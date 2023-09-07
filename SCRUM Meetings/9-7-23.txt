@@ -14,3 +14,5 @@ Is timeline needed for RFP.
 
 Work on the main parts of the RFP, then do the glossary and such later.
 Create a descision tree (will probbaly help with creating the RFP).
+
+Meeting End: 2:44 PM
