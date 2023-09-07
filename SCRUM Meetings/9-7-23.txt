@@ -9,6 +9,7 @@ Ask Professor Vong for :
 Need to send the RFP Template to Vong to make sure it is okay.
 Difference between Phase 1 and 2.
 What does he mean by phase 1 and 2 features, one feature per person?
+Do we need to include APIs in the RFP.
 
 Work on the main parts of the RFP, then do the glossary and such later.
 Create a descision tree (will probbaly help with creating the RFP).
