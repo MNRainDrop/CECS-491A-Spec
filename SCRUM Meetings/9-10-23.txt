@@ -1,0 +1,6 @@
+Meeting objectives: 
++ Decide on 10 features of application (2 for each member) 
++ Go through the RFP template so everyone know what to follow 
++ Decide on who write RFP/make decision tree/look into BRD 
++ Who will be in charge of SCRUM meeting 
++ Who will be in charge of taking notes of SCRUM meeting 
