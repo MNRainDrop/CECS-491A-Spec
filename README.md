@@ -16,3 +16,6 @@ This folder contains all materials used for Team Spec's year long _Senior Projec
 
 ## Decision Tree
 https://drive.google.com/file/d/10N92Y1gGMscDzqNXaRc9sMie24bhFo08/view?usp=sharing
+
+## Google Drive Resources
+https://drive.google.com/drive/folders/18g36f_W2MpAs2VZQXuqWvCCY1EWKdpNQ?usp=sharing
