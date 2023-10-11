@@ -4,7 +4,7 @@ namespace TeamSpecs.RideAlong.DataAccess
 {
     public class DataAccess
     {
-        private string connectionString = @"Server=LAPTOP-Marlone\RIDEALONG;Database=RideAlong;";
+        private string connectionString = @"Server=LAPTOP-6OLKME95;Database=RideAlongDB;";
         private string adminString = "User Id=RideAlongAdmin;Password=admin;";
         private string readString = "User Id=RideAlongRead;Password=readme;";
         private string writeString = "User Id=RideAlongWrite;Password=writeme;";
