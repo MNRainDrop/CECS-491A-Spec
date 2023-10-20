@@ -4,7 +4,7 @@ namespace TeamSpecs.RideAlong.DataAccess
 {
     public class DataAccess
     {
-        private string connectionString = @"Server=LAPTOP-6OLKME95\RIDEALONG;Database=RideAlong;";
+        private string connectionString = @"Server=LAPTOP-6OLKME95\RIDEALONG;Database=LoggingTestDB;";
         private string adminString = "User Id=RideAlongAdmin;Password=admin;";
         private string readString = "User Id=RideAlongRead;Password=readme;";
         private string writeString = "User Id=RideAlongWrite;Password=writeme;";
@@ -35,6 +35,7 @@ namespace TeamSpecs.RideAlong.DataAccess
                 Console.WriteLine("{0} {1} {2}", reader["logID"].ToString(), reader["logTime"].ToString(), reader["logMessage"].ToString());
             }
             readConnection.Close();
+
 
         }
 
