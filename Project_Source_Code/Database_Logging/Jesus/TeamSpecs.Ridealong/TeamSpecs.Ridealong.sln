@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.Ridealong.Console
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.Ridealong.Logging", "TeamSpecs.Ridealong.Logging\TeamSpecs.Ridealong.Logging.csproj", "{3B16614D-6E07-4B3B-94C4-11433F2A8C94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.Ridealong.LoggingUnitTest", "TeamSpecs.Ridealong.LoggingUnitTest\TeamSpecs.Ridealong.LoggingUnitTest.csproj", "{4817D21C-9020-432F-94B7-72829474E16B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3B16614D-6E07-4B3B-94C4-11433F2A8C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B16614D-6E07-4B3B-94C4-11433F2A8C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B16614D-6E07-4B3B-94C4-11433F2A8C94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4817D21C-9020-432F-94B7-72829474E16B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4817D21C-9020-432F-94B7-72829474E16B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4817D21C-9020-432F-94B7-72829474E16B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4817D21C-9020-432F-94B7-72829474E16B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

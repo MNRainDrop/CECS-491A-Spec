@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TeamSpecs.Ridealong.Logging\TeamSpecs.Ridealong.Logging.csproj" />
+  </ItemGroup>
+
 </Project>
