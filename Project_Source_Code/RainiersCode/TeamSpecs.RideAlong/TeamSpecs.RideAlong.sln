@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DataAcc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.LoggingLibrary", "TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj", "{266F16FE-A585-451E-8F7B-82A8D8B7E7CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Services", "TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj", "{AF376532-374B-4CEA-A6B1-4EEC13992048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Model", "TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj", "{191F40A7-33DC-4A46-8B15-C7D28601E733}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.Model", "TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj", "{191F40A7-33DC-4A46-8B15-C7D28601E733}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.TestingLibrary", "TeamSpecs.RideAlong.Tests\TeamSpecs.RideAlong.TestingLibrary.csproj", "{070DA01A-0796-44D3-A9D4-6DF462D4DE48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{266F16FE-A585-451E-8F7B-82A8D8B7E7CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{266F16FE-A585-451E-8F7B-82A8D8B7E7CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{266F16FE-A585-451E-8F7B-82A8D8B7E7CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF376532-374B-4CEA-A6B1-4EEC13992048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF376532-374B-4CEA-A6B1-4EEC13992048}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF376532-374B-4CEA-A6B1-4EEC13992048}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF376532-374B-4CEA-A6B1-4EEC13992048}.Release|Any CPU.Build.0 = Release|Any CPU
 		{191F40A7-33DC-4A46-8B15-C7D28601E733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{191F40A7-33DC-4A46-8B15-C7D28601E733}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{191F40A7-33DC-4A46-8B15-C7D28601E733}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{191F40A7-33DC-4A46-8B15-C7D28601E733}.Release|Any CPU.Build.0 = Release|Any CPU
+		{070DA01A-0796-44D3-A9D4-6DF462D4DE48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{070DA01A-0796-44D3-A9D4-6DF462D4DE48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{070DA01A-0796-44D3-A9D4-6DF462D4DE48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{070DA01A-0796-44D3-A9D4-6DF462D4DE48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

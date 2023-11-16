@@ -1,5 +1,6 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace TeamSpecs.RideAlong.DataAccess;
 
@@ -10,6 +11,43 @@ public class SqlServerDAO : IGenericDAO
     private readonly string database = "RideAlong";
     private string access = "";
 
+    public Response ExectueWriteOnly(SqlCommand sql)
+    {
+        access = "User Id=RideAlongWrite;Password=writeme;";
+
+        var response = new Response();
+        try
+        {
+            connectionString = $"Server={server};Database={database};{access}";
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                sql.Connection = connection;
+                var changedRows = sql.ExecuteNonQuery();
+
+                response.ReturnValue = new List<object>();
+                response.ReturnValue.Add(changedRows);
+            }
+            response.HasError = false;
+            }
+        catch (SqlException ex)
+        {
+            // If connection.Open() or command.ExecuteNonQuery() throws SqlException
+            // Executed command against a locked row
+            // Timeout during an operation
+            response.HasError = true;
+            response.ErrorMessage = ex.Message;
+
+        }
+        catch (InvalidOperationException ex)
+        {
+            // If connection.Open() or command.ExecuteNonQuery() throws InvalidOperationException
+            // SqlConnection could have closed or been dropped during operation
+            response.HasError = true;
+            response.ErrorMessage = ex.Message;
+        }
+        return response;
+    }
     public Response ExectueReadOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongRead;Password=readme;";
@@ -27,12 +65,18 @@ public class SqlServerDAO : IGenericDAO
                 sql.Connection = connection;
                 using (var command = sql)
                 {
-                    using (var reader = command.ExecuteReader())
+                    var reader = command.ExecuteReader();
+
+                    response.ReturnValue = new List<object>();
+                    while (reader.Read())
                     {
-                        response.ReturnValue = (ICollection<object>)reader;
+                        var values = new Object[reader.FieldCount];
+                        reader.GetValues(values);
+                        response.ReturnValue.Add(values);
                     }
                 }
             }
+            response.HasError = false;
         }
         catch (SqlException ex)
         {
@@ -52,39 +96,5 @@ public class SqlServerDAO : IGenericDAO
         return response;
     }
 
-    public Response ExectueWriteOnly(SqlCommand sql)
-    {
-        access = "User Id=RideAlongWrite;Password=writeme;";
-
-        var response = new Response();
-        try
-        {
-            connectionString = $"Server={server};Database={database};{access}";
-            using (var connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                sql.Connection = connection;
-                using (var command = sql)
-                {
-                    command.ExecuteNonQuery();
-                }
-            }
-        }
-        catch (SqlException ex)
-        {
-            // If connection.Open() or command.ExecuteNonQuery() throws SqlException
-            // Executed command against a locked row
-            // Timeout during an operation
-            response.HasError = true;
-            response.ErrorMessage = ex.Message;
-        }
-        catch (InvalidOperationException ex)
-        {
-            // If connection.Open() or command.ExecuteNonQuery() throws InvalidOperationException
-            // SqlConnection could have closed or been dropped during operation
-            response.HasError = true;
-            response.ErrorMessage = ex.Message;
-        }
-        return response;
-    }
+    
 }

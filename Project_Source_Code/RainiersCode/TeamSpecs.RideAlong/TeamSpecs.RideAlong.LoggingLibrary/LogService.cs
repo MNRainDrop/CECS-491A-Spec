@@ -1,10 +1,10 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-public class SqlServerLogService : ILogService
+public class LogService : ILogService
 {
     private readonly ILogTarget _logTarget;
 
-    SqlServerLogService(ILogTarget logTarget)
+    LogService(ILogTarget logTarget)
     {
         _logTarget = logTarget;
     }
@@ -13,7 +13,7 @@ public class SqlServerLogService : ILogService
     {
         var response = new Response();
         // Not sure if the startTime parameter should be the current time of the log being logged or the time the user operation should be 
-        _logTarget.Write(DateTime.UtcNow, logLevel, category, message);
+        response = _logTarget.Write(DateTime.UtcNow, logLevel, category, message);
         return response;
     }
 }
