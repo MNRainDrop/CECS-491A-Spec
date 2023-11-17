@@ -70,7 +70,7 @@ public class SqlServerDAO : IGenericDAO
                     response.ReturnValue = new List<object>();
                     while (reader.Read())
                     {
-                        var values = new Object[reader.FieldCount];
+                        var values = new object[reader.FieldCount];
                         reader.GetValues(values);
                         response.ReturnValue.Add(values);
                     }
