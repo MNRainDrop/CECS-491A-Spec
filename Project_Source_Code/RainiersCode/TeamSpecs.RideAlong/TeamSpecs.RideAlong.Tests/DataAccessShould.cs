@@ -10,7 +10,7 @@ public class DataAccessShould
 {
     // Create Operations
     [Fact]
-    public void DAO_ExecuteWriteOnly_ValidInsertSqlCommandPassedIn_WriteToDatabase_Pass()
+    public void DAO_ExecuteWriteOnly_ValidInsertSqlCommandPassedIn_OneRowWrittenToDatabase_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
@@ -156,7 +156,7 @@ public class DataAccessShould
     
     // Read Operations
     [Fact]
-    public void DAO_ExecuteReadOnly_SelectRowFromOneLogIDSqlCommandPassedIn_OneArgumentReturned_Pass()
+    public void DAO_ExecuteReadOnly_SelectRowFromOneLogIDSqlCommandPassedIn_OneResultReturned_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
@@ -193,7 +193,35 @@ public class DataAccessShould
     }
 
     [Fact]
-    public void DAO_ExecuteReadOnly_SelectRowFromLogLevelSqlCommandPassedIn_ManyArgumentReturned_Pass()
+    public void DAO_ExecuteReadOnly_SelectRowFromOneLogIDSqlCommandPassedIn_NoResultsReturned_Pass()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logLevel = 'Haha Funny Number lololol';");
+
+        // Expected 
+        var expectedHasError = false;
+        string expectedErrorMessage = null;
+        var expectedReturnValueAmount = 0;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueReadOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage == expectedErrorMessage);
+        Assert.True(response.ReturnValue.Count() == expectedReturnValueAmount);
+    }
+
+    [Fact]
+    public void DAO_ExecuteReadOnly_SelectRowFromLogLevelSqlCommandPassedIn_ManyResultsReturned_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
@@ -255,9 +283,154 @@ public class DataAccessShould
         Assert.True(response.ReturnValue == expectedReturnValueAmount);
     }
 
-
     // Update Operations
-    
+    [Fact]
+    public void DAO_ExecuteWriteOnly_ValidUpdateSqlCommandPassedIn_OneRowUpdatedToDatabase_Pass()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("UPDATE dbo.loggingTable " +
+            "SET logContext = 'This is a test for updating'" +
+            "WHERE logID = 2");
+
+        // Expected values
+        var expectedHasError = false;
+        string expectedErrorMessage = null;
+        var expectedReturnValue = 1;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueWriteOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage == expectedErrorMessage);
+        Assert.True(response.ReturnValue.FirstOrDefault().Equals(expectedReturnValue));
+    }
+
+    [Fact]
+    public void DAO_ExecuteWriteOnly_ValidUpdateSqlCommandPassedInToReadOnly_OneRowUpdatedToDatabase_Fail()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("UPDATE dbo.loggingTable " +
+            "SET logContext = 'This is a test for updating'" +
+            "WHERE logID = 2");
+
+        // Expected values
+        var expectedHasError = true;
+        string expectedErrorMessage = "The UPDATE permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
+        ICollection<object> expectedReturnValue = null;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueReadOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage == expectedErrorMessage);
+        Assert.True(response.ReturnValue == expectedReturnValue);
+    }
 
     // Delete Operations
+    [Fact]
+    public void DAO_ExecuteWriteOnly_ValidDeleteSqlCommandPassedIn_MultipleRowsDeletedInDatabase_Pass()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("DELETE FROM dbo.loggingTable " +
+            "WHERE logID > 2");
+
+        // Expected values
+        var expectedHasError = false;
+        string expectedErrorMessage = null;
+        var expectedMinimumReturnValue = 1;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueWriteOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage == expectedErrorMessage);
+        foreach (int items in response.ReturnValue)
+        {
+            Assert.True(items >= expectedMinimumReturnValue);
+        }
+    }
+
+    [Fact]
+    public void DAO_ExecuteWriteOnly_ValidDeleteSqlCommandPassedIn_NoRowsDeletedInDatabase_Pass()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("DELETE FROM dbo.loggingTable " +
+            "WHERE logID = null");
+
+        // Expected values
+        var expectedHasError = false;
+        string expectedErrorMessage = null;
+        var expectedReturnValue = 0;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueWriteOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage == expectedErrorMessage);
+        Assert.True(response.ReturnValue.FirstOrDefault().Equals(expectedReturnValue));
+    }
+
+    [Fact]
+    public void DAO_ExecuteWriteOnly_ValidDeleteAllRowsSqlCommandPassedIn_AllRowsDeletedInDatabase_Fail()
+    {
+        // Arrange
+        var timer = new Stopwatch();
+        Response response;
+        var dao = new SqlServerDAO();
+
+        var sql = new SqlCommand("DELETE FROM dbo.loggingTable");
+
+        // Expected values
+        var expectedHasError = true;
+        string expectedErrorMessage = "The DELETE permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
+        ICollection<object> expectedReturnValue = null;
+
+        // Act
+        timer.Start();
+        response = dao.ExectueReadOnly(sql);
+        timer.Stop();
+
+
+        // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.True(response.HasError == expectedHasError);
+        Assert.True(response.ErrorMessage.Contains(expectedErrorMessage));
+        Assert.True(response.ReturnValue == expectedReturnValue);
+    }
 }
