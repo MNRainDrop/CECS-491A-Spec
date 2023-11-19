@@ -23,10 +23,10 @@ public class SqlDbLogTarget : ILogTarget
         string sql = $@"INSERT INTO dbo.LoggingTestTable (logStartTime, logLevel, category, description)" +
             "VALUES (@logStartTime, @logLevel, @category, @description)";
         var cmd = new SqlCommand(sql);
-        cmd.Parameters.Add(new SqlParameter("@logStartTime", log.logTime));
-        cmd.Parameters.Add(new SqlParameter("@logLevel", log.logLevel));
-        cmd.Parameters.Add(new SqlParameter("@category", log.logCategory));
-        cmd.Parameters.Add(new SqlParameter("@message", log.logContext));
+        cmd.Parameters.Add(new SqlParameter("@logStartTime", log.LogTime));
+        cmd.Parameters.Add(new SqlParameter("@logLevel", log.LogLevel));
+        cmd.Parameters.Add(new SqlParameter("@category", log.LogCategory));
+        cmd.Parameters.Add(new SqlParameter("@message", log.LogContext));
         return _dao.ExectueWriteOnly(cmd);
     }
 }

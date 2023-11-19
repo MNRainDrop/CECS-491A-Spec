@@ -2,11 +2,11 @@
 {
     public interface ILog
     {
-        public int? logID { get; set; }
-        public DateTime logTime { get; set; }
-        public string logLevel { get; set; }
-        public string logCategory { get; set; }
-        public string logContext { get; set; }
-        public string? createdBy { get; set; }
+        public int? LogID { get; set; }
+        public DateTime LogTime { get; set; }
+        public string LogLevel { get; set; }
+        public string LogCategory { get; set; }
+        public string LogContext { get; set; }
+        public string? LogCreatedBy { get; set; }
     }
 }

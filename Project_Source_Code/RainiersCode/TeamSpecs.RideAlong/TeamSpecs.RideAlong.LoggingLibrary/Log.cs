@@ -4,18 +4,18 @@
     {
         public Log(int? logID, DateTime logTime, string logLevel, string logCategory, string logContext, string? createdBy = null)
         {
-            this.logID = logID;
-            this.logTime = logTime;
-            this.logLevel = logLevel;
-            this.logCategory = logCategory;
-            this.logContext = logContext;
-            this.createdBy = createdBy;
+            this.LogID = logID;
+            this.LogTime = logTime;
+            this.LogLevel = logLevel;
+            this.LogCategory = logCategory;
+            this.LogContext = logContext;
+            this.LogCreatedBy = createdBy;
         }
-        public int? logID { get; set; }
-        public DateTime logTime { get; set; }
-        public string logLevel { get; set; }
-        public string logCategory { get; set; }
-        public string logContext { get; set; }
-        public string? createdBy { get; set; }
+        public int? LogID { get; set; }
+        public DateTime LogTime { get; set; }
+        public string LogLevel { get; set; }
+        public string LogCategory { get; set; }
+        public string LogContext { get; set; }
+        public string? LogCreatedBy { get; set; }
     }
 }
