@@ -8,12 +8,12 @@ public class SqlDbLogTarget : ILogTarget
 {
     private readonly IGenericDAO _dao;
 
-    SqlDbLogTarget(IGenericDAO dao)
+    public SqlDbLogTarget(IGenericDAO dao)
     {
         _dao = dao;
     }
 
-    public Response Write(DateTimeOffset startTime, string logLevel, string category, string? description)
+    public IResponse Write(DateTimeOffset startTime, string logLevel, string category, string? description)
     {
         // need to protect against sql injection
         // start time and end time I'm not 100% sure of - 11/13

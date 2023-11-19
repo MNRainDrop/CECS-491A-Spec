@@ -14,7 +14,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext)" +
@@ -22,7 +22,7 @@ public class DataAccessShould
         
             // Expected values
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedReturnValue = 1;
 
         // Act
@@ -35,7 +35,14 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        Assert.True(response.ReturnValue.FirstOrDefault().Equals(expectedReturnValue));
+        if (response.ReturnValue is not null)
+        {
+            Assert.Equal(expectedReturnValue, response.ReturnValue.First());
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
     }
 
     [Fact]
@@ -43,7 +50,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand();
@@ -51,7 +58,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "ExecuteNonQuery: CommandText property has not been initialized";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -71,7 +78,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("INSERT INTO dbo.NotImplementedTable (something)" +
@@ -80,7 +87,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "Invalid object name 'dbo.NotImplementedTable'.";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -91,7 +98,7 @@ public class DataAccessShould
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
-        Assert.True(response.ErrorMessage.Contains(expectedErrorMessage));
+        Assert.Contains(expectedErrorMessage, response.ErrorMessage);
         Assert.True(response.ReturnValue == expectedReturnValue);
     }
 
@@ -100,7 +107,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext)" +
@@ -109,7 +116,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "String or binary data would be truncated in table 'RideAlong.dbo.loggingTable', column 'logLevel'. Truncated value: 'ThisLogLevelHasMoreT'.";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -120,7 +127,7 @@ public class DataAccessShould
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
-        Assert.True(response.ErrorMessage.Contains(expectedErrorMessage));
+        Assert.Contains(expectedErrorMessage, response.ErrorMessage);
         Assert.True(response.ReturnValue == expectedReturnValue);
     }
 
@@ -129,7 +136,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext) " +
@@ -138,7 +145,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "Cannot insert the value NULL into column 'logLevel', table 'RideAlong.dbo.loggingTable'; column does not allow nulls. INSERT fails.";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -149,7 +156,7 @@ public class DataAccessShould
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
-        Assert.True(response.ErrorMessage.Contains(expectedErrorMessage));
+        Assert.Contains(expectedErrorMessage, response.ErrorMessage);
         Assert.True(response.ReturnValue == expectedReturnValue);
     }
 
@@ -160,14 +167,14 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logID = 1;");
 
         // Expected 
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedReturnValueAmount = 1;
         Object[] expectedReturnValue = { 1, "Info", "Testing", "This is a test" };
 
@@ -181,7 +188,14 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        Assert.True(response.ReturnValue.Count() == expectedReturnValueAmount);
+        if (response.ReturnValue is not null)
+        {
+            Assert.True(response.ReturnValue.Count == expectedReturnValueAmount);
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
         
         foreach (object[] obj in response.ReturnValue)
         {
@@ -197,14 +211,14 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logLevel = 'Haha Funny Number lololol';");
 
         // Expected 
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedReturnValueAmount = 0;
 
         // Act
@@ -217,7 +231,14 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        Assert.True(response.ReturnValue.Count() == expectedReturnValueAmount);
+        if (response.ReturnValue is not null)
+        {
+            Assert.True(response.ReturnValue.Count == expectedReturnValueAmount);
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
     }
 
     [Fact]
@@ -225,14 +246,14 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("SELECT logLevel, logCategory, logContext FROM loggingTable WHERE logLevel = 'Info';");
 
         // Expected 
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         Object[] expectedReturnValue = { "Info", "Testing", "This is a test" };
 
         // Act
@@ -245,12 +266,19 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        foreach (object[] obj in response.ReturnValue)
+        if (response.ReturnValue is not null)
         {
-            for (int i = 0; i < obj.Length - 1; i++)
+            foreach (object[] obj in response.ReturnValue)
             {
-                Assert.True(obj[i].Equals(expectedReturnValue[i]));
+                for (int i = 0; i < obj.Length - 1; i++)
+                {
+                    Assert.True(obj[i].Equals(expectedReturnValue[i]));
+                }
             }
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
         }
     }
 
@@ -259,7 +287,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext)" +
@@ -268,7 +296,7 @@ public class DataAccessShould
         // Expected 
         var expectedHasError = true;
         string expectedErrorMessage = "The INSERT permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
-        ICollection<object> expectedReturnValueAmount = null;
+        ICollection<object> ?expectedReturnValueAmount = null;
 
         // Act
         timer.Start();
@@ -289,7 +317,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("UPDATE dbo.loggingTable " +
@@ -298,7 +326,7 @@ public class DataAccessShould
 
         // Expected values
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedReturnValue = 1;
 
         // Act
@@ -311,7 +339,14 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        Assert.True(response.ReturnValue.FirstOrDefault().Equals(expectedReturnValue));
+        if (response.ReturnValue is not null)
+        {
+            Assert.Equal(expectedReturnValue, response.ReturnValue.First());
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
     }
 
     [Fact]
@@ -319,7 +354,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("UPDATE dbo.loggingTable " +
@@ -329,7 +364,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "The UPDATE permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -350,7 +385,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("DELETE FROM dbo.loggingTable " +
@@ -358,7 +393,7 @@ public class DataAccessShould
 
         // Expected values
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedMinimumReturnValue = 1;
 
         // Act
@@ -371,10 +406,18 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        foreach (int items in response.ReturnValue)
+        if (response.ReturnValue is not null)
         {
-            Assert.True(items >= expectedMinimumReturnValue);
+            foreach (int items in response.ReturnValue)
+            {
+                Assert.True(items >= expectedMinimumReturnValue);
+            }
         }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
+        
     }
 
     [Fact]
@@ -382,7 +425,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("DELETE FROM dbo.loggingTable " +
@@ -390,7 +433,7 @@ public class DataAccessShould
 
         // Expected values
         var expectedHasError = false;
-        string expectedErrorMessage = null;
+        string ?expectedErrorMessage = null;
         var expectedReturnValue = 0;
 
         // Act
@@ -403,7 +446,14 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        Assert.True(response.ReturnValue.FirstOrDefault().Equals(expectedReturnValue));
+        if (response.ReturnValue is not null)
+        {
+            Assert.Equal(expectedReturnValue, response.ReturnValue.First());
+        }
+        else
+        {
+            Assert.Fail("response.ReturnValue should not be null");
+        }
     }
 
     [Fact]
@@ -411,7 +461,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        Response response;
+        IResponse response;
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("DELETE FROM dbo.loggingTable");
@@ -419,7 +469,7 @@ public class DataAccessShould
         // Expected values
         var expectedHasError = true;
         string expectedErrorMessage = "The DELETE permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
-        ICollection<object> expectedReturnValue = null;
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -430,7 +480,7 @@ public class DataAccessShould
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
-        Assert.True(response.ErrorMessage.Contains(expectedErrorMessage));
+        Assert.Contains(expectedErrorMessage, response.ErrorMessage);
         Assert.True(response.ReturnValue == expectedReturnValue);
     }
 }
