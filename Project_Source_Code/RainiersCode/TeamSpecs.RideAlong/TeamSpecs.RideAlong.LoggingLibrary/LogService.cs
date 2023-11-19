@@ -15,7 +15,7 @@ public class LogService : ILogService
 
         //changed to work with log object
         ILog log = new Log(null, DateTime.UtcNow, logLevel, logCategory, logMessage);
-        response = _logTarget.Write(log);
+        IResponse response = _logTarget.Write(log);
         return response;
     }
 }
