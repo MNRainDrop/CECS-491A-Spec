@@ -6,12 +6,19 @@ namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
-    private string connectionString = "";
-    private readonly string server = @"LAPTOP-MARLONE\RIDEALONG";
-    private readonly string database = "RideAlong";
-    private string access = "";
+    private string connectionString;
+    private string server;
+    private string database;
+    private string access;
 
-    public Response ExectueWriteOnly(SqlCommand sql)
+    public SqlServerDAO ()
+    {
+        connectionString = "";
+        server = @"LAPTOP-MARLONE\RIDEALONG";
+        database = "RideAlong";
+        access = "";
+    }
+    public IResponse ExectueWriteOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongWrite;Password=writeme;";
 
@@ -48,7 +55,7 @@ public class SqlServerDAO : IGenericDAO
         }
         return response;
     }
-    public Response ExectueReadOnly(SqlCommand sql)
+    public IResponse ExectueReadOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongRead;Password=readme;";
 

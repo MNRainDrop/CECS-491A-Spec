@@ -1,16 +1,7 @@
 ﻿namespace TeamSpecs.RideAlong.Model;
 
-public class Response : IResponse
+public interface IResponse
 {
-    public Response()
-    {
-        HasError = true;
-        ErrorMessage = null;
-        ReturnValue = null;
-        RetryAttempts = 0;
-        IsSafeToRetry = false;
-    }
-
     public bool HasError { get; set; }
     public string? ErrorMessage { get; set; }
     public ICollection<object>? ReturnValue { get; set; }
