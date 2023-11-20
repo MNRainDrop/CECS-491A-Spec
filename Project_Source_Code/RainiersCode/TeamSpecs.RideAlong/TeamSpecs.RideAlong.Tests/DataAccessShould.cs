@@ -1,7 +1,6 @@
-namespace TeamSpecs.RideAlong.Tests;
+namespace TeamSpecs.RideAlong.TestingLibrary;
 
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
@@ -214,7 +213,7 @@ public class DataAccessShould
         IResponse response;
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logLevel = 'Haha Funny Number lololol';");
+        var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logLevel LIKE '%Haha Funny Number lololol';");
 
         // Expected 
         var expectedHasError = false;
@@ -249,12 +248,12 @@ public class DataAccessShould
         IResponse response;
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("SELECT logLevel, logCategory, logContext FROM loggingTable WHERE logLevel = 'Info';");
+        var sql = new SqlCommand("SELECT logLevel, logCategory, logContext FROM loggingTable WHERE logLevel LIKE '%Info%' and logCategory LIKE '%testing%';");
 
         // Expected 
         var expectedHasError = false;
         string ?expectedErrorMessage = null;
-        Object[] expectedReturnValue = { "Info", "Testing", "This is a test" };
+        Object[] expectedReturnValue = { "Info", "Testing", "" };
 
         // Act
         timer.Start();
@@ -268,6 +267,10 @@ public class DataAccessShould
         Assert.True(response.ErrorMessage == expectedErrorMessage);
         if (response.ReturnValue is not null)
         {
+            if (response.ReturnValue.Count is 0)
+            {
+                Assert.Fail("response.ReturnValue should not be 0");
+            }
             foreach (object[] obj in response.ReturnValue)
             {
                 for (int i = 0; i < obj.Length - 1; i++)

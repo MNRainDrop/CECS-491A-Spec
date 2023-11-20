@@ -7,14 +7,14 @@ namespace TeamSpecs.RideAlong.DataAccess;
 public class SqlServerDAO : IGenericDAO
 {
     private string connectionString;
-    private string server;
-    private string database;
+    private readonly string server;
+    private readonly string database;
     private string access;
 
     public SqlServerDAO ()
     {
         connectionString = "";
-        server = @"LAPTOP-MARLONE\RIDEALONG";
+        server = @"DESKTOP-MARLONE\RIDEALONG";
         database = "RideAlong";
         access = "";
     }
@@ -44,7 +44,6 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
-
         }
         catch (InvalidOperationException ex)
         {
@@ -52,6 +51,7 @@ public class SqlServerDAO : IGenericDAO
             // SqlConnection could have closed or been dropped during operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
+            response.IsSafeToRetry = false;
         }
         return response;
     }

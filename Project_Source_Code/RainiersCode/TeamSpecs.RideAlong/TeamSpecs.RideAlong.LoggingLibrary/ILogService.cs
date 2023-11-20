@@ -3,5 +3,6 @@ using TeamSpecs.RideAlong.Model;
 
 public interface ILogService
 {
-    public IResponse Log(string logLevel, string category, string message);
+    public IResponse CreateLog(string logLevel, string category, string message, string? createdBy);
+    public IResponse RetrieveLog(ILogFilter logFilter);
 }

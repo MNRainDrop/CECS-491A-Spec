@@ -9,13 +9,27 @@ public class LogService : ILogService
         _logTarget = logTarget;
     }
 
-    public IResponse Log(string logLevel, string logCategory, string logMessage)
+    public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)
     {
-        // Not sure if the startTime parameter should be the current time of the log being logged or the time the user operation should be 
-
         //changed to work with log object
-        ILog log = new Log(null, DateTime.UtcNow, logLevel, logCategory, logMessage);
+        ILog log = new Log(null, DateTime.UtcNow, logLevel, logCategory, logContext, createdBy);
         IResponse response = _logTarget.Write(log);
+        return response;
+    }
+
+    public IResponse RetrieveLog(ILogFilter logFilter)
+    {
+        IResponse response = _logTarget.Read(logFilter);
+        if (response.ReturnValue is not null)
+        {
+            var temp = new List<object>();
+            foreach (object[] logarray in response.ReturnValue)
+            {
+                temp.Add(new Log((int)logarray[0], (DateTimeOffset)logarray[1], (string)logarray[2], (string)logarray[3], (string)logarray[4], logarray[5].ToString()));
+            }
+            response.ReturnValue.Clear();
+            response.ReturnValue = temp;
+        }
         return response;
     }
 }
