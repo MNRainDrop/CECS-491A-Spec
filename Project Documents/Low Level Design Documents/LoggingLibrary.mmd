@@ -9,36 +9,40 @@ participant DS as Data Store
 
 U->>V: The user interacts with the view
 V->>M: The view calls on the manager<br>to save a log to the Data Store
-M->>+S: The manager calls upon `LogService.Log()`<br>and passes in `logLevel`, `logCategory`,<br>and `logMessage` to information it needs<br>to log to the Data Store
+M->>+S: The manager calls upon `LogService.CreateLog()`<br>and passes in `logLevel`, `logCategory`,<br>`logMessage`, and optionally `logCreatedBy` to create<br>the log and store it
 S->>+DG: The `LogService` calls upon<br>`SqlDbLogTarget.Write()` to create <br> a parameterized SQL command with<br>the log information
-DG->>+DA: The `SqlDbLogTarget` calls upon <br> `SqlServerDAO.executeWriteOnly()`<br>to connect to the database and<br>execute the SQL command
-DA->>+DS: The `SqlServerDAO` calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to write the data to the data store
-DS->>+DS: The Data Store processes<br> the SQL Code
 
-rect rgba(127,127,127,.1)
-alt Data Store fails to write the Log information
-    DS->>DA: The Data Store fails to write the<br>Log information to the data store
-    rect rgba(127,127,127,.2)
-    alt The error is recoverable
-        DA->>DG: The `SqlServerDAO`<br>returns a `Response` object with<br>`Response.HasError` set to `true` and<br>`Response.IsSafeToRetry` set to `true`
-        rect rgba(127, 127, 127, 0.2)
-        loop Until `Response.RetryAttempts` is equal to 3
-            par
-                DG->>DA: The `SqlDbLogTarget` calls upon <br> `SqlServerDAO.executeWriteOnly()`<br>to connect to the database and<br>execute the SQL command
+rect rgba(127, 127, 127,.2)
+loop Until `Response.IsSafeToRetry` = false
+    DG->>+DA: The `SqlDbLogTarget` calls upon <br> `SqlServerDAO.executeWriteOnly()`<br>to connect to the database and<br>execute the SQL command
+    DA->>+DS: The `SqlServerDAO` calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to write the data to the data store
+    DS->>+DS: The Data Store processes<br> the SQL Code
+
+    rect rgba(127, 127, 127, .2)
+    alt Data Store ran into an error
+        rect rgba(127, 127, 127, .2)
+        alt Error is recoverable
+            DS->>DA: The Data Store could not write the log<br>and returned an error
+            DA->>DG: The `SQLServerDAO` returns a `Response`<br> object with `Response.HasError` = true<br> and `Response.IsSafeToRetry` = true
+            rect rgba(127, 127, 127, .2)
+            alt `Response.RetryAttempts` is less than 3
                 DG->>DG: The `SqlDbLogTarget` will increment the `Response.RetryAttempts` by 1
+            else `Response.RetryAttempts` is equal to 3
+                DG->>DG: The `SqlDbLogTarget` will set `Response.IsSafeToRetry` = false
             end
-            DA->>DS: The `SqlServerDAO` calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to write the data to the data store
+            end
+        else Error is not recoverable
+            DS->>DA: The Data Store could not write the log<br>and returned an error
+            DA->>DG: The `SQLServerDAO` returns a `Response`<br> object with `Response.HasError` = true<br> and `Response.IsSafeToRetry` = false
+        
         end
         end
-    else The error is unrecoverable
-        DA->>DG: The `SqlServerDAO`<br>returns a `Response` object with<br>`Response.HasError` set to `true` and<br>`Response.IsSafeToRetry` set to `false`
-        DG->>S: Response Object is found to have error<br> Error handling is applied appropriately
+    else Data Store wrote the log successfully
+        DS->>-DA: The Data Store wrote the log successfully<br>and returns the amount of rows affected
+        DA->>-DG: The `SQLServerDAO` returns a `Response`<br> object with `Response.HasError` = false<br>and `Response.IsSafeToRetry` = false
     end
     end
-else Data Store succeeds to write the Log information
-    DS-->>-DA: SQL Written Successfully
-    DA->>-DG: Returns `Response` object with outcome
-    DG->>-S: Response Object is confirmed to be successful<br>Logging is finalized
-    deactivate S
 end
 end
+DG->>-S: The `SqlDbLogTarget` returns the `Response` object
+deactivate S
