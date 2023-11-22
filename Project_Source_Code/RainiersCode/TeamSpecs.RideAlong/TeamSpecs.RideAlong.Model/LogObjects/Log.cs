@@ -1,4 +1,4 @@
-﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
+﻿namespace TeamSpecs.RideAlong.Model;
 
 public class Log : ILog
 {

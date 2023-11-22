@@ -1,8 +1,7 @@
-﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
+﻿namespace TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 
 public interface ILogTarget
 {
     public IResponse Write(ILog log);
-    public IResponse Read(ILogFilter filter);
 }

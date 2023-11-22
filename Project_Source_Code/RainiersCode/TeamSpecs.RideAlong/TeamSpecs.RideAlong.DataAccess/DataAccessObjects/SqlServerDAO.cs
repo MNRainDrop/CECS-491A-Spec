@@ -1,6 +1,5 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using System.Data.SqlClient;
-using System.Data;
 
 namespace TeamSpecs.RideAlong.DataAccess;
 
@@ -36,6 +35,7 @@ public class SqlServerDAO : IGenericDAO
                 response.ReturnValue.Add(changedRows);
             }
             response.HasError = false;
+            response.IsSafeToRetry = false;
             }
         catch (SqlException ex)
         {
@@ -44,6 +44,7 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
+            CreateLog(response);
         }
         catch (InvalidOperationException ex)
         {
@@ -52,9 +53,11 @@ public class SqlServerDAO : IGenericDAO
             response.HasError = true;
             response.ErrorMessage = ex.Message;
             response.IsSafeToRetry = false;
+            CreateLog(response);
         }
         return response;
     }
+
     public IResponse ExectueReadOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongRead;Password=readme;";
@@ -92,6 +95,7 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
+            CreateLog(response);
         }
         catch (InvalidOperationException ex)
         {
@@ -99,9 +103,17 @@ public class SqlServerDAO : IGenericDAO
             // SqlConnection could have closed or been dropped during operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
+            response.IsSafeToRetry = false;
+            CreateLog(response);
         }
         return response;
     }
 
-    
+    public IResponse CreateLog(IResponse DBresponse)
+    {
+        //changed to work with log object
+        ILog log = new Log(null, DateTime.UtcNow, "Error", "Data Store", DBresponse.ErrorMessage, null);
+        IResponse response = new SqlDbLogTarget(this).Write(log);
+        return response;
+    }
 }
