@@ -28,11 +28,11 @@ DS->>DS: The SqlServer processes<br> the SQL Code
 # Returning
 DS-->>-DA: The SqlServer wrote the log successfully<br>and returns the amount of rows affected
 
-DA-->>DA: The SQLServerDAO checks the returned value from the<br>SqlServer for errors
+DA-->>DA: The SqlServerDAO checks the returned value from the<br>SqlServer for errors
 
-DA-->>DA: The SQLServerDAO creates a new `Response` <br>object with `Response.HasError` = false,<br> `Response.IsSafeToRetry` = false, and<br>`Response.ReturnValue` = the recieved value from Data Store
+DA-->>DA: The SqlServerDAO creates a new `Response` <br>object with `Response.HasError` = false,<br> `Response.IsSafeToRetry` = false, and<br>`Response.ReturnValue` = the recieved value from Data Store
 
-DA-->>-DG: The SQLServerDAO returns the `Response` object
+DA-->>-DG: The SqlServerDAO returns the `Response` object
 
 DG-->>DG: The `SqlDbLogTarget` checks<br>`Response.HasError` if it is equal to false and<br>`Response.ReturnValue` for only one returned value
 DG-->>-S: The `SqlDbLogTarget` returns the `Response` object

@@ -1,0 +1,34 @@
+sequenceDiagram
+participant V as View (UI Layer)
+participant M as Manager Layer
+participant S as Service Layer
+participant DG as Data Gateway (Data Access Layer)
+participant DA as SqlServerDAO (Data Access Layer)
+participant DS as SqlServer (Data Store)
+
+V->>M: The View calls on the Manager<br>layer to save information<br> to SqlServer
+
+M->>+S: The Manager calls upon the<br> appropriate service to gather<br>the information it needs to store
+
+S->>+DG: The Service calls upon the<br> appropriate Data Gateway to parse<br>the information into an SqlCommand
+
+DG->>+DA: The Data Gateway calls upon<br>`SqlServerDAO.ExecuteReadOnly(SqlCommand sql)`<br> to connect to the server and<br>execute the generated SqlCommand
+    Note over DG,DA: IResponse SqlServerDAO.ExecuteReadOnly(SqlCommand)
+
+DA->>+DS: The SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute query on the SqlServer
+    Note over DA,DS: int SqlCommand.ExecuteReader()
+
+DS->>+DS: The SqlServer processes<br> the SQL Code
+
+#Returning
+DS-->>-DA: The SqlServer retrieved the data unsuccessfully<br>and returns an error
+
+DA-->>DA: The SqlServerDAO checks the returned data from the<br>SqlServer for errors
+DA-->>DA: The SqlServerDAO creates a new `Response` <br>object with `Response.HasError` = true,<br> `Response.IsSafeToRetry` = false
+DA-->>-DG: The SqlServerDAO returns the `Response` object
+
+DG-->>DG: The Data Gateway checks<br>`Response.HasError` if it is equal to false and<br> `Response.IsSafeToRetry` is equal to false
+
+DG-->>-S: The Data Gateway returns the `Response` object
+
+S-->>-M: The Service Layer returns the `Response` object

@@ -70,8 +70,6 @@ public class SqlServerDAO : IGenericDAO
             {
                 connection.Open();
 
-                // Protect against sql injection
-
                 sql.Connection = connection;
                 using (var command = sql)
                 {
