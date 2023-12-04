@@ -5,5 +5,5 @@ using TeamSpecs.RideAlong.Model;
 
 public interface IReadOnly
 {
-    public IResponse ExectueReadOnly(SqlCommand sql);
+    public IResponse ExecuteReadOnly(SqlCommand sql);
 }

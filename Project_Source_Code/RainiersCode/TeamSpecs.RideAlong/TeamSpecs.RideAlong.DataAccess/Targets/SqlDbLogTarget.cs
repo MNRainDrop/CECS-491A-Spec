@@ -62,6 +62,6 @@ public class SqlDbLogTarget : ILogTarget
         cmd.Parameters.Add(new SqlParameter("@logContext", log.LogContext.Length >= 100 ? log.LogContext.Substring(0,100) : log.LogContext));
         cmd.Parameters.Add(new SqlParameter("@logCreatedBy", log.LogCreatedBy == null ? DBNull.Value : log.LogCreatedBy));
 
-        return _dao.ExectueWriteOnly(cmd);
+        return _dao.ExecuteWriteOnly(cmd);
     }
 }

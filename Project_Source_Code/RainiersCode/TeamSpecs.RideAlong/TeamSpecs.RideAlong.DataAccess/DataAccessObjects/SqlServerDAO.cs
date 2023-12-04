@@ -13,11 +13,11 @@ public class SqlServerDAO : IGenericDAO
     public SqlServerDAO ()
     {
         connectionString = "";
-        server = @"DESKTOP-MARLONE\RIDEALONG";
+        server = @"LAPTOP-MARLONE\RIDEALONG";
         database = "RideAlong";
         access = "";
     }
-    public IResponse ExectueWriteOnly(SqlCommand sql)
+    public IResponse ExecuteWriteOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongWrite;Password=writeme;";
 
@@ -58,7 +58,7 @@ public class SqlServerDAO : IGenericDAO
         return response;
     }
 
-    public IResponse ExectueReadOnly(SqlCommand sql)
+    public IResponse ExecuteReadOnly(SqlCommand sql)
     {
         access = "User Id=RideAlongRead;Password=readme;";
 
