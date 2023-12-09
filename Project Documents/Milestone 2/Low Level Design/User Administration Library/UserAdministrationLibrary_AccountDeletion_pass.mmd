@@ -1,0 +1,76 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant usm as UserAdministrationManager<br>(Manager Layer)
+participant uc as UserService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer) 
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant ldg as SqlDbLogTarget<br>(Data Gateway)
+participant da as SQLServerDAO
+participant ds as Data Store
+
+Note Right of e: Assume something in the entry point<br>called the manager to do delete a user
+e->>+usm: IAccountResponse deleteValidUser(IUserModel)
+    Note over e,usm: Entry Point calls upon<br>`IAccountResponse deleteValidUser(IUserModel)`<br>to delete a user
+
+usm->>+uc: IAccountResponse deleteUser(IUserModel)
+    Note over usm,uc: UserAdministrationManager calls upon<br>`IAccountResponse deleteUser(IUserModel)`<br>to delete the user
+
+# write log
+uc-->>+ll: IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)
+    Note over uc,ll: UserService calls upon<br>`IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)`<br>to log that the user wants to delete their account
+
+ll->>+ldg: IResponse WriteLog(ILog log)
+    Note over ll,ldg: LogService calls upon<br>`IResponse Log(ILog log)` to create <br>a parameterized SqlCommand with<br>the created Log object
+
+ldg->>+ldg: SqlDbLogTarget creates Parameterized SqlCommand
+
+ldg->>+da: IResponse ExecuteWriteOnly(SqlCommand sql)
+    Note over ldg,da: The SqlDbLogTarget calls upon <br> `ExecuteWriteOnly(SqlCommand sql)`<br>to connect to SqlServer and<br>execute the generated SqlCommand
+
+da->>+ds: The SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to exectue query on the SqlServer
+    Note over da,ds: int SqlCommand.ExecuteNonQuery()
+
+ds->>ds: The SqlServer processes<br> the SQL Code
+
+# returning from log
+ds-->>-da: The SqlServer wrote the log successfully<br>and returns the amount of rows affected
+
+da-->>da: The SqlServerDAO checks the returned value from the<br>SqlServer for errors
+
+da-->>da: The SqlServerDAO creates a new `IResponse` <br>object with `Response.HasError` = false<br>and`Response.ReturnValue` = the recieved value from Data Store
+
+da-->>-ldg: The SqlServerDAO returns the `IResponse` object
+
+ldg-->>ldg: The `SqlDbLogTarget` checks<br>`IResponse.HasError` if it is equal to false
+ldg-->>-ll: The `SqlDbLogTarget` returns the `IResponse` object
+
+ll->>ll: The `LogService` checks if `IResponse.ReturnValue` is equal to one
+ll-->>-uc: The `LogService` returns the `IResponse` object
+
+uc->>uc: UserService checks to see if the `IResponse` object has errors or not
+
+# delete the user
+uc->>+dg: IAccountResponse generateAccountDeletionSQL(IUserModel)
+    Note over uc,dg: UserService calls upon<br>`IAccountResponse generateAccountDeletionSQL(IUserModel)`<br>to pass user data to be written to a parameterized SqlCommand
+
+dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
+
+dg->>+da: IResponse executeWriteSQL(SqlCommand sql)
+    Note over dg,da: SqlServerUserTarget calls upon<br>`IResponse executeWriteSQL(SqlCommand sql)`<br>to write the sql
+
+da->>+ds: SqlCommand.ExecuteNonQuery()
+    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+ds->>ds: User account is successfully<br>deleted from the Data Store
+
+ds-->>-da: Database returns the number of rows affected
+
+da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
+
+dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
+
+uc-->>-usm: IAccountResponse object returned
+
+usm-->>e: IAccountResponse object returned
+deactivate usm
