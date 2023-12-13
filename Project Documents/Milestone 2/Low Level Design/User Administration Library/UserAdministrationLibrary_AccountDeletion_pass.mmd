@@ -23,7 +23,7 @@ uc-->>+ll: IResponse CreateLog(string logLevel, string logCategory, string logCo
 ll->>+ldg: IResponse WriteLog(ILog log)
     Note over ll,ldg: LogService calls upon<br>`IResponse Log(ILog log)` to create <br>a parameterized SqlCommand with<br>the created Log object
 
-ldg->>+ldg: SqlDbLogTarget creates Parameterized SqlCommand
+ldg->>ldg: SqlDbLogTarget creates Parameterized SqlCommand
 
 ldg->>+da: IResponse ExecuteWriteOnly(SqlCommand sql)
     Note over ldg,da: The SqlDbLogTarget calls upon <br> `ExecuteWriteOnly(SqlCommand sql)`<br>to connect to SqlServer and<br>execute the generated SqlCommand
