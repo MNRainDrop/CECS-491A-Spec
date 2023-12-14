@@ -1,11 +1,6 @@
-:::mermaid
+
 
 sequenceDiagram
-
-
-
-
-    # See BRD UA-6 Account Modification
 
     participant ml as Manager Layer
     participant ls as LoggingService<br>(Services Layer)
@@ -19,13 +14,15 @@ sequenceDiagram
 
     ml->>+as: 'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'
         Note over ml,as: Manager Layer calls upon<br>  'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'<br>to see if user has correct permissions
-        Note right of as: See Low Level Design for Authorization
+        Note right of as: See Low Level Design for success Authorization case
+
+    
 
     ml->>+uc: IAccountResponse modifyUser(IUserModel)
         Note over ml,uc: Manager Layer calls upon<br>`IAccountResponse modifyUser(IUserModel)`<br>to modify the user
 
     # UserService should check/ validate data passed through
-    uc->>uc: UserService checks to see if the `IResponse` object has errors or not
+    uc->>uc: UserService checks to see if the `IUserModel` object has errors or not
 
     # Modify the user
      uc->>+dg: IAccountResponse generateAccountModificationSQL(IUserModel)
@@ -76,5 +73,4 @@ sequenceDiagram
 
     ml ->> ls: 'IResponse createLog(string logLevel, string logCategory, string logContext, string? createdBy= null)'
          Note over ml,ls: LoggingService calls upon<br>'IResponse createLog(string logLevel, string logCategory, string logContext, string? createdBy= null)'<br> to log the modification was successful
-        Note right of ls: See Low Level Design for Logging
-:::
+        Note right of ls: See Low Level Design for succesful Logging case
