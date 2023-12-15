@@ -1,0 +1,46 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant usm as UserAdministrationManager<br>(Manager Layer)
+participant ss as SaltingService<br>(Services Layer)
+participant uc as UserService<br>(Services Layer)
+participant dg as SQLServerUserTarget<br>(Data Gateway)
+participant da as SQLServerDAO
+participant ds as Data Store
+
+Note Right of e: Assume something in the entry point<br>called the manager to do create a user
+e->>+usm: IAccountResponse createValidUser(IUserModel)
+    Note over e,usm: Entry Point calls upon<br>`IAccountResponse createValidUser(IUserModel)`<br>to create a new user
+
+usm->>usm: UserAdministrationManager verifies that<br>the `user age` is valid
+usm->>usm: UserAdministrationManager verifies that<br>the `username` is valid
+
+usm->>+ss: uint saltingService.generateRandomSalt()
+    Note over ss,usm: UserAdministrationManager calls upon<br>`uint saltingService.generateRandomSalt()`<br>to get a salt for the user
+ss-->>-usm: SaltingService returns a randomly generated salt
+
+usm->>usm: UserAdministrationManager modifies<br>`salt` parameter in the IUserModel
+usm->>+uc: IAccountResponse createUser(IUserModel)
+    Note over usm,uc: UserAdministrationManager calls upon<br>`IAccountResponse createUser(IUserModel)`<br>to create the user with the salt
+
+uc->>+dg: IAccountResponse generateAccountCreationSQL(IUserModel)
+    Note over uc,dg: UserService calls upon<br>`IAccountResponse generateAccountCreationSQL(IUserModel)`<br>to pass user data to be written to a parameterized SqlCommand
+
+dg->>+da: IResponse executeWriteSQL(SqlCommand sql)
+    Note over dg,da: SqlServerUserTarget calls upon<br>`IResponse executeWriteSQL(SqlCommand sql)`<br>to write the sql
+
+da->>+ds: SqlCommand.ExecuteNonQuery()
+    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+ds->>ds: User account is successfull<br>written to the Data Store
+
+ds-->>-da: Database returns the number of rows affected
+
+da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
+
+dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
+
+uc-->>-usm: IAccountResponse object returned
+
+usm-->>e: IAccountResponse object returned
+deactivate usm

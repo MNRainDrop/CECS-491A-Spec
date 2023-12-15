@@ -1,0 +1,9 @@
+classDiagram 
+  UserAccountModel <|-- IUserAccountModel
+
+  class UserAccountModel{
+    +Dictionary properties
+    +GetProperty(string propertyName): T~T~
+    +SetProperty(string propertyName, object value): void
+  }
+

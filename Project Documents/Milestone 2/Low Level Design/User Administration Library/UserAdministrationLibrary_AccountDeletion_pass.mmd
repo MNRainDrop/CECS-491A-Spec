@@ -18,35 +18,9 @@ usm->>+uc: IAccountResponse deleteUser(IUserModel)
 
 # write log
 uc-->>+ll: IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)
-    Note over uc,ll: UserService calls upon<br>`IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)`<br>to log that the user wants to delete their account
+    Note over uc,ll: UserService logs that a user requests for account deletion. See logging success case
 
-ll->>+ldg: IResponse WriteLog(ILog log)
-    Note over ll,ldg: LogService calls upon<br>`IResponse Log(ILog log)` to create <br>a parameterized SqlCommand with<br>the created Log object
-
-ldg->>ldg: SqlDbLogTarget creates Parameterized SqlCommand
-
-ldg->>+da: IResponse ExecuteWriteOnly(SqlCommand sql)
-    Note over ldg,da: The SqlDbLogTarget calls upon <br> `ExecuteWriteOnly(SqlCommand sql)`<br>to connect to SqlServer and<br>execute the generated SqlCommand
-
-da->>+ds: The SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to exectue query on the SqlServer
-    Note over da,ds: int SqlCommand.ExecuteNonQuery()
-
-ds->>ds: The SqlServer processes<br> the SQL Code
-
-# returning from log
-ds-->>-da: The SqlServer wrote the log successfully<br>and returns the amount of rows affected
-
-da-->>da: The SqlServerDAO checks the returned value from the<br>SqlServer for errors
-
-da-->>da: The SqlServerDAO creates a new `IResponse` <br>object with `Response.HasError` = false<br>and`Response.ReturnValue` = the recieved value from Data Store
-
-da-->>-ldg: The SqlServerDAO returns the `IResponse` object
-
-ldg-->>ldg: The `SqlDbLogTarget` checks<br>`IResponse.HasError` if it is equal to false
-ldg-->>-ll: The `SqlDbLogTarget` returns the `IResponse` object
-
-ll->>ll: The `LogService` checks if `IResponse.ReturnValue` is equal to one
-ll-->>-uc: The `LogService` returns the `IResponse` object
+ll-->>-uc: LogService returns the `IResponse` object
 
 uc->>uc: UserService checks to see if the `IResponse` object has errors or not
 
@@ -66,11 +40,19 @@ ds->>ds: User account is successfully<br>deleted from the Data Store
 
 ds-->>-da: Database returns the number of rows affected
 
-da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
+da-->>-dg: IResponse object returned with<br>`IResponse.ReturnValue` equal to the retrieved value
 
 dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
 
 uc-->>-usm: IAccountResponse object returned
+
+# Write log that user was successfully deleted
+usm->>usm: UserAdministrationManager checks<br>if the user service met business rules
+
+usm->>+ll: IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)
+    Note over usm,ll: UserAdministrationManager logs account creation was successful. See logging success case
+
+ll-->>-usm: LogService returns the `IResponse` object
 
 usm-->>e: IAccountResponse object returned
 deactivate usm
