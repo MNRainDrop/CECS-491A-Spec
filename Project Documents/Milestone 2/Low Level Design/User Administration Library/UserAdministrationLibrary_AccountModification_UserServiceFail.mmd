@@ -1,6 +1,7 @@
 sequenceDiagram
 
     # See BRD UA-6 Account Modification
+    # MethodName(varaibleName : dataType) : ReturnType
 
     participant ml as Manager Layer
     participant as as AuthService`<br>`(Services Layer)
@@ -9,8 +10,6 @@ sequenceDiagram
     participant dg as SqlDbUserTarget`<br>`(Data Gateway)
     participant da as SQLServerDAO
     participant ds as Data Store
-
-%% Depending on AuthZ implementation, We may want to check if the user is auhtorized over a time duration as well
 
     ml->>+as: 'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary`<string>` `<string>` requiredClaims)'
         Note over ml,as: Manager Layer calls upon`<br>`  'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary`<string>` `<string>` requiredClaims)'`<br>`to see if user has correct permissions
@@ -30,7 +29,4 @@ sequenceDiagram
 
     # Data validiation finds error 
     uc -->>- ml: UserService returns IResponse.HasError = true to Manager Layer
-
-
-
     
