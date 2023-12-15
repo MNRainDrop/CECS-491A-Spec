@@ -26,7 +26,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -61,7 +61,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -90,7 +90,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -119,7 +119,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -148,7 +148,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -179,7 +179,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
@@ -222,7 +222,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
@@ -257,7 +257,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
@@ -303,7 +303,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
@@ -334,7 +334,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -371,7 +371,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
@@ -401,7 +401,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -441,7 +441,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueWriteOnly(sql);
+        response = dao.ExecuteWriteOnly(sql);
         timer.Stop();
 
 
@@ -476,7 +476,7 @@ public class DataAccessShould
 
         // Act
         timer.Start();
-        response = dao.ExectueReadOnly(sql);
+        response = dao.ExecuteReadOnly(sql);
         timer.Stop();
 
 
