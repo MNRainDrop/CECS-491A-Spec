@@ -3,18 +3,20 @@ sequenceDiagram
 %% See BRD UA-2 for additional context
 
 participant ml as Manager Layer
+participant as as AuthService<br>(Services Layer)
 participant uc as UserService<br>(Services Layer)
 participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SQLServerDAO
 participant ds as Data Store
 
 
-ml->>+uc: IForgot isAuthorized(Forgot)
-    Note over ml,uc: Manager Layer calls upon<br> 'IForgot isAuthorized(Forgot)'<br>to see if user has correct permissions
+ml->>+as: 'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'
+        Note over ml,as: Manager Layer calls upon<br>  'isAuthorized(currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService '<br>to see if user has correct permissions
+        Note right of as: See Low Level Design for success Authorization case
 
 
-ml->>+uc: IAccountResponse recoverUser(IUserModel)
-    Note over ml,uc: Manager Layer calls upon<br>`IAccountResponse recoverUser(IUserModel)`<br>to recover the user
+ml->>+uc: IResponse recoverUser(IUserModel)
+    Note over ml,uc: Manager Layer calls upon<br>` recoverUser(IUserModel): IResponse`<br>to recover the user
 
 %% UserService should check/ validate data passed through
 uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
