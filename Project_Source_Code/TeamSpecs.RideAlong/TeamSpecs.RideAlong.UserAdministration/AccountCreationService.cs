@@ -6,7 +6,7 @@ public class AccountCreationService : IAccountCreationService
 {
     public IResponse CreateValidUserAccount(string userName, string dateOfBirth)
     {
-        IResponse response;
+        IResponse response = new Response();
         var userAccount = new AccountUserModel(userName, DateTime.Parse(dateOfBirth));
 
         return response;
