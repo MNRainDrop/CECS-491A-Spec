@@ -3,14 +3,16 @@ sequenceDiagram
 %% See BRD UA-2 for additional context
 
 participant ml as Manager Layer
+participant as as AuthService<br>(Services Layer)
 participant uc as UserService<br>(Services Layer)
 participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SQLServerDAO
 participant ds as Data Store
 
 
-ml->>+uc: IForgot isAuthorized(Forgot)
-    Note over ml,uc: Manager Layer calls upon<br> 'IForgot isAuthorized(Forgot)'<br>to see if user has correct permissions
+ml->>+as: 'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'
+        Note over ml,as: Manager Layer calls upon<br>  'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'<br>to see if user has correct permissions
+        Note right of as: See Low Level Design for success Authorization case
 
 
 ml->>+uc: IAccountResponse recoverUser(IUserModel)
@@ -20,7 +22,7 @@ ml->>+uc: IAccountResponse recoverUser(IUserModel)
 uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
 
     %% Modify the user
-    uc->>+dg: IAccountResponse generateAccountRcoverySQL(IUserModel)
+    uc->>+dg: IResponse generateAccountRcoverySQL(IUserModel)
     Note over uc,dg: UserService calls upon<br>`IAccountResponse generateAccountRecoverySQL(IUserModel)`<br>to pass user data to be written to a parameterized SqlCommand
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
@@ -37,6 +39,6 @@ uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
 
     da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
 
-    dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
+    dg-->>-uc: IResponse object returned with<br>`IAccountResponse.HasError` equal to false
 
-    uc-->>-ml: IAccountResponse object returned
+    uc-->>-ml: IResponse object returned
