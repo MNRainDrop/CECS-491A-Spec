@@ -1,18 +1,21 @@
 classDiagram 
   UserAccountModel <|-- IUserAccountModel
+  UserProfileModel <|-- IUserProfileModel
 
 
-  %% For the life of me, I can't figure out how to make <string><object> in mermaid.js
-  %% may not be supported
-  %% I have quite literally gone thru multiple pull requests to find this and no match
+  
 
   class UserAccountModel{
-    -Dictionary `<`string,object> properties
     
   }
 
   class IUserAccountModel{
     <<interface>>
-    +GetProperty(string propertyName): T~T~
-    +SetProperty(string propertyName, object value): void
+  }
+  class UserProfileModel{
+
+  }
+  class IUserProfileModel{
+    <<interface>>
+
   }

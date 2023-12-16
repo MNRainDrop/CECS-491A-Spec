@@ -14,8 +14,8 @@ sequenceDiagram
         Note over ml,as: Manager Layer calls upon<br>'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'<br>to see if user has correct permissions
         Note right of as: See Low Level Design for success Authorization case
 
-    ml->>+uc: modifyUser(profile: IUserProfileModel): IResponse 
-        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(account: IUserProfileModel): IResponse`<br>to modify the user
+    ml->>+uc: modifyUser(IUserProfileModel): IResponse 
+        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(IUserProfileModel): IResponse`<br>to modify the user
 
     # UserService should check/ validate data passed through
     uc->>uc: UserService checks to see if the `IUserProfileModel` object has errors or not
@@ -26,22 +26,24 @@ sequenceDiagram
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da: executeWriteSQL(sql: SqlCommand): IResponse 
+    dg->>+da: IResponse executeWriteSQL(SqlCommand sql)
     Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse`<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()
     Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
 
-    ds->>ds: User account data is successfully<br>modified in the Data Store
+    # Data Store Fails to be connected to // Data is down
+    ds->>ds: User account unsuccessfully<br>writes to the Data Store
 
-    ds-->>-da: Database returns the number of rows affected
+    ds-->>-da: Database returns an error
 
-    da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
+    da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the error message 
 
-    dg-->>-uc: IResponse object returned with<br>`IResponse.HasError` equal to false
+    dg->>dg: SqlDbUserTarget checks the error to see if the error is safe to retry
+
+    dg-->>-uc: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+    uc-->>ls: CreateLogAsync(LogLevel: string, LogCategory: string, LogContext: string, UserHash: string) : IResponse
+        Note over uc,ls: UserService calls upon LogService to log<br>"Unsuccessful modification of account data."<br>See logging success case
 
     uc-->>-ml: IResponse object returned
-
-    ml ->> ls: 'createLog(logLevel: string, logCategory: string, logContext: string, createdBy: string?): IResponse '
-         Note over ml,ls: LoggingService calls upon<br>'createLog(logLevel: string, logCategory: string, logContext: string, createdBy: string?): IResponse'<br> to log the modification was successful
-        Note right of ls: See Low Level Design for succesful Logging case
