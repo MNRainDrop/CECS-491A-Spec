@@ -12,12 +12,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.TestingLibrary", "TeamSpecs.RideAlong.Tests\TeamSpecs.RideAlong.TestingLibrary.csproj", "{070DA01A-0796-44D3-A9D4-6DF462D4DE48}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
-		{F7A72707-1280-4B3C-9373-69F39CA23BDD} = {F7A72707-1280-4B3C-9373-69F39CA23BDD}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Services", "TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj", "{CB286656-126F-4F55-B64E-291AD8194279}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.UserAdministration", "TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj", "{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.UserAdministration", "TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj", "{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityLibrary", "TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj", "{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,14 +46,14 @@ Global
 		{CB286656-126F-4F55-B64E-291AD8194279}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB286656-126F-4F55-B64E-291AD8194279}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB286656-126F-4F55-B64E-291AD8194279}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7A72707-1280-4B3C-9373-69F39CA23BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7A72707-1280-4B3C-9373-69F39CA23BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7A72707-1280-4B3C-9373-69F39CA23BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7A72707-1280-4B3C-9373-69F39CA23BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
