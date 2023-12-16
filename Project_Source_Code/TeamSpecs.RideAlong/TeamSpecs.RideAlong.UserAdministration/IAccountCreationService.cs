@@ -1,8 +1,7 @@
 ﻿using TeamSpecs.RideAlong.Model;
 namespace TeamSpecs.RideAlong.UserAdministration;
 
-public interface IUserAdministrationService
+public interface IAccountCreationService
 {
     IResponse CreateValidUserAccount(string userName, string dateOfBirth);
-    IResponse DeleteUserAccount(string userName);
 }

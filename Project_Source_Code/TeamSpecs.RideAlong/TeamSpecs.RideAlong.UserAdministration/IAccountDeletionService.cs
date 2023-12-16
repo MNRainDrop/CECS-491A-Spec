@@ -1,6 +1,7 @@
-﻿namespace TeamSpecs.RideAlong.UserAdministration;
+﻿using TeamSpecs.RideAlong.Model;
+namespace TeamSpecs.RideAlong.UserAdministration;
 
-public class IAccountDeletionService
+public interface IAccountDeletionService
 {
-
+    IResponse DeleteUserAccount(string userName);
 }

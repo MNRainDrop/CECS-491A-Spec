@@ -6,6 +6,9 @@ public class AccountCreationService : IAccountCreationService
 {
     public IResponse CreateValidUserAccount(string userName, string dateOfBirth)
     {
-        throw new NotImplementedException();
+        IResponse response;
+        var userAccount = new AccountUserModel(userName, DateTime.Parse(dateOfBirth));
+
+        return response;
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace TeamSpecs.RideAlong.UserAdministration;
+﻿using TeamSpecs.RideAlong.Model;
+namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class AccountDeletionService : IAccountDeletionService
 {

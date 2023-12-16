@@ -1,5 +1,4 @@
-﻿
-namespace TeamSpecs.RideAlong.Model.AccountUserModel;
+﻿namespace TeamSpecs.RideAlong.UserAdministration;
 public class AccountUserModel : IAccountUserModel
 {
     public string UserName { get; set;}
@@ -7,7 +6,7 @@ public class AccountUserModel : IAccountUserModel
     public string? UserHash { get; set; } = null;
     public string? OTPHash { get; set; } = null;
     public IDictionary<string, string>? UserClaims { get; set; } = null;
-    public DateTime DateOfBirth { get; set; }
+    private DateTime DateOfBirth { get; set; }
 
     public AccountUserModel(string userName, DateTime dateOfBirth)
     {
