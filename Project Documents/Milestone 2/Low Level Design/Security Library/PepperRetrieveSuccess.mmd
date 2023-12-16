@@ -1,0 +1,23 @@
+sequenceDiagram
+participant e as Entry Point
+participant usm as UserSecurityManager<br>(Manager Layer)
+participant pp as PepperService<br>(Services Layer)
+participant uc as RandomGenerationService<br>(Services Layer)
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant da as SQLServerDAO<br>(DAO)
+participant ds as Data Store
+
+Note Left of e: Assuming something in the entry point<br>called the manager to do create a user
+
+usm->>+pp: 'RetrievePepper(key: string) : uint'
+pp->>+dg: 'RetrieveFromFile(): IResponse'
+dg->>+da: 'ReadFromFile(filename: string): IResponse'
+da->>+ds: '.ReadToEnd(): string'
+ds->>ds: 'read from file sucessfully'Working with Vi on consolidating approach for authentication
+ds-->>-da: '.ReadToEnd() returns string'
+da-->>da: 'DAO check for null value'
+da-->>-dg: 'return IResponse with .HasError() equals to false' 
+dg-->>dg: '.Deserialize<List<Dictionary<string, string>>>(jsonString: string): Dictionary'
+dg-->>-pp: 'return IResponse with .HasError() equals to false'
+pp-->>pp: 'extract value from IResponse.ReturnValue'
+pp-->>-usm: 'return uint'
