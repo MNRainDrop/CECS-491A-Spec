@@ -39,9 +39,6 @@ uc->>uc: string OTPHash = ComputeHash(UserName + OTPSalt + OTPPepper)
 
 uc->>uc: Create an IDictionary of<br>claims a user will have
 
-uc->>uc: GetUserAccountClaimsSQL() : ICollection<string>
-    Note over uc,uc: Account claims are generated with default values
-
 # to data gateway 
 uc->>+dg: CreateUserAccountSQL(userAccount: IUserAccountModel, userClaims: IDictionary<claimID: int, claimScope: int>) : IResponse
     Note over uc,dg: UserService calls upon SqlDbUserTarget to generate sql statement and parameters<br>SqlDbUserTarget will create sql statement and parameters for the user first, then the claims next<br>Add the sql statements to a Collection of key value pairs
