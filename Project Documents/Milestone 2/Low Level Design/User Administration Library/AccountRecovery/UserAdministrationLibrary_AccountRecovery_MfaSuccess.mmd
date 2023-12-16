@@ -10,19 +10,19 @@ participant da as SQLServerDAO
 participant ds as Data Store
 
 
-ml->>+as: 'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'
-        Note over ml,as: Manager Layer calls upon<br>  'AppAuthService isAuthorized(AppPrincipal currentPrincipal, IDictionary<string> <string> requiredClaims)'<br>to see if user has correct permissions
+ml->>+as: 'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'
+        Note over ml,as: Manager Layer calls upon<br>  'isAuthorized(currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService '<br>to see if user has correct permissions
         Note right of as: See Low Level Design for success Authorization case
 
 
-ml->>+uc: IAccountResponse recoverUser(IUserModel)
-    Note over ml,uc: Manager Layer calls upon<br>`IAccountResponse recoverUser(IUserModel)`<br>to recover the user
+ml->>+uc: IResponse recoverUser(IUserModel)
+    Note over ml,uc: Manager Layer calls upon<br>` recoverUser(IUserModel): IResponse`<br>to recover the user
 
 %% UserService should check/ validate data passed through
 uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
 
     %% Modify the user
-    uc->>+dg: IResponse generateAccountRcoverySQL(IUserModel)
+    uc->>+dg: IAccountResponse generateAccountRcoverySQL(IUserModel)
     Note over uc,dg: UserService calls upon<br>`IAccountResponse generateAccountRecoverySQL(IUserModel)`<br>to pass user data to be written to a parameterized SqlCommand
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
@@ -39,6 +39,6 @@ uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
 
     da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
 
-    dg-->>-uc: IResponse object returned with<br>`IAccountResponse.HasError` equal to false
+    dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
 
-    uc-->>-ml: IResponse object returned
+    uc-->>-ml: IAccountResponse object returned
