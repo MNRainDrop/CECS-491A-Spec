@@ -5,25 +5,24 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 
-namespace TeamSpecs.RideAlong.TestingLibrary
-{
-  public class AccountUserModelShould
-    {
-        [Fact]
-        public void AccountUserModel_GetProperty_ValidUsernameParameterPassedIn_OneValidObjectReturned_Pass()
-        {
-            //Assert
-            //Act
-            //Arrange
-        }
-        
-        [Fact]
-        public void AccountUserMdoel AccountUserModel_GetProperty_ValidUsernameParameterPassedIn_OneValidObjectReturned_Fail()
-        {
-            // Assert
-            // Act
-            // Arrange
-        }
+namespace TeamSpecs.RideAlong.TestingLibrary;
 
+public class AccountUserModelShould
+{
+    [Fact]
+    public void AccountUserModel_GetProperty_ValidUsernameParameterPassedIn_OneValidObjectReturned_Pass()
+    {
+        //Assert
+        //Act
+        //Arrange
     }
+    
+    [Fact]
+    public void AccountUserModel_AccountUserModel_GetProperty_ValidUsernameParameterPassedIn_OneValidObjectReturned_Fail()
+    {
+        // Assert
+        // Act
+        // Arrange
+    }
+
 }
