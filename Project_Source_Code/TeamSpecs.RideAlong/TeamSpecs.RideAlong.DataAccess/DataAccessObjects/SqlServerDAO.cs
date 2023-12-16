@@ -44,7 +44,6 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
-            CreateLog(response);
         }
         catch (InvalidOperationException ex)
         {
@@ -53,7 +52,6 @@ public class SqlServerDAO : IGenericDAO
             response.HasError = true;
             response.ErrorMessage = ex.Message;
             response.IsSafeToRetry = false;
-            CreateLog(response);
         }
         return response;
     }
@@ -93,7 +91,6 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
-            CreateLog(response);
         }
         catch (InvalidOperationException ex)
         {
@@ -102,16 +99,8 @@ public class SqlServerDAO : IGenericDAO
             response.HasError = true;
             response.ErrorMessage = ex.Message;
             response.IsSafeToRetry = false;
-            CreateLog(response);
         }
         return response;
     }
 
-    public IResponse CreateLog(IResponse DBresponse)
-    {
-        //changed to work with log object
-        ILog log = new Log(null, DateTime.UtcNow, "Error", "Data Store", DBresponse.ErrorMessage, null);
-        IResponse response = new SqlDbLogTarget(this).Write(log);
-        return response;
-    }
 }

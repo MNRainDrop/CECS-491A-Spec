@@ -9,9 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Logging
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Model", "TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj", "{191F40A7-33DC-4A46-8B15-C7D28601E733}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.TestingLibrary", "TeamSpecs.RideAlong.Tests\TeamSpecs.RideAlong.TestingLibrary.csproj", "{070DA01A-0796-44D3-A9D4-6DF462D4DE48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.TestingLibrary", "TeamSpecs.RideAlong.Tests\TeamSpecs.RideAlong.TestingLibrary.csproj", "{070DA01A-0796-44D3-A9D4-6DF462D4DE48}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
+		{F7A72707-1280-4B3C-9373-69F39CA23BDD} = {F7A72707-1280-4B3C-9373-69F39CA23BDD}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.Services", "TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj", "{CB286656-126F-4F55-B64E-291AD8194279}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Services", "TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj", "{CB286656-126F-4F55-B64E-291AD8194279}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.UserAdministration", "TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj", "{5B2EEA07-0655-4C8F-AA18-DB2E5FDFE9C2}"
 EndProject
