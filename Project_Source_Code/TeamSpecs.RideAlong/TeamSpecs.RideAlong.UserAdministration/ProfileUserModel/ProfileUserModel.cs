@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TeamSpecs.RideAlong.UserAdministration;
 
-<<<<<<< Updated upstream
-namespace TeamSpecs.RideAlong.UserAdministration
-{
-    public class ProfileUserModel : IProfileUserModel
-    {
-        public DateTime DateOfBirth { get; set; }
-=======
-namespace TeamSpecs.RideAlong.UserAdministration.ProfileUserModel;
->>>>>>> Stashed changes
-
-public class UserProfileModel : IUserProfileModel
+public class ProfileUserModel : IProfileUserModel
 {
     public DateTime DateOfBirth { get; set; }
 
-    public UserProfileModel(DateTime dateOfBirth)
+    public ProfileUserModel(DateTime dateOfBirth)
     {
         DateOfBirth = dateOfBirth;
     }

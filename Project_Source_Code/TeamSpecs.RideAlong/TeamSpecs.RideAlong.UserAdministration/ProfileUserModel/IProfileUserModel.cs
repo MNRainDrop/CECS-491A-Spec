@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TeamSpecs.RideAlong.UserAdministration;
 
-namespace TeamSpecs.RideAlong.UserAdministration
+public interface IProfileUserModel
 {
-    public interface IUserProfileModel
-    {
-         DateTime DateOfBirth {get; set;}
-    }
+    DateTime DateOfBirth {get; set;}
 }
+
