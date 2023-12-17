@@ -1,5 +1,4 @@
-﻿namespace TeamSpecs.RideAlong.DataAccess;
-
+﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
 
 using System.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;

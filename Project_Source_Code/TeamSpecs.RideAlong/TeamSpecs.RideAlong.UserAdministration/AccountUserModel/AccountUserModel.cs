@@ -3,7 +3,7 @@ public class AccountUserModel : IAccountUserModel
 {
     public string UserName { get; set;}
     public DateTimeOffset DateCreated { get; }
-    public string? UserSalt { get; set; } = null;
+    public string? OTPSalt { get; set; } = null;
     public string? UserHash { get; set; } = null;
     public string? OTPHash { get; set; } = null;
     

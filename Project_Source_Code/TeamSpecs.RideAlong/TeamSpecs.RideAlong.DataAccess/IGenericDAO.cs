@@ -1,5 +1,5 @@
 ﻿namespace TeamSpecs.RideAlong.DataAccess;
 
-public interface IGenericDAO : IReadOnly, IWriteOnly
+public interface IGenericDAO : IReadOnlyFromDataStore, IWriteOnlyFromDataStore
 {
 }

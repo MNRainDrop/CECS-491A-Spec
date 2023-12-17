@@ -1,9 +1,9 @@
 ﻿namespace TeamSpecs.RideAlong.DataAccess;
 
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.Model;
 
-public interface IReadOnly
+public interface IReadOnlyFromDataStore
 {
     public IResponse ExecuteReadOnly(SqlCommand sql);
 }

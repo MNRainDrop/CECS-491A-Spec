@@ -1,6 +1,6 @@
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
