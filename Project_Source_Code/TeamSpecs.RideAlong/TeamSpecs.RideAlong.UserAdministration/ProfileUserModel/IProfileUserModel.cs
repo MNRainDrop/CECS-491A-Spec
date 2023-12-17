@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TeamSpecs.RideAlong.UserAdministration.ProfileUserModel
+namespace TeamSpecs.RideAlong.UserAdministration
 {
     public interface IProfileUserModel
     {
