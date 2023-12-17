@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
-    public interface IUserProfileModel
+    public interface IAccountModificationService
     {
-         DateTime DateOfBirth {get; set;}
+
     }
 }
