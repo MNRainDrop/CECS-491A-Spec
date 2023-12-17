@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.UserAdministration;
-using TeamSpecs.RideAlong.UserAdministration.ProfileUserModel;
 
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
