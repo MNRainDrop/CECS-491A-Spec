@@ -1,4 +1,4 @@
-﻿namespace TeamSpecs.RideAlong.UserAdministration;
+﻿namespace TeamSpecs.RideAlong.Model;
 
 public class ProfileUserModel : IProfileUserModel
 {
