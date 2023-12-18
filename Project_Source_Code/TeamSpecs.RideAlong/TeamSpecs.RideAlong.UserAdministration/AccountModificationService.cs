@@ -21,7 +21,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
         {
             IResponse response = new Response();
 
-            #region Validiating Input
+            #region Validiating Arguements
             if (String.IsNullOrWhiteSpace(userName))
             {
                 throw new ArgumentException($"{nameof(userName)} must be valid");
@@ -34,11 +34,13 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             var profile = new ProfileUserModel(dateOfBirth);
             var UserName = userName;
-            // Create UserProfileSQL (profile: IUserProfileModel): IResponse
             response = _userTarget.ModifyUserProfileSql(userName, profile);
 
-            // If error is found 
-
+            if(response.HasError)
+            {
+                response.ErrorMessage = "Could not modify the user profile";
+            }
+        
             return response;
         }
     }

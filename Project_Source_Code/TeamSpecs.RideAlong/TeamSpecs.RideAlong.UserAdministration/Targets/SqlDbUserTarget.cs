@@ -1,6 +1,7 @@
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.Data.SqlClient;
+
 namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class SqlDbUserTarget : IUserTarget
@@ -149,21 +150,36 @@ public class SqlDbUserTarget : IUserTarget
         throw new NotImplementedException();
     }
 
-    public IResponse ModifyUserProfileSql(string userName, ProfileUserModel profile)
+    public IResponse ModifyUserProfileSql(string userName, IProfileUserModel profileModel)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
         var response = new Response();
 
+        #region Validiating Arguements
+        if (profileModel is null)
+        {
+            throw new ArgumentNullException(nameof(profileModel));
+        }
+        foreach (var property in typeof(IAccountUserModel).GetProperties())
+        {
+            if (property.GetValue(profileModel) is null)
+            {
+                throw new ArgumentException($"{nameof(property)} must be valid");
+            }
+        }
+        #endregion
+
         try
         {
+            #region Convert ProfileUserModel object to SQL
             // Get properties of ProfileUserModel object with reflection
-            var properties = profile.GetType().GetProperties();
+            var properties = profileModel.GetType().GetProperties();
 
             // Iterates thru. each property and generates a SQL command
             foreach (var property in properties)
             {
                 var propertyName = property.Name;
-                var propertyValue = property.GetValue(profile, null);
+                var propertyValue = property.GetValue(profileModel, null);
 
                 // Create SQL command for each property
                 var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserName = @UserName";
@@ -174,17 +190,32 @@ public class SqlDbUserTarget : IUserTarget
                 };
 
                 sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, sqlParameters));
+            
             }
-
-            // Call DAO
-            // response.ReturnValue = new obj?
-            // 
-
+            #endregion
         }
         catch
         {
-
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate ModifyUserProfile Sql";
+            return response;
         }
+
+        // DAO executes command
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            { daoValue };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Log Execution failed";
+            return response;
+        }
+
+        response.HasError = false;
         return response;
     }
 
