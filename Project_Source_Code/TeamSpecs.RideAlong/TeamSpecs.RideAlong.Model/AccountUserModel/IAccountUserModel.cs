@@ -1,4 +1,4 @@
-﻿namespace TeamSpecs.RideAlong.UserAdministration;
+﻿namespace TeamSpecs.RideAlong.Model;
 public interface IAccountUserModel
 {
     string UserName { get; set; }
