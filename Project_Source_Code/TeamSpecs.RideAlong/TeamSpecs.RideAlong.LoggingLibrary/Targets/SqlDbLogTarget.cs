@@ -56,27 +56,29 @@ public class SqlDbLogTarget : ILogTarget
             // Add string and hash set to list that the dao will execute
             sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
 
-            // DAO Executes the command
-            try
-            {
-                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
-                response.ReturnValue = new List<object>()
-                {
-                    daoValue
-                };
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Log execution failed";
-                return response;
-            }
         }
         catch
         {
             response.HasError = true;
             response.ErrorMessage = "Could not generate Log Sql";
         }
+
+        // DAO Executes the command
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Log execution failed";
+            return response;
+        }
+
         response.HasError = false;
         return response;
     }
