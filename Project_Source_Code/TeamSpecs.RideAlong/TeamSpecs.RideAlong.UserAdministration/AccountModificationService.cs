@@ -4,24 +4,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.UserAdministration.ProfileUserModel;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
     public class AccountModificationService
     {
-        public IResponse ModifyUser(DateTime dateOfBirth) 
+        private IUserTarget _userTarget;
+
+        public AccountModificationService(IUserTarget userTarget)
         {
-            var profile = new UserProfileModel(dateOfBirth);
+            _userTarget = userTarget;
+        }
+        public IResponse ModifyUser(string userName,DateTime dateOfBirth) 
+        {
             IResponse response = new Response();
 
-            // Check correct data type
+            #region Validiating Input
+            if (String.IsNullOrWhiteSpace(userName))
+            {
+                throw new ArgumentException($"{nameof(userName)} must be valid");
+            }
+            if (dateOfBirth.GetType() != typeof(DateTime))
+            {
+                throw new ArgumentException($"{nameof(dateOfBirth)} is not of type {nameof(DateTime)}");
+            }
+            #endregion
 
+            var profile = new ProfileUserModel(dateOfBirth);
+            var UserName = userName;
             // Create UserProfileSQL (profile: IUserProfileModel): IResponse
-            // Assuming response = to this statement
+            response = _userTarget.ModifyUserProfileSql(userName, profile);
 
             // If error is found 
-
 
             return response;
         }

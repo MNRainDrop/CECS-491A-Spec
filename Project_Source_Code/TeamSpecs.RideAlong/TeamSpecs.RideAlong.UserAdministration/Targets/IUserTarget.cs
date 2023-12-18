@@ -6,6 +6,6 @@ public interface IUserTarget
 {
     IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<string, string> userClaims);
     IResponse DeleteUserAccountSql(string userName);
-    IResponse ModifyUserProfileSql(string userName, IDictionary<string, string> something);
+    IResponse ModifyUserProfileSql(string userName, ProfileUserModel profile);
     IResponse RecoverUserAccountSql(string userName);
 }

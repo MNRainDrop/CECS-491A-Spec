@@ -40,9 +40,43 @@ public class SqlDbUserTarget : IUserTarget
         throw new NotImplementedException();
     }
 
-    public IResponse ModifyUserProfileSql(string userName, IDictionary<string, string> something)
+    public IResponse ModifyUserProfileSql(string userName, ProfileUserModel profile)
     {
-        throw new NotImplementedException();
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        try
+        {
+            // Get properties of ProfileUserModel object with reflection
+            var properties = profile.GetType().GetProperties();
+
+            // Iterates thru. each property and generates a SQL command
+            foreach (var property in properties)
+            {
+                var propertyName = property.Name;
+                var propertyValue = property.GetValue(profile, null);
+
+                // Create SQL command for each property
+                var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserName = @UserName";
+                var sqlParameters = new HashSet<SqlParameter>
+                {
+                    new SqlParameter($"@{propertyName}", propertyValue),
+                    new SqlParameter("@UserName", propertyValue)
+                };
+
+                sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, sqlParameters));
+            }
+
+            // Call DAO
+            // response.ReturnValue = new obj?
+            // 
+
+        }
+        catch
+        {
+
+        }
+        return response;
     }
 
     public IResponse RecoverUserAccountSql(string userName)
