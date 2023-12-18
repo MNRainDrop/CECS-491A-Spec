@@ -50,7 +50,7 @@ public class AccountModificationServiceShould
     }
 
     [Fact]
-    public void AccountModificationSerivce_ModifyUserProfile_NullUserNamePassedIn_ArguementExceptionThrown()
+    public void AccountModificationSerivce_ModifyUserProfile_NullUserNamePassedIn_ArguementExceptionThrown_Pass()
     {
         // Arrange
         IResponse response;
@@ -73,7 +73,7 @@ public class AccountModificationServiceShould
     }
 
     [Fact]
-    public void AccountModificationService_ModifyUserProfile_EmptyUserNamePassedIn_ArguementExceptionThrown()
+    public void AccountModificationService_ModifyUserProfile_EmptyUserNamePassedIn_ArguementExceptionThrown_Pass()
     {
         // Arrange
         IResponse response;
@@ -96,7 +96,7 @@ public class AccountModificationServiceShould
     }
 
     [Fact]
-    public void AccountModificationService_ModifyUserProfile_WhiteSpaceUserNamePassedIn_ArguementExceptionThrown()
+    public void AccountModificationService_ModifyUserProfile_WhiteSpaceUserNamePassedIn_ArguementExceptionThrown_Pass()
     {
         // Arrange
         IResponse response;

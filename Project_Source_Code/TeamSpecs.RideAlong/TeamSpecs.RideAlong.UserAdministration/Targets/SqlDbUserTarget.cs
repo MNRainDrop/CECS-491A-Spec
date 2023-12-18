@@ -318,13 +318,13 @@ public class SqlDbUserTarget : IUserTarget
         {
             #region Convert String to SQL
 
-            // Finds claim CanLogin (ClaimID = 0) 
+            // Finds claim CanLogin (ClaimID = 1) 
             string sqlCommand = @"
             UPDATE UserClaims
             SET claimScope = 'Yes'
             FROM UserClaims uc
             JOIN UserAccounts ua ON uc.UID = ua.UID
-            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+            WHERE ua.userName = @UserName AND uc.claimID = 1;";
 
             var parameters = new HashSet<SqlParameter>
         {
@@ -369,13 +369,13 @@ public class SqlDbUserTarget : IUserTarget
         {
             #region Convert String to SQL
 
-            // Finds claim CanLogin (ClaimID = 0) 
+            // Finds claim CanLogin (ClaimID = 1) 
             string sqlCommand = @"
             UPDATE UserClaims
             SET claimScope = 'No'
             FROM UserClaims uc
             JOIN UserAccounts ua ON uc.UID = ua.UID
-            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+            WHERE ua.userName = @UserName AND uc.claimID = 1;";
 
             var parameters = new HashSet<SqlParameter>
         {

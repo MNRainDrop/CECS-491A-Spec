@@ -73,10 +73,10 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             if (response.HasError)
             {
-                response.ErrorMessage = "User Account was unable to be enabled";
+                response.ErrorMessage = "User secondary email was unable to be recovered";
             }
 
-            // Response will hold secondaryEmail string and be sent to Manager Layer
+            // Response will hold secondaryEmail string and be sent to Manager Layer to process OTP sending
             return response;
         }
 
