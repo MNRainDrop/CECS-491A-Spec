@@ -136,7 +136,7 @@ public class SqlDbUserTarget : IUserTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Log execution failed";
+            response.ErrorMessage = "AccountCreation execution failed";
             return response;
         }
 
