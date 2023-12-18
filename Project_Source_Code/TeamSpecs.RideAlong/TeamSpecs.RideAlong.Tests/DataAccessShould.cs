@@ -3,8 +3,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.Model;
-using Xunit.Sdk;
 
 public class DataAccessShould
 {
