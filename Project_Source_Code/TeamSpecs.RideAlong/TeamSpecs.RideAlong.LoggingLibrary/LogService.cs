@@ -10,11 +10,11 @@ public class LogService : ILogService
         _logTarget = logTarget;
     }
 
-    public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? createdBy = null)
+    public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
         //changed to work with log object
-        ILog log = new Log(null, DateTime.UtcNow, logLevel, logCategory, logContext, createdBy);
-        IResponse response = _logTarget.Write(log);
+        ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
+        IResponse response = _logTarget.WriteLog(log);
         return response;
     }
 }

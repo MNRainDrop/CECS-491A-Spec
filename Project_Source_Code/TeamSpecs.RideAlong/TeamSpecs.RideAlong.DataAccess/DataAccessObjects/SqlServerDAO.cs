@@ -13,13 +13,13 @@ public class SqlServerDAO : IGenericDAO
     public SqlServerDAO ()
     {
         _connString = "";
-        _server = @"";
+        _server = @"LAPTOP-Marlone\RIDEALONG";
         _database = "RideAlong";
         _access = "";
     }
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RideAlongWrite;Password=writeme;";
+        _access = "User Id=RideAlongWrite;Password=writeme;TrustServerCertificate=True;";
         _connString = $"Server={_server};Database={_database};{_access}";
         var rowsAffected = 0;
 
@@ -61,7 +61,7 @@ public class SqlServerDAO : IGenericDAO
 
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
-        _access = "User Id=RideAlongRead;Password=readme;";
+        _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
         _connString = $"Server={_server};Database={_database};{_access}";
 
         var response = new Response();

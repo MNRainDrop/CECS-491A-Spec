@@ -2,19 +2,18 @@
 
 public class Log : ILog
 {
-    public Log(int? logID, DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string? createdBy)
+    public Log(DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string? UserHash = null)
     {
-        this.LogID = logID;
         this.LogTime = logTime;
         this.LogLevel = logLevel;
         this.LogCategory = logCategory;
         this.LogContext = logContext;
-        this.LogCreatedBy = createdBy;
+        this.UserHash = UserHash;
     }
-    public int? LogID { get; set; }
+    private int? LogID { get; set; }
     public DateTimeOffset LogTime { get; set; }
     public string LogLevel { get; set; }
     public string LogCategory { get; set; }
     public string LogContext { get; set; }
-    public string? LogCreatedBy { get; set; }
+    public string? UserHash { get; set; }
 }

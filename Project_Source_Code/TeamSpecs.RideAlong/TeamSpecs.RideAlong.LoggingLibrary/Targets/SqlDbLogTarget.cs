@@ -1,6 +1,6 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
 
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 public class SqlDbLogTarget : ILogTarget
@@ -12,55 +12,72 @@ public class SqlDbLogTarget : ILogTarget
         _dao = dao;
     }
 
-    public IResponse Write(ILog log)
+    public IResponse WriteLog(ILog log)
     {
-        var response = WriteHelper(log);
-        var newResponse = response;
-        while(response.IsSafeToRetry == true && response.RetryAttempts < 3)
+        #region Default sql setup
+        var commandSql = "INSERT INTO ";
+        var tableSql = "Log ";
+        var rowsSql = "(";
+        var valuesSql = "VALUES (";
+        #endregion
+
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        try
         {
-            if (newResponse.HasError == true)
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>();
+
+            // convert Log model to sql statement
+            var configType = typeof(ILog);
+            var properties = configType.GetProperties();
+
+            foreach (var property in properties)
             {
-                if (newResponse.IsSafeToRetry == true)
+                if(property.GetValue(log) != null)
                 {
-                    if (response.RetryAttempts < 3)
-                    {
-                        response.RetryAttempts++;
-                        newResponse = WriteHelper(log);
-                    }
-                    else
-                    {
-                        response.IsSafeToRetry = false;
-                    }
+                    rowsSql += property.Name + ",";
+                    valuesSql += "@" + property.Name + ",";
+
+                    parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(log)));
                 }
-                else
-                {
-                    response.IsSafeToRetry = false;
-                }
+                
             }
-            else
+
+            
+            rowsSql = rowsSql.Remove(rowsSql.Length - 1, 1);
+            valuesSql = valuesSql.Remove(valuesSql.Length - 1, 1);
+            rowsSql += ") ";
+            valuesSql += ");";
+
+            var sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+            // Add string and hash set to list that the dao will execute
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+
+            // DAO Executes the command
+            try
             {
-                response.HasError = false;
-                response.IsSafeToRetry = false;
+                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+                response.ReturnValue = new List<object>()
+                {
+                    daoValue
+                };
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Log execution failed";
+                return response;
             }
         }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate Log Sql";
+        }
+        response.HasError = false;
         return response;
-    }
-    public IResponse WriteHelper(ILog log)
-    {
-        // need to protect against sql injection
-        // start time and end time I'm not 100% sure of - 11/13
-
-        // removed the "logEndTime parameters because it is not necessary - 11/15
-        //Changed to work with log objects
-        string sql = $@"INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext, logCreatedBy)" +
-            "VALUES (@logTime, @logLevel, @logCategory, @logContext, @logCreatedBy)";
-        var cmd = new SqlCommand(sql);
-        cmd.Parameters.Add(new SqlParameter("@logTime", log.LogTime));
-        cmd.Parameters.Add(new SqlParameter("@logLevel", log.LogLevel));
-        cmd.Parameters.Add(new SqlParameter("@logCategory", log.LogCategory));
-        cmd.Parameters.Add(new SqlParameter("@logContext", log.LogContext.Length >= 100 ? log.LogContext.Substring(0,100) : log.LogContext));
-        cmd.Parameters.Add(new SqlParameter("@logCreatedBy", log.LogCreatedBy == null ? DBNull.Value : log.LogCreatedBy));
-
-        return _dao.ExecuteWriteOnly(cmd);
     }
 }
