@@ -20,33 +20,29 @@ public class AccountCreationService : IAccountCreationService
         _pepperService = new PepperService();
         _randomService = new RandomService();
     }
-    public IResponse CreateValidUserAccount(string userName, string dateOfBirth)
+    public IResponse CreateValidUserAccount(string userName)
     {
-        DateTime DOB;
         #region Validate arguments
         if(string.IsNullOrWhiteSpace(userName))
         {
             throw new ArgumentException($"{nameof(userName)} must be valid");
         }
-        if(string.IsNullOrWhiteSpace(dateOfBirth))
-        {
-            throw new ArgumentException($"{nameof(dateOfBirth)} must be valid");
-        }
-        if(!DateTime.TryParse(dateOfBirth, out DOB))
-        {
-            throw new ArgumentException($"{nameof(dateOfBirth)} must be valid date");
-        }
         #endregion
 
         IResponse response;
         var userAccount = new AccountUserModel(userName);
-        var userProfile = new ProfileUserModel(DOB);
 
         
         using (SHA256 sha256Hash = SHA256.Create())
         {
             // Create User Hash
-            var userPepper = _pepperService.RetrievePepper("CreateAccount");
+
+            // Once the PepperService is finished, use this line of code
+            //var userPepper = _pepperService.RetrievePepper("CreateAccount");
+
+            // Use this line of code while IPepperService is not complete
+            var userPepper = _randomService.GenerateUnsignedInt(32);
+
             byte[] bytes = Encoding.UTF8.GetBytes(string.Concat(userName, userPepper));
             var userHash = sha256Hash.ComputeHash(bytes);
 
@@ -54,9 +50,15 @@ public class AccountCreationService : IAccountCreationService
 
             // Create OTP Hash
             // Note: SHA256 will be changed to another hashing algorithm for the OTP 
-            var OTPPepper = _pepperService.RetrievePepper("OTP");
+
+            // Once the PepperService is finished, use this line of code
+            //var OTPPepper = _pepperService.RetrievePepper("OTP");
+
+            // Use this line of code while IPepperService is not complete
+            var OTPPepper = _randomService.GenerateUnsignedInt(32);
+            
             var OTPSalt = _randomService.GenerateUnsignedInt(32);
-            userAccount.OTPSalt = OTPSalt.ToString();
+            userAccount.OTPSalt = BitConverter.ToString(OTPSalt).Replace("-", string.Empty);
             bytes = Encoding.UTF8.GetBytes(string.Concat(userName, OTPSalt, OTPPepper));
             var OTPHash = sha256Hash.ComputeHash(bytes);
 
@@ -82,8 +84,11 @@ public class AccountCreationService : IAccountCreationService
 
     private IDictionary<string, string> GenerateDefaultClaims()
     {
-        IDictionary<string, string> claims = new Dictionary<string, string>();
-        claims.Add(new KeyValuePair<string, string>("CanLogin", "True"));
+        IDictionary<string, string> claims = new Dictionary<string, string>()
+        {
+            { "CanLogin", "True" }
+        };
+        ;
         return claims;
     }
 }

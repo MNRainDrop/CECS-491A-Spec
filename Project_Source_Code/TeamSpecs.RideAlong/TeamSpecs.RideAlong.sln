@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.UserAdm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityLibrary", "TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj", "{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.ConsoleApp", "TeamSpecs.RideAlong.ConsoleApp\TeamSpecs.RideAlong.ConsoleApp.csproj", "{17925BD2-8682-4F58-B60C-44BF5394300B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17925BD2-8682-4F58-B60C-44BF5394300B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17925BD2-8682-4F58-B60C-44BF5394300B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17925BD2-8682-4F58-B60C-44BF5394300B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17925BD2-8682-4F58-B60C-44BF5394300B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

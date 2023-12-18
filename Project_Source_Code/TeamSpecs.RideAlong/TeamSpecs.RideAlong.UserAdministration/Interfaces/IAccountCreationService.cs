@@ -3,5 +3,5 @@ namespace TeamSpecs.RideAlong.UserAdministration;
 
 public interface IAccountCreationService
 {
-    IResponse CreateValidUserAccount(string userName, string dateOfBirth);
+    IResponse CreateValidUserAccount(string userName);
 }
