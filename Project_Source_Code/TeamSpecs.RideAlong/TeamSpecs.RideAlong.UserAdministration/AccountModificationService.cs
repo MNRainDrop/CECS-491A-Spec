@@ -17,7 +17,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
         {
             _userTarget = userTarget;
         }
-        public IResponse ModifyUser(string userName,DateTime dateOfBirth) 
+        public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth) 
         {
             IResponse response = new Response();
 

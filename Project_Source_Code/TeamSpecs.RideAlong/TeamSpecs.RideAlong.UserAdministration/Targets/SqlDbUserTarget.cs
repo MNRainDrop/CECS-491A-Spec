@@ -160,7 +160,7 @@ public class SqlDbUserTarget : IUserTarget
         {
             throw new ArgumentNullException(nameof(profileModel));
         }
-        foreach (var property in typeof(IAccountUserModel).GetProperties())
+        foreach (var property in typeof(IProfileUserModel).GetProperties())
         {
             if (property.GetValue(profileModel) is null)
             {
