@@ -3,6 +3,7 @@ using System.Diagnostics;
 using TeamSpecs.RideAlong.UserAdministration;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Services;
+using Microsoft.Data.SqlClient;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
@@ -26,10 +27,14 @@ public class AccountCreationServiceShould
         timer.Start();
         response = accountCreationService.CreateValidUserAccount(testUsername);
         timer.Stop();
-        
+
         // Assert
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ReturnValue.Contains(expectedReturnValue));
+
+        // Undo
+        var sql = $"DELETE FROM UserAccount WHERE UserName = '{testUsername}'";
+        _DAO.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) });
     }
 
     [Fact]

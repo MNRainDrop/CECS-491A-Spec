@@ -179,14 +179,14 @@ public class SqlDbUserTarget : IUserTarget
             foreach (var property in properties)
             {
                 var propertyName = property.Name;
-                var propertyValue = property.GetValue(profileModel, null);
+                var propertyValue = property.GetValue(profileModel);
 
                 // Create SQL command for each property
-                var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserName = @UserName";
+                var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserID = (SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName)";
                 var sqlParameters = new HashSet<SqlParameter>
                 {
                     new SqlParameter($"@{propertyName}", propertyValue),
-                    new SqlParameter("@UserName", propertyValue)
+                    new SqlParameter("@UserName", userName)
                 };
 
                 sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, sqlParameters));
