@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NuGet.Frameworks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         {
             // Arrange
             DateTime expectedDateofBirth = new DateTime(1990, 1, 1);
-            var user = new ProfileUserModel(expectedDateofBirth);
+            string testEmail = "testemail@gmail.com";
+            var user = new ProfileUserModel(expectedDateofBirth, testEmail);
 
             // Act
             DateTime actualDateOfBirth = user.DateOfBirth;
@@ -24,17 +26,47 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         }
 
         [Fact]
-        public void ProfileUserModel_SetDateofBirth_ValidParameterPassedIn_NewValueExpected_Pass()
+        public void ProfileUserModel_SetDateofBirth_ValidDateTimeParameterPassedIn_NewValueExpected_Pass()
         {
             // Arrange
             DateTime expectedDateOfBirth = new DateTime(1995, 5, 5);
-            var user = new ProfileUserModel(DateTime.MinValue);
+            string testEmail = "testemail@gmail.com";
+            var user = new ProfileUserModel(DateTime.MinValue, testEmail);
 
-            // Assert
+            // Act
             user.DateOfBirth = expectedDateOfBirth;
 
-            // Arrange
+            // Assert
             Assert.Equal(expectedDateOfBirth, user.DateOfBirth);
+        }
+        [Fact]
+        public void ProfileUserModel_GetSecondaryEmail_NoParametersPassedIn_OneValidStringReturned_Pass()
+        {
+            // Arrange
+            DateTime testDateOfBirth = new DateTime(1995, 5, 5);
+            string expectedEmail = "jason@gmail.com";
+            var user = new ProfileUserModel(testDateOfBirth, expectedEmail);
+
+            // Act
+            user.AlternateUserName = expectedEmail;
+
+            // 
+            Assert.Equal(expectedEmail, user.AlternateUserName);
+        }
+        [Fact]
+        public void ProfileUserModel_SetSecondaryEmail_ValidStringParameterPassedIn_NewvalueExpected_Passed()
+        {
+            // Arrange
+            DateTime testDateOfBirth = new DateTime(1995, 5, 5);
+            string dummyEmail = "NotAnEmail";
+            string expectedEmail = "jason@gmail.com";
+            var user = new ProfileUserModel(testDateOfBirth, dummyEmail);
+
+            // Act
+            user.AlternateUserName = expectedEmail;
+
+            // 
+            Assert.Equal(expectedEmail, user.AlternateUserName);
         }
     }
 }

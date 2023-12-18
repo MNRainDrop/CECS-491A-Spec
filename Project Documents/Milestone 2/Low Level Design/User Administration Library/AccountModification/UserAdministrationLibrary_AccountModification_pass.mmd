@@ -12,9 +12,8 @@ sequenceDiagram
     participant da as SQLServerDAO
     participant ds as Data Store
 
-    ml->>+as: 'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService '
-        Note over ml,as: Manager Layer calls upon<br>  'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'<br>to see if user has correct permissions
-        Note right of as: See Low Level Design for success Authorization case
+    Note Right of e: Assume something in the entry point<br>called the manager to do create a user
+    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
 
     ml->>+uc:  modifyUser(IProfileUserModel): IResponse
         Note over ml,uc: Manager Layer calls upon<br>`modifyUser(DateTime dateOfBirth): IResponse`<br>to modify the user
@@ -28,7 +27,7 @@ sequenceDiagram
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da: IResponse executeWriteSQL(sql: SqlCommand )
+    dg->>+da:  executeWriteSQL(sql: SqlCommand ): IResponse
     Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse `<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()

@@ -15,7 +15,12 @@ public class LogService : ILogService
     {
         //changed to work with log object
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
-        IResponse response = await Task.Run(() => _logTarget.WriteLog(log));
-        return response;
+        return _logTarget.WriteLog(log);
+    }
+
+    public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
+    {
+        ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
+        return await Task.Run(() => _logTarget.WriteLog(log));
     }
 }

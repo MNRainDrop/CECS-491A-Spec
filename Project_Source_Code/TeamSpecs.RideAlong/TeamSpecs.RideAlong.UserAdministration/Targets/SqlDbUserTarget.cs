@@ -1,6 +1,8 @@
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.Data.SqlClient;
+using System.Data;
+using System.Security.Claims;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
@@ -13,7 +15,7 @@ public class SqlDbUserTarget : IUserTarget
     {
         _dao = dao;
     }
-    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<string, string> userClaims)
+    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<int, string> userClaims)
     {
 
         #region Validate Arguments
@@ -34,10 +36,6 @@ public class SqlDbUserTarget : IUserTarget
         }
         foreach(var claim in userClaims)
         {
-            if(string.IsNullOrWhiteSpace(claim.Key))
-            {
-                throw new ArgumentException($"{nameof(claim.Key)} must be valid");
-            }
             if(string.IsNullOrWhiteSpace(claim.Value))
             {
                 throw new ArgumentException($"{nameof(claim.Value)}");
@@ -46,11 +44,11 @@ public class SqlDbUserTarget : IUserTarget
         #endregion
 
         #region Default sql setup
-        var commandSql = $"INSERT INTO ";
+        var commandSql = "INSERT INTO ";
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
-        var userNameToID = "(SELECT UserID FROM UserAccount WHERE UserName = ";
+        var userNameToID = "(SELECT TOP 1 UserID FROM UserAccount WHERE UserName = ";
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -76,7 +74,15 @@ public class SqlDbUserTarget : IUserTarget
                 rowsSql += property.Name + ",";
                 valuesSql += "@" + property.Name + ",";
 
-                parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(userModel)));
+                var value = property.GetValue(userModel);
+                if (value.GetType() == typeof(uint))
+                {
+                    parameters.Add(new SqlParameter("@" + property.Name, Convert.ToInt32(value)));
+                }
+                else
+                {
+                    parameters.Add(new SqlParameter("@" + property.Name, value));
+                }
             }
 
             // Truncate the last "," at the end of the sql
@@ -93,10 +99,9 @@ public class SqlDbUserTarget : IUserTarget
             sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
             #endregion
 
-
             #region Convert IDictionary of claims into sql statement
             tableSql = "UserClaim ";
-            rowsSql = "(UserID, Claim, ClaimScope) ";
+            rowsSql = "(UserID, ClaimID, ClaimScope) ";
             valuesSql = "VALUES (" + userNameToID + "@UserName), @Claim, @ClaimScope);";
             // Convert user claims into sql
             foreach (var claim in userClaims)
@@ -117,6 +122,38 @@ public class SqlDbUserTarget : IUserTarget
 
             #endregion
 
+            #region Create user profile sql statement
+            tableSql = "UserProfile ";
+            rowsSql = "(UserID, AlternateUserName, DateCreated) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName), @UserName, GETUTCDATE())";
+
+            parameters = new HashSet<SqlParameter>()
+            {
+
+                new SqlParameter("@UserName", userModel.UserName)
+            };
+
+            sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+
+            #endregion
+
+            #region Create user OTP sql statement
+            tableSql = "OTP ";
+            rowsSql = "(UserID) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName))";
+
+            parameters = new HashSet<SqlParameter>()
+            {
+
+                new SqlParameter("@UserName", userModel.UserName)
+            };
+
+            sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+            #endregion
         }
         catch
         {
@@ -134,7 +171,7 @@ public class SqlDbUserTarget : IUserTarget
                     daoValue
                 };
         }
-        catch
+            catch
         {
             response.HasError = true;
             response.ErrorMessage = "AccountCreation execution failed";
@@ -144,12 +181,64 @@ public class SqlDbUserTarget : IUserTarget
         response.HasError = false;
         return response;
     }
-
     public IResponse DeleteUserAccountSql(string userName)
     {
-        throw new NotImplementedException();
-    }
+        #region Validate arguments
+        if(string.IsNullOrEmpty(userName))
+        {
+            throw new ArgumentNullException(nameof(userName));
+        }
+        #endregion
 
+        #region Default sql setup
+        var commandSql = "DELETE FROM ";
+        var tableSql = "UserAccount ";
+        var whereSql = "WHERE UserName = @UserName";
+        #endregion
+
+
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        // 
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UserName", userName)
+            };
+
+            var sqlString = commandSql + tableSql + whereSql;
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate sql to delete user";
+            return response;
+        }
+
+        // DAO Executes the command
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                (object) daoValue
+            };
+            response.HasError = false;
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Account Deletion execution failed";
+            return response;
+        }
+
+        return response;
+    }
     public IResponse ModifyUserProfileSql(string userName, IProfileUserModel profileModel)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -160,7 +249,7 @@ public class SqlDbUserTarget : IUserTarget
         {
             throw new ArgumentNullException(nameof(profileModel));
         }
-        foreach (var property in typeof(IAccountUserModel).GetProperties())
+        foreach (var property in typeof(IProfileUserModel).GetProperties())
         {
             if (property.GetValue(profileModel) is null)
             {
@@ -179,14 +268,14 @@ public class SqlDbUserTarget : IUserTarget
             foreach (var property in properties)
             {
                 var propertyName = property.Name;
-                var propertyValue = property.GetValue(profileModel, null);
+                var propertyValue = property.GetValue(profileModel);
 
                 // Create SQL command for each property
-                var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserName = @UserName";
+                var sqlCommand = $"UPDATE UserProfile SET {propertyName} = @{propertyName} WHERE UserID = (SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName)";
                 var sqlParameters = new HashSet<SqlParameter>
                 {
                     new SqlParameter($"@{propertyName}", propertyValue),
-                    new SqlParameter("@UserName", propertyValue)
+                    new SqlParameter("@UserName", userName)
                 };
 
                 sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, sqlParameters));
@@ -206,21 +295,161 @@ public class SqlDbUserTarget : IUserTarget
         {
             var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
             response.ReturnValue = new List<object>()
-            { daoValue };
+            {
+                daoValue
+            };
         }
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Log Execution failed";
+            response.ErrorMessage = "Modification execute failed";
             return response;
         }
 
         response.HasError = false;
         return response;
     }
+    public IResponse EnableUserAccountSql(string userName)
+    {
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
 
+        try
+        {
+            #region Convert String to SQL
+
+            // Finds claim CanLogin (ClaimID = 0) 
+            string sqlCommand = @"
+            UPDATE UserClaims
+            SET claimScope = 'Yes'
+            FROM UserClaims uc
+            JOIN UserAccounts ua ON uc.UID = ua.UID
+            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+
+            var parameters = new HashSet<SqlParameter>
+        {
+            new SqlParameter("@UserName", userName )
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, parameters));
+            #endregion 
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate EnableUserAccount Sql";
+            return response;
+        }
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "EnableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+    public IResponse DisableUserAccountSql(string userName)
+    {
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        try
+        {
+            #region Convert String to SQL
+
+            // Finds claim CanLogin (ClaimID = 0) 
+            string sqlCommand = @"
+            UPDATE UserClaims
+            SET claimScope = 'No'
+            FROM UserClaims uc
+            JOIN UserAccounts ua ON uc.UID = ua.UID
+            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+
+            var parameters = new HashSet<SqlParameter>
+        {
+            new SqlParameter("@UserName", userName )
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, parameters));
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate DisableUserAccount Sql";
+            return response;
+        }
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "DisableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
     public IResponse RecoverUserAccountSql(string userName)
     {
-        throw new NotImplementedException();
+        var sqlCommandString = "";
+        var response = new Response();
+
+        #region Convert String to SQL
+        sqlCommandString = @"
+        SELECT ua.userName, up.alternateUserName
+        FROM UserAccounts ua
+        JOIN UserProfile up ON ua.UID = up.UID
+        WHERE ua.userName = @UserName;";
+
+        var sqlCommand = new SqlCommand
+        {
+            CommandText = sqlCommandString,
+            CommandType = CommandType.Text
+        };
+        #endregion
+        
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteReadOnly(sqlCommand);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "DisableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+
     }
 }

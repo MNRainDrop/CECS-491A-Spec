@@ -9,12 +9,6 @@ participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SQLServerDAO
 participant ds as Data Store
 
-
-ml->>+as: 'IsAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'
-        Note over ml,as: Manager Layer calls upon<br>  'isAuthorized(currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService '<br>to see if user has correct permissions
-        Note right of as: See Low Level Design for success Authorization case
-
-
 ml->>+uc: RecoverUser( userName: String): IResponse
     Note over ml,uc: Manager Layer calls upon<br>` RecoverUser( userName: String): IResponse`<br>to recover the user
 
