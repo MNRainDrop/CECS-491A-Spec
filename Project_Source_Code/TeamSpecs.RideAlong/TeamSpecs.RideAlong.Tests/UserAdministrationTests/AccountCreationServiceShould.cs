@@ -16,7 +16,6 @@ public class AccountCreationServiceShould
         var _DAO = new SqlServerDAO();
         var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO));
         var testUsername = "testemail@gmail.com";
-        var testDOB = "1/1/2023";
 
         // Expected Outcome
         var expectedHasError = false;
@@ -24,7 +23,7 @@ public class AccountCreationServiceShould
 
         // Act
         timer.Start();
-        response = accountCreationService.CreateValidUserAccount(testUsername, testDOB);
+        response = accountCreationService.CreateValidUserAccount(testUsername);
         timer.Stop();
         
         // Assert
@@ -40,42 +39,17 @@ public class AccountCreationServiceShould
         var _DAO = new SqlServerDAO();
         var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO));
         string testUsername = null;
-        string testDOB = "1/1/2023";
 
         // Act and Assert
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountCreationService.CreateValidUserAccount(testUsername, testDOB)
+                () => response = accountCreationService.CreateValidUserAccount(testUsername)
             );
         }
         catch
         {
             Assert.Fail("Should throw ArgumentException");
         }
-    }
-    
-    [Fact]
-    public void AccountCreationService_CreateValidUserAccount_NullDateOfBirthPassedIn_ArgumentExceptionThrown_Pass()
-    {
-        // Arrange
-        IResponse response;
-        var _DAO = new SqlServerDAO();
-        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO));
-        string testUsername = "testemail@gmail.com";
-        string testDOB = null;
-
-        // Act and Assert
-        try
-        {
-            Assert.Throws<ArgumentException>(
-                () => response = accountCreationService.CreateValidUserAccount(testUsername, testDOB)
-            );
-        }
-        catch
-        {
-            Assert.Fail("Should throw ArgumentException");
-        }
-        
     }
 }

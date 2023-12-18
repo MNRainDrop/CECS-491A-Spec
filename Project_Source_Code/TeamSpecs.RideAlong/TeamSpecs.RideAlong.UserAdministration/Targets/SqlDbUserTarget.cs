@@ -46,7 +46,7 @@ public class SqlDbUserTarget : IUserTarget
         #endregion
 
         #region Default sql setup
-        var commandSql = $"INSERT INTO";
+        var commandSql = $"INSERT INTO ";
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
@@ -61,7 +61,7 @@ public class SqlDbUserTarget : IUserTarget
         try
         {
             #region Convert IAccountUserModel into sql statement
-            tableSql = "UserAccount";
+            tableSql = "UserAccount ";
             // Convert UserAccount Model into sql
             var parameters = new HashSet<SqlParameter>();
 
@@ -80,8 +80,8 @@ public class SqlDbUserTarget : IUserTarget
             }
 
             // Truncate the last "," at the end of the sql
-            rowsSql.Remove(rowsSql.Length - 1, 1);
-            valuesSql.Remove(valuesSql.Length - 1, 1);
+            rowsSql = rowsSql.Remove(rowsSql.Length - 1, 1);
+            valuesSql = valuesSql.Remove(valuesSql.Length - 1, 1);
             // Add a closing parenthesis at the end of the sql
             rowsSql += ") ";
             valuesSql += ");";
@@ -95,7 +95,7 @@ public class SqlDbUserTarget : IUserTarget
 
 
             #region Convert IDictionary of claims into sql statement
-            tableSql = "UserClaims";
+            tableSql = "UserClaims ";
             rowsSql = "(UserID, Claim, ClaimScope) ";
             valuesSql = "VALUES (" + userNameToID + "@UserName, @Claim, @ClaimScope);";
             // Convert user claims into sql
