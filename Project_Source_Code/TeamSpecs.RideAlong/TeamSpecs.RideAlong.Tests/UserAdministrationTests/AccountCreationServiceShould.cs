@@ -20,7 +20,7 @@ public class AccountCreationServiceShould
 
         // Expected Outcome
         var expectedHasError = false;
-        var expectedReturnValue = 1 + typeof(IProfileUserModel).GetProperties().Length;
+        var expectedReturnValue = accountCreationService.getDefaultClaimLength() + typeof(IProfileUserModel).GetProperties().Length;
 
         // Act
         timer.Start();

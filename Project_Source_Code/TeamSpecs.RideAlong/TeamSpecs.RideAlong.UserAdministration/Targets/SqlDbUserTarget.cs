@@ -50,7 +50,7 @@ public class SqlDbUserTarget : IUserTarget
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
-        var userNameToID = "(SELECT UserID FROM UserAccount WHERE UserName = ";
+        var userNameToID = "(SELECT TOP 1 UserID FROM UserAccount WHERE UserName = ";
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -134,7 +134,7 @@ public class SqlDbUserTarget : IUserTarget
                     daoValue
                 };
         }
-        catch
+            catch
         {
             response.HasError = true;
             response.ErrorMessage = "AccountCreation execution failed";
@@ -206,7 +206,9 @@ public class SqlDbUserTarget : IUserTarget
         {
             var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
             response.ReturnValue = new List<object>()
-            { daoValue };
+            {
+                daoValue
+            };
         }
         catch
         {

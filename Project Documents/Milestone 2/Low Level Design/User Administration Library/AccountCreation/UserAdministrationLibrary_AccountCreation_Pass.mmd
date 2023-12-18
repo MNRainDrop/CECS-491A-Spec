@@ -13,7 +13,7 @@ participant ds as Data Store
 Note Right of e: Assume something in the entry point<br>called the manager to do create a user
 Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
 
-usm->>+uc: CreateValidUserAccount(userName: string, dateOfBirth: string) : IResponse
+usm->>+uc: CreateValidUserAccount(userName: string) : IResponse
     Note over usm,uc: UserAdministrationManager calls upon<br>User Service to create the user with the pepper
 
 uc->>uc: UserService creates a new IUserAccountModel object

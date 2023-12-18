@@ -87,9 +87,15 @@ public class AccountCreationService : IAccountCreationService
     {
         IDictionary<string, string> claims = new Dictionary<string, string>()
         {
-            { "CanLogin", "True" }
+            { "CanLogin", "True" },
+            { "IsEnabled", "True"}
         };
         
         return claims;
+    }
+
+    public int getDefaultClaimLength()
+    {
+        return GenerateDefaultClaims().Count;
     }
 }
