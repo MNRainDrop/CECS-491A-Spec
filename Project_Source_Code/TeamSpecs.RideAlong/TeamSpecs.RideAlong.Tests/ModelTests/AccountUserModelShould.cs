@@ -15,6 +15,7 @@ public class AccountUserModelShould
         //Assert
         //Act
         //Arrange
+        Assert.True(false);
     }
     
     [Fact]
@@ -23,6 +24,7 @@ public class AccountUserModelShould
         // Assert
         // Act
         // Arrange
+        Assert.True(false);
     }
 
 }

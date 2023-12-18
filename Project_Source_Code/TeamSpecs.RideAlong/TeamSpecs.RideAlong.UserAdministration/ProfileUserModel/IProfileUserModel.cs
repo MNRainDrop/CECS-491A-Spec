@@ -3,6 +3,6 @@
 public interface IProfileUserModel
 {
     DateTime DateOfBirth {get; set;}
-    string SecondaryEmail {get; set;}
+    string AlternateUserName {get; set;}
 }
 

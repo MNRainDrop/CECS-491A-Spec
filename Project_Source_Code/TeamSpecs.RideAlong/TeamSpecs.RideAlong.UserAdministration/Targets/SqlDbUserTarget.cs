@@ -74,7 +74,15 @@ public class SqlDbUserTarget : IUserTarget
                 rowsSql += property.Name + ",";
                 valuesSql += "@" + property.Name + ",";
 
-                parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(userModel)));
+                var value = property.GetValue(userModel);
+                if (value.GetType() == typeof(uint))
+                {
+                    parameters.Add(new SqlParameter("@" + property.Name, Convert.ToInt32(value)));
+                }
+                else
+                {
+                    parameters.Add(new SqlParameter("@" + property.Name, value));
+                }
             }
 
             // Truncate the last "," at the end of the sql
@@ -91,10 +99,9 @@ public class SqlDbUserTarget : IUserTarget
             sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
             #endregion
 
-
             #region Convert IDictionary of claims into sql statement
             tableSql = "UserClaim ";
-            rowsSql = "(UserID, Claim, ClaimScope) ";
+            rowsSql = "(UserID, ClaimID, ClaimScope) ";
             valuesSql = "VALUES (" + userNameToID + "@UserName), @Claim, @ClaimScope);";
             // Convert user claims into sql
             foreach (var claim in userClaims)
@@ -117,8 +124,8 @@ public class SqlDbUserTarget : IUserTarget
 
             #region Create user profile sql statement
             tableSql = "UserProfile ";
-            rowsSql = "(UserID) ";
-            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName))";
+            rowsSql = "(UserID, AlternateUserName, DateCreated) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName), @UserName, GETUTCDATE())";
 
             parameters = new HashSet<SqlParameter>()
             {

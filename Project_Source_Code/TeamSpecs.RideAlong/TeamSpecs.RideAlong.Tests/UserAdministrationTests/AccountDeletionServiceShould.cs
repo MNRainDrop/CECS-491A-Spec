@@ -18,21 +18,23 @@ public class AccountDeletionServiceShoud
         IResponse response;
         var _DAO = new SqlServerDAO();
         var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO));
-        var testUsername = "testmail@gmail.com";
+        var testUsername = "Deletetestemail@gmail.com";
 
         // Expected Outcome
         var expectedHasError = false;
         var expectedReturnValue = (object) 1;
 
-        // Undo
-        var accountSql = $"INSERT INTO UserAccount (UserName, DateCreated) VALUES ('{testUsername}', GETDATE())";
-        var claimsSql = $"INSERT INTO UserClaim (UserID, Claim, ClaimScope) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), 'isTest', 'True')";
-        var profileSql = $"INSERT INTO UserProfile (UserID, DateOfBirth) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), GETDATE())";
+        // Create
+        var accountSql = $"INSERT INTO UserAccount (UserName, Salt) VALUES ('{testUsername}', 0)";
+        var claimsSql = $"INSERT INTO UserClaim (UserID, ClaimID, ClaimScope) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), 1, 'True')";
+        var profileSql = $"INSERT INTO UserProfile (UserID, AlternateUserName, DateCreated) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), '{testUsername}', GETUTCDATE())";
+        var otpSql = $"INSERT INTO OTP (UserID) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'))";
         _DAO.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(claimsSql, null),
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(profileSql, null),
+            KeyValuePair.Create<string, HashSet<SqlParameter>?>(otpSql, null)
         });
 
         // Act
@@ -41,6 +43,7 @@ public class AccountDeletionServiceShoud
         timer.Stop();
 
         // Assert
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ReturnValue.Contains(expectedReturnValue));
     }
