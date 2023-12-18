@@ -10,6 +10,18 @@ public class AccountDeletionService : IAccountDeletionService
     }
     public IResponse DeleteUserAccount(string userName)
     {
-        throw new NotImplementedException();
+        #region Validate arguments
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            throw new ArgumentException($"{nameof(userName)} must be valid");
+        }
+        #endregion
+
+        IResponse response;
+
+
+        response = _userTarget.DeleteUserAccountSql(userName);
+
+        return response;
     }
 }

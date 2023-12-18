@@ -22,12 +22,12 @@ public class AccountDeletionServiceShoud
 
         // Expected Outcome
         var expectedHasError = false;
-        var expectedReturnValue = 1 + typeof(IProfileUserModel).GetProperties().Length;
+        var expectedReturnValue = (object) 1;
 
         // Undo
-        var accountSql = $"INSERT FROM UserAccount (UserName, DateCreated) VALUES ({testUsername}, getDate)";
-        var claimsSql = $"INSERT FROM UserClaim (UserID, Claim, ClaimScope) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), 'isTest', 'True')";
-        var profileSql = $"INSERT FROM UserAccount (UserID, DateOfBirth) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), GETDATE())";
+        var accountSql = $"INSERT INTO UserAccount (UserName, DateCreated) VALUES ('{testUsername}', GETDATE())";
+        var claimsSql = $"INSERT INTO UserClaim (UserID, Claim, ClaimScope) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), 'isTest', 'True')";
+        var profileSql = $"INSERT INTO UserProfile (UserID, DateOfBirth) VALUES ((SELECT TOP 1 UserID FROM UserAccount Where UserName = '{testUsername}'), GETDATE())";
         _DAO.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
