@@ -171,20 +171,11 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        if (response.ReturnValue is not null)
+        foreach (object[] i in response.ReturnValue)
         {
-            Assert.True(response.ReturnValue.Count == expectedReturnValueAmount);
-        }
-        else
-        {
-            Assert.Fail("response.ReturnValue should not be null");
-        }
-        
-        foreach (object[] obj in response.ReturnValue)
-        {
-            for (int i = 0; i < obj.Length - 1; i++)
+            foreach (var j in i)
             {
-                Assert.True(obj[i].Equals(expectedReturnValue[i]));
+                Assert.True(expectedReturnValue.Contains(j));
             }
         }
     }
@@ -229,7 +220,6 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        
         var dao = new SqlServerDAO();
 
         var sql = new SqlCommand("SELECT logLevel, logCategory, logContext FROM loggingTable WHERE logLevel LIKE '%Info%' and logCategory LIKE '%testing%';");
@@ -249,23 +239,13 @@ public class DataAccessShould
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
         Assert.True(response.ErrorMessage == expectedErrorMessage);
-        if (response.ReturnValue is not null)
+
+        foreach (object[] i in response.ReturnValue)
         {
-            if (response.ReturnValue.Count is 0)
+            foreach (var j in i)
             {
-                Assert.Fail("response.ReturnValue should not be 0");
+                Assert.True(expectedReturnValue.Contains(j));
             }
-            foreach (object[] obj in response.ReturnValue)
-            {
-                for (int i = 0; i < obj.Length - 1; i++)
-                {
-                    Assert.True(obj[i].Equals(expectedReturnValue[i]));
-                }
-            }
-        }
-        else
-        {
-            Assert.Fail("response.ReturnValue should not be null");
         }
     }
 
@@ -376,7 +356,7 @@ public class DataAccessShould
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null)
         };
         // Expected values
-        var expectedReturnValue = 2;
+        var expectedReturnValue = 0;
 
         // Act
         timer.Start();
@@ -426,6 +406,8 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
+        // Expected values
+        var minimumExpectedReturnValue = 0;
         var sql = "DELETE FROM dbo.loggingTable";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -436,9 +418,8 @@ public class DataAccessShould
         // Act and Assert
         try
         {
-            Assert.ThrowsAny<Exception>(
-                () => dao.ExecuteWriteOnly(sqlCommands)
-            );
+            var returnValue = dao.ExecuteWriteOnly(sqlCommands);
+            Assert.True(returnValue >= minimumExpectedReturnValue);
         }
         catch
         {

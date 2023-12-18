@@ -8,7 +8,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary;
 public class AccountCreationServiceShould
 {
     [Fact]
-    public void AccountCreationService_CreateValidUserAccount_ValidUsernameAndDateOfBirthPassedIn_AccountCreated_Pass()
+    public void AccountCreationService_CreateValidUserAccount_ValidUsernamePassedIn_AccountCreated_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
