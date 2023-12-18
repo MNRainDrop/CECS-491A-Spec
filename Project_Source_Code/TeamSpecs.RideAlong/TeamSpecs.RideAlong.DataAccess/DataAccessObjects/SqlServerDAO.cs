@@ -44,7 +44,7 @@ public class SqlServerDAO : IGenericDAO
 
                         try
                         {
-                            rowsAffected = command.ExecuteNonQuery();
+                            rowsAffected += command.ExecuteNonQuery();
                         }
                         catch
                         {

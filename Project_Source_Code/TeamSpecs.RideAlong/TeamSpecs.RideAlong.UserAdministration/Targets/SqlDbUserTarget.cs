@@ -50,7 +50,7 @@ public class SqlDbUserTarget : IUserTarget
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
-        var userNameToID = "SELECT UserID FROM UserAccount WHERE UserName = ";
+        var userNameToID = "(SELECT UserID FROM UserAccount WHERE UserName = ";
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -95,9 +95,9 @@ public class SqlDbUserTarget : IUserTarget
 
 
             #region Convert IDictionary of claims into sql statement
-            tableSql = "UserClaims ";
+            tableSql = "UserClaim ";
             rowsSql = "(UserID, Claim, ClaimScope) ";
-            valuesSql = "VALUES (" + userNameToID + "@UserName, @Claim, @ClaimScope);";
+            valuesSql = "VALUES (" + userNameToID + "@UserName), @Claim, @ClaimScope);";
             // Convert user claims into sql
             foreach (var claim in userClaims)
             {

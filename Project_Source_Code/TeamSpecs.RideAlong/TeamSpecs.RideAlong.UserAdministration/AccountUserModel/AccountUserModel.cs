@@ -3,9 +3,9 @@ public class AccountUserModel : IAccountUserModel
 {
     public string UserName { get; set;}
     public DateTimeOffset DateCreated { get; }
-    public string? OTPSalt { get; set; } = null;
-    public string? UserHash { get; set; } = null;
-    public string? OTPHash { get; set; } = null;
+    public byte[]? OTPSalt { get; set; } = null;
+    public byte[]? UserHash { get; set; } = null;
+    public byte[]? OTPHash { get; set; } = null;
     
     public AccountUserModel(string userName)
     {

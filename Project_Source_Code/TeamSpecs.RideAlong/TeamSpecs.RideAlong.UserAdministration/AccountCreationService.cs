@@ -46,7 +46,7 @@ public class AccountCreationService : IAccountCreationService
             byte[] bytes = Encoding.UTF8.GetBytes(string.Concat(userName, userPepper));
             var userHash = sha256Hash.ComputeHash(bytes);
 
-            userAccount.UserHash = BitConverter.ToString(userHash).Replace("-", string.Empty);
+            userAccount.UserHash = userHash;
 
             // Create OTP Hash
             // Note: SHA256 will be changed to another hashing algorithm for the OTP 
@@ -58,11 +58,12 @@ public class AccountCreationService : IAccountCreationService
             var OTPPepper = _randomService.GenerateUnsignedInt(32);
             
             var OTPSalt = _randomService.GenerateUnsignedInt(32);
-            userAccount.OTPSalt = BitConverter.ToString(OTPSalt).Replace("-", string.Empty);
+            userAccount.OTPSalt = OTPSalt;
+
             bytes = Encoding.UTF8.GetBytes(string.Concat(userName, OTPSalt, OTPPepper));
             var OTPHash = sha256Hash.ComputeHash(bytes);
 
-            userAccount.OTPHash = BitConverter.ToString(OTPHash).Replace("-", string.Empty);
+            userAccount.OTPHash = OTPHash;
         }
 
         // Generate user default claims
