@@ -26,10 +26,6 @@ namespace TeamSpecs.RideAlong.UserAdministration
             {
                 throw new ArgumentException($"{nameof(userName)} must be valid");
             }
-            if (dateOfBirth.GetType() != typeof(DateTime))
-            {
-                throw new ArgumentException($"{nameof(dateOfBirth)} is not of type {nameof(DateTime)}");
-            }
             #endregion
 
             var profile = new ProfileUserModel(dateOfBirth);
