@@ -17,7 +17,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
         {
             _userTarget = userTarget;
         }
-        public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth) 
+        public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth, string secondaryEmail) 
         {
             IResponse response = new Response();
 
@@ -26,10 +26,14 @@ namespace TeamSpecs.RideAlong.UserAdministration
             {
                 throw new ArgumentException($"{nameof(userName)} must be valid");
             }
+            if (String.IsNullOrWhiteSpace(secondaryEmail))
+            {
+                throw new ArgumentException($"{nameof(secondaryEmail)} must be valid");
+            }
             #endregion
 
-            var profile = new ProfileUserModel(dateOfBirth);
-            var UserName = userName;
+            var profile = new ProfileUserModel(dateOfBirth, secondaryEmail);
+
             response = _userTarget.ModifyUserProfileSql(userName, profile);
 
             if(response.HasError)

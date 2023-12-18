@@ -1,6 +1,7 @@
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
@@ -144,12 +145,10 @@ public class SqlDbUserTarget : IUserTarget
         response.HasError = false;
         return response;
     }
-
     public IResponse DeleteUserAccountSql(string userName)
     {
         throw new NotImplementedException();
     }
-
     public IResponse ModifyUserProfileSql(string userName, IProfileUserModel profileModel)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -213,16 +212,154 @@ public class SqlDbUserTarget : IUserTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Log Execution failed";
+            response.ErrorMessage = "Modification execute failed";
             return response;
         }
 
         response.HasError = false;
         return response;
     }
+    public IResponse EnableUserAccountSql(string userName)
+    {
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
 
+        try
+        {
+            #region Convert String to SQL
+
+            // Finds claim CanLogin (ClaimID = 0) 
+            string sqlCommand = @"
+            UPDATE UserClaims
+            SET claimScope = 'Yes'
+            FROM UserClaims uc
+            JOIN UserAccounts ua ON uc.UID = ua.UID
+            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+
+            var parameters = new HashSet<SqlParameter>
+        {
+            new SqlParameter("@UserName", userName )
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, parameters));
+            #endregion 
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate EnableUserAccount Sql";
+            return response;
+        }
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "EnableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+    public IResponse DisableUserAccountSql(string userName)
+    {
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        try
+        {
+            #region Convert String to SQL
+
+            // Finds claim CanLogin (ClaimID = 0) 
+            string sqlCommand = @"
+            UPDATE UserClaims
+            SET claimScope = 'No'
+            FROM UserClaims uc
+            JOIN UserAccounts ua ON uc.UID = ua.UID
+            WHERE ua.userName = @UserName AND uc.claimID = 0;";
+
+            var parameters = new HashSet<SqlParameter>
+        {
+            new SqlParameter("@UserName", userName )
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(sqlCommand, parameters));
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate DisableUserAccount Sql";
+            return response;
+        }
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "DisableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
     public IResponse RecoverUserAccountSql(string userName)
     {
-        throw new NotImplementedException();
+        var sqlCommandString = "";
+        var response = new Response();
+
+        #region Convert String to SQL
+        sqlCommandString = @"
+        SELECT ua.userName, up.alternateUserName
+        FROM UserAccounts ua
+        JOIN UserProfile up ON ua.UID = up.UID
+        WHERE ua.userName = @UserName;";
+
+        var sqlCommand = new SqlCommand
+        {
+            CommandText = sqlCommandString,
+            CommandType = CommandType.Text
+        };
+        #endregion
+        
+
+        try
+        {
+            #region Execute SQL
+            var daoValue = _dao.ExecuteReadOnly(sqlCommand);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "DisableUserAccount execute failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+
     }
 }
