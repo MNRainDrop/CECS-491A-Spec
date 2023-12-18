@@ -14,11 +14,11 @@ public class AccountCreationService : IAccountCreationService
     private IPepperService _pepperService;
     private IRandomService _randomService;
     
-    public AccountCreationService(IUserTarget userTarget)
+    public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IRandomService randomService)
     {
         _userTarget = userTarget;
-        _pepperService = new PepperService();
-        _randomService = new RandomService();
+        _pepperService = pepperService;
+        _randomService = randomService;
     }
     public IResponse CreateValidUserAccount(string userName)
     {
@@ -89,7 +89,7 @@ public class AccountCreationService : IAccountCreationService
         {
             { "CanLogin", "True" }
         };
-        ;
+        
         return claims;
     }
 }
