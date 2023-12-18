@@ -14,7 +14,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         {
             // Arrange
             DateTime expectedDateofBirth = new DateTime(1990, 1, 1);
-            var user = new ProfileUserModel(expectedDateofBirth);
+            string testEmail = "testemail@gmail.com";
+            var user = new ProfileUserModel(expectedDateofBirth, testEmail);
 
             // Act
             DateTime actualDateOfBirth = user.DateOfBirth;
@@ -28,7 +29,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         {
             // Arrange
             DateTime expectedDateOfBirth = new DateTime(1995, 5, 5);
-            var user = new ProfileUserModel(DateTime.MinValue);
+            string testEmail = "testemail@gmail.com";
+            var user = new ProfileUserModel(DateTime.MinValue, testEmail);
 
             // Assert
             user.DateOfBirth = expectedDateOfBirth;

@@ -1,24 +1,17 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace TeamSpecs.RideAlong.Services;
 
 public class RandomService : IRandomService
 {
-    public byte[] GenerateUnsignedInt(int size)
+    public static uint GenerateUnsignedInt()
     {
-        byte[] randUint = RandomNumberGenerator.GetBytes(size);
-
-        return randUint;
+        return (uint) RandomNumberGenerator.GetInt32(Int32.MaxValue);
     }
 
-    public byte[] GenerateSignedInt(int size)
+    public static int GenerateSignedInt()
     {
-        //Yes it is obsolete but for some reason if I do it like Vong did it doesn't fuking work 
-        byte[] result = new byte[size];
-        RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-        rng.GetNonZeroBytes(result);
-        return result;
+        return RandomNumberGenerator.GetInt32(Int32.MaxValue);
     }
 
     public string GenerateRandomString(int size, bool lowercase)

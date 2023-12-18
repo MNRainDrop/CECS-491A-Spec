@@ -2,6 +2,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Security.Claims;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
@@ -14,7 +15,7 @@ public class SqlDbUserTarget : IUserTarget
     {
         _dao = dao;
     }
-    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<string, string> userClaims)
+    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<int, string> userClaims)
     {
 
         #region Validate Arguments
@@ -35,10 +36,6 @@ public class SqlDbUserTarget : IUserTarget
         }
         foreach(var claim in userClaims)
         {
-            if(string.IsNullOrWhiteSpace(claim.Key))
-            {
-                throw new ArgumentException($"{nameof(claim.Key)} must be valid");
-            }
             if(string.IsNullOrWhiteSpace(claim.Value))
             {
                 throw new ArgumentException($"{nameof(claim.Value)}");
@@ -47,7 +44,7 @@ public class SqlDbUserTarget : IUserTarget
         #endregion
 
         #region Default sql setup
-        var commandSql = $"INSERT INTO ";
+        var commandSql = "INSERT INTO ";
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
@@ -118,6 +115,38 @@ public class SqlDbUserTarget : IUserTarget
 
             #endregion
 
+            #region Create user profile sql statement
+            tableSql = "UserProfile ";
+            rowsSql = "(UserID) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName))";
+
+            parameters = new HashSet<SqlParameter>()
+            {
+
+                new SqlParameter("@UserName", userModel.UserName)
+            };
+
+            sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+
+            #endregion
+
+            #region Create user OTP sql statement
+            tableSql = "OTP ";
+            rowsSql = "(UserID) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName))";
+
+            parameters = new HashSet<SqlParameter>()
+            {
+
+                new SqlParameter("@UserName", userModel.UserName)
+            };
+
+            sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+            #endregion
         }
         catch
         {

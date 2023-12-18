@@ -2,7 +2,7 @@
 
 public interface IRandomService
 {
-    byte[] GenerateUnsignedInt(int size);
-    byte[] GenerateSignedInt(int size);
+    static abstract uint GenerateUnsignedInt();
+    static abstract int GenerateSignedInt();
     string GenerateRandomString(int size, bool lowercase); 
 }

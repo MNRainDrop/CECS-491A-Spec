@@ -17,7 +17,7 @@ public class AccountModificationServiceShould
         var testDateTime = DateTime.Now;
 
         // Act
-        response = accountModificationService.ModifyUserProfile(testUsername, testDateTime);
+        response = accountModificationService.ModifyUserProfile(testUsername, testDateTime, testUsername);
 
         // Assert
         Assert.False(response.HasError);
@@ -38,7 +38,7 @@ public class AccountModificationServiceShould
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime)
+                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime, testUsername)
             );
         }
         catch
@@ -61,7 +61,7 @@ public class AccountModificationServiceShould
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime)
+                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime, testUsername)
             );
         }
         catch
@@ -84,7 +84,7 @@ public class AccountModificationServiceShould
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime)
+                () => response = accountModificationService.ModifyUserProfile(testUsername, testDateTime, testUsername)
             );
         }
         catch
