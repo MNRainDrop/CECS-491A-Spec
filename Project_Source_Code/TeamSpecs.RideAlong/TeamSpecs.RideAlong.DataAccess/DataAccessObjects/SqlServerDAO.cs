@@ -107,4 +107,15 @@ public class SqlServerDAO : IGenericDAO
         return response;
     }
 
+    public IResponse ExecuteReadOnly()
+    {
+        throw new NotImplementedException(); 
+    }
+
+    public IResponse ExecuteWriteOnly(string value)
+    {
+        throw new NotImplementedException();
+    }
+
+
 }
