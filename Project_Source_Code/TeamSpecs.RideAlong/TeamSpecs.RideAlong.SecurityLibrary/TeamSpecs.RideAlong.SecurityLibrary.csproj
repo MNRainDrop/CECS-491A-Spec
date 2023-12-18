@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj" />
+  </ItemGroup>
+
 </Project>

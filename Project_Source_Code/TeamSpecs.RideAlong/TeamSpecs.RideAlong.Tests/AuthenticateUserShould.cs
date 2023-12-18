@@ -1,8 +1,10 @@
-﻿namespace TeamSpecs.RideAlong.TestingLibrary
+﻿namespace TeamSpecs.RideAlong.TestingLibrary;
+
+public class AuthenticateUserShould
 {
-    internal class AuthenticateUserShould
+    [Fact]
+    public void testc()
     {
-        [Fact]
 
     }
 }

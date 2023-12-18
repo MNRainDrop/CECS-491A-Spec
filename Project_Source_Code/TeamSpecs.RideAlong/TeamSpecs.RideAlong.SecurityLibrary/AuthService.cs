@@ -1,4 +1,5 @@
-﻿namespace TeamSpecs.RideAlong.SecurityLibrary;
+﻿using TeamSpecs.RideAlong.UserAdministration;
+namespace TeamSpecs.RideAlong.SecurityLibrary;
 // Library built in
 
 public class AuthService : IAuthenticator, IAuthorizer
@@ -8,9 +9,9 @@ public class AuthService : IAuthenticator, IAuthorizer
     {
         return false;
     }
-    private Dictionary<string, string> getClaims(userAccount userIdentity)
+    private Dictionary<string, string> getClaims(IAccountUserModel userIdentity)
     {
-
+        return new Dictionary<string, string>();
     }
 
     /// <summary>
@@ -62,7 +63,7 @@ public class AuthService : IAuthenticator, IAuthorizer
             // Step 2: Populate AppPrincipal
             var claims = new Dictionary<string, string>();
 
-            appPrincipal = new AppPrincipal(authRequest.UserIdentity, );
+            appPrincipal = new AppPrincipal(authRequest.UserIdentity, claims)
             {
                 UserIdentity = authRequest.UserIdentity,
                 Claims = claims

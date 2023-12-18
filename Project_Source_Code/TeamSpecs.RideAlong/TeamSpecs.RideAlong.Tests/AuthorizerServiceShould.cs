@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.SecurityLibrary; 
+using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
@@ -16,7 +17,9 @@ public class AuthorizeUserShould
 
         IDictionary<string, string> claims = new Dictionary<string, string>();
         claims.Add("CanLogIn", "Yes");
-        var CurrentPrincipal = new AppPrincipal("TestUser",claims);
+        var testUserName = "test@gmail.com";
+        var userModel = new AccountUserModel(testUserName);
+        var CurrentPrincipal = new AppPrincipal(userModel, claims);
 
         IDictionary<string, string> Rclaims = new Dictionary<string, string>();
         Rclaims.Add("CanLogIn", "Yes");

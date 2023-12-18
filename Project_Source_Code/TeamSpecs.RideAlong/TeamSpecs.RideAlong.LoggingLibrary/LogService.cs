@@ -11,7 +11,7 @@ public class LogService : ILogService
         _logTarget = logTarget;
     }
 
-    public async Task<IResponse> CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
+    public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
         //changed to work with log object
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
