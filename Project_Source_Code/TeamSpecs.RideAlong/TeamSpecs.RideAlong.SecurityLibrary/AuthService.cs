@@ -1,10 +1,17 @@
 ﻿namespace TeamSpecs.RideAlong.SecurityLibrary;
-
 // Library built in
-using System.Security.Principal;
 
 public class AuthService : IAuthenticator, IAuthorizer
 {
+
+    private bool validatePass(AuthenticationRequest authRequest)
+    {
+        return false;
+    }
+    private Dictionary<string, string> getClaims(userAccount userIdentity)
+    {
+
+    }
 
     /// <summary>
     /// For Authentication
@@ -26,9 +33,14 @@ public class AuthService : IAuthenticator, IAuthorizer
             throw new ArgumentNullException(nameof(authRequest));
         }
 
-        if (String.IsNullOrWhiteSpace(authRequest.UserIdentity))
+        if (authRequest.UserIdentity is null)
         {
             throw new ArgumentException($"{nameof(authRequest.UserIdentity)} must be valid");
+        }
+
+        if (String.IsNullOrWhiteSpace(authRequest.UserIdentity.UserName))
+        {
+            throw new ArgumentException($"{nameof(authRequest.UserIdentity.UserName)} must be valid");
         }
 
         if (String.IsNullOrWhiteSpace(authRequest.Proof))
@@ -50,7 +62,7 @@ public class AuthService : IAuthenticator, IAuthorizer
             // Step 2: Populate AppPrincipal
             var claims = new Dictionary<string, string>();
 
-            appPrincipal = new AppPrincipal()
+            appPrincipal = new AppPrincipal(authRequest.UserIdentity, );
             {
                 UserIdentity = authRequest.UserIdentity,
                 Claims = claims

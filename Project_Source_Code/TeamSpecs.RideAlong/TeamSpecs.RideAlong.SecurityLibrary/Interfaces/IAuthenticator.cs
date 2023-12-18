@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TeamSpecs.RideAlong.SecurityLibrary
+﻿namespace TeamSpecs.RideAlong.SecurityLibrary
 {
     public interface IAuthenticator
     {
@@ -14,6 +8,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
 
         // better to create an object of AuthRequest rather than just putting in values 
         // instead of a tuple, just have a new response object
-        AppPrincipal Authenticate(AuthenticationRequest authRequest);
+        AppPrincipal? Authenticate(AuthenticationRequest authRequest);
     }
 }

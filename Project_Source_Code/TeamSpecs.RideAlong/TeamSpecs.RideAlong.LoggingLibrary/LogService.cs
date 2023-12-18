@@ -1,4 +1,5 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
+using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 public class LogService : ILogService
@@ -10,11 +11,11 @@ public class LogService : ILogService
         _logTarget = logTarget;
     }
 
-    public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
+    public async Task<IResponse> CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
         //changed to work with log object
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
-        IResponse response = _logTarget.WriteLog(log);
+        IResponse response = await Task.Run(() => _logTarget.WriteLog(log));
         return response;
     }
 }
