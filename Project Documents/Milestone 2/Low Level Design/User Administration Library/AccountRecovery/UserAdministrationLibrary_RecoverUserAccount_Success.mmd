@@ -9,19 +9,19 @@ participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SQLServerDAO
 participant ds as Data Store
 
-ml->>+uc: RecoverUser( userName: String): IResponse
+ml->>+uc: RecoverUserAccount(userName: String): IResponse
     Note over ml,uc: Manager Layer calls upon<br>` RecoverUser( userName: String): IResponse`<br>to recover the user
 
 %% UserService should check/ validate data passed through
-%% uc->>+uc: UserService checks to see if the `IResponse` object has errors or not
+uc->>+uc: UserService checks to see if the agruements has errors or not
 
-    %% Modify the user
+    %% Recover the User
     uc->>+dg: RecoverUserAccountSql(userName: String):  IResponse 
     Note over uc,dg: UserService calls upon<br>`RecoverUserAccountSql(userName: String): IResponse `<br>to pass user data to be written to a parameterized SqlCommand
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da: executeWriteSQL(sql: SqlCommand): IResponse
+    dg->>+da: executeWriteOnly(sql: SqlCommand): IResponse
     Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse`<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()
@@ -33,6 +33,6 @@ ml->>+uc: RecoverUser( userName: String): IResponse
 
     da-->>-dg: IResponse object returned with<br>`Response.ReturnValue` equal to the retrieved value
 
-    dg-->>-uc: IAccountResponse object returned with<br>`IAccountResponse.HasError` equal to false
+    dg-->>-uc: IResponse object returned with<br>`IResponse.HasError` equal to false
 
-    uc-->>-ml: IAccountResponse object returned
+    uc-->>-ml: IResponse object returned
