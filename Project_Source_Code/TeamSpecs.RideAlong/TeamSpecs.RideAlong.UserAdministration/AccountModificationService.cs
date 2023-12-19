@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
+using TeamSpecs.RideAlong.LoggingLibrary;
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
     public class AccountModificationService
     {
         private IUserTarget _userTarget;
+        private ILogService _logService;
 
         public AccountModificationService(IUserTarget userTarget)
         {
             _userTarget = userTarget;
+
         }
         public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth, string secondaryEmail) 
         {
