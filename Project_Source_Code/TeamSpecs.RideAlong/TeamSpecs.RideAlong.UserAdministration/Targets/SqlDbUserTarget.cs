@@ -444,7 +444,7 @@ public class SqlDbUserTarget : IUserTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "DisableUserAccount execute failed";
+            response.ErrorMessage = "RecoverUserAccount execute failed";
             return response;
         }
 
