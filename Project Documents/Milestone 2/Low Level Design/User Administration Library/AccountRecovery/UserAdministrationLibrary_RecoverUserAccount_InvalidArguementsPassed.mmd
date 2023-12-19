@@ -1,0 +1,18 @@
+ sequenceDiagram
+
+%% See BRD UA-2 for additional context
+
+participant ml as Manager Layer
+participant as as AuthService<br>(Services Layer)
+participant uc as UserService<br>(Services Layer)
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant da as SQLServerDAO
+participant ds as Data Store
+
+ml->>+uc: RecoverUserAccount(userName: String): IResponse
+    Note over ml,uc: Manager Layer calls upon<br>` RecoverUser( userName: String): IResponse`<br>to recover the user
+
+%% UserService should check/ validate data passed through
+uc->>+uc: UserService checks to see if the agruements has errors or not
+ 
+uc->>uc: UserService throws Arguement Exception

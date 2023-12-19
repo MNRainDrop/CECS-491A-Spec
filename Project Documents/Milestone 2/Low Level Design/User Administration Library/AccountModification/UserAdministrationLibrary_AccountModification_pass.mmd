@@ -43,6 +43,3 @@ sequenceDiagram
 
     uc-->>-ml: IResponse object returned
 
-    ml ->> ls: 'createLogAsync(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse '
-         Note over ml,ls: LoggingService calls upon<br>'createLogAsync(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse'<br> to log the modification was successful
-         Note right of ls: See Low Level Design for succesful Logging case
