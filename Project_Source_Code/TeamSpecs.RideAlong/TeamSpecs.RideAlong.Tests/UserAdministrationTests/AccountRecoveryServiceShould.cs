@@ -115,7 +115,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Assert
             Assert.False(response.HasError);
             Assert.Null(response.ErrorMessage);
-            foreach (string o in response.ReturnValue.OfType<string>())
+            foreach (string o in response.ReturnValue)
             {
                 Assert.True(o.Equals(testAltUsername));
             }

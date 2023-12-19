@@ -13,8 +13,9 @@ public class AuthService : IAuthenticator, IAuthorizer
     }
     private bool validatePass(AuthenticationRequest authRequest)
     {
-        string storedPass = _authTarget.fetchPass(authRequest.UserIdentity);
-        return false
+        throw new NotImplementedException();
+        //string storedPass = _authTarget.fetchPass(authRequest.UserIdentity);
+        //return false;
     }
     private Dictionary<string, string> getClaims(IAccountUserModel userIdentity)
     {
