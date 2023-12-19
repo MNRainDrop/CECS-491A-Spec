@@ -320,10 +320,10 @@ public class SqlDbUserTarget : IUserTarget
 
             // Finds claim CanLogin (ClaimID = 1) 
             string sqlCommand = @"
-            UPDATE UserClaims
+            UPDATE UserClaim
             SET claimScope = 'Yes'
-            FROM UserClaims uc
-            JOIN UserAccounts ua ON uc.UID = ua.UID
+            FROM UserClaim uc
+            JOIN UserAccount ua ON uc.UserID = ua.UserID
             WHERE ua.userName = @UserName AND uc.claimID = 1;";
 
             var parameters = new HashSet<SqlParameter>
@@ -371,10 +371,10 @@ public class SqlDbUserTarget : IUserTarget
 
             // Finds claim CanLogin (ClaimID = 1) 
             string sqlCommand = @"
-            UPDATE UserClaims
+            UPDATE UserClaim
             SET claimScope = 'No'
-            FROM UserClaims uc
-            JOIN UserAccounts ua ON uc.UID = ua.UID
+            FROM UserClaim uc
+            JOIN UserAccount ua ON uc.UserID = ua.UserID
             WHERE ua.userName = @UserName AND uc.claimID = 1;";
 
             var parameters = new HashSet<SqlParameter>
@@ -419,8 +419,8 @@ public class SqlDbUserTarget : IUserTarget
         #region Convert String to SQL
         sqlCommandString = @"
         SELECT ua.userName, up.alternateUserName
-        FROM UserAccounts ua
-        JOIN UserProfile up ON ua.UID = up.UID
+        FROM UserAccount ua
+        JOIN UserProfile up ON ua.UserID = up.UserID
         WHERE ua.userName = @UserName;";
 
         var sqlCommand = new SqlCommand
