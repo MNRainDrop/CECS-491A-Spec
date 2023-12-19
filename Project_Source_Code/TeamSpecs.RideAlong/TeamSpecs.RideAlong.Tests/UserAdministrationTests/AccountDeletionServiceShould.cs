@@ -1,9 +1,7 @@
-﻿using Azure;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
@@ -19,6 +17,8 @@ public class AccountDeletionServiceShoud
         var _DAO = new SqlServerDAO();
         var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO));
         var testUsername = "Deletetestemail@gmail.com";
+
+        var userAccount = new AccountUserModel(testUsername);
 
         // Expected Outcome
         var expectedHasError = false;
@@ -39,7 +39,7 @@ public class AccountDeletionServiceShoud
 
         // Act
         timer.Start();
-        response = accountDeletionService.DeleteUserAccount(testUsername);
+        response = accountDeletionService.DeleteUserAccount(userAccount);
         timer.Stop();
 
         // Assert
@@ -57,11 +57,13 @@ public class AccountDeletionServiceShoud
         var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO));
         string testUsername = null;
 
+        var userAccount = new AccountUserModel(testUsername);
+
         // Act and Assert
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountDeletionService.DeleteUserAccount(testUsername)
+                () => response = accountDeletionService.DeleteUserAccount(userAccount)
             );
         }
         catch

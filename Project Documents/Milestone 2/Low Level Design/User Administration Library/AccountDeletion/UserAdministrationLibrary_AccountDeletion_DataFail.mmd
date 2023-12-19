@@ -1,0 +1,25 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant usm as UserAdministrationManager<br>(Manager Layer)
+participant uc as UserService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer) 
+
+Note Right of e: Assume something in the entry point<br>called the manager to do delete a user
+Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
+
+usm->>+uc: DeleteUser(userName: string) : IResponse
+    Note over usm,uc: UserAdministrationManager calls upon<br>`IAccountResponse deleteUser(IUserModel)`<br>to delete the user
+
+uc->>uc: Validate arguments
+
+uc->>uc: Arguments are invalid
+
+uc->>uc: IResponse object Created
+    Note over uc,uc: IResponse.HasError = true<br>IResponse.ErrorMessage = invalid arguments
+# Write log that user was unsuccessfully deleted
+uc-->>ll: CreateLogAsync(LogLevel: string, LogCategory: string, LogContext: string, UserHash: string) : IResponse
+    Note over uc,ll: UserService calls upon LogService to log<br>invalid data provided.<br>See logging success case
+
+uc-->>-usm: ArgumentException thrown
+

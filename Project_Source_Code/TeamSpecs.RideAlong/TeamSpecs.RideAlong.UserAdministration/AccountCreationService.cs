@@ -27,6 +27,7 @@ public class AccountCreationService : IAccountCreationService
         #region Validate arguments
         if(string.IsNullOrWhiteSpace(userName))
         {
+            _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
             throw new ArgumentException($"{nameof(userName)} must be valid");
         }
         #endregion
@@ -43,7 +44,8 @@ public class AccountCreationService : IAccountCreationService
 
         // Use these lines of code while IPepperService and IHashService is not complete
         userAccount.UserHash = userName;
-
+        
+        // Create Salt
         var salt = RandomService.GenerateUnsignedInt();
         userAccount.Salt = salt;
 
@@ -59,7 +61,7 @@ public class AccountCreationService : IAccountCreationService
             response.ErrorMessage = "Could not create account";
         }
 
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Account Creation", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
         
 
         // Return Response
