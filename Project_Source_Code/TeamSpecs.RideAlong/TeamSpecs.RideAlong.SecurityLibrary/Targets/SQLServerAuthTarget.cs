@@ -30,7 +30,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 Response userHashResponse = new Response();
                 userHashResponse.HasError = false;
                 userHashResponse.ReturnValue.Add(passHash);
-
+                return userHashResponse;
             }
             return new Response();
         }

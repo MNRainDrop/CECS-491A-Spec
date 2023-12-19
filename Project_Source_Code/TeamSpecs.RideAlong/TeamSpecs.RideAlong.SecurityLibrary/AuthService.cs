@@ -1,13 +1,20 @@
 ﻿using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+
 namespace TeamSpecs.RideAlong.SecurityLibrary;
 // Library built in
 
 public class AuthService : IAuthenticator, IAuthorizer
 {
-
+    IAuthTarget _authTarget;
+    AuthService(IAuthTarget authTarget)
+    {
+        _authTarget = authTarget;
+    }
     private bool validatePass(AuthenticationRequest authRequest)
     {
-        return false;
+        string storedPass = _authTarget.fetchPass(authRequest.UserIdentity);
+        return false
     }
     private Dictionary<string, string> getClaims(IAccountUserModel userIdentity)
     {
