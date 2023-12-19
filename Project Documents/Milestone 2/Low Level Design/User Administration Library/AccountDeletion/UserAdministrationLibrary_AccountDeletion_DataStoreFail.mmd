@@ -10,7 +10,7 @@ participant da as SQLServerDAO
 participant ds as Data Store
 
 Note Right of e: Assume something in the entry point<br>called the manager to do delete a user
-Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account<br>and the manager logged the user requested<br>for deletion
+Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
 
 usm->>+uc: DeleteUser(userName: string) : IResponse
     Note over usm,uc: UserAdministrationManager calls upon<br>`IAccountResponse deleteUser(IUserModel)`<br>to delete the user
@@ -26,22 +26,29 @@ dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
     Note over dg,da: SqlServerUserTarget calls upon<br>`IResponse executeWriteSQL(SqlCommand sql)`<br>to write the sql
 
-da->>+ds: SqlCommand.ExecuteNonQuery()
-    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
 
-ds->>ds: DELETE FROM UserAccount<br>WHERE UserName = @userName
-    Note over ds,ds: Cascade delete should be run within the database
+rect rgba(127, 127, 127, 0.2)
+loop For every command in sqlCommands
 
-ds->>ds: User account is successfully<br>deleted from the Data Store
+    da->>+ds: SqlCommand.ExecuteNonQuery()
+        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+    
+    ds->>ds: DELETE FROM UserAccount<br>WHERE UserName = @userName
 
-ds-->>-da: Database returns the number of rows affected
+end
+end
 
-da-->>-dg: IResponse object returned with<br>`IResponse.ReturnValue` equal to the retrieved value
+ds->>ds: User deletion is unsuccessful<br>deleted from the Data Store
 
-dg-->>-uc: IResponse object returned with<br>`IAccountResponse.HasError` equal to false
+ds-->>-da: Database throws an exception
 
-uc-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, createdBy: string) : IResponse
-    Note over uc,ll: User Service logs account creation was successful. See logging success case
+da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the error message 
 
-uc-->>-usm: IResponse object returned
-# Write log that user was successfully deleted
+dg-->>-uc: SqlDbUserTarget checks the error to see if the error is safe to retry
+
+# Write log that user was unsuccessfully deleted
+uc-->>ll: CreateLogAsync(LogLevel: string, LogCategory: string, LogContext: string, UserHash: string) : IResponse
+    Note over uc,ll: UserService calls upon LogService to log<br>unsuccessful assignment of claims and/or account deletion.<br>See logging success case
+
+uc-->>-usm: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
