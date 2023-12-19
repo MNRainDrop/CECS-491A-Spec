@@ -50,7 +50,7 @@ public class AuthService : IAuthenticator, IAuthorizer
         }
         #endregion
 
-        AppPrincipal appPrincipal = null;
+        AppPrincipal? appPrincipal = null;
 
         try
         {
