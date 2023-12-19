@@ -2,6 +2,6 @@
 
 public interface IHashService
 {
-    string hashUser(string userName, uint pepper);
-    string hashPass(uint salt, uint pepper, string pass);
+    string hashUser(string userName, int pepper);
+    string hashPass(int salt, int pepper, string pass);
 }
