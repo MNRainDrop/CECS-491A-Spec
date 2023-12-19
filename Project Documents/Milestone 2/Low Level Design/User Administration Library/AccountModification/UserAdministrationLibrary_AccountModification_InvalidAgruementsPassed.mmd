@@ -1,0 +1,25 @@
+sequenceDiagram
+
+    # See BRD UA-6 Account Modification
+    # MethodName(varaibleName : dataType) : ReturnType
+
+    participant ml as Manager Layer
+    participant as as AuthService`<br>`(Services Layer)
+    participant uc as UserService`<br>`(Services Layer)
+    participant ls as LoggingService`<br>`(Services Layer)
+    participant dg as SqlDbUserTarget`<br>`(Data Gateway)
+    participant da as SQLServerDAO
+    participant ds as Data Store
+
+    Note Right of e: Assume something in the entry point<br>called the manager to do modify a user
+    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to modify an account
+
+   ml->>+uc:  modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse
+        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse`<br>to modify the user
+
+    # UserService should check/ validate data passed through
+    uc->>uc: UserService checks to see if the arugments userName, dateOfBirth, and secondaryEmail have errors or not
+
+    uc->>uc: UserService throws Arguement Exception 
+
+    

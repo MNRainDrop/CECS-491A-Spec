@@ -17,7 +17,7 @@ public class AccountCreationServiceShould
         var timer = new Stopwatch();
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(), new HashService());
+        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
         var testUsername = "Createtestemail@gmail.com";
 
         // Expected Outcome
@@ -54,7 +54,7 @@ public class AccountCreationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(), new HashService());
+        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
         string testUsername = null;
 
         // Act and Assert

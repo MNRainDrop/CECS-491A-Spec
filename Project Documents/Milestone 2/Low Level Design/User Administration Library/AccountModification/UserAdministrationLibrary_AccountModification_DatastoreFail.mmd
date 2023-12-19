@@ -11,14 +11,14 @@ sequenceDiagram
     participant da as SQLServerDAO
     participant ds as Data Store
     
-    Note Right of e: Assume something in the entry point<br>called the manager to do create a user
-    Note Right of ml: Assume the user provided values are valid<br>and the user is authorized to create an account
+    Note Right of e: Assume something in the entry point<br>called the manager to do modify a user
+    Note Right of ml: Assume the user provided values are valid<br>and the user is authorized to modify an account
 
-    ml->>+uc:  modifyUser(IProfileUserModel): IResponse
-        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(IProfileUserModel: object): IResponse`<br>to modify the user
+    ml->>+uc:  modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse
+        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse`<br>to modify the user
 
     # UserService should check/ validate data passed through
-    uc->>uc: UserService checks to see if the `IProfileUserModel` object has errors or not
+    uc->>uc: UserService checks to see if the arugments userName, dateOfBirth, and secondaryEmail have errors or not
 
     # Modify the user
      uc->>+dg: generateAccountModificationSQL(IProfileUserModel): IResponse
@@ -26,8 +26,8 @@ sequenceDiagram
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da:  executeWriteSQL(sql: SqlCommand ): IResponse
-    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse `<br>to write the sql
+    dg->>+da:  executeWriteOnly(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse
+    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteOnly(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse `<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()
     Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command\
@@ -37,10 +37,8 @@ sequenceDiagram
     ds-->>-da: Database returns an error
 
     da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the error message 
-
-    dg->>dg: SqlDbUserTarget checks the error to see if the error is safe to retry
-
-    dg-->>-uc: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+  
+    dg-->>-uc: IResponse object returned 
 
     uc-->>ll: CreateLogAsync(LogLevel: string, LogCategory: string, LogContext: string, UserHash: string) : IResponse
     Note over uc,ll: UserService calls upon LogService to log<br>unsuccessful assignment of claims and/or account creation.<br>See logging success case

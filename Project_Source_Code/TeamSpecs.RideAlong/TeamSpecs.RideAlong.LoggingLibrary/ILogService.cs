@@ -3,5 +3,6 @@ using TeamSpecs.RideAlong.Model;
 
 public interface ILogService
 {
-    public IResponse CreateLog(string logLevel, string category, string message, string? userHash);
+    IResponse CreateLog(string logLevel, string category, string message, string? userHash);
+    Task<IResponse> CreateLogAsync(string logLevel, string category, string message, string? userHash);
 }

@@ -1,4 +1,4 @@
-﻿using TeamSpecs.RideAlong.UserAdministration;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary
 {

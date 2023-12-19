@@ -12,23 +12,23 @@ sequenceDiagram
     participant da as SQLServerDAO
     participant ds as Data Store
 
-    Note Right of e: Assume something in the entry point<br>called the manager to do create a user
-    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
+    Note Right of e: Assume something in the entry point<br>called the manager to do modify a user
+    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to modify an account
 
-    ml->>+uc:  modifyUser(IProfileUserModel): IResponse
-        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(DateTime dateOfBirth): IResponse`<br>to modify the user
+    ml->>+uc:  modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse
+        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse`<br>to modify the user
 
     # UserService should check/ validate data passed through
-    uc->>uc: UserService checks to see if the `IProfileUserModel` object has errors or not
+    uc->>uc: UserService checks to see if the arugments userName, dateOfBirth, and secondaryEmail have errors or not
 
     # Modify the user
-     uc->>+dg: generateAccountModificationSQL(IProfileUserModel): IResponse
-     Note over uc,dg: UserService calls upon<br>`generateAccountModificationSQL(IProfileUserModel): IResponse`<br>to pass user data to be written to a parameterized SqlCommand
+     uc->>+dg: ModifyUserProfileSQL(userName: String, profile: IProfileUserModel): IResponse
+     Note over uc,dg: UserService calls upon<br>`ModifyUserProfileSQL(userName: String, profile: IProfileUserModel): IResponse`<br>to pass user data to be written to a parameterized SqlCommand
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da:  executeWriteSQL(sql: SqlCommand ): IResponse
-    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse `<br>to write the sql
+    dg->>+da:  executeWriteOnly(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse
+    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse `<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()
     Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
@@ -43,6 +43,6 @@ sequenceDiagram
 
     uc-->>-ml: IResponse object returned
 
-    ml ->> ls: 'createLog(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse '
-         Note over ml,ls: LoggingService calls upon<br>'createLog(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse'<br> to log the modification was successful
+    ml ->> ls: 'createLogAsync(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse '
+         Note over ml,ls: LoggingService calls upon<br>'createLogAsync(logLevel: string , logCategory: string, logContext: string, createdBy: string?): IResponse'<br> to log the modification was successful
          Note right of ls: See Low Level Design for succesful Logging case
