@@ -26,16 +26,12 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteWriteOnly(string Writevalue)
         {
             var response = new Response();
-            //string fullPath = "C:\\Users\\huynj\\OneDrive\\Documents\\GitHub\\323--Project1\\CECS-491A-Spec\\Project_Source_Code\\TeamSpecs.RideAlong\\TeamSpecs.RideAlong.DataAccess\\DataAccessObjects\\PepperOutput.txt";
-            //File.WriteAllText(fullPath, Writevalue);
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.txt"),true))
             {
                 outputFile.WriteLine(Writevalue);
             }
-            //System.Diagnostics.Debug.WriteLine(Path.Combine(docPath, "PPOut.txt"));
-            //System.Diagnostics.Debug.WriteLine("Hello");
-
+       
             //try-catch block and see which to return 
             response.HasError = false;
             return response;

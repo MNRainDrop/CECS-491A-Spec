@@ -1,0 +1,26 @@
+sequenceDiagram
+participant e as Entry Point
+participant usm as UserSecurityManager<br>(Manager Layer)
+participant pp as PepperService<br>(Services Layer)
+participant uc as RandomGenerationService<br>(Services Layer)
+participant dg as FilePepperTarget<br>(Data Gateway)
+participant da as JsonFileDAO<br>(DAO)
+participant ds as Data Store
+
+Note Left of e: Assuming something in the entry point<br>called the manager to do create a user
+
+usm->>+pp: '.generatePepper(key: string): uint'
+pp->>+uc: `.generateUnsignedInt(): uint`
+uc->>uc:'.generateUnsignedInt() generates random unsigned integer'
+uc->>+pp: '.generateUnsignedInt() return unsigned int'
+pp->>pp: '.populateKeyValue(string key, uint value): KeyValuePair<string, uint><br>populate the key value pair in the object'
+pp->>+dg:'.SendingPepper(Dictionary<string, string>  PepperObject): object' 
+dg->>dg: '.Serialize(Dictionary<string, string> PPobject): string'
+dg->>+da: '.ExecuteWriteOnly(string WriteValue): IResponse'
+da->>+ds: '.WriteLine() to write to text file'
+ds->>ds: 'write json to text file sucessfully'
+ds-->>-da: 'DataStore does not raise error'
+da-->>da: 'DAO check for error'
+da-->>-dg: 'return IResponse with .HasError() equals to false' 
+dg-->>-uc: 'return IResponse with .HasError() equals to false'
+uc-->>-usm: 'generateUnsignedInt() return the generated unsigned integer'
