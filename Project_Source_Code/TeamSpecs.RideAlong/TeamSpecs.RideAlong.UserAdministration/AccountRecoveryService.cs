@@ -23,10 +23,14 @@ namespace TeamSpecs.RideAlong.UserAdministration
         public IResponse EnableUserAccount(string userName)
         {
             IResponse response = new Response();
-            var userHash = _hashService.hashUser(userName, _pepper.RetrievePepper("Account Creation"));
+            // Use this when RetrievePepper works
+            //var userHash = _hashService.hashUser(userName, (int)_pepper.RetrievePepper("Account Creation"));
+
+            // Using this for now
+            var userHash = _hashService.hashUser(userName, 0);
 
             #region Validiating Arguements
-            if (String.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 _logService.CreateLogAsync("Error", "Data", $"{nameof(userName)} must be valid", userHash);
                 throw new ArgumentException($"{nameof(userName)} must be valid");
@@ -47,7 +51,11 @@ namespace TeamSpecs.RideAlong.UserAdministration
         public IResponse DisableUserAccount(string userName)
         {
             IResponse response = new Response();
-            var userHash = _hashService.hashUser(userName, _pepper.RetrievePepper("Account Creation"));
+            // Use this when RetrievePepper works
+            //var userHash = _hashService.hashUser(userName, (int)_pepper.RetrievePepper("Account Creation"));
+
+            // Using this for now
+            var userHash = _hashService.hashUser(userName, 0);
 
             #region Validiating Arguements
             if (String.IsNullOrWhiteSpace(userName))
@@ -71,10 +79,14 @@ namespace TeamSpecs.RideAlong.UserAdministration
         public IResponse RecoverUserAccount(string userName)
         {
             IResponse response = new Response();
-            var userHash = _hashService.hashUser(userName, _pepper.RetrievePepper("Account Creation"));
+            // Use this when RetrievePepper works
+            //var userHash = _hashService.hashUser(userName, (int)_pepper.RetrievePepper("Account Creation"));
+
+            // Using this for now
+            var userHash = _hashService.hashUser(userName, 0);
 
             #region Validiating Arguements
-            if (String.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 _logService.CreateLogAsync("Error", "Data", $"{nameof(userName)} must be valid", userHash);
                 throw new ArgumentException($"{nameof(userName)} must be valid");
