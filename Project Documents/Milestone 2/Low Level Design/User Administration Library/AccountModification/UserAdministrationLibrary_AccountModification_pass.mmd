@@ -10,24 +10,23 @@ sequenceDiagram
     participant da as SQLServerDAO
     participant ds as Data Store
 
-    ml->>+as: 'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'
-        Note over ml,as: Manager Layer calls upon<br>'isAuthorized( currentPrincipal: AppPrincipal, requiredClaims: IDictionary<string> <string>): AppAuthService'<br>to see if user has correct permissions
-        Note right of as: See Low Level Design for success Authorization case
+    Note Right of e: Assume something in the entry point<br>called the manager to do modify a user
+    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to modify an account
 
-    ml->>+uc: modifyUser(profile: IUserProfileModel): IResponse 
-        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(account: IUserProfileModel): IResponse`<br>to modify the user
+    ml->>+uc:  modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse
+        Note over ml,uc: Manager Layer calls upon<br>`modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse`<br>to modify the user
 
     # UserService should check/ validate data passed through
-    uc->>uc: UserService checks to see if the `IUserProfileModel` object has errors or not
+    uc->>uc: UserService checks to see if the arugments userName, dateOfBirth, and secondaryEmail have errors or not
 
     # Modify the user
-     uc->>+dg: generateAccountModificationSQL(IUserProfileModel): IResponse
-     Note over uc,dg: UserService calls upon<br>`generateAccountModificationSQL(IUserProfileModel): IResponse`<br>to pass user data to be written to a parameterized SqlCommand
+     uc->>+dg: ModifyUserProfileSQL(userName: String, profile: IProfileUserModel): IResponse
+     Note over uc,dg: UserService calls upon<br>`ModifyUserProfileSQL(userName: String, profile: IProfileUserModel): IResponse`<br>to pass user data to be written to a parameterized SqlCommand
 
     dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
-    dg->>+da: executeWriteSQL(sql: SqlCommand): IResponse 
-    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sql: SqlCommand): IResponse`<br>to write the sql
+    dg->>+da:  executeWriteOnly(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse
+    Note over dg,da: SqlServerUserTarget calls upon<br>`executeWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): IResponse `<br>to write the sql
 
     da->>+ds: SqlCommand.ExecuteNonQuery()
     Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command

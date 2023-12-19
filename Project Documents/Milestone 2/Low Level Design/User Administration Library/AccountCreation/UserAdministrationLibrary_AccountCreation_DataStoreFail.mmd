@@ -5,6 +5,7 @@ participant usm as UserAdministrationManager<br>(Manager Layer)
 participant uc as UserService<br>(Services Layer)
 participant ss as PepperService<br>(Services Layer)
 participant rs as RandomService<br>(Services Layer)
+participant hs as HashService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer)
 participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SqlServerDAO
@@ -13,30 +14,36 @@ participant ds as Data Store
 Note Right of e: Assume something in the entry point<br>called the manager to do create a user
 Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
 
-usm->>+uc: CreateValidUserAccount(userName: string, dateOfBirth: string) : IResponse
+usm->>+uc: CreateValidUserAccount(userName: string) : IResponse
     Note over usm,uc: UserAdministrationManager calls upon<br>User Service to create the user with the pepper
 
+uc->>uc: Validate parameters
+
+# New User Object
 uc->>uc: UserService creates a new IUserAccountModel object
     Note over uc,uc: string UserName = userName<br>DateTime DateCreated = currentDateTime
 
-uc->>+ss: RetrievePepper(key: string) : uint 
-    Note over uc,ss: UserService calls upon<br>PepperService to get a pepper for the UserHash.<br>See PepperService success scenario
-ss-->>-uc: PepperService returns the user pepper
-
-uc->>uc: string UserHash = ComputeHash(UserName + UserPepper)
-    Note over uc,uc: UserService creates UserHash using the pepper
-
-uc->>rs: GenerateUnsignedInt() : uint
-    Note over uc,rs: UserService calls upon<br>RandomService to get a salt for the OTPHash.<br>See RandomService success scenario
-rs-->>uc: RandomService returns the salt
-
+# User Hash
 uc->>+ss: RetrievePepper(key: string) : uint 
     Note over uc,ss: UserService calls upon<br>PepperService to get a pepper for the OTPHash.<br>See PepperService success scenario
 ss-->>-uc: PepperService returns the OTP pepper
 
-uc->>uc: string OTPHash = ComputeHash(UserName + OTPSalt + OTPPepper)
-    Note over uc,uc: UserService creates OTPHash using the salt
+uc->>+hs: ComputeHash(userName: string, pepper: uint) : string
+    Note over uc,hs: UserService creates UserHash using the pepper
+hs-->>-uc: HashService returns string
 
+uc->>uc: UserService updates value of IUserAccountObject.UserHash
+    Note over uc,uc: string UserHash = returned hash from UserService
+
+# User Salt
+uc->>rs: GenerateUnsignedInt() : uint
+    Note over uc,rs: UserService calls upon<br>RandomService to get a salt for the OTPHash.<br>See RandomService success scenario
+rs-->>uc: RandomService returns the salt
+    
+uc->>uc: UserService updates value of IUserAccountObject.Salt
+    Note over uc,uc: uint Salt = returned salt from RandomService
+
+# User Claims
 uc->>uc: Create an IDictionary of<br>claims a user will have
 
 # to data gateway 
@@ -62,7 +69,7 @@ end
 
 ds->>ds: User account unsuccessfully<br>writes to the Data Store
 
-ds-->>-da: Database returns an error
+ds-->>-da: Database throws an exception
 
 da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the error message 
 

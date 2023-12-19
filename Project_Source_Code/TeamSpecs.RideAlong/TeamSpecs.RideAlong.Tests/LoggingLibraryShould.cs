@@ -96,7 +96,7 @@ public class LoggingLibraryShould
     }
 
     [Fact]
-    public void LL_Log_CreateLogWithoutCreatedBy_LogWillBeWrittenToDataStore_Pass()
+    public void LL_Log_CreateLogWithoutUserHash_LogWillBeWrittenToDataStore_Pass()
     {
         // Arrange
         var timer = new Stopwatch();

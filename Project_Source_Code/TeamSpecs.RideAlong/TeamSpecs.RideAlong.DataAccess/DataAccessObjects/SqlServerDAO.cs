@@ -1,72 +1,74 @@
 ﻿using TeamSpecs.RideAlong.Model;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
-    private string connectionString;
-    private readonly string server;
-    private readonly string database;
-    private string access;
+    private string _connString;
+    private readonly string _server;
+    private readonly string _database;
+    private string _access;
 
     public SqlServerDAO ()
     {
-        connectionString = "";
-        server = @"LAPTOP-MARLONE\RIDEALONG";
-        database = "RideAlong";
-        access = "";
+        _connString = "";
+        _server = @"LAPTOP-Marlone\RIDEALONG";
+        _database = "RideAlong";
+        _access = "";
     }
-    public IResponse ExecuteWriteOnly(SqlCommand sql)
+    public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        access = "User Id=RideAlongWrite;Password=writeme;";
+        _access = "User Id=RideAlongWrite;Password=writeme;TrustServerCertificate=True;";
+        _connString = $"Server={_server};Database={_database};{_access}";
+        var rowsAffected = 0;
 
-        var response = new Response();
-        try
+        using (var conn = new SqlConnection(_connString))
         {
-            connectionString = $"Server={server};Database={database};{access}";
-            using (var connection = new SqlConnection(connectionString))
+            conn.Open();
+            using (var transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
-                connection.Open();
-                sql.Connection = connection;
-                var changedRows = sql.ExecuteNonQuery();
+                foreach (var sqlCommand in sqlCommands)
+                {
+                    using (var command = new SqlCommand(sqlCommand.Key, conn, transaction))
+                    {
+                        command.CommandType = System.Data.CommandType.Text;
 
-                response.ReturnValue = new List<object>();
-                response.ReturnValue.Add(changedRows);
+                        if (sqlCommand.Value != null)
+                        {
+                            foreach (var parameter in sqlCommand.Value)
+                            {
+                                command.Parameters.Add(parameter);
+                            }
+                        }
+
+                        try
+                        {
+                            rowsAffected += command.ExecuteNonQuery();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+                transaction.Commit();
+                return rowsAffected;
             }
-            response.HasError = false;
-            response.IsSafeToRetry = false;
-            }
-        catch (SqlException ex)
-        {
-            // If connection.Open() or command.ExecuteNonQuery() throws SqlException
-            // Executed command against a locked row
-            // Timeout during an operation
-            response.HasError = true;
-            response.ErrorMessage = ex.Message;
-            CreateLog(response);
         }
-        catch (InvalidOperationException ex)
-        {
-            // If connection.Open() or command.ExecuteNonQuery() throws InvalidOperationException
-            // SqlConnection could have closed or been dropped during operation
-            response.HasError = true;
-            response.ErrorMessage = ex.Message;
-            response.IsSafeToRetry = false;
-            CreateLog(response);
-        }
-        return response;
     }
 
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
-        access = "User Id=RideAlongRead;Password=readme;";
+        _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
+        _connString = $"Server={_server};Database={_database};{_access}";
 
         var response = new Response();
         try
         {
-            connectionString = $"Server={server};Database={database};{access}";
-            using (var connection = new SqlConnection(connectionString))
+            
+            using (var connection = new SqlConnection(_connString))
             {
                 connection.Open();
 
@@ -93,7 +95,6 @@ public class SqlServerDAO : IGenericDAO
             // Timeout during an operation
             response.HasError = true;
             response.ErrorMessage = ex.Message;
-            CreateLog(response);
         }
         catch (InvalidOperationException ex)
         {
@@ -102,16 +103,19 @@ public class SqlServerDAO : IGenericDAO
             response.HasError = true;
             response.ErrorMessage = ex.Message;
             response.IsSafeToRetry = false;
-            CreateLog(response);
         }
         return response;
     }
 
-    public IResponse CreateLog(IResponse DBresponse)
+    public IResponse ExecuteReadOnly()
     {
-        //changed to work with log object
-        ILog log = new Log(null, DateTime.UtcNow, "Error", "Data Store", DBresponse.ErrorMessage, null);
-        IResponse response = new SqlDbLogTarget(this).Write(log);
-        return response;
+        throw new NotImplementedException(); 
     }
+
+    public IResponse ExecuteWriteOnly(string value)
+    {
+        throw new NotImplementedException();
+    }
+
+
 }

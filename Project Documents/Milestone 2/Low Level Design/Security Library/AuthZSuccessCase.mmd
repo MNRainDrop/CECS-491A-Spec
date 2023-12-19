@@ -1,0 +1,14 @@
+sequenceDiagram
+participant e as Entry Point
+participant usm as UserSecurityManager<br>(Manager Layer)
+participant uc as AuthService<br>(Services Layer)
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant da as SQLServerDAO<br>(DAO)
+participant ds as Data Store
+
+Note Left of e: Assuming something in the entry point<br>called the manager to do create a user
+
+usm->>+uc: `bool IsAuthorize(AppPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)`
+uc->>uc:'IsAuthorize(AppPrincipal currentPrincipal, IDictionary<string, string> requiredClaims) check for claims in the RequiredClaims Dictionary'
+
+uc-->>-usm: 'IsAuthorize(AppPrincipal currentPrincipal, IDictionary<string, string> requiredClaims) return true'

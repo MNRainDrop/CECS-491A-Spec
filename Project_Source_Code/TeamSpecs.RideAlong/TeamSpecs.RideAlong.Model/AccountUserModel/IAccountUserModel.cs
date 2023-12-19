@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TeamSpecs.RideAlong.Model.AccountUserModel
+﻿namespace TeamSpecs.RideAlong.Model;
+public interface IAccountUserModel
 {
-    public interface IAccountUserModel
-    {
-        public T GetProperty<T>(string propertyName);
-
-        public void SetProperty(string propertyName, object value);
-    }
-
-} 
+    string UserName { get; set; }
+    uint Salt { get; set; }
+    string? UserHash { get; set; }
+}

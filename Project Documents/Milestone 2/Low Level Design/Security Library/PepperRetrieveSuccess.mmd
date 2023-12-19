@@ -1,0 +1,23 @@
+sequenceDiagram
+participant e as Entry Point
+participant usm as UserSecurityManager<br>(Manager Layer)
+participant pp as PepperService<br>(Services Layer)
+participant uc as RandomGenerationService<br>(Services Layer)
+participant dg as FilePepperTarget<br>(Data Gateway)
+participant da as JsonFileDAO<br>(DAO)
+participant ds as Data Store
+
+Note Left of e: Assuming something in the entry point<br>called the manager to do create a user
+
+usm->>+pp: 'RetrievePepper(key: string) : uint'
+pp->>+dg: 'RetrieveFromFile(key: string): IResponse'
+dg->>+da: 'ExecuteReadOnly(): IResponse'
+da->>+ds: '.ReadToEnd(): string'
+ds->>ds: 'read from file sucessfully'
+ds-->>-da: '.ReadToEnd() returns string'
+da-->>da: 'DAO check for null value'
+da-->>-dg: 'return IResponse with .HasError() equals to false and ReturnValue <br> hold the string that read from file' 
+dg-->>dg: '.Deserialize<Dictionary<string, string>>(jsonString: string): Dictionary <br> deserialize the string into a json object'
+dg-->>-pp: 'return IResponse with .HasError() equals to false and <br> ReturnValue hold the key-value pair of a specific pepper'
+pp-->>pp: 'extract value from IResponse.ReturnValue'
+pp-->>-usm: 'return uint'
