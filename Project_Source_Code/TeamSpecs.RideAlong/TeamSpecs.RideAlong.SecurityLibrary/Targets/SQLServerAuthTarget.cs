@@ -32,7 +32,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 userHashResponse.ReturnValue.Add(passHash);
 
             }
-            return ;
+            return new Response();
         }
 
         public IResponse getClaims(long UID)
