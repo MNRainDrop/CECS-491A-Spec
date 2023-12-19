@@ -59,7 +59,7 @@ public class AccountCreationService : IAccountCreationService
             response.ErrorMessage = "Could not create account";
         }
 
-        _logService.CreateLog(response.HasError ? "Error" : "Info", "Account Creation", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Account Creation", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
         
 
         // Return Response
