@@ -1,0 +1,61 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileService<br>(Services Layer)
+participant uc as UserService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Right of e: Assume something in the entry point<br>called the manager to do create a user
+Note Right of vpm: Assume the user provided values<br>are valid and the user is authorized<br>to create a vehicle profile
+
+vpm->>+vps: CreateVehicleProfile(vin: string, licensePlate: string, color: string) : IResponse
+    Note over vpm,vps: VehicleProfileManager calls upon<br>VehicleProfileService to create the vehicle
+
+vps->>vps: Validate Parameters
+
+# Use api to search for other details on the vehicle
+vps->>vps: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponseMessage>
+    Note over vps,vps: Requests information from API using the vin of the vehicle
+
+# Create new IVehicleProfile Object
+vps->>vps: VehicleProfileService creates a new IVehicleProfile object
+    Note over vps,vps: string VIN = vin<br>string LicensePlate = licensePlate<br>string Make = make<br>string Model = model<br>string Year = year<br>string Color = color
+
+# Send to data store
+vps->>+dg: CreateVehicleProfileSql(vehicleProfile: IVehicleProfile) : IResponse
+    Note over vps,dg: VehicleProfileService calls upon SqlDbVechileTarget to generate the sql statement and parameters<br>SqlDbVehicleTarget will create sql statement and parameters first
+
+dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+    da->>+ds: SqlCommand.ExecuteNonQuery()
+        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+    ds->>ds: INSERT INTO VehicleProfile (VIN, LicensePlate, Make, Model, Year, Color)<br>VALUES (VIN, LicensePlate, Make, Model, Year, Color)
+
+ds->>ds: User account is successfully<br>written to the Data Store
+
+ds-->>-da: Database returns the number of rows affected
+
+da-->>-dg: SqlServerDAO returns the number of rows affected
+
+dg->>dg: SqlDbVehicleTarget checks to see that one and only one row was affected
+
+dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to false
+
+# Log successful vehicle creation
+vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+    Note over vps,ll: UserService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+# User is now granted access to service log
+vps->>+uc: UserAdministrationLibrary.ModifyUser() : IResponse
+    Note over vps,uc: User is granted permission to view service log.<br>See user modification success case
+
+uc-->>-vps: IResponse object returned
+
+vps->>vps: Verifies the modification of user claims was successful
+
+vps-->>-vpm: IResponse object returned

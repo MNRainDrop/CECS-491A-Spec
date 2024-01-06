@@ -1,7 +1,7 @@
 sequenceDiagram
 
     # MethodName(varaibleName : dataType) : ReturnType
-
+    participant e as Entry Layer
     participant ml as Manager Layer
     participant ls as LoggingService<br>(Services Layer)
     participant as as AuthService<br>(Services Layer)
@@ -11,7 +11,7 @@ sequenceDiagram
     participant ds as Data Store
 
     Note Right of e: Assume something in the entry point<br>called the manager to do modify a user
-    Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to modify an account
+    Note Right of ml: Assume the user provided values are valid<br>and the user is authorized to modify an account
 
     ml->>+uc:  modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse
         Note over ml,uc: Manager Layer calls upon<br>`modifyUser(userName: String, dateOfBirth: DateTime, secondaryEmail: String): IResponse`<br>to modify the user
