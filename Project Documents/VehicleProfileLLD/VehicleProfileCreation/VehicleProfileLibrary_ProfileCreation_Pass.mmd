@@ -12,7 +12,7 @@ participant ds as Data Store<br>(Sql Server)
 Note Right of e: Assume something in the entry point<br>called the manager to do create a user
 Note Right of vpm: Assume the user provided values<br>are valid and the user is authorized<br>to create a vehicle profile
 
-vpm->>+vps: CreateVehicleProfile(vin: string, licensePlate: string, color: string) : IResponse
+vpm->>+vps: CreateVehicleProfile(vin: string, licensePlate: string, color: string, userAccount: IUserAccount) : IResponse
     Note over vpm,vps: VehicleProfileManager calls upon<br>VehicleProfileService to create the vehicle
 
 vps->>vps: Validate Parameters
@@ -23,7 +23,7 @@ vps->>vps: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponse
 
 # Create new IVehicleProfile Object
 vps->>vps: VehicleProfileService creates a new IVehicleProfile object
-    Note over vps,vps: string VIN = vin<br>string LicensePlate = licensePlate<br>string Make = make<br>string Model = model<br>string Year = year<br>string Color = color
+    Note over vps,vps: string VIN = vin<br>string LicensePlate = licensePlate<br>string Make = make<br>string Model = model<br>int Year = year<br>string Color = color<br>int Owner = userID
 
 # Send to data store
 vps->>+dg: CreateVehicleProfileSql(vehicleProfile: IVehicleProfile) : IResponse
@@ -49,13 +49,5 @@ dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to fals
 # Log successful vehicle creation
 vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
     Note over vps,ll: UserService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
-
-# User is now granted access to service log
-vps->>+uc: UserAdministrationLibrary.ModifyUser() : IResponse
-    Note over vps,uc: User is granted permission to view service log.<br>See user modification success case
-
-uc-->>-vps: IResponse object returned
-
-vps->>vps: Verifies the modification of user claims was successful
 
 vps-->>-vpm: IResponse object returned

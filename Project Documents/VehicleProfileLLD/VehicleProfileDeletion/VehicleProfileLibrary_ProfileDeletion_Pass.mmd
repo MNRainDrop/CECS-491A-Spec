@@ -1,0 +1,45 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer) 
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SQLServerDAO
+participant ds as Data Store
+
+Note Right of e: Assume something in the entry point<br>called the manager to do delete a vehicle profile
+Note Right of vpm: Assume the user provided values are valid,<br> the user is authorized to delete the vehicle profile,<br>and the user already selected a vehicle<br>(see Vehicle Selection success case)
+
+vpm->>+vps: DeleteVehicleProfile(vehicleProfile: IVehicleProfile) : IResponse
+    Note over vpm,vps: VehicleProfileManager calls upon VehicleProfileService to<br>delete the vehicle profile
+
+vps->>vps: Validate parameters
+
+# Delete the vehicle profile
+vps->>+dg: DeleteVehicleProfileSql(vehicleID: int) : IResponse
+    Note over vps,dg: VehicleProfileService calls upon SqlDbVehicleTarget to generate<br>parameterized SqlCommand
+
+dg->>dg: SqlDbVehicleTarget creates<br>Parameterized SqlCommand
+
+dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+    Note over dg,da: SqlDbVehicleTarget calls upon SqlServerDao to write the sql
+
+da->>+ds: ExecuteNonQuery() : int
+    Note over da,ds: SqlServerDAO calls upon<br>Microsoft.Data.SqlClient to execute<br> sql command
+
+ds->>ds: DELETE FROM VehicleProfile<br>WHERE VehicleID = @vehicleID
+    Note over ds,ds: Cascade delete should run within the database
+
+ds->>ds: Vehicle profile is successfully<br>deleted from the Data Store
+
+ds-->>-da: Database returns the number of rows affected
+
+da-->>-dg: IResponse object returned with<br>`IResponse.ReturnValue` equal to the retrieved value
+
+dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to false
+
+vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, createdBy: string) : IResponse
+    Note over vps,ll: VehicleProfileService logs vehicle deletion was successful. See logging success case
+
+vps-->>-vpm: IResponse object returned

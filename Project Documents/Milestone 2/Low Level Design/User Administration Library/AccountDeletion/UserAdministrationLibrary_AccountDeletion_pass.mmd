@@ -5,7 +5,6 @@ participant usm as UserAdministrationManager<br>(Manager Layer)
 participant uc as UserService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer) 
 participant dg as SqlDbUserTarget<br>(Data Gateway)
-participant ldg as SqlDbLogTarget<br>(Data Gateway)
 participant da as SQLServerDAO
 participant ds as Data Store
 
@@ -13,18 +12,18 @@ Note Right of e: Assume something in the entry point<br>called the manager to do
 Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account<br>and the manager logged the user requested<br>for deletion
 
 usm->>+uc: DeleteUser(userName: string) : IResponse
-    Note over usm,uc: UserAdministrationManager calls upon<br>`IAccountResponse deleteUser(IUserModel)`<br>to delete the user
+    Note over usm,uc: UserAdministrationManager calls upon<br>UserService to delete the user
 
 uc->>uc: Validate parameters
 
 # delete the user
-uc->>+dg: DeleteUserAccountSql(userName: string) : IResponse
-    Note over uc,dg: UserService calls upon<br>`IAccountResponse generateAccountDeletionSQL(IUserModel)`<br>to pass user data to be written to a parameterized SqlCommand
+uc->>+dg: DeleteUserAccountSql(userAccount: IUserAccount) : IResponse
+    Note over uc,dg: UserService calls upon SqlDbUserTarget to pass user data to be written to a parameterized SqlCommand
 
 dg->>dg: SqlDbUserTarget creates Parameterized SqlCommand
 
 dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
-    Note over dg,da: SqlServerUserTarget calls upon<br>`IResponse executeWriteSQL(SqlCommand sql)`<br>to write the sql
+    Note over dg,da: SqlDbUserTarget calls upon SqlServerDao to write the sql
 
 da->>+ds: SqlCommand.ExecuteNonQuery()
     Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
@@ -41,7 +40,7 @@ da-->>-dg: IResponse object returned with<br>`IResponse.ReturnValue` equal to th
 dg-->>-uc: IResponse object returned with<br>`IAccountResponse.HasError` equal to false
 
 uc-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, createdBy: string) : IResponse
-    Note over uc,ll: User Service logs account creation was successful. See logging success case
+    Note over uc,ll: User Service logs account deletion was successful. See logging success case
 
 uc-->>-usm: IResponse object returned
 # Write log that user was successfully deleted
