@@ -35,18 +35,17 @@ dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sql
         Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
     ds->>ds: INSERT INTO VehicleProfile (VIN, LicensePlate, Make, Model, Year, Color)<br>VALUES (VIN, LicensePlate, Make, Model, Year, Color)
 
-ds->>ds: User account is successfully<br>written to the Data Store
+ds->>ds: User account is unsuccessfully<br>written to the Data Store
 
-ds-->>-da: Database returns the number of rows affected
+ds-->>-da: Database throws an exception
 
-da-->>-dg: SqlServerDAO returns the number of rows affected
+da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the error message 
 
-dg->>dg: SqlDbVehicleTarget checks to see that one and only one row was affected
+dg->>dg: SqlDbUserTarget checks the error to see if the error is safe to retry
 
-dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to false
+dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
 
-# Log successful vehicle creation
-vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
-    Note over vps,ll: UserService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+vps-->>ll: CreateLogAsync(LogLevel: string, LogCategory: string, LogContext: string, UserHash: string) : IResponse
+    Note over vps,ll: UserService calls upon LogService to log<br>unsuccessful assignment of claims and/or account creation.<br>See logging success case
 
 vps-->>-vpm: IResponse object returned

@@ -5,8 +5,8 @@ participant vpm as VehicleProfileManager<br>(Manager Layer)
 participant vps as VehicleProfileService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer) 
 participant dg as SqlDbVehicleTarget<br>(Data Gateway)
-participant da as SQLServerDAO
-participant ds as Data Store
+participant da as SQLServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
 
 Note Right of e: Assume something in the entry point<br>called the manager to do delete a vehicle profile
 Note Right of vpm: Assume the user provided values are valid,<br> the user is authorized to delete the vehicle profile,<br>and the user already selected a vehicle<br>(see Vehicle Selection success case)
