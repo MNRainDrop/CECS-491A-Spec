@@ -45,7 +45,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             else if (response.HasError == true)
             {
                 IResponse userHashResponse = new Response();
-                userHashResponse.ErrorMessage = "There was an error in the DAO";
+                userHashResponse.ErrorMessage = response.ErrorMessage;
                 return userHashResponse;
             }
             return new Response();
@@ -53,6 +53,31 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 
         public IResponse getClaims(long UID)
         {
+            SqlCommand sql = new SqlCommand();
+            //Generate SQL statement
+            sql.CommandText = "SELECT * FROM UserClaim WHERE UID = @UID";
+            //populate sql statement
+            sql.Parameters.Add(new SqlParameter("@UID", SqlDbType.BigInt) { Value = UID });
+            //Execute
+            IResponse response = _dao.ExecuteReadOnly(sql);
+            //Retrieve values
+            if(response.HasError == true)
+            {
+                IResponse userClaimsResponse = new Response();
+                userClaimsResponse.HasError = true;
+                userClaimsResponse.ErrorMessage = response.ErrorMessage;
+                return userClaimsResponse;
+            }
+            else
+            {
+
+                IDictionary<string, string> Claims = new Dictionary<string, string>();
+                //Loop through all values, get all use claims
+                //Generate the response
+                //Return the response
+
+            }
+
             throw new NotImplementedException();
         }
 
