@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 {
@@ -21,15 +22,30 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         public IResponse fetchPass(long UID)
         {
             SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT passHash FROM Pass WHERE Pass.UID = @UID";
+            sql.CommandText = "SELECT PassHash FROM OTP WHERE UID = @UID";
             sql.Parameters.Add(new SqlParameter("@UID", SqlDbType.BigInt) { Value = UID });
             IResponse response = _dao.ExecuteReadOnly(sql);
-            if (response.HasError == false) 
+            if (response.HasError == false)
             {
                 string passHash = (string)response.ReturnValue.First();
                 Response userHashResponse = new Response();
                 userHashResponse.HasError = false;
-                userHashResponse.ReturnValue.Add(passHash);
+                if (!passHash.IsNullOrEmpty())
+                {
+                    if (userHashResponse.ReturnValue == null){ userHashResponse.ReturnValue = new List<object>(); }
+                    userHashResponse.ReturnValue.Add(passHash);
+                    return userHashResponse;
+                }
+                else
+                {
+                    userHashResponse.ErrorMessage = "Passhash Returned null";
+                    return userHashResponse;
+                }
+            }
+            else if (response.HasError == true)
+            {
+                IResponse userHashResponse = new Response();
+                userHashResponse.ErrorMessage = "There was an error in the DAO";
                 return userHashResponse;
             }
             return new Response();
