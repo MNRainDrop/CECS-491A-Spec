@@ -1,4 +1,6 @@
-﻿namespace TeamSpecs.RideAlong.SecurityLibrary
+﻿using TeamSpecs.RideAlong.Model
+
+namespace TeamSpecs.RideAlong.SecurityLibrary
 {
     public interface IAuthenticator
     {
@@ -9,5 +11,10 @@
         // better to create an object of AuthRequest rather than just putting in values 
         // instead of a tuple, just have a new response object
         AppPrincipal? Authenticate(AuthenticationRequest authRequest);
+
+        public Response getUserAccountModel(string username);
+        public Response getPrincipal(long UID);
+
+        public Response getPass(long UID);
     }
 }

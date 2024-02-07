@@ -15,7 +15,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
     public class SQLServerAuthTarget : IAuthTarget
     {
         IGenericDAO _dao;
-        SQLServerAuthTarget(IGenericDAO dao)
+        public SQLServerAuthTarget(IGenericDAO dao)
         {
             _dao = dao;
         }
