@@ -3,6 +3,7 @@ using System.Data;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.Services.HashService;
@@ -40,10 +41,10 @@ public class AuthenticateUserShould
         var testUserName = "testUser";
 
         accountCreator.CreateValidUserAccount(testUserName);
-        
-        
-        //Act
 
+
+        //Act
+        authenticator.getUserAccountModel(testUserName);
 
 
         //Assert

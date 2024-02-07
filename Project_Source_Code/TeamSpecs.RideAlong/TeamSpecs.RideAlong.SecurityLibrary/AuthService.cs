@@ -1,4 +1,6 @@
 ﻿using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary;
@@ -7,19 +9,32 @@ namespace TeamSpecs.RideAlong.SecurityLibrary;
 public class AuthService : IAuthenticator, IAuthorizer
 {
     IAuthTarget _authTarget;
+
+    //Authentication functionalities Start
     public AuthService(IAuthTarget authTarget)
     {
         _authTarget = authTarget;
     }
-    private bool validatePass(AuthenticationRequest authRequest)
+    public Response getUserAccountModel(string username)
+    {
+        //
+        throw new NotImplementedException();
+    }
+    public Response getPrincipal(AuthUserModel userModel)
+    {
+        //uses get claims functionality from Auth Target
+        //Combines it with user account model to 
+        throw new NotImplementedException();
+    }
+    public Response getPass(long UID)
+    {
+        throw new NotImplementedException();
+    }
+    public bool validatePass(AuthenticationRequest authRequest)
     {
         throw new NotImplementedException();
         //string storedPass = _authTarget.fetchPass(authRequest.UserIdentity);
         //return false;
-    }
-    private Dictionary<string, string> getClaims(IAccountUserModel userIdentity)
-    {
-        return new Dictionary<string, string>();
     }
 
     /// <summary>
@@ -87,6 +102,8 @@ public class AuthService : IAuthenticator, IAuthorizer
 
         return appPrincipal;
     }
+
+    //Authentication functionalities end
 
     // depending on design goals, implementation drastically changes
     // why do we throw only in the beginning, but not at the end

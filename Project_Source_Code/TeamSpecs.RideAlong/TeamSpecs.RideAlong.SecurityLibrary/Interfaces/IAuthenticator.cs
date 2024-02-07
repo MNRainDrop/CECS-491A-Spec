@@ -1,6 +1,7 @@
-﻿using TeamSpecs.RideAlong.Model
+﻿using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
-namespace TeamSpecs.RideAlong.SecurityLibrary
+namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
 {
     public interface IAuthenticator
     {
@@ -13,8 +14,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         AppPrincipal? Authenticate(AuthenticationRequest authRequest);
 
         public Response getUserAccountModel(string username);
-        public Response getPrincipal(long UID);
-
+        public Response getPrincipal(IAuthUserModel userModel);
         public Response getPass(long UID);
+        public bool validatePass(AuthenticationRequest authRequest);
+
     }
 }

@@ -1,6 +1,12 @@
-﻿namespace TeamSpecs.RideAlong.SecurityLibrary.Model
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
 {
-    public class AuthUserModel
+    public interface IAuthUserModel
     {
         //UID
         public long UID { get; set; }
@@ -10,12 +16,5 @@
         public byte[] salt { get; set; }
         //UserHash
         public string? userHash { get; set; }
-        public AuthUserModel()
-        {
-            UID = 0;
-            userName = null;
-            salt = new byte[32];
-            userHash = null;
-        }
     }
 }
