@@ -1,6 +1,8 @@
-﻿namespace TeamSpecs.RideAlong.SecurityLibrary.Model
+﻿using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+
+namespace TeamSpecs.RideAlong.SecurityLibrary.Model
 {
-    public class AuthUserModel
+    public class AuthUserModel : IAuthUserModel
     {
         //UID
         public long UID { get; set; }

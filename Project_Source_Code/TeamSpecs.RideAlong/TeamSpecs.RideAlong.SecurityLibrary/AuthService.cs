@@ -20,7 +20,7 @@ public class AuthService : IAuthenticator, IAuthorizer
         //
         throw new NotImplementedException();
     }
-    public Response getPrincipal(AuthUserModel userModel)
+    public Response getPrincipal(IAuthUserModel userModel)
     {
         //uses get claims functionality from Auth Target
         //Combines it with user account model to 

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.IdentityModel.Tokens;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 {
@@ -51,7 +53,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             return new Response();
         }
 
-        public IResponse getClaims(long UID)
+        public IResponse fetchClaims(long UID)
         {
             SqlCommand sql = new SqlCommand();
             //Generate SQL statement
@@ -81,9 +83,63 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             throw new NotImplementedException();
         }
 
-        public IResponse saveHashedPass(long UID, string passHash)
+        public IResponse storeHashedPass(long UID, string passHash)
         {
+            //create Sql statement
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "UPDATE OTP SET PassHash = @passHash WHERE UID = @uid";
+            //Populate sql statement with new pass
+            sql.Parameters.Add(new SqlParameter("@passHash", SqlDbType.VarChar) { Value = passHash});
+            sql.Parameters.Add(new SqlParameter("@UID", SqlDbType.BigInt) { Value = UID });
+            //Execute SQL Query 
+            //validate response, check for successful upload
+            //Return success/failure
+            throw new NotImplementedException();
+        }
+        public IResponse fetchAuthAccountModel(string username)
+        {
+            //Create model and response that will be returned
+            IAuthUserModel userModel = new AuthUserModel();
+            IResponse finalResponse = new Response();
+
+            //Get sql statement to retrieve claims
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT a.UID, a.UserName, a.Salt, a.UserHash FROM UserAccount AS a WHERE a.UserName = @username";
+            sql.Parameters.Add(new SqlParameter("@username", SqlDbType.VarChar) { Value = username });
+            
+            //Execute the sql command
+            IResponse daoResponse = _dao.ExecuteReadOnly(sql);
+            
+            //Check for dao errors
+            if(daoResponse.HasError == true) 
+            { 
+                finalResponse.ErrorMessage = daoResponse.ErrorMessage; 
+                return finalResponse;
+            }
+            else
+            {
+                //retrieve data from response
+                //validate data is not null
+                //package data into AuthAccountModel
+                //package model into Response
+                //return response
+            }
+
             throw new NotImplementedException();
         }
     }
 }
+
+//fetchAuthAccountModelSQLStatement
+/*
+SELECT a.UID, a.UserName, a.Salt, a.UserHash
+FROM UserAccount AS a
+WHERE a.UserName == @username
+ */
+
+//storeHashedPass
+/*
+UPDATE OTP
+SET PassHash = @passHash
+WHERE UID = @uid
+ */
