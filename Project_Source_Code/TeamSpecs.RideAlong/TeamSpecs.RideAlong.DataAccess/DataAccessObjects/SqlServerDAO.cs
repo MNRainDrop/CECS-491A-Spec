@@ -115,6 +115,7 @@ public class SqlServerDAO : IGenericDAO
     public IResponse ExecuteWriteOnly(string value)
     {
         var sql = value;
+
         //Simply execute the read only command
         throw new NotImplementedException();
     }

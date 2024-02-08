@@ -119,6 +119,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             else
             {
                 //retrieve data from response
+
                 //validate data is not null
                 //package data into AuthAccountModel
                 //package model into Response
