@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
@@ -13,7 +15,9 @@ public class AuthorizeUserShould
         //Arrange 
         var timer = new Stopwatch(); 
         IResponse response;
-        var authorizationObject = new AuthService();
+        var dao = new SqlServerDAO();
+        var authorizer = new SQLServerAuthTarget(dao); 
+        var authorizationObject = new AuthService(authorizer);
 
         IDictionary<string, string> claims = new Dictionary<string, string>();
         claims.Add("CanLogIn", "Yes");
