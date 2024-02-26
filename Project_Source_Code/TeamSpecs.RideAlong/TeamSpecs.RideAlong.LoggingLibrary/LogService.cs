@@ -20,6 +20,8 @@ public class LogService : ILogService
 
     public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
+        //The log  levels  are: Info, Debug, Warning, Error
+        //The log contexts are: View, Business, Server, Data, Data Store
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, userHash);
         return await Task.Run(() => _logTarget.WriteLog(log));
     }
