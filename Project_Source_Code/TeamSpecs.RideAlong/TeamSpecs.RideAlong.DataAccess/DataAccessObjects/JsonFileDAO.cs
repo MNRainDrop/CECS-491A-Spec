@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 
@@ -17,7 +18,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         {
             //Default get relative path to PepperService folder
             _currentFile = @"\DataAccessObjects";
-            _newfile = @"\PepperOutput.txt";
+            _newfile = @"\PepperOutput.json";
             _relativePath = "";
             //_relativePath = Path.GetFullPath(_currentFile)+_newfile;
 
@@ -27,7 +28,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         {
             var response = new Response();
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.txt"),true))
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"),true))
             {
                 outputFile.WriteLine(Writevalue);
             }
@@ -44,10 +45,12 @@ namespace TeamSpecs.RideAlong.DataAccess
          
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
-            using (var result = new StreamReader(Path.Combine(docPath, "PepperOutput.txt")))
+            /*using (var result = new StreamReader(Path.Combine(docPath, "PepperOutput.json")))
             {
                 response.ReturnValue.Add(result.ReadToEnd());
-            }
+            }*/
+            string text = File.ReadAllText(Path.Combine(docPath, "PepperOutput.json"));
+            response.ReturnValue.Add(text);
             response.HasError = false;
 
 

@@ -24,6 +24,7 @@ public class PepperService : IPepperService
         KeyValuePair<string, uint> pepper = new KeyValuePair<string, uint>(key, value);
         return pepper;
     }
+
     public object SendingPepper(KeyValuePair<string, uint> PepperObject)
     {
         _pepperTarget.WriteToFile(PepperObject);
@@ -34,10 +35,13 @@ public class PepperService : IPepperService
     public uint RetrievePepper(string key)
     {
         var response = _pepperTarget.RetrieveFromFile(key);
-        foreach(uint o in response.ReturnValue)
-        {
-            return o;
+        if (response.ReturnValue is not null) {
+            foreach (uint o in response.ReturnValue)
+            {
+                return o;
+            }
         }
+        
 
         return 0;
     }

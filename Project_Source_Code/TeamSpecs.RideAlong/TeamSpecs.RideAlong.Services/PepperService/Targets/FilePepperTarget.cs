@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
+using System.Text.Json.Serialization;
+
 
 namespace TeamSpecs.RideAlong.Services
 {
@@ -31,14 +33,21 @@ namespace TeamSpecs.RideAlong.Services
         public IResponse RetrieveFromFile(string key)
         {
             var response = _fileDao.ExecuteReadOnly();
-            IDictionary<string, uint> result = new Dictionary<string,uint>();
-            foreach (System.IO.Stream i in response.ReturnValue)
-            {
-                result = JsonSerializer.Deserialize<IDictionary<string, uint>>(i);
+            IDictionary<string, uint>? result = new Dictionary<string,uint>();
+            if (response.ReturnValue is not null){
+                 foreach (System.IO.Stream i in response.ReturnValue)
+                 {
+                     result = JsonSerializer.Deserialize<IDictionary<string, uint>>(i);
+                 }
             }
+   
             var res = result[key];
             var Response1 = new Response();
-            Response1.ReturnValue.Add(res);
+            if (Response1.ReturnValue is not null)
+            {
+
+                Response1.ReturnValue.Add(res);
+            }
 
 
             return Response1;
