@@ -1,5 +1,6 @@
 sequenceDiagram
 participant u as User
+participant sjs as Script.js
 participant e as Entry Point
 participant usm as UserAdministrationManager<br>(Manager Layer)
 participant uc as UserService<br>(Services Layer)
@@ -11,15 +12,19 @@ participant dg as SqlDbUserTarget<br>(Data Gateway)
 participant da as SqlServerDAO
 participant ds as Data Store
 
+
 # To note: Pepper, and Random Services don't seem to be needed on Account Creation
 # Refer to BRD: User will be returned to home page view, presumely to login --> thus these aren't needed
 # HashService will be needed for userHash --> Dont need to implement pepper just yey
 # Use HashService -- Don't Use Pepper/Random Service
 
-#
+u->>sjs: User clicks regiestration button
+sjs->>u: Generates regierstration view
+u->>sjs: User inputs neccesary information 
 
-Note Right of e: Assume something in the entry point<br>called the manager to do create a user
-Note Right of usm: Assume the user provided values are valid<br>and the user is authorized to create an account
+sjs->>e: fetch POST request
+
+e->>+usm: RegisterUser( model: UserAccountModel) : IActionResult
 
 usm->>+uc: CreateValidUserAccount(userName: string) : IResponse
     Note over usm,uc: UserAdministrationManager calls upon<br>User Service to create the user with the pepper
@@ -85,3 +90,5 @@ uc-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: stri
     Note over uc,ll: UserService calls upon LogService to log<br>successful assignment of claims.<br>See logging success case
 
 uc-->>-usm: IResponse object returned
+
+# Add objects returned to front end
