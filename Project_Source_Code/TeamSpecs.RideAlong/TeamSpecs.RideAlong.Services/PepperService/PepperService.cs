@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.Services;
@@ -36,13 +38,24 @@ public class PepperService : IPepperService
     {
         var response = _pepperTarget.RetrieveFromFile(key);
         if (response.ReturnValue is not null) {
-            foreach (uint o in response.ReturnValue)
+            var keyValues = response.ReturnValue as List<object>;
+
+            if (keyValues is not null)
             {
-                return o;
+                foreach (var x in keyValues)
+                {
+                    var temp = x as KeyValuePair<string, uint>?;
+                    if (temp.Value.Key == key)
+                    {
+                        return temp.Value.Value;
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Value is not in pepper");
             }
         }
-        
-
-        return 0;
+        throw new Exception("Could not retrieve peppers");
     }
 }

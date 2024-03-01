@@ -33,21 +33,19 @@ namespace TeamSpecs.RideAlong.Services
         public IResponse RetrieveFromFile(string key)
         {
             var response = _fileDao.ExecuteReadOnly();
-            IDictionary<string, uint>? result = new Dictionary<string,uint>();
+            KeyValuePair<string, uint >? result = new KeyValuePair<string, uint>();
             if (response.ReturnValue is not null){
-                 foreach (System.IO.Stream i in response.ReturnValue)
+                 foreach (string i in response.ReturnValue)
                  {
-                     result = JsonSerializer.Deserialize<IDictionary<string, uint>>(i);
-                 }
+                    result = JsonSerializer.Deserialize<KeyValuePair<string, uint>>(i);
+                }
             }
    
-            var res = result[key];
+            var res = result;
             var Response1 = new Response();
-            if (Response1.ReturnValue is not null)
-            {
+            Response1.ReturnValue = new List<object>();
+            Response1.ReturnValue.Add(res);
 
-                Response1.ReturnValue.Add(res);
-            }
 
 
             return Response1;

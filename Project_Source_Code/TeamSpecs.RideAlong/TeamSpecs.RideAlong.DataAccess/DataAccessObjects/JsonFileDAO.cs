@@ -42,7 +42,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
-         
+
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
             /*using (var result = new StreamReader(Path.Combine(docPath, "PepperOutput.json")))
@@ -54,7 +54,7 @@ namespace TeamSpecs.RideAlong.DataAccess
             response.HasError = false;
 
 
-            return response; 
+            return response;
         }
 
         public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)

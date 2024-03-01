@@ -61,7 +61,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var _pepperTarget = new FilePepperTarget(dao);
             PepperService PepperObject = new PepperService(_pepperTarget);
             string key = "Test Key";
-            uint value = 0000000000;
+            uint value = 3190766528;
 
             //Act 
             timer.Start();
@@ -70,7 +70,9 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
             //Assert 
             Assert.True(timer.Elapsed.TotalSeconds <= 3);
-           // Assert.True(result.GetType() == typeof(KeyValuePair<string, uint>) && (result.Key == key && result.Value == value));
+            Assert.True(result==value);
+
+
         }
 
 
