@@ -33,11 +33,11 @@ namespace TeamSpecs.RideAlong.Services
         public IResponse RetrieveFromFile(string key)
         {
             var response = _fileDao.ExecuteReadOnly();
-            KeyValuePair<string, uint >? result = new KeyValuePair<string, uint>();
+            List<KeyValuePair<string, uint >>? result = new List<KeyValuePair<string, uint>>();
             if (response.ReturnValue is not null){
                  foreach (string i in response.ReturnValue)
                  {
-                    result = JsonSerializer.Deserialize<KeyValuePair<string, uint>>(i);
+                    result = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
                 }
             }
    

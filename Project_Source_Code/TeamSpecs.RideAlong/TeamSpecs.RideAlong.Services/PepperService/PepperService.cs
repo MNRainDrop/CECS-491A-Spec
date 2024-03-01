@@ -44,10 +44,22 @@ public class PepperService : IPepperService
             {
                 foreach (var x in keyValues)
                 {
-                    var temp = x as KeyValuePair<string, uint>?;
-                    if (temp.Value.Key == key)
+                    /*var temp = x as KeyValuePair<string, uint>?;
+                    if (temp!=null && temp.Value.Key == key)
                     {
                         return temp.Value.Value;
+                    }*/
+                    var temp = x as List<KeyValuePair<string, uint>>;
+                    if (temp != null)
+                    {
+                        foreach (var y in temp)
+                        {
+                            var temp2 = y as KeyValuePair<string, uint>?;
+                            if (temp2.Value.Key == key)
+                            {
+                                return temp2.Value.Value;
+                            }
+                        }
                     }
                 }
             }

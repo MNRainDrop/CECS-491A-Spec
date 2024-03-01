@@ -60,8 +60,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
             PepperService PepperObject = new PepperService(_pepperTarget);
-            string key = "Test Key";
-            uint value = 3190766528;
+            string key = "Test Key2";
+            uint value = 421557000;
 
             //Act 
             timer.Start();
