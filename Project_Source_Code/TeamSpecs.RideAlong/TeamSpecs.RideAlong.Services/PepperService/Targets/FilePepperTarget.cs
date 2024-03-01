@@ -21,10 +21,35 @@ namespace TeamSpecs.RideAlong.Services
         }
         public IResponse WriteToFile(KeyValuePair<string, uint> PepperObject)
         {
-            //put this block to try-catch
+            //Setting up variables 
+            var response1 = _fileDao.ExecuteReadOnly();
             IResponse response = new Response();
-            string jsonString = JsonSerializer.Serialize(PepperObject);
+            List<KeyValuePair<string, uint>>? temp = new List<KeyValuePair<string, uint>>();
+
+            
+            //Loading the Json file
+            if (response1.HasError==false && response1.ReturnValue is not null)
+            {
+                foreach (string i in response1.ReturnValue)
+                {
+                    temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                }
+            }
+            //Checking for repetated key before write
+            foreach (var x in temp)
+            {
+                var temp2 = x as KeyValuePair<string, uint>?;
+                if (temp2.Value.Key == PepperObject.Key)
+                {
+                    throw new Exception("Key already exist in Pepper !!");
+                }
+            }
+
+            //Writing part: adding pepper to the list and write the whole list to file 
+            temp.Add(PepperObject);
+            string jsonString = JsonSerializer.Serialize(temp);
             _fileDao.ExecuteWriteOnly(jsonString);
+
             response.HasError = false;
 
             return response;

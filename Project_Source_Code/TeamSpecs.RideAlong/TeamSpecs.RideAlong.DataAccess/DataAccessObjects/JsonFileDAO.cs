@@ -28,7 +28,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         {
             var response = new Response();
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"),true))
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"),false))
             {
                 outputFile.WriteLine(Writevalue);
             }
@@ -42,6 +42,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
+            string text="";
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
@@ -49,9 +50,23 @@ namespace TeamSpecs.RideAlong.DataAccess
             {
                 response.ReturnValue.Add(result.ReadToEnd());
             }*/
-            string text = File.ReadAllText(Path.Combine(docPath, "PepperOutput.json"));
-            response.ReturnValue.Add(text);
-            response.HasError = false;
+            //File exist then read 
+            if (File.Exists(Path.Combine(docPath, "PepperOutput.json")))
+            {
+                text = File.ReadAllText(Path.Combine(docPath, "PepperOutput.json"));
+                response.ReturnValue.Add(text);
+                response.HasError = false;
+
+            }
+            //If file doesn't exist then create a blanc file and return error for response object 
+            else
+            {
+                using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"), false))
+                {
+                    outputFile.WriteLine("");
+                }
+                response.HasError = true;
+            }
 
 
             return response;

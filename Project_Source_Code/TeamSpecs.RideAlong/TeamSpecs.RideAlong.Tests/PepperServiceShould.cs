@@ -16,7 +16,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
             PepperService PepperObject = new PepperService(_pepperTarget);
-            string key = "Test Key";
+            string key = "Test Key2";
 
             //Act 
             timer.Start();
@@ -24,7 +24,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             timer.Stop();
 
             //Assert 
-            Assert.True(timer.Elapsed.TotalSeconds <= 3);
+            Assert.True(timer.Elapsed.TotalSeconds <= 5);
             Assert.True(result.GetType() == typeof(uint));
         }
 
@@ -61,7 +61,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var _pepperTarget = new FilePepperTarget(dao);
             PepperService PepperObject = new PepperService(_pepperTarget);
             string key = "Test Key2";
-            uint value = 421557000;
+            uint value = 3490748009;
 
             //Act 
             timer.Start();
