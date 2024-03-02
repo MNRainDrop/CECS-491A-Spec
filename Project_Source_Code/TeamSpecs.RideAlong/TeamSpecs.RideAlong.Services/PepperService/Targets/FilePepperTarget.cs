@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
 using System.Text.Json.Serialization;
-
+using System.Numerics;
+using System.Diagnostics;
 
 namespace TeamSpecs.RideAlong.Services
 {
@@ -32,7 +33,18 @@ namespace TeamSpecs.RideAlong.Services
             {
                 foreach (string i in response1.ReturnValue)
                 {
-                    temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                    try
+                    {
+                        temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                    }
+                    catch (JsonException e)
+                    {
+                        if (e.HResult == -2146233088)
+                        {
+                            throw new ArgumentNullException("PepperOutput.json is blank please delete the file and try generating again");
+                        }
+                        
+                    }
                 }
             }
             //Checking for repetated key before write
