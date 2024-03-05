@@ -7,7 +7,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary;
 public class AuthService : IAuthenticator, IAuthorizer
 {
     IAuthTarget _authTarget;
-    AuthService(IAuthTarget authTarget)
+    public AuthService(IAuthTarget authTarget)
     {
         _authTarget = authTarget;
     }

@@ -1,0 +1,108 @@
+sequenceDiagram
+participant u as User
+participant sjs as Script.js
+participant e as UserAdministrationController (Entry Point)
+participant usm as UserAdministrationManager<br>(Manager Layer)
+participant uc as UserService<br>(Services Layer)
+participant ss as PepperService<br>(Services Layer)
+participant rs as RandomService<br>(Services Layer)
+participant hs as HashService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant da as SqlServerDAO
+participant ds as Data Store
+
+Note left of u: Assume User is on the home view
+
+u->>sjs: User clicks registration button
+sjs->>u: Generates registration view
+u->>sjs: User inputs neccesary information : Email, DateOfBirth, AccountType
+
+sjs->>e: [HttpPost] RegisterationRequest(userName: string, accountType: string, dateOfBirth: datetime) : IActionResult
+    Note over sjs,e: An AJAX POST request is made to the UserAdministrationController from Script.js<br>based on user input
+
+e->>+usm: RegisterUser(userName: string, accountType: string, dateOfBirth: dateTime) : IResponse
+    Note over e,usm: UserAdministrationController calls upon<br>UserAdministrationManager to intialize begin creating the user
+
+usm->>usm: Checks business rules of parameters
+
+usm->>+uc: CreateValidUserAccount(userName: string, accountType: string, dateOfBirth: dateTime) : IResponse
+    Note over usm,uc: UserAdministrationManager calls upon<br>User Service to create the user with the pepper
+
+uc->>uc: Validate parameters
+
+# New User Account
+uc->>uc: UserService creates a new IUserAccountModel object
+    Note over uc,uc: string UserName = userName
+
+# New User Profile
+uc->>uc: UserService creates a new IUserProfileModel
+    Note over uc,uc: DateTime DateCreated = currentDateTime<br>DateTime dateOfBirth = dateOfBirth
+
+# User Hash
+uc->>+ss: RetrievePepper(key: string) : uint 
+    Note over uc,ss: UserService calls upon<br>PepperService to get a pepper for the OTPHash.<br>See PepperService success scenario
+ss-->>-uc: PepperService returns the userHash's pepper
+
+uc->>+hs: ComputeHash(userName: string, pepper: uint) : string
+    Note over uc,hs: UserService creates UserHash using the pepper.<br>See HashService success scenario
+hs-->>-uc: HashService returns string
+
+uc->>uc: UserService updates value of IUserAccountObject.UserHash
+    Note over uc,uc: IUserAccountObject.UserHash = returned hash from UserService
+
+# User Salt --> Commented out because we do not need the salt for OTPHash for UA - 1. We are not sending OTP at this stage// only log in and log out
+# uc->>rs: GenerateUnsignedInt() : uint
+#    Note over uc,rs: UserService calls upon<br>RandomService to get a salt for the OTPHash.<br>See RandomService success scenario
+# rs-->>uc: RandomService returns the salt
+    
+uc->>uc: UserService updates value of IUserAccountObject.Salt
+    Note over uc,uc: uint Salt = returned salt from RandomService
+
+# User Claims --> will create set of claims based on account type that is passed
+uc->>uc: Create an IDictionary of<br>claims a user will have
+    alt accountType == "Vendor"
+        uc->>uc: Add claims for Vendor account
+    else accountType == "Rental Fleet"
+        uc->>uc: Add claims for Rental Fleet account
+    else
+        uc->>uc: Add default claims
+    end
+
+
+# to data gateway 
+uc->>+dg: CreateUserAccountSQL(userAccount: IUserAccountModel, userProfile: IUserProfileModel, userClaims: IDictionary<claimID: int, claimScope: int>) : IResponse
+    Note over uc,dg: UserService calls upon SqlDbUserTarget to generate sql statement and parameters<br>SqlDbUserTarget will create sql statement and parameters for the userAccount, userProfile, then the claims next<br>Add the sql statements to a Collection of key value pairs
+
+dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+rect rgba(127, 127, 127, 0.2)
+loop For every command in sqlCommands
+
+    da->>+ds: SqlCommand.ExecuteNonQuery()
+        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+    alt Storing userAccount
+        ds->>ds: INSERT INTO UserAccount (Username, Salt, UserHash)<br> VALUES (UserName, Salt, UserHash)
+    else Storing userProfile
+        ds->>ds: INSERT INTO UserProfile (DateOfBirth, DateCreated)<br> VALUES (DateOfBirth, DateCreated)
+    else
+        ds->>ds: INSERT INTO UserClaims (UserID, Claim, ClaimScope)<br> VALUES (SELECT UserID FROM UserAccount WHERE UserName = 'UserName', Claim, ClaimScope)
+    end
+end
+end
+
+ds->>ds: User account, UserProfile, and Claims is successfull<br>written to the Data Store
+
+ds-->>-da: Database returns the number of rows affected
+
+da-->>-dg: SqlServerDAO returns the number of rows affected
+
+dg-->>-uc: IResponse object returned with<br>`IResponse.HasError` equal to false
+
+uc-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+    Note over uc,ll: UserService calls upon LogService to log<br>successful assignment of claims.<br>See logging success case
+
+uc-->>-usm: IResponse object returned
+
+# Add objects returned to front end
