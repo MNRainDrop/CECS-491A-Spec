@@ -1,0 +1,28 @@
+sequenceDiagram
+participant u as User
+participant e as Entry Point
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vms as VehicleManagerService<br>(Services Layer)
+participant vpss as VehicleProfileSelectionService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Right of e: Assume something in the entry point<br>called the manager to modify a vehicle profile
+Note Right of vpm: Assume the user provided values<br> are valid and the user is authorized<br>to modify a vehicle profile
+
+vpm->>+vms: ModifyVehicleProfile(newVehicleProfile: IVehicleProfile, userAccount: IUserAccount) : IResponse
+    Note over vpm,vms: VehicleProfileManager calls upon<br>VehicleModificationService to update a vehicle
+
+vms->>vms: Validate Parameters
+
+vms->>vms: Parameters are invalid
+
+vms->>vms: IResponse object created
+    Note over vms, vms: IResponse.HasError = true<br>IResponse.ErrorMessage = invalid arguments
+# Log unsuccessful vehicle update
+vms-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+    Note over vms,ll: UserService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+vms-->>-vpm: IResponse object returned

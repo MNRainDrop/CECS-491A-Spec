@@ -1,0 +1,76 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as PublishVehicleProfileService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to update publish status of their vehicle
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: PostUpdatePublicVehicleDetails(vehicleProfile: IVehicleProfile, viewableDetails: IViewableVehicleDetails) : IActionResult
+    Note over u,e: Invoked when user clicks "Publish" to view<br>vehicle profiles
+
+    e->>+vpm: UpdatePublicVehicleDetails(vehicleProfile: IVehicleProfile, viewableDetails: IViewableVehicleDetails) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to update public vehicle profile details
+
+        vpm->>vpm: Validate parameters
+
+        vpm->>+vps: UpdatePublicVehicleDetails(vehicleProfile: IVehicleProfile, viewableDetails: IViewableVehicleDetails) : IResponse
+            Note over vpm,vps: VehicleProfileManager calls upon PublishVehicleProfileService<br>to update public vehicle profile details
+
+            vps->>vps: Validate parameters
+
+            vps->>+dg: UpdatePublicVehicleDetails(vehicleProfile: IVehicleProfile, viewableDetails: IViewableVehicleDetails) : IResponse
+                Note over vps,dg: PublishVehicleProfileService calls upon SqlDbVechileTarget to generate<br>the sql statement and parameters
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+                        ds->>ds: UPDATE ViewableDetails<br>SET Make_isviewable = @Make, Model_isviewable = @Model,<br>Year_isviewable = @Year, Color_isviewable = @Color,<br>Name_isviewable = @Name, VIN_isviewable = @VIN, Photo_isViewable = @Photo<br>WHERE VIN = @VIN
+                            Note over ds,ds: First @VIN referrs to the IViewableVehicleDetails option for vin<br>Second @VIN referrs to the IVehicleProfile VIN
+
+                        ds->>ds: Public Vehicle Profile Details are successfully<br>written to the Data Store
+
+                    ds-->>-da: Database returns the number of rows affected
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: SqlServerDAO returns the number of rows affected
+
+                dg->>dg: SqlDbVehicleTarget checks to see that one and only one row was affected
+
+            dg-->>-vps: IResponse object returned
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log successful vehicle profile retrieval
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: UserService calls upon LogService to log<br>successful update of vehicle profile details.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for any violations of business rules
+
+        # Log successful vehicle profile retrieval
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: UserService calls upon LogService to log<br>successful update of public vehicle profile details.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+    e->>e: Inject confirmation into HTML
+
+e-->>-u: Return OK IActionResult

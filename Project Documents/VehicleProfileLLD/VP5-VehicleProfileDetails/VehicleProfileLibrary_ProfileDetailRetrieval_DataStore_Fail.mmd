@@ -1,0 +1,72 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant sl as ServiceLogManager<br>(Manager Layer)
+participant vps as DetailedVehicleProfileRetrievalService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to select retrieve vehicle profile details
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: GetVehicleProfileDetails(vehicle: IVehicleProfile) : IActionResult 
+    Note over u,e: Invoked when user clicks button to retrieve<br>vehicle profile details
+
+    e->>+vpm: GetVehicleProfileDetails(vehicle: IVehicleProfile) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to get vehicle profile details
+
+        vpm->>vpm: Validate parameters
+
+        vpm->>+vps: RetrieveDetailedVehicleProfile(vehicle: IVehicleProfile) : IResponse
+            Note over vpm,vps: Returns a collection of vehicle profiles in IResponse.ReturnValue
+
+            vps->>+dg: ReadDetailedVehicleProfile(vehicle: IVehicleProfile) : IResponse
+
+                dg->>dg: Convert needed values into SQL Statement
+
+                dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : SqlDataReader
+
+                    da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+                        
+                        ds->>ds: SELECT (Color, Description)<br>FROM VehicleProfile WHERE VIN = @VIN
+
+                        ds->>ds: Vehicle profile details are unsuccessfully retireved<br>from the Data Store
+
+                    ds-->>-da: Database throws an exception
+
+                    da->>da: Check for thrown errors
+
+                    da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the thrown exception
+
+                dg->>dg: SqlDbVehicleTarget checks the error to see if the error is safe to retry
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log successful vehicle details retrieval
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: UserService calls upon LogService to log<br>unsuccessful retrieval of detailed vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for any violations of business rules
+
+        # Log successful vehicle details retrieval
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: UserService calls upon LogService to log<br>unsuccessful retrieval of vehicle profiles within time requirements.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(500, IResponseObject.ErrorMessage)

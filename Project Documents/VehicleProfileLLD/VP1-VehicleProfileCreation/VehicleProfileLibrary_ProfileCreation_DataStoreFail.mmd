@@ -1,0 +1,87 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileCreationService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to create new vehicle profile
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccount: IUserAccount) : IActionResult
+    Note over u,e: Invoked when user accepts inputs for all fields to<br>Create VehicleProfile
+
+    e->>+vpm: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccont: IUserAccount) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to create vehicle profiles
+        
+        vpm->>vpm: Validate Parameters
+
+        vpm->>+vps: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccount: IUserAccount) : IResponse
+            Note over vpm,vps: VehicleProfileManager calls upon<br>VehicleProfileCreationService to create the vehicle
+
+            vps->>vps: Validate Parameters
+
+            # Use api to search for other details on the vehicle
+            vps->>vps: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponseMessage>
+                Note over vps,vps: Requests information from API using the vin of the vehicle
+
+            # Create new IVehicleProfile Object
+            vps->>vps: VehicleProfileService creates a new IVehicleProfile object
+                Note over vps,vps: string VIN = vin<br>string LicensePlate = licensePlate<br>string Make = make<br>string Model = model<br>int Year = year<br>string Color = color<br>int Owner = userID
+
+            # Send to data store
+            vps->>+dg: CreateVehicleProfileSql(vehicleProfile: IVehicleProfile) : IResponse
+                Note over vps,dg: VehicleProfileService calls upon SqlDbVechileTarget to generate the sql statement and parameters<br>SqlDbVehicleTarget will create sql statement and parameters first
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+                    
+                        ds->>ds: INSERT INTO VehicleProfile (VIN, LicensePlate, Make, Model, Year)<br>VALUES (@VIN, @LicensePlate, @Make, @Model, @Year)
+
+                        ds->>ds: INSERT INTO VehicleDetails (VIN, Color, Description)<br>VALUES (@Vin, Color, Description)
+
+                        ds->>ds: INSERT INTO ViewableDetails (VIN, Make_isViewable, Model_isViewable, Year_isViewable, Color_isViewable, Name_isViewable, VIN_isViewable, Photo_isViewable)<br>Values (@VIN, @Make, @Model, @Year, @Color, @Name, @Vin, @Photo)
+                            Note over ds,ds: First @VIN referrs to the IViewableVehicleDetails option for vin<br>Second @VIN referrs to the IVehicleProfile VIN
+
+                        ds->>ds: Vehicle Profile was unsuccessfully<br>written to the Data Store
+
+                    ds-->>-da: Database throws an exception
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the thrown exception
+
+                dg->>dg: SqlDbVehicleTarget checks the error to see if the error is safe to retry
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log unsuccessful vehicle creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+        # Log unsuccessful vehicle creation
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(500, IResponseObject.ErrorMessage)

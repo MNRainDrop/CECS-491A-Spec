@@ -1,0 +1,86 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileRetrievalService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to retrieve vehicle profiles
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: GetMyVehicleProfiles(userAccount: IUserAccount) : IActionResult
+    Note over u,e: Invoked when user clicks button to view<br>vehicle profiles
+
+    e->>+vpm: GetVehicleProfiles(userAccont: IUserAccount) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to retrieve vehicle profiles
+
+        vpm->>vpm: Validate Parameters
+            
+        vpm->>+vps: RetrieveVehicleProfiles(userAccount: IUserAccount) : IResponse
+            Note over vpm,vps: Returns a collection of vehicle profiles in IResponse.ReturnValue
+
+            vps->>vps: Validate Parameters
+
+            vps->>+dg: ReadVehicleProfileSql(search: ISearchParameters) : IResponse
+                Note over vps,dg: VehicleProfileRetrievalService calls upon SqlDbVehicleTarget to generate<br>the sql statement and parameters
+
+                dg->>dg: Convert search parameters into SQL statement
+
+                dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+                        
+                        ds->>ds: SELECT (VIN, LicensePlate, Make, Model, Year, Color)<br>FROM VehicleProfile WHERE Owner_UID = @UserID;
+
+                        ds->>ds: Vehicle profile(s) is successfully retireved<br>from the Data Store
+
+                    ds-->>-da: Database returns query results
+
+                    da->>da: Check for thrown errors
+
+                    da->>da: Create new IResponse object
+                        Note over da: HasError = false<br>ErrorMessage = null<br>ReturnValue = new list containing returned query results
+
+                da-->>-dg: IResponse object returned
+
+                dg->>dg: Check for errors in returned IResponse object
+
+                dg->>dg: Extract value from IResponse.Return value and cast it into a list of IVehicleProfile objects
+
+                dg->>dg: Set IResponse.ReturnValue to the new list of IVehicleProfile objects
+
+            dg-->>-vps: IResponse object returned
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log successful vehicle profile retrieval
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: UserService calls upon LogService to log<br>successful retrieval of vehicle profiles.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for any violations of business rules
+
+        vpm->>vpm: Convert IResponse.ReturnValue into JSON string
+
+        # Log successful vehicle profile retrieval
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: UserService calls upon LogService to log<br>successful retrieval of vehicle profiles.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+    e->>e: Inject the vehicle profiles into HTML
+
+e-->>-u: Return OK IActionResult

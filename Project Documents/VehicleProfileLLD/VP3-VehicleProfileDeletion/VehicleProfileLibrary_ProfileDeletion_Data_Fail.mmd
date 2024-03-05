@@ -1,0 +1,51 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileDeletionService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to delete a<br>vehicle profile they own
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: DeleteVehicleProfile(vehicleProfile: IVehicleProfile) : IActionResult
+    Note over u,e: User clicks button to delete<br>vehicle profile
+
+    e->>+vpm: DeleteVehicleProfile(vehicleProfile: IVehicleProfile) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to delete vehicle profile
+
+        vpm->>vpm: Validate Parameters
+
+        vpm->>+vps: DeleteVehicleProfile(vehicleProfile: IVehicleProfile) : IResponse
+            Note over vpm,vps: VehicleProfileManager calls upon VehicleProfileService to<br>delete the vehicle profile
+
+            vps->>vps: Validate parameters
+
+            vps->>vps: Parameters are invalid
+
+            # Log unsuccessful vehicle deletion
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, createdBy: string) : IResponse
+                Note over vps,ll: VehicleProfileService logs vehicle deletion was unsuccessful. See logging success case
+
+            vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+        
+        # Log unsuccessful vehicle deletion
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>sunuccessful deletion of vehicle profile.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(400, IResponseObject.ErrorMessage)
+    

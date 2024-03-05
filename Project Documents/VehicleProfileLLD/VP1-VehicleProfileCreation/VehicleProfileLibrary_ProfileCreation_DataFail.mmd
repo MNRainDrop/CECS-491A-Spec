@@ -1,0 +1,48 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleProfileEntryPoint<br>(Entry Point)
+participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant vps as VehicleProfileCreationService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to view create new vehicle profile
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccount: IUserAccount) : IActionResult
+    Note over u,e: Invoked when user accepts inputs for all fields to<br>Create VehicleProfile
+
+    e->>+vpm: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccont: IUserAccount) : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to create vehicle profiles
+        
+        vpm->>vpm: Validate Parameters
+
+        vpm->>+vps: CreateVehicleProfile(vin: string, licensePlate: string, make: string, model: string, year: int, color: string, description: string, userAccount: IUserAccount) : IResponse
+            Note over vpm,vps: VehicleProfileManager calls upon<br>VehicleProfileCreationService to create the vehicle
+
+            vps->>vps: Validate Parameters
+
+            vps->>vps: Parameters are invalid
+
+            # Log unsuccessful vehicle creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>unsuccessful creation of vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: Throw ArgumentInvalidException
+
+        vpm->>vpm: Check for violation of business rules
+
+        # Log unsuccessful vehicle creation
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>unsuccessful creation of vehicle profile.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(400, IResponseObject.ErrorMessage)
