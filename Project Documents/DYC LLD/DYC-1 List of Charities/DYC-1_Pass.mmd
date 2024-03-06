@@ -1,0 +1,56 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as DonateYourCarPoint<br>(Entry Point)
+participant m as DonateYourCarManager<br>(Manager Layer)
+participant s as CharityRetrievalService<br>(Service Layer)
+participant ll as LogService<br>(Services Layer)
+participant dt as SqlDbCharityTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+Note Left of u: User visited Donate Your Car page
+
+u->>+az: CheckToken() 
+az-->>-u: Return valid check
+
+u->>+e: GetCharities(charity: ICharity): IActionResults
+Note over u,e: Send a HTTP Get for charity names and descriptions
+
+e->>+m: GetCharities(charity: ICharity): IResponse
+Note over e,m: Entry point calls manger layer to get <br>charities and their description
+
+m->>+s: RetrieveCharities(charity: ICharity) : IResponse
+Note over m,s: Returns a collection of charities <br>and their description in IResonse.ReturnValue
+
+s ->>+dt: RetrieveCharitiesSql(charity: ICharity) : IResponse
+Note over s,dt: CharityRetrievalService calls SqlDbCharityTarget to generate an sql statement <br> This will create an sql statement to retrieve charities and there descriptions
+
+dt ->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>): int
+Note over dt,da: SqlServerUserTarget calls <br> SqlServerDAO to execute sql
+
+da ->>+ds: SqlCommand.ExecuteNonQuery() : int
+Note over da,ds: SqlServerDAO calls <br> SqlCommand.ExecuteNonQuery <br> to execute sql
+
+ds ->>+ds: SELECT (charity, description) <br> FROM Charities
+
+ds -->>-da: Database returns charity names and their descriptions from charity table
+
+da ->>da: Check for thrown exceptions
+
+da ->>da: Creates a list containing query results into IResponse.Returnvalue object
+
+da -->>-dt: SqlServerDAO returns IResponse object
+
+dt -->>-s: IResponse object returns no error
+
+s -->>-m: IResponse object is returned
+
+m ->>-m: IResponse.ReturnValue is turn into JSON string
+
+m -->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+m -->>e: IResponse object returned
+
+e ->>+e: Inject charities and descriptions into HTML
+
+e -->>u: The list of charites and their descriptions are seen in the browser
