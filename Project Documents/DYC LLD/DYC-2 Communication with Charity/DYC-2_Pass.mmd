@@ -8,3 +8,57 @@ participant dt as SqlDbCharityTarget<br>(Data Gateway)
 participant da as SqlServerDAO<br>(Data Access Object)
 participant ds as Data Store<br>(Sql Server)
 
+u->>+u: User clicks button to donate car for certain charity
+Note over u: Depending on which charity is chosen it will return back different parameters
+
+u->>+e: GetCarDetails(vehicle: IVehicleProfile) : IActions
+
+e->>+m: GetCarDetails(vehicle: IVehicleProfile) : IResponse
+
+m->>+m: Validate parameters
+
+m->>+s: RetrieveDetailedVehicleProfile(vehicle: IVehicleProfile) : IResponse
+
+s->>+dt: ReadDetailedVehicleProfile(vehicle: IVehicleProfile) :IResponse
+
+dt->>+dt: Convert into SQL
+
+dt->>+da: ExecuteReadSql(sqlCommands: I Collection<KeyValuePair<sql:string, sqlParameters: HashSet<SqlParameter>>>): SqlDataReader
+
+da->>+ds: SqlCommand.ExecuteReader(): SqlDataReader
+
+ds->>+ds: SELECT (Make, Model, Year) <br> FROM VehicleProfile WHERE VIN = @VIN
+
+ds->>+ds: SELECT (Mileage) <br> FROM ServiceLog WHERE VIN = @VIN
+
+Note over ds: If kars4kids charity was selected
+
+ds->>+ds: SELECT (Make, Model, Year) <br> FROM VehicleProfile WHERE VIN = @VIN
+
+Note over ds: If  kids.wheelsforwishes charity was selected
+
+ds->>+ds: details are retrieved from Data Store
+
+ds -->>da: Database returns results
+
+da -->>-da: Check for errors and if no errors create IResponse object
+
+da -->>dt: return IResponse object
+
+dt->>dt: Extract value from IResponse.Return value and add details to IVehicleProfile
+
+dt->>dt: Set Response.Return value to list of the IVehicleProfile
+
+dt-->>s: IResponse object returned
+
+s->>s: IResponse object is checked for errors
+
+s -->>m : IResponse object returned
+
+m -->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+m -->>e: IResponse object returned
+
+e ->>e: The vehicle details are put into a script that will autofill the browser
+
+e -->>u: User is sent to the charity page they have chosen that will autofill with script
