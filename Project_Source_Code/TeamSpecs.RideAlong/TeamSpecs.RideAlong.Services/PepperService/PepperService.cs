@@ -37,7 +37,8 @@ public class PepperService : IPepperService
     public uint RetrievePepper(string key)
     {
         var response = _pepperTarget.RetrieveFromFile(key);
-        if (response.ReturnValue is not null) {
+        if (response.ReturnValue is not null) 
+        {
             var keyValues = response.ReturnValue as List<object>;
 
             if (keyValues is not null)

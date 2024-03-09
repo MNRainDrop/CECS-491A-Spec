@@ -13,7 +13,8 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+  
+        var _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
 
         // Expected values
         var expectedHasError = false;
@@ -22,7 +23,7 @@ public class LoggingLibraryShould
 
         // Act
         timer.Start();
-        response = logService.CreateLog("Info", "View", "This is a test message", "Admin");
+        response = _logService.CreateLog("Info", "Warning", "This is a test", "Hash");
         timer.Stop();
 
         // Assert

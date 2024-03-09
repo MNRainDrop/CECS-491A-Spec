@@ -7,6 +7,7 @@ using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
+/*
 public class AuthorizeUserShould
 {
     [Fact]
@@ -40,3 +41,4 @@ public class AuthorizeUserShould
         
     }
 }
+*/

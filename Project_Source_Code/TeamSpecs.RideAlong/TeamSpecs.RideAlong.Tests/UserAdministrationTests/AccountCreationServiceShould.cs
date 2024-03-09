@@ -19,25 +19,28 @@ public class AccountCreationServiceShould
         IResponse response;
         var _DAO = new SqlServerDAO();
         var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
-        var testUsername = "Createtestemail@gmail.com";
+        var testUsername = "Fakeuseraccount@.com";
+        var testAccountType = "Default User";
+        var testDateOfBirth = new DateTime(2000, 1, 1);
 
         // Expected Outcome
         var expectedHasError = false;
 
         // Act
-        try
-        {
+        
+        
             timer.Start();
-            response = accountCreationService.CreateValidUserAccount(testUsername);
+            response = accountCreationService.CreateValidUserAccount(testUsername, testDateOfBirth, testAccountType);
             timer.Stop();
-        }
-        finally
-        {
+        
+        
+        
+        
             // Undo
             var sql = $"DELETE FROM UserAccount WHERE UserName = '{testUsername}'";
             _DAO.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) });
-        }
-
+        
+        
 
 
         // Assert
@@ -48,6 +51,7 @@ public class AccountCreationServiceShould
         
     }
 
+
     [Fact]
     public void AccountCreationService_CreateValidUserAccount_NullUsernamePassedIn_ArgumentExceptionThrown_Pass()
     {
@@ -56,12 +60,14 @@ public class AccountCreationServiceShould
         var _DAO = new SqlServerDAO();
         var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
         string testUsername = null;
+        var testAccountType = "Default";
+        var testDateOfBirth = new DateTime(2000, 1, 1);
 
         // Act and Assert
         try
         {
             Assert.Throws<ArgumentException>(
-                () => response = accountCreationService.CreateValidUserAccount(testUsername)
+                () => response = accountCreationService.CreateValidUserAccount(testUsername, testDateOfBirth, testAccountType)
             );
         }
         catch

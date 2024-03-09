@@ -22,7 +22,7 @@ public class AccountCreationService : IAccountCreationService
         _hashService = hashService;
         _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
     }
-    public IResponse CreateValidUserAccount(string userName)
+    public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
     {
         #region Validate arguments
         if(string.IsNullOrWhiteSpace(userName))
@@ -30,32 +30,51 @@ public class AccountCreationService : IAccountCreationService
             _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
             throw new ArgumentException($"{nameof(userName)} must be valid");
         }
+        if(dateOfBirth == null)
+        {
+            _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
+            throw new ArgumentException($"{nameof(dateOfBirth)} must be not null");
+        }
         #endregion
 
         IResponse response;
         var userAccount = new AccountUserModel(userName);
-
+        var userProfile = new ProfileUserModel(dateOfBirth);
+        IDictionary<int, string> userClaims;
 
         // Create User Hash
-
-        // Once the IPepperService and IHashService is finished, use these line of code
-        //var userPepper = _pepperService.RetrievePepper("CreateAccount");
-        //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
-
-        // Use these lines of code while IPepperService and IHashService is not complete
-        userAccount.UserHash = userName;
+        var userPepper = _pepperService.RetrievePepper("AccountCreation");
+        userAccount.UserHash = _hashService.hashUser(userName, userPepper);
         
-        // Create Salt
+        // Create Salt stand in
         var salt = RandomService.GenerateUnsignedInt();
         userAccount.Salt = salt;
 
-        // Generate user default claims
-        var userClaims = GenerateDefaultClaims();
+        // Encountered issue of Int32 being too low or high in Sql Generation
+        if (userAccount.Salt > Int32.MaxValue || userAccount.Salt < UInt32.MinValue)
+        {
+            userAccount.Salt = 12067862;
+        }
+
+        #region Checking AccountType
+        if (accountType == "Vendor")
+        {
+            userClaims = GenerateVendorClaims();
+        }
+        if(accountType == "Rental Fleet")
+        {
+            userClaims = GenerateRentalFleetClaims();
+        }
+        else
+        {
+            userClaims = GenerateDefaultClaims();
+        }
+        #endregion
 
         // Write user to data store
-        response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
+        response = _userTarget.CreateUserAccountSql(userAccount, userProfile, userClaims);
 
-        // Validate Response
+        #region Validiate Response
         if (response.HasError)
         {
             response.ErrorMessage = "Could not create account";
@@ -64,11 +83,27 @@ public class AccountCreationService : IAccountCreationService
         {
             response.HasError = false;
         }
+        #endregion
 
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server",                                           
+    response.HasError ? response.ErrorMessage : "Successful",  // Message
+    response.HasError ? null : userAccount.UserHash       // UserHash assc. with Log (UserHash or null)
+    );
         
 
+
         // Return Response
+        return response;
+    }
+
+    public IResponse IsUserRegistered(string userName)
+    {
+        IResponse response;
+
+        response = _userTarget.CheckIfUserAccountExistsSql(userName);
+
+        //log
+
         return response;
     }
 
@@ -77,12 +112,36 @@ public class AccountCreationService : IAccountCreationService
         IDictionary<int, string> claims = new Dictionary<int, string>()
         {
             { 1, "True" },
-            { 2, "True" }
+            { 2, "True" },
+            { 3, "True" }
         };
         
         return claims;
     }
 
+    private IDictionary<int, string> GenerateVendorClaims()
+    {
+        IDictionary<int, string> claims = new Dictionary<int, string>()
+        {
+            { 1, "True" },
+            { 2, "True" },
+            { 3, "False" }
+        };
+
+        return claims;
+    }
+
+    private IDictionary<int, string> GenerateRentalFleetClaims()
+    {
+        IDictionary<int, string> claims = new Dictionary<int, string>()
+        {
+            { 1, "True" },
+            { 2, "False" },
+            { 3, "False" }
+        };
+
+        return claims;
+    }
     public int getDefaultClaimLength()
     {
         return GenerateDefaultClaims().Count;

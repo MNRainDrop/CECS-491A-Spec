@@ -9,7 +9,7 @@ using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {
-    public class JsonFileDAO : IGenericDAO
+    public class JsonFileDAO : IJsonFileDAO
     {
         private readonly string _currentFile;
         private string _relativePath;
@@ -28,11 +28,11 @@ namespace TeamSpecs.RideAlong.DataAccess
         {
             var response = new Response();
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"),false))
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"), false))
             {
                 outputFile.WriteLine(Writevalue);
             }
-       
+
             //try-catch block and see which to return 
             response.HasError = false;
             return response;
@@ -42,7 +42,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
-            string text="";
+            string text = "";
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
@@ -71,19 +71,6 @@ namespace TeamSpecs.RideAlong.DataAccess
 
             return response;
         }
-
-        public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
-        {
-            throw new NotImplementedException();
-
-        }
-
-        public IResponse ExecuteReadOnly(SqlCommand sql)
-        {
-            throw new NotImplementedException();
-        }
-
-
 
     }
 }

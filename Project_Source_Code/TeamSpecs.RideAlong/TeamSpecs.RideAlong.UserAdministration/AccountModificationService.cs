@@ -24,7 +24,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
         public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth, string secondaryEmail) 
         {
             IResponse response = new Response();
-            var userHash = _hashService.hashUser(userName, (int) _pepper.RetrievePepper("Account Creation"));
+             var userHash = _hashService.hashUser(userName, _pepper.RetrievePepper("Account Creation"));
 
             #region Validiating Arguements
             if (String.IsNullOrWhiteSpace(userName))
@@ -39,7 +39,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
             }
             #endregion
 
-            var profile = new ProfileUserModel(dateOfBirth, secondaryEmail);
+            var profile = new ProfileUserModel(dateOfBirth);
 
             response = _userTarget.ModifyUserProfileSql(userName, profile);
 

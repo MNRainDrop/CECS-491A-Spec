@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 
 namespace TeamSpecs.RideAlong.DataAccess;
 
-public class SqlServerDAO : IGenericDAO
+public class SqlServerDAO : ISqlServerDAO
 {
     private string _connString;
     private readonly string _server;
@@ -13,8 +13,8 @@ public class SqlServerDAO : IGenericDAO
     public SqlServerDAO ()
     {
         _connString = "";
-        _server = @"LAPTOP-Marlone\RIDEALONG";
-        _database = "RideAlong";
+        _server = @"localhost";
+        _database = "RideAlongTest";
         _access = "";
     }
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
@@ -106,16 +106,5 @@ public class SqlServerDAO : IGenericDAO
         }
         return response;
     }
-
-    public IResponse ExecuteReadOnly()
-    {
-        throw new NotImplementedException(); 
-    }
-
-    public IResponse ExecuteWriteOnly(string value)
-    {
-        throw new NotImplementedException();
-    }
-
 
 }

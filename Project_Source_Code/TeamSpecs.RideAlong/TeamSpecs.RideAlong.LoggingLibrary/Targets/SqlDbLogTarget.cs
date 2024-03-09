@@ -5,9 +5,9 @@ using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 public class SqlDbLogTarget : ILogTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
-    public SqlDbLogTarget(IGenericDAO dao)
+    public SqlDbLogTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

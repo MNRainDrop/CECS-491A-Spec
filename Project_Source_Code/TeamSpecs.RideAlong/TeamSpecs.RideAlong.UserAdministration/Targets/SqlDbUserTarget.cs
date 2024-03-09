@@ -3,40 +3,54 @@ using TeamSpecs.RideAlong.DataAccess;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Security.Claims;
+using Azure;
+using Response = TeamSpecs.RideAlong.Model.Response;
+using System.Collections.Immutable;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class SqlDbUserTarget : IUserTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
 
-    public SqlDbUserTarget(IGenericDAO dao)
+    public SqlDbUserTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }
-    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IDictionary<int, string> userClaims)
+    public IResponse CreateUserAccountSql(IAccountUserModel userModel, IProfileUserModel profileModel, IDictionary<int, string> userClaims)
     {
 
         #region Validate Arguments
-        if(userModel is null)
+        if (userModel is null)
         {
             throw new ArgumentNullException(nameof(userModel));
         }
-        foreach(var property in typeof(IAccountUserModel).GetProperties())
+        foreach (var property in typeof(IAccountUserModel).GetProperties())
         {
-            if(property.GetValue(userModel) is null)
+            if (property.GetValue(userModel) is null)
             {
                 throw new ArgumentException($"{nameof(property)} must be valid");
             }
         }
-        if(userClaims is null)
+        if (profileModel is null)
+        {
+            throw new ArgumentNullException(nameof(profileModel));
+        }
+        foreach (var property in typeof(IProfileUserModel).GetProperties())
+        {
+            if (property.GetValue(profileModel) is null)
+            {
+                throw new ArgumentException($"{nameof(property)} must be valid");
+            }
+        }
+        if (userClaims is null)
         {
             throw new ArgumentNullException(nameof(userClaims));
         }
-        foreach(var claim in userClaims)
+        foreach (var claim in userClaims)
         {
-            if(string.IsNullOrWhiteSpace(claim.Value))
+            if (string.IsNullOrWhiteSpace(claim.Value))
             {
                 throw new ArgumentException($"{nameof(claim.Value)}");
             }
@@ -48,11 +62,11 @@ public class SqlDbUserTarget : IUserTarget
         var tableSql = "";
         var rowsSql = "(";
         var valuesSql = "VALUES (";
-        var userNameToID = "(SELECT TOP 1 UserID FROM UserAccount WHERE UserName = ";
+        var userNameToID = "(SELECT TOP 1 UID FROM UserAccount WHERE UserName = ";
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-        var response = new Response();
+        IResponse response = new Response();
 
 
         // Convert Parameters into list of sqlCommands
@@ -69,13 +83,13 @@ public class SqlDbUserTarget : IUserTarget
 
             // Modifies the row and values sql to match properties
             // Add SqlParameter to the parameters HashSet
-            foreach ( var property in properties )
+            foreach (var property in properties)
             {
                 rowsSql += property.Name + ",";
                 valuesSql += "@" + property.Name + ",";
 
                 var value = property.GetValue(userModel);
-                if (value.GetType() == typeof(uint))
+                if (value.GetType() == typeof(int) || (value.GetType() == typeof(uint)))
                 {
                     parameters.Add(new SqlParameter("@" + property.Name, Convert.ToInt32(value)));
                 }
@@ -101,7 +115,7 @@ public class SqlDbUserTarget : IUserTarget
 
             #region Convert IDictionary of claims into sql statement
             tableSql = "UserClaim ";
-            rowsSql = "(UserID, ClaimID, ClaimScope) ";
+            rowsSql = "(UID, ClaimID, ClaimScope) ";
             valuesSql = "VALUES (" + userNameToID + "@UserName), @Claim, @ClaimScope);";
             // Convert user claims into sql
             foreach (var claim in userClaims)
@@ -124,13 +138,14 @@ public class SqlDbUserTarget : IUserTarget
 
             #region Create user profile sql statement
             tableSql = "UserProfile ";
-            rowsSql = "(UserID, AlternateUserName, DateCreated) ";
-            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName), @UserName, GETUTCDATE())";
+            rowsSql = "(UID, DateOfBirth, DateCreated) ";
+            valuesSql = "VALUES ((SELECT TOP 1 UID FROM UserAccount WHERE UserName = @UserName), @DateOfBirth, @DateCreated);";
 
             parameters = new HashSet<SqlParameter>()
             {
-
-                new SqlParameter("@UserName", userModel.UserName)
+                new SqlParameter("@UserName", userModel.UserName),
+                new SqlParameter("@DateOfBirth", profileModel.DateOfBirth),
+                new SqlParameter("@DateCreated", profileModel.DateCreated)
             };
 
             sqlString = commandSql + tableSql + rowsSql + valuesSql;
@@ -139,22 +154,8 @@ public class SqlDbUserTarget : IUserTarget
 
             #endregion
 
-            #region Create user OTP sql statement
-            tableSql = "OTP ";
-            rowsSql = "(UserID) ";
-            valuesSql = "VALUES ((SELECT TOP 1 UserID FROM UserAccount WHERE UserName = @UserName))";
-
-            parameters = new HashSet<SqlParameter>()
-            {
-
-                new SqlParameter("@UserName", userModel.UserName)
-            };
-
-            sqlString = commandSql + tableSql + rowsSql + valuesSql;
-
-            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
-            #endregion
         }
+        // Catches if error arises in Sql generation
         catch
         {
             response.HasError = true;
@@ -171,7 +172,7 @@ public class SqlDbUserTarget : IUserTarget
                     daoValue
                 };
         }
-            catch
+        catch
         {
             response.HasError = true;
             response.ErrorMessage = "AccountCreation execution failed";
@@ -181,6 +182,60 @@ public class SqlDbUserTarget : IUserTarget
         response.HasError = false;
         return response;
     }
+
+    public IResponse CheckIfUserAccountExistsSql(string username)
+    {
+        IResponse response = new Response();
+        int count = 0;
+        var temp = " ";
+
+        // SQL query to check if the user account exists
+        string query = "SELECT COUNT(*) FROM UserAccount WHERE UserName = @UserName";
+
+        // Create a new SqlCommand object with the query
+        SqlCommand sqlCommand = new SqlCommand(query);
+        sqlCommand.Parameters.AddWithValue("@UserName", username);
+
+        try
+        {
+            response = _dao.ExecuteReadOnly(sqlCommand);
+            if (response.ReturnValue != null)
+            {
+                foreach (var arrayObject in response.ReturnValue)
+                {
+                    if (arrayObject is object[] array)
+                    {
+                        foreach (var value in array)
+                        {
+                            // Handle each value in the array
+                            temp = value.ToString(); 
+                        }
+                    }
+                }
+
+                count = Int32.Parse(temp);
+                
+                if (count > 0)
+                {
+                    response.HasError = true;
+                    response.ErrorMessage = "Account Exists";
+                    return response;
+                }
+
+            }
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Account existing check failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+
+
     public IResponse DeleteUserAccountSql(string userName)
     {
         #region Validate arguments
@@ -198,7 +253,7 @@ public class SqlDbUserTarget : IUserTarget
 
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-        var response = new Response();
+        IResponse response = new Response();
 
         // 
         try
@@ -239,10 +294,11 @@ public class SqlDbUserTarget : IUserTarget
 
         return response;
     }
+    
     public IResponse ModifyUserProfileSql(string userName, IProfileUserModel profileModel)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-        var response = new Response();
+        IResponse response = new Response();
 
         #region Validiating Arguements
         if (profileModel is null)
@@ -312,7 +368,7 @@ public class SqlDbUserTarget : IUserTarget
     public IResponse EnableUserAccountSql(string userName)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-        var response = new Response();
+        IResponse response = new Response();
 
         try
         {
@@ -363,7 +419,7 @@ public class SqlDbUserTarget : IUserTarget
     public IResponse DisableUserAccountSql(string userName)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-        var response = new Response();
+        IResponse response = new Response();
 
         try
         {
@@ -414,7 +470,7 @@ public class SqlDbUserTarget : IUserTarget
     public IResponse RecoverUserAccountSql(string userName)
     {
         var sqlCommandString = "";
-        var response = new Response();
+        IResponse response = new Response() ;
 
         #region Convert String to SQL
         sqlCommandString = @"
@@ -453,3 +509,5 @@ public class SqlDbUserTarget : IUserTarget
 
     }
 }
+
+    

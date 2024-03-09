@@ -17,7 +17,7 @@ public class HashService : IHashService
         return passHash;
     }
 
-    public string hashUser(string userName, int pepper)
+    public string hashUser(string userName, uint pepper)
     {
         byte[] pepperBytes = BitConverter.GetBytes(pepper);
         byte[] userBytes = Encoding.UTF8.GetBytes(userName);
