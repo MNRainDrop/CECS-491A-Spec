@@ -33,6 +33,13 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
             return errorResponse;
         }
+        /// <summary>
+        /// Utility function used to avoid repeated code
+        /// Simply takes in a value as a parameter
+        /// then generates a response to encapsulate it
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>Error free Response Object with whatever you put in</returns>
         private IResponse createSuccessResponse(object item)
         {
             // Pack it up and ship it
@@ -153,7 +160,11 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 }
             }
         }
-
+        /// <summary>
+        /// Fetches integer with login attempts from the Databbase
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <returns>Response Object with attempts as integer</returns>
         public IResponse fetchAttempts(long UID)
         {
             // Create SELECT SQL statement and parameters
@@ -192,10 +203,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                     return createErrorResponse(ex);
                 }
             }
-            // Return error response, if error present
-            // Return respone object with attempts
 
-            throw new NotImplementedException();
         }
         public IResponse updateAttempts(long UID, int attempts)
         {
@@ -209,6 +217,12 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Will return a Respone object with a dictionary full of claims.<br>
+        /// NOTE: if a claim is formatted incorrectly(one or both values null), it will be skipped and a log will be made
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <returns></returns>
         public IResponse getClaims(long UID)
         {
             // Create SQL statement and parameters
