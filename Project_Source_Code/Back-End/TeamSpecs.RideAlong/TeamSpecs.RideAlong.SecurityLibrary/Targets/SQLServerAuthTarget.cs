@@ -18,6 +18,29 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             _logger = logger;
 
         }
+        /// <summary>
+        /// Utility function used to avoid repeated code
+        /// Simply takes in an exception as a parameter, 
+        /// then generates both a log and a tailored response object to the error recorded in the exeption
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <returns>Response object, with error message based on exception</returns>
+        private IResponse createErrorResponse(Exception ex)
+        {
+            IResponse errorResponse = new Response();
+            errorResponse.HasError = true;
+            errorResponse.ErrorMessage = "Error retrieving user data: " + ex.Message;
+            _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
+            return errorResponse;
+        }
+        private IResponse createSuccessResponse(object item)
+        {
+            // Pack it up and ship it
+            IResponse successResponse = new Response();
+            successResponse.HasError = false;
+            successResponse.ReturnValue = new List<object>() { item };
+            return successResponse;
+        }
         public IResponse fetchUserModel(string username)
         {
             // Create SQL statement and parameters
@@ -36,25 +59,21 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 try
                 {
                     List<object> userData;
+                    #region Input validation and assignment
                     if (response.ReturnValue is not null)
                     {
                         // Retrieve data from the response
                         userData = (List<object>)response.ReturnValue;
                     }
-                    else
-                    {
-                        throw new Exception("Database Response has null return value");
-                    }
+                    else { throw new Exception("Database Response has null return value"); }
 
                     // Check if any data was returned
-                    if (userData is not null && userData.Count == 0)
-                    {
-                        // If no data found, return error response
-                        throw new Exception("User was not Found");
-                    }
+                    if (userData is not null && userData.Count == 0) { throw new Exception("User was not Found"); }
+
+                    if (userData is null) { throw new Exception("User Data returned is null"); }
+                    #endregion
 
                     // Assuming only one row is returned for the given username
-                    if (userData is null) { throw new Exception("User Data returned is null"); }
                     object[] userRow = (object[])userData[0];
 
                     // Create a UserModel object to store the retrieved data
@@ -66,22 +85,13 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                         userHash = (string)userRow[3]
                     };
 
-                    // Return UserModel object as part of the response
-                    response.ReturnValue = new List<object>() { userModel };
-
-                    // Indicate success
-                    response.HasError = false;
-                    return response;
+                    return createSuccessResponse(userModel);
                 }
                 catch (Exception ex)
                 {
                     // If an exception occurs during data retrieval or processing
 
-                    IResponse errorResponse = new Response();
-                    errorResponse.HasError = true;
-                    errorResponse.ErrorMessage = "Error retrieving user data: " + ex.Message;
-                    _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
-                    return response;
+                    return createErrorResponse(ex);
                 }
             }
 
@@ -118,41 +128,28 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 try
                 {
                     List<object> rowsReturned;
+
+                    #region validate assign validate
                     // Validate we have a return value
-                    if (response.ReturnValue is not null)
-                    {
-                        rowsReturned = (List<object>)response.ReturnValue;
-                    }
-                    else
-                    {
-                        throw new Exception("No Rows Returned");
-                    }
+                    if (response.ReturnValue is not null) { rowsReturned = (List<object>)response.ReturnValue; }
+                    else { throw new Exception("No Return value from DB"); }
 
                     // Check if we got any rows
-                    if (rowsReturned.Count == 0)
-                    {
-                        throw new Exception("Pass/User Not found");
-                    }
+                    if (rowsReturned.Count == 0) { throw new Exception("No Rows Returned"); }
+
+                    #endregion
 
                     // We assume one row, so we only fetch that one row
                     object[] row = (object[])rowsReturned[0];
                     //Extract our passHash from the row
                     string passHash = (string)row[0];
 
-                    //Pack it all up and ship it
-                    IResponse successResponse = new Response();
-                    successResponse.HasError = false;
-                    successResponse.ReturnValue = new List<object>() { passHash };
-                    return successResponse;
 
+                    return createSuccessResponse(passHash);
                 }
                 catch (Exception ex)
                 {
-                    IResponse errorResponse = new Response();
-                    errorResponse.HasError = true;
-                    errorResponse.ErrorMessage = "Error retrieving user data: " + ex.Message;
-                    _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
-                    return response;
+                    return createErrorResponse(ex);
                 }
             }
         }
@@ -161,9 +158,40 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         {
             // Create SELECT SQL statement and parameters
             SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT attempts FROM ";
+            sql.CommandText = "SELECT attempts FROM OTP WHERE UID = @uid";
+            sql.Parameters.AddWithValue("@uid", UID);
             // Execute SQL statement
+            IResponse response = _dao.ExecuteReadOnly(sql);
             // Validate SQL response
+            if (response.HasError)
+            {
+                return response;
+            }
+            else
+            {
+                try
+                {
+                    List<object> rowsReturned;
+
+                    #region Validate Assign Validate
+                    if (response.ReturnValue is not null) { rowsReturned = (List<object>)response.ReturnValue; }
+                    else { throw new Exception("No Return Value from DB"); }
+
+                    if (rowsReturned.Count == 0) { throw new Exception("No Rows Returned"); }
+                    #endregion
+
+                    // We should only be getting one row
+                    object[] row = (object[])rowsReturned[0];
+                    // Extract attempts value from row
+                    int attempts = (int)row[0];
+
+                    return createSuccessResponse(attempts);
+                }
+                catch (Exception ex)
+                {
+                    return createErrorResponse(ex);
+                }
+            }
             // Return error response, if error present
             // Return respone object with attempts
 
@@ -184,33 +212,54 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         public IResponse getClaims(long UID)
         {
             // Create SQL statement and parameters
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT ClaimID, ClaimScope FROM UserClaim WHERE UID = @uid";
+            sql.Parameters.AddWithValue("@uid", UID);
             // Execute SQL statement
+            IResponse response = _dao.ExecuteReadOnly(sql);
             // Validate SQL response
-            // Return error response, if error present
-            // Return respone object with claims otherwise
-
-            //The following is being commented out because it is useful, but I cannot use it yet
-            /*
-            if (response.HasError == true)
+            if (response.HasError)
             {
-                IResponse userClaimsResponse = new Response();
-                userClaimsResponse.HasError = true;
-                userClaimsResponse.ErrorMessage = response.ErrorMessage;
-                return userClaimsResponse;
+                return response;
             }
             else
             {
+                try
+                {
+                    List<object> rowsReturned;
 
-                IDictionary<string, string> Claims = new Dictionary<string, string>();
-                //Loop through all values, get all use claims
-                //Generate the response
-                //Return the response
+                    #region validate assign validate
+                    if (response.ReturnValue is not null) { rowsReturned = (List<object>)response.ReturnValue; }
+                    else { throw new Exception("NO Return Value from DB"); }
 
+                    if (rowsReturned.Count == 0) { throw new Exception("No Rows Returned"); }
+
+                    #endregion
+
+                    Dictionary<string, string> claims = new Dictionary<string, string>();
+
+                    foreach (object[] row in rowsReturned)
+                    {
+
+                        string claimID = (string)row[0];
+                        string claimScope = (string)row[1];
+                        if (claimID is not null && claimScope is not null)
+                        {
+                            claims.Add(claimID, claimScope);
+                        }
+                        else
+                        {
+                            _logger.CreateLogAsync("Warning", "Data Store", $"Claim ID:{claimID}/Scope:{claimScope} for user {UID} is broken", null);
+                            continue;
+                        }
+                    }
+                    return createSuccessResponse(claims);
+                }
+                catch (Exception ex)
+                {
+                    return createErrorResponse(ex);
+                }
             }
-            */
-
-            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
-            throw new NotImplementedException();
         }
     }
 }
