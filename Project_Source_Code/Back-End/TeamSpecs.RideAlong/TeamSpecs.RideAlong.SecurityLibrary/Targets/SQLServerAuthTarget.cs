@@ -1,6 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 {
@@ -8,22 +11,85 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
     public class SQLServerAuthTarget : IAuthTarget
     {
         IGenericDAO _dao;
-        public SQLServerAuthTarget(IGenericDAO dao)
+        ILogService _logger;
+        public SQLServerAuthTarget(IGenericDAO dao, ILogService logger)
         {
             _dao = dao;
+            _logger = logger;
+
         }
         public IResponse fetchUserModel(string username)
         {
-            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
-            throw new NotImplementedException();
+            // Create SQL statement and parameters
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT UID, UserName, Salt, UserHash FROM UserAccount WHERE UserName = @username";
+            sql.Parameters.AddWithValue("@username", username);
+            // Attempt SQL Execution
+            IResponse response = _dao.ExecuteReadOnly(sql);
+            // Validate SQL return statement
+            if (response.HasError == true)
+            {
+                return response;
+            }
+            else
+            {
+                try
+                {
+                    List<object> userData;
+                    if (response.ReturnValue is not null)
+                    {
+                        // Retrieve data from the response
+                        userData = (List<object>)response.ReturnValue;
+                    }
+                    else
+                    {
+                        throw new Exception("Database Response has null return value");
+                    }
+
+                    // Check if any data was returned
+                    if (userData is not null && userData.Count == 0)
+                    {
+                        // If no data found, return error response
+                        throw new Exception("User was not Found");
+                    }
+
+                    // Assuming only one row is returned for the given username
+                    if (userData is null) { throw new Exception("User Data returned is null"); }
+                    object[] userRow = (object[])userData[0];
+
+                    // Create a UserModel object to store the retrieved data
+                    IAuthUserModel userModel = new AuthUserModel
+                    {
+                        UID = (int)userRow[0],
+                        userName = (string)userRow[1],
+                        salt = (byte[])userRow[2],
+                        userHash = (string)userRow[3]
+                    };
+
+                    // Return UserModel object as part of the response
+                    response.ReturnValue = new List<object>() { userModel };
+
+                    // Indicate success
+                    response.HasError = false;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    // If an exception occurs during data retrieval or processing
+
+                    IResponse errorResponse = new Response();
+                    errorResponse.HasError = true;
+                    errorResponse.ErrorMessage = "Error retrieving user data: " + ex.Message;
+                    _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
+                    return response;
+                }
+            }
+
         }
         public IResponse savePass(long UID, string passHash)
         {
-            // DefineSQL Command
+            // Create SQL statement and parameters
             SqlCommand sql = new SqlCommand();
-
-            // Create SQL insert/update statement
-            // Create parameters for SQL statement
             // Attempt SQL Execution
             // Validate SQL return statement
             // Return error outcome if error
@@ -35,6 +101,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         public IResponse fetchPass(long UID)
         {
             // Create SQL statement and parameters
+
             // Execute SQL statement
             // Validate SQL response
             // Return error response, if error present
