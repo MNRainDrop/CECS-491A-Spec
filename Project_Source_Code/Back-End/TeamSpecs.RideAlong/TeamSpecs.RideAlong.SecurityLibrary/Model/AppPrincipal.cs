@@ -1,8 +1,9 @@
 ﻿using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary;
 
-public class AppPrincipal
+public class AppPrincipal : IAppPrincipal
 {
 
     /*public AppPrincipal()

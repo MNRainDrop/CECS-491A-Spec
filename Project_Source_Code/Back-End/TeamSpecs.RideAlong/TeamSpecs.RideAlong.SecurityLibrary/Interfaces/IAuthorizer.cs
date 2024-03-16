@@ -1,8 +1,9 @@
-﻿namespace TeamSpecs.RideAlong.SecurityLibrary
+﻿using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+
+namespace TeamSpecs.RideAlong.SecurityLibrary
 {
     public interface IAuthorizer
     {
-        AppPrincipal? Authenticate(AuthenticationRequest authRequest);
-        bool IsAuthorize(AppPrincipal currentPrincipal, IDictionary<string, string> claims);
+        bool Authorize(IAppPrincipal principal, Dictionary<string, string> requiredClaims);
     }
 }
