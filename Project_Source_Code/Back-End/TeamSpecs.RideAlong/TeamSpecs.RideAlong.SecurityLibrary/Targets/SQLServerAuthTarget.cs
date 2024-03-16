@@ -1,17 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.DataAccess;
-using Microsoft.IdentityModel.Tokens;
+using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 {
-    
+
     public class SQLServerAuthTarget : IAuthTarget
     {
         IGenericDAO _dao;
@@ -19,49 +12,71 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         {
             _dao = dao;
         }
+        public IResponse fetchUserModel(string username)
+        {
+            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
+            throw new NotImplementedException();
+        }
+        public IResponse savePass(long UID, string passHash)
+        {
+            // DefineSQL Command
+            SqlCommand sql = new SqlCommand();
+
+            // Create SQL insert/update statement
+            // Create parameters for SQL statement
+            // Attempt SQL Execution
+            // Validate SQL return statement
+            // Return error outcome if error
+            // Return good response variable if success
+
+            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
+            throw new NotImplementedException();
+        }
         public IResponse fetchPass(long UID)
         {
-            SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT PassHash FROM OTP WHERE UID = @UID";
-            sql.Parameters.Add(new SqlParameter("@UID", SqlDbType.BigInt) { Value = UID });
-            IResponse response = _dao.ExecuteReadOnly(sql);
-            if (response.HasError == false)
-            {
-                string passHash = (string)response.ReturnValue.First();
-                Response userHashResponse = new Response();
-                userHashResponse.HasError = false;
-                if (!passHash.IsNullOrEmpty())
-                {
-                    if (userHashResponse.ReturnValue == null){ userHashResponse.ReturnValue = new List<object>(); }
-                    userHashResponse.ReturnValue.Add(passHash);
-                    return userHashResponse;
-                }
-                else
-                {
-                    userHashResponse.ErrorMessage = "Passhash Returned null";
-                    return userHashResponse;
-                }
-            }
-            else if (response.HasError == true)
-            {
-                IResponse userHashResponse = new Response();
-                userHashResponse.ErrorMessage = response.ErrorMessage;
-                return userHashResponse;
-            }
-            return new Response();
+            // Create SQL statement and parameters
+            // Execute SQL statement
+            // Validate SQL response
+            // Return error response, if error present
+            // Return respone object with claims otherwise
+
+            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
+            throw new NotImplementedException();
+        }
+
+        public IResponse fetchAttempts(long UID)
+        {
+            // Create SELECT SQL statement and parameters
+            // Execute SQL statement
+            // Validate SQL response
+            // Return error response, if error present
+            // Return respone object with claims otherwise
+
+            throw new NotImplementedException();
+        }
+        public IResponse updateAttempts(long UID, int attempts)
+        {
+            // Create SQL command and parameters
+            // Execute SQL statement
+            // Validate SQL Response
+            // Return Response with success outcome if successful
+            // Return Response Object with failure outcome if not successful
+
+            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
+            throw new NotImplementedException();
         }
 
         public IResponse getClaims(long UID)
         {
-            SqlCommand sql = new SqlCommand();
-            //Generate SQL statement
-            sql.CommandText = "SELECT * FROM UserClaim WHERE UID = @UID";
-            //populate sql statement
-            sql.Parameters.Add(new SqlParameter("@UID", SqlDbType.BigInt) { Value = UID });
-            //Execute
-            IResponse response = _dao.ExecuteReadOnly(sql);
-            //Retrieve values
-            if(response.HasError == true)
+            // Create SQL statement and parameters
+            // Execute SQL statement
+            // Validate SQL response
+            // Return error response, if error present
+            // Return respone object with claims otherwise
+
+            //The following is being commented out because it is useful, but I cannot use it yet
+            /*
+            if (response.HasError == true)
             {
                 IResponse userClaimsResponse = new Response();
                 userClaimsResponse.HasError = true;
@@ -77,12 +92,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 //Return the response
 
             }
+            */
 
-            throw new NotImplementedException();
-        }
-
-        public IResponse saveHashedPass(long UID, string passHash)
-        {
+            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
             throw new NotImplementedException();
         }
     }

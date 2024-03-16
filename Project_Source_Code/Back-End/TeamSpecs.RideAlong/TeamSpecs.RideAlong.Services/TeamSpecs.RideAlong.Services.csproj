@@ -15,4 +15,8 @@
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EmailService\" />
+  </ItemGroup>
+
 </Project>
