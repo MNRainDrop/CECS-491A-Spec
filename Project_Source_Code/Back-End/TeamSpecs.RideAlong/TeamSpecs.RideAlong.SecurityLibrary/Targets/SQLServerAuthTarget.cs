@@ -90,7 +90,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         {
             // Create SQL statement and parameters
             SqlCommand sql = new SqlCommand();
+
             // Attempt SQL Execution
+
             // Validate SQL return statement
             // Return error outcome if error
             // Return good response variable if success
@@ -101,23 +103,69 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         public IResponse fetchPass(long UID)
         {
             // Create SQL statement and parameters
-
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT PassHash FROM OTP WHERE UID = @uid";
+            sql.Parameters.AddWithValue("@uid", UID);
             // Execute SQL statement
+            IResponse response = _dao.ExecuteReadOnly(sql);
             // Validate SQL response
-            // Return error response, if error present
-            // Return respone object with claims otherwise
+            if (response.HasError)
+            {
+                return response;
+            }
+            else
+            {
+                try
+                {
+                    List<object> rowsReturned;
+                    // Validate we have a return value
+                    if (response.ReturnValue is not null)
+                    {
+                        rowsReturned = (List<object>)response.ReturnValue;
+                    }
+                    else
+                    {
+                        throw new Exception("No Rows Returned");
+                    }
 
-            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
-            throw new NotImplementedException();
+                    // Check if we got any rows
+                    if (rowsReturned.Count == 0)
+                    {
+                        throw new Exception("Pass/User Not found");
+                    }
+
+                    // We assume one row, so we only fetch that one row
+                    object[] row = (object[])rowsReturned[0];
+                    //Extract our passHash from the row
+                    string passHash = (string)row[0];
+
+                    //Pack it all up and ship it
+                    IResponse successResponse = new Response();
+                    successResponse.HasError = false;
+                    successResponse.ReturnValue = new List<object>() { passHash };
+                    return successResponse;
+
+                }
+                catch (Exception ex)
+                {
+                    IResponse errorResponse = new Response();
+                    errorResponse.HasError = true;
+                    errorResponse.ErrorMessage = "Error retrieving user data: " + ex.Message;
+                    _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
+                    return response;
+                }
+            }
         }
 
         public IResponse fetchAttempts(long UID)
         {
             // Create SELECT SQL statement and parameters
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT attempts FROM ";
             // Execute SQL statement
             // Validate SQL response
             // Return error response, if error present
-            // Return respone object with claims otherwise
+            // Return respone object with attempts
 
             throw new NotImplementedException();
         }

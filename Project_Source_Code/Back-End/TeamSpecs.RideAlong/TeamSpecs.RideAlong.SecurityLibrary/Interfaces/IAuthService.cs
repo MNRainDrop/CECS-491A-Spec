@@ -11,6 +11,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
         IResponse UpdateOtp(IAuthUserModel model, string otp);
         IResponse GetUserPrincipal(IAuthUserModel model);
         IResponse GetOtpHash(IAuthUserModel model);
+        IResponse GetUserLogInAttempts(IAuthUserModel model);
         bool Authenticate(AuthNRequest loginAttempt, string otpHash);
         bool Authorize(IAppPrincipal, Dictionary<string, string> requiredClaims);
     }

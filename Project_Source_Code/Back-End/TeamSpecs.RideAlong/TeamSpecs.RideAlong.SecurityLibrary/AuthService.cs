@@ -52,6 +52,21 @@ public class AuthService : IAuthService, IAuthorizer
         return response;
     }
 
+    public IResponse GetUserLogInAttempts(IAuthUserModel model)
+    {
+        long uid = model.UID;
+        IResponse response = _authTarget.fetchAttempts(uid);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown Error occurred at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+
     public IResponse GetUserModel(string username)
     {
         IResponse response = _authTarget.fetchUserModel(username);
@@ -69,6 +84,8 @@ public class AuthService : IAuthService, IAuthorizer
         }
         return response;
     }
+
+
 
     public IResponse GetUserPrincipal(IAuthUserModel model)
     {
@@ -89,7 +106,7 @@ public class AuthService : IAuthService, IAuthorizer
             _logService.CreateLogAsync("Error", "Server", errorResponse.ErrorMessage, model.userHash);
             return errorResponse;
         }
-        // Check for presense of return value list
+        // Check for presense of returnValue list
         if (userClaimsResponse.ReturnValue is null)
         {
             IResponse errorResponse = new Response();
@@ -107,7 +124,7 @@ public class AuthService : IAuthService, IAuthorizer
         }
         if (value is Dictionary<string, string>)
         {
-            // Combine user model and claims to cS reate a principal
+            // Combine user model and claims to create a principal
             Dictionary<string, string> claims = (Dictionary<string, string>)value;
             IAppPrincipal principal = new RideAlongPrincipal(model, claims);
             IResponse successResponse = new Response();

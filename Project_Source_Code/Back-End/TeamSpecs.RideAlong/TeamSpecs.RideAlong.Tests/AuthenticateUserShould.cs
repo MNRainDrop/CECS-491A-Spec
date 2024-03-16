@@ -3,8 +3,10 @@
 public class AuthenticateUserShould
 {
     [Fact]
-    public void testc()
+    public void AuthenticateAUser()
     {
-
+        //Arrange
+        //Act
+        //Assert
     }
 }
