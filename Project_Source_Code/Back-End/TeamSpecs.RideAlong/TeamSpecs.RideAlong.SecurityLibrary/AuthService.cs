@@ -145,7 +145,7 @@ public class AuthService : IAuthService, IAuthorizer
         IResponse response = _authTarget.savePass(model.UID, opt);
         if (response.HasError)
         {
-            if (response.ErrorMessage.IsNullOrEmpty())
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
             {
                 response.ErrorMessage = "Unknown Layer occurred at target layer or below";
             }
@@ -159,7 +159,7 @@ public class AuthService : IAuthService, IAuthorizer
         IResponse response = _authTarget.updateAttempts(model.UID, attempts);
         if (response.HasError)
         {
-            if (response.ErrorMessage.IsNullOrEmpty())
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
             {
                 response.ErrorMessage = "Unknown error happened at target layer or below";
             }

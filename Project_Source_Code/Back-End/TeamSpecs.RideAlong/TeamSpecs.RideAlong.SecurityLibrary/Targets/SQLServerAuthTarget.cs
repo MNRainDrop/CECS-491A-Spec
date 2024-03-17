@@ -135,8 +135,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             uidParam.Value = UID;
             SqlParameter passHashParam = new SqlParameter("@passHash", SqlDbType.VarChar);
             passHashParam.Value = passHash;
-
-            //add parameters to hashset
             parameters.Add(uidParam);
             parameters.Add(passHashParam);
 
@@ -153,7 +151,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             // Validate SQL return statement
             try
             {
-                if (rowsAffected == 0) { throw new Exception("SQLDB error error, no rows affected"); }
+                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
                 return createSuccessResponse(null);
             }
             catch (Exception ex)
@@ -256,14 +254,38 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         }
         public IResponse updateAttempts(long UID, int attempts)
         {
-            // Create SQL command and parameters
-            // Execute SQL statement
-            // Validate SQL Response
-            // Return Response with success outcome if successful
-            // Return Response Object with failure outcome if not successful
+            // Create SQL statment
+            string commandText = "UPDATE OTP SET attempts = @attempts WHERE UID = @uid;";
 
-            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
-            throw new NotImplementedException();
+            //Create Parameters
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            SqlParameter uidParam = new SqlParameter();
+            uidParam.Value = UID;
+            SqlParameter attemptsParam = new SqlParameter();
+            attemptsParam.Value = attempts;
+            parameters.Add(uidParam);
+            parameters.Add(attemptsParam);
+
+            //Create Key value pair with sql and parameters
+            KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+
+            //Add sql statement to a collection
+            List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+            sqlCommandList.Add(sqlStatement);
+
+            // Attempt SQL Execution
+            int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
+
+            // Validate SQL Response
+            try
+            {
+                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                return createSuccessResponse(null);
+            }
+            catch (Exception ex)
+            {
+                return createErrorResponse(ex);
+            }
         }
 
         /// <summary>
