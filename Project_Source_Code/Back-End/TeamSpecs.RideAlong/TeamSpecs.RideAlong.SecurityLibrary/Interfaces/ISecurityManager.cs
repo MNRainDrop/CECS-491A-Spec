@@ -4,12 +4,12 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
 {
     public interface ISecurityManager
     {
-        Response StartLogin(string username);
-        Response TryAuthenticating(string username, string otp);
-        Response CreateIdToken();
-        Response CreateAccessToken();
-        Response RefreshTokens();
-        Response Logout();
+        IResponse StartLogin(string username);
+        IResponse TryAuthenticating(string username, string otp);
+        IResponse CreateIdToken();
+        IResponse CreateAccessToken();
+        IResponse RefreshTokens();
+        IResponse Logout();
         bool Authorize();
         RideAlongPrincipal JwtToPrincipal(string idJwt, string accessJwt);
         string GetUsernameFromJwt(string idJwt);
