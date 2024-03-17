@@ -1,4 +1,6 @@
-﻿using TeamSpecs.RideAlong.LoggingLibrary;
+﻿using Azure;
+using Microsoft.IdentityModel.Tokens;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
@@ -15,7 +17,6 @@ public class AuthService : IAuthService, IAuthorizer
         _authTarget = authTarget;
         _logService = logService;
     }
-
 
     public bool Authenticate(AuthNRequest loginAttempt, string otpHash)
     {
@@ -85,14 +86,12 @@ public class AuthService : IAuthService, IAuthorizer
         return response;
     }
 
-
-
     public IResponse GetUserPrincipal(IAuthUserModel model)
     {
         // Get response with claims from ds
         IResponse userClaimsResponse = _authTarget.getClaims(model.UID);
-        // validate no errors present
-        if (!userClaimsResponse.HasError)
+        // Check if there are errors present
+        if (userClaimsResponse.HasError)
         {
             IResponse errorResponse = new Response();
             if (userClaimsResponse.ErrorMessage is null)
@@ -146,11 +145,25 @@ public class AuthService : IAuthService, IAuthorizer
         IResponse response = _authTarget.savePass(model.UID, opt);
         if (response.HasError)
         {
-            if (response.ErrorMessage is null)
+            if (response.ErrorMessage.IsNullOrEmpty())
             {
                 response.ErrorMessage = "Unknown Layer occurred at target layer or below";
             }
-            _logService.CreateLogAsync("level", "category", response.ErrorMessage, model.userHash);
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+
+    public IResponse updateLoginAttempt(IAuthUserModel model, int attempts)
+    {
+        IResponse response = _authTarget.updateAttempts(model.UID, attempts);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty())
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
         }
         return response;
     }

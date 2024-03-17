@@ -9,6 +9,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
     {
         IResponse GetUserModel(string username);
         IResponse UpdateOtp(IAuthUserModel model, string otp);
+        IResponse updateLoginAttempt(IAuthUserModel model, int attempts);
         IResponse GetUserPrincipal(IAuthUserModel model);
         IResponse GetOtpHash(IAuthUserModel model);
         IResponse GetUserLogInAttempts(IAuthUserModel model);

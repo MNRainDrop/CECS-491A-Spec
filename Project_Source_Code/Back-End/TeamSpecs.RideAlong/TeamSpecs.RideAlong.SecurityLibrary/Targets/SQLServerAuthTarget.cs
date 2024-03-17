@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Data;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -35,24 +36,32 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         }
         /// <summary>
         /// Utility function used to avoid repeated code
-        /// Simply takes in a value as a parameter
+        /// Simply takes in an object as a parameter
         /// then generates a response to encapsulate it
         /// </summary>
         /// <param name="item"></param>
         /// <returns>Error free Response Object with whatever you put in</returns>
-        private IResponse createSuccessResponse(object item)
+        private IResponse createSuccessResponse(object? item)
         {
             // Pack it up and ship it
             IResponse successResponse = new Response();
             successResponse.HasError = false;
-            successResponse.ReturnValue = new List<object>() { item };
+            if (item is not null)
+            {
+                successResponse.ReturnValue = new List<object>() { item };
+            }
             return successResponse;
         }
+        /// <summary>
+        /// Gets the rows from the "UserAccount" table in the datastore, and combines them into a AuthUserModel object
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public IResponse fetchUserModel(string username)
         {
             // Create SQL statement and parameters
             SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT UID, UserName, Salt, UserHash FROM UserAccount WHERE UserName = @username";
+            sql.CommandText = "SELECT UID, Salt, UserHash FROM UserAccount WHERE UserName = @username";
             sql.Parameters.AddWithValue("@username", username);
             // Attempt SQL Execution
             IResponse response = _dao.ExecuteReadOnly(sql);
@@ -87,9 +96,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                     IAuthUserModel userModel = new AuthUserModel
                     {
                         UID = (int)userRow[0],
-                        userName = (string)userRow[1],
-                        salt = (byte[])userRow[2],
-                        userHash = (string)userRow[3]
+                        userName = username,
+                        salt = (byte[])userRow[1],
+                        userHash = (string)userRow[2]
                     };
 
                     return createSuccessResponse(userModel);
@@ -103,20 +112,60 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             }
 
         }
+        /// <summary>
+        /// Stores the given pass to the Datastore row with the matching UID
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="passHash"></param>
+        /// <returns></returns>
         public IResponse savePass(long UID, string passHash)
         {
-            // Create SQL statement and parameters
-            SqlCommand sql = new SqlCommand();
+            // Create SQL statement
+            //The following SQL command tries to update a row for the user's otp. If the row doesnt exist, then it creates it
+            string CommandText =
+                "BEGIN TRANSACTION" +
+                "UPDATE OTP SET PassHash = @passHash WHERE UID = @uid;" +
+                "IF @@ROWCOUNT = 0" +
+                "BEGIN INSERT INTO OTP (UID, PassHash, attempts) VALUES (@uid, @passHash, 0); END" +
+                "COMMIT TRANSACTION;";
+
+            //Create parameters
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            SqlParameter uidParam = new SqlParameter("@uid", SqlDbType.BigInt);
+            uidParam.Value = UID;
+            SqlParameter passHashParam = new SqlParameter("@passHash", SqlDbType.VarChar);
+            passHashParam.Value = passHash;
+
+            //add parameters to hashset
+            parameters.Add(uidParam);
+            parameters.Add(passHashParam);
+
+            //Create Key Value pair with sql string and parameters
+            KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(CommandText, parameters);
+
+            //Add sql statement to a collection
+            List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+            sqlCommandList.Add(sqlStatement);
 
             // Attempt SQL Execution
+            int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
 
             // Validate SQL return statement
-            // Return error outcome if error
-            // Return good response variable if success
-
-            // DELETE THIS WHEN SUCCESSFULLY IMPLEMENTED
-            throw new NotImplementedException();
+            try
+            {
+                if (rowsAffected == 0) { throw new Exception("SQLDB error error, no rows affected"); }
+                return createSuccessResponse(null);
+            }
+            catch (Exception ex)
+            {
+                return createErrorResponse(ex);
+            }
         }
+        /// <summary>
+        /// Retrieves the passcode from the Datastore
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <returns>Response Object with passcode</returns>
         public IResponse fetchPass(long UID)
         {
             // Create SQL statement and parameters
