@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
@@ -157,6 +156,32 @@ public class AuthService : IAuthService, IAuthorizer
     public IResponse updateLoginAttempt(IAuthUserModel model, int attempts)
     {
         IResponse response = _authTarget.updateAttempts(model.UID, attempts);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+    public IResponse GetFirstFailedLogin(IAuthUserModel model)
+    {
+        IResponse response = _authTarget.fetchFirstFailedLogin(model.UID);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+    public IResponse SetFirstFailedLogin(IAuthUserModel model, DateTime datetime)
+    {
+        IResponse response = _authTarget.setFirstFailedLogin(model.UID, datetime);
         if (response.HasError)
         {
             if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)

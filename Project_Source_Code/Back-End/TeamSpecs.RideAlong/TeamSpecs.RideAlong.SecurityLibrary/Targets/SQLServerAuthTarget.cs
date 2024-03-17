@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿
+using Microsoft.Data.SqlClient;
 using System.Data;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
@@ -345,6 +346,53 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                     return createErrorResponse(ex);
                 }
             }
+        }
+        public IResponse setFirstFailedLogin(long uid, DateTime datetime)
+        {
+            throw new NotImplementedException();
+        }
+        public IResponse fetchFirstFailedLogin(long uid)
+        {
+            //Create SQL command and parameters
+            SqlCommand sql = new SqlCommand();
+            sql.CommandText = "SELECT firstFailedLogin FROM OTP WHERE UID = @uid";
+            sql.Parameters.AddWithValue("@uid", uid);
+
+            IResponse response = _dao.ExecuteReadOnly(sql);
+
+            if (response.HasError)
+            {
+                return response;
+            }
+            else
+            {
+                try
+                {
+                    List<object> rowsReturned;
+
+                    #region validate assign validate
+                    if (response.ReturnValue is not null) { rowsReturned = (List<object>)response.ReturnValue; }
+                    else { throw new Exception("NO Return Value from DB"); }
+
+                    if (rowsReturned.Count == 0) { throw new Exception("No Rows Returned"); }
+                    #endregion
+
+                    //We are assuming there is only one row returned
+                    object[] row = (object[])rowsReturned[0];
+
+                    //We extract value from row
+                    DateTime dateTimeofFirstFailLogin = (DateTime)row[0];
+
+                    // Return the date time in a response object
+                    return createSuccessResponse(dateTimeofFirstFailLogin);
+
+                }
+                catch (Exception ex)
+                {
+                    return createErrorResponse(ex);
+                }
+            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -45,5 +45,19 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         /// <param name="attempts"></param>
         /// <returns>Response Object with success outcome</returns>
         IResponse updateAttempts(long UID, int attempts);
+        /// <summary>
+        /// Sets the FirstFailedLoginAttempt to the dateTime passed in as a parameter
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="datetime"></param>
+        /// <returns>Response Object with success outcome</returns>
+        IResponse setFirstFailedLogin(long uid, DateTime datetime);
+        /// <summary>
+        /// Gets the time of the first failed login<br>
+        /// This function should be called alongside a check for how many login attempts have been done<br>
+        /// If login attempts are higher than 3, and less than 24 hours have passed since this time, we fail authN request
+        /// </summary>
+        /// <returns>Response object with the datetime of firstFailedLogin</returns>
+        IResponse fetchFirstFailedLogin(long uid);
     }
 }
