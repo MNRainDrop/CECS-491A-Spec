@@ -54,8 +54,8 @@ public class SqlServerDAO : IGenericDAO
                     }
                 }
                 transaction.Commit();
-                return rowsAffected;
             }
+            return rowsAffected;
         }
     }
 
@@ -64,7 +64,10 @@ public class SqlServerDAO : IGenericDAO
         _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
         _connString = $"Server={_server};Database={_database};{_access}";
 
-        var response = new Response();
+        var response = new Response()
+        {
+            ReturnValue = new List<object>()
+        };
         try
         {
             
@@ -77,7 +80,6 @@ public class SqlServerDAO : IGenericDAO
                 {
                     var reader = command.ExecuteReader();
 
-                    response.ReturnValue = new List<object>();
                     while (reader.Read())
                     {
                         var values = new object[reader.FieldCount];
@@ -106,7 +108,57 @@ public class SqlServerDAO : IGenericDAO
         }
         return response;
     }
+    public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
+    {
+        _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
+        _connString = $"Server={_server};Database={_database};{_access}";
 
+        var returnList = new List<object[]>();
+
+        using (var conn = new SqlConnection(_connString))
+        {
+            conn.Open();
+            using (var transaction = conn.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
+            {
+                foreach (var sqlCommand in sqlCommands)
+                {
+                    using (var command = new SqlCommand(sqlCommand.Key, conn, transaction))
+                    {
+                        command.CommandType = System.Data.CommandType.Text;
+
+                        if (sqlCommand.Value != null)
+                        {
+                            foreach (var parameter in sqlCommand.Value)
+                            {
+                                command.Parameters.Add(parameter);
+                            }
+                        }
+
+                        try
+                        {
+                            var reader = command.ExecuteReader();
+
+                            while (reader.Read())
+                            {
+                                var arr = new object[reader.FieldCount];
+
+                                reader.GetValues(arr);
+                                returnList.Add(arr);
+                            }
+                            reader.Close();
+                        }
+                        catch
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+                transaction.Commit();
+            }
+            return returnList;
+        }
+    }
     public IResponse ExecuteReadOnly()
     {
         throw new NotImplementedException(); 

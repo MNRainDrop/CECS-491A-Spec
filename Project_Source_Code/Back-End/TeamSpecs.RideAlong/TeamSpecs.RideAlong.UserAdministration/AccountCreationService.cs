@@ -64,7 +64,10 @@ public class AccountCreationService : IAccountCreationService
         {
             response.HasError = false;
         }
-
+        if (response.ErrorMessage == null)
+        {
+            response.ErrorMessage = "Successful";
+        }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
         
 
