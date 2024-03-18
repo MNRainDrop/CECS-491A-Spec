@@ -5,7 +5,7 @@ participant e as VehicleMarketPlaceEntryPoint<br>(Entry Point)
 participant vpm as VehicleMarketPlaceManager<br>(Manager Layer)
 participant vps as VehicleMarketPlacePostDeletionService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer)
-participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant dg as SqlDbVehicleMarketplaceTarget<br>(Data Gateway)
 participant da as SqlServerDAO<br>(Data Access Object)
 participant ds as Data Store<br>(Sql Server)
 
@@ -14,15 +14,14 @@ u->>+az: CheckToken()
     Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
 az-->>-u: Return valid check
 
-u->>+e: DeletePostFromMarketplace(marketplaceStatus: IMarketplaceStatus) : IActionResult
-    Note over u,e: Invoked when user clicks button on a specific post to delete<br>it from the marketplace 
+u->>+e: DeletePostFromMarketplace(vin: string)  : IActionResult
 
-    e->>+vpm: DeletePostFromMarketplace(marketplaceStatus: IMarketplaceStatus) : IResponse
+    e->>+vpm: DeletePostFromMarketplace(vin: string) : IResponse
         Note over e,vpm: Entry point calls upon manager<br>to delete vehicle profile post
 
         vpm->>vpm: Validate Parameters
 
-        vpm->>+vps: DeletePostFromMarketplace(marketplaceStatus: IMarketplaceStatus) : IResponse
+        vpm->>+vps: DeletePostFromMarketplace(vin: string) : IResponse
             Note over vpm,vps: VehicleMarketPlaceManager calls upon VehicleMarketPlacePostDeletionService to<br>delete the post from marketplace
 
             vps->>vps: Validate parameters
@@ -30,7 +29,7 @@ u->>+e: DeletePostFromMarketplace(marketplaceStatus: IMarketplaceStatus) : IActi
 
 
             # Delete the post 
-            vps->>+dg: DeletePostFromMarketplaceSql(vehicleID: int) : IResponse
+            vps->>+dg: DeletePostFromMarketplaceSql(vin: string, view: int, description: string, MarketPlaceStatus: int)  : IResponse
                 Note over vps,dg: VehicleMarketPlacePostDeletionService calls upon SqlDbVehicleTarget to generate<br>parameterized SqlCommand
 
                 dg->>dg: SqlDbVehicleTarget creates<br>Parameterized SqlCommand

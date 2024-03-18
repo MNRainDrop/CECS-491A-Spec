@@ -1,11 +1,11 @@
 sequenceDiagram
 participant u as Browser
 participant az as AuthN/AuthZ<br>(Entry Point)
-participant e as VehicleProfileEntryPoint<br>(Entry Point)
-participant vpm as VehicleProfileManager<br>(Manager Layer)
+participant e as VehicleMarketPlaceEntryPoint<br>(Entry Point)
+participant vpm as VehicleMarketPlaceManager<br>(Manager Layer)
 participant vps as VehicleProfileRetrievalService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer)
-participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant dg as SqlDbVehicleMarketplaceTarget<br>(Data Gateway)
 participant da as SqlServerDAO<br>(Data Access Object)
 participant ds as Data Store<br>(Sql Server)
 
@@ -14,23 +14,19 @@ u->>+az: CheckToken()
     Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
 az-->>-u: Return valid check
 
-u->>+e: GetMyVehicleProfiles(userAccount: IUserAccount) : IActionResult
+u->>+e: GetAllPublicVehicleProfiles() : IActionResult
     Note over u,e: Invoked when user clicks button to view<br>vehicle profiles
 
-    e->>+vpm: GetVehicleProfiles(userAccont: IUserAccount) : IResponse
+    e->>+vpm: GetAllPublicVehicleProfiles() : IResponse
         Note over e,vpm: Entry point calls upon manager<br>to retrieve vehicle profiles
-
-        vpm->>vpm: Validate Parameters
             
-        vpm->>+vps: RetrieveVehicleProfiles(userAccount: IUserAccount) : IResponse
+        vpm->>+vps: RetrieveVehicleALLPublicProfilesForMarketplace() : IResponse
             Note over vpm,vps: Returns a collection of vehicle profiles in IResponse.ReturnValue
 
-            vps->>vps: Validate Parameters
-
-            vps->>+dg: ReadVehicleProfileSql(search: ISearchParameters) : IResponse
+            vps->>+dg: ReadAllPublicVehicleProfileSql(): IResponse 
                 Note over vps,dg: VehicleProfileRetrievalService calls upon SqlDbVehicleTarget to generate<br>the sql statement and parameters
 
-                dg->>dg: Convert search parameters into SQL statement
+                dg->>dg: Generate SQL statement
 
                 dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
                     Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
