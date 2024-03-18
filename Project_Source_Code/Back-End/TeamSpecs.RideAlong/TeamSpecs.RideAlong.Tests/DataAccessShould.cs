@@ -2,10 +2,27 @@ namespace TeamSpecs.RideAlong.TestingLibrary;
 
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 
 public class DataAccessShould
 {
+    //Generates hashes for testing purposes
+    private string GenerateRandomHash()
+    {
+        string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
+        int length = 64; //Length of a hash is 64
+        StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
+        for (int i = 0; i < length; i++)
+        {
+            int index = random.Next(AllowedChars.Length);
+            sb.Append(AllowedChars[index]);
+        }
+        return sb.ToString();
+    }
+    // UserAccount (UserName, Salt, UserHash)
+    // ('TestUsername', 123456, 'TestUserHash')
     // Create Operations
     [Fact]
     public void DAO_ExecuteWriteOnly_ValidInsertSqlCommandPassedIn_OneRowWrittenToDatabase_Pass()
@@ -14,8 +31,8 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = "INSERT INTO loggingTable (logTime, logLevel, logCategory, logContext)" +
-            "VALUES (SYSUTCDATETIME(), 'Info', 'Testing', 'This is a test')";
+        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
+            $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')";
         
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -94,8 +111,8 @@ public class DataAccessShould
     {
         // Arrange        
         var dao = new SqlServerDAO();
-        var sql = "INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext)" +
-            "VALUES (SYSDATETIMEOFFSET(), 'ThisLogLevelHasMoreThanTwentyCharactersAndShouldNotWork', 'ThisLogCategoryHasMoreThanTwentyCharactersAndShouldNotWork', 'ThisLogContextIsUnderOneHundredCharactersButItShouldNotWorkStill')";
+        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
+            "VALUES ('username should fail it has more than 50 characters', 2147483648, 'this user hash is expected to fail it has more than 64 characters')";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
@@ -122,8 +139,8 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = "INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext) " +
-            "VALUES (SYSDATETIMEOFFSET(), null, null, null)";
+        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
+            "VALUES (null, null, null)";
 
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -153,13 +170,13 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logID = 1;");
+        var sql = new SqlCommand("SELECT UID, UserName, Salt, UserHash FROM UserAccount WHERE UID = 1;");
 
         // Expected 
         var expectedHasError = false;
         string ?expectedErrorMessage = null;
         var expectedReturnValueAmount = 1;
-        Object[] expectedReturnValue = { 1, "Info", "Testing", "This is a test" };
+        Object[] expectedReturnValue = { 1, "TestUsername", 123456, "TestUserHash" };
 
         // Act
         timer.Start();
@@ -188,7 +205,7 @@ public class DataAccessShould
         
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("SELECT logID, logLevel, logCategory, logContext FROM loggingTable WHERE logLevel LIKE '%Haha Funny Number lololol';");
+        var sql = new SqlCommand("SELECT  UID, UserName, Salt, UserHash FROM UserAccount WHERE UserName LIKE '%Haha Funny Number lololol';");
 
         // Expected 
         var expectedHasError = false;
@@ -221,13 +238,14 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
+        string hash = GenerateRandomHash();
 
-        var sql = new SqlCommand("SELECT logLevel, logCategory, logContext FROM loggingTable WHERE logLevel LIKE '%Info%' and logCategory LIKE '%testing%';");
+        var sql = new SqlCommand("SELECT UserName, UserHash FROM UserAccount WHERE UserName LIKE '%TestUsername%' and UserHash LIKE '%TestUserHash%';");
 
         // Expected 
         var expectedHasError = false;
         string ?expectedErrorMessage = null;
-        Object[] expectedReturnValue = { "Info", "Testing", "" };
+        Object[] expectedReturnValue = { "TestUsername", "TestUserHash" };
 
         // Act
         timer.Start();
@@ -257,12 +275,11 @@ public class DataAccessShould
         
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("INSERT INTO dbo.loggingTable (logTime, logLevel, logCategory, logContext)" +
-            "VALUES (SYSUTCDATETIME(), 'Info', 'Testing', 'This should not work')");
+        var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')");
 
         // Expected 
         var expectedHasError = true;
-        string expectedErrorMessage = "The INSERT permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
+        string expectedErrorMessage = "The INSERT permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
         ICollection<object> ?expectedReturnValueAmount = null;
 
         // Act
@@ -286,9 +303,9 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = "UPDATE dbo.loggingTable " +
-            "SET logContext = 'This is a test for updating'" +
-            "WHERE logID = 112";
+        var sql = "UPDATE UserAccount " +
+            "SET UserHash = 'This is an update test'" +
+            "WHERE UID = 2;";
 
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -317,13 +334,13 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("UPDATE dbo.loggingTable " +
-            "SET logContext = 'This is a test for updating'" +
-            "WHERE logID = 2");
+        var sql = new SqlCommand("UPDATE UserAccount " +
+            "SET UserHash = 'This is a test for updating' " +
+            "WHERE UID = 2");
 
         // Expected values
         var expectedHasError = true;
-        string expectedErrorMessage = "The UPDATE permission was denied on the object 'loggingTable', database 'RideAlong', schema 'dbo'.";
+        string expectedErrorMessage = "The UPDATE permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
         ICollection<object> ?expectedReturnValue = null;
 
         // Act
@@ -348,8 +365,8 @@ public class DataAccessShould
         
         var dao = new SqlServerDAO();
 
-        var sql = "DELETE FROM dbo.loggingTable " +
-            "WHERE logID > 2";
+        var sql = "DELETE FROM UserAccount " +
+            "WHERE UID > 2";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
@@ -377,8 +394,8 @@ public class DataAccessShould
         var timer = new Stopwatch();
         var dao = new SqlServerDAO();
 
-        var sql = "DELETE FROM dbo.loggingTable " +
-            "WHERE logID = null";
+        var sql = "DELETE FROM UserAccount " +
+            "WHERE UID = null";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
@@ -408,7 +425,7 @@ public class DataAccessShould
 
         // Expected values
         var minimumExpectedReturnValue = 0;
-        var sql = "DELETE FROM dbo.loggingTable";
+        var sql = "DELETE FROM UserAccount";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {

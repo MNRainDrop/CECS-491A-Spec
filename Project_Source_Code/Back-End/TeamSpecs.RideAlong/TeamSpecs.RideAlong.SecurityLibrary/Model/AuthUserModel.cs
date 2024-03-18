@@ -15,5 +15,12 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Model
             salt = new byte[32];
             userHash = null;
         }
+        public AuthUserModel(long pUID, string pUserName, byte[] pSalt, string pUserHash)
+        {
+            UID = pUID;
+            userName = pUserName;
+            salt = pSalt;
+            userHash = pUserHash;
+        }
     }
 }

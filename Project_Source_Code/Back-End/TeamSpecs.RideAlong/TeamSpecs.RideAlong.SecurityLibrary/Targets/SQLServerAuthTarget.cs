@@ -96,9 +96,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                     // Create a UserModel object to store the retrieved data
                     IAuthUserModel userModel = new AuthUserModel
                     {
-                        UID = (int)userRow[0],
+                        UID = (long)userRow[0],
                         userName = username,
-                        salt = (byte[])userRow[1],
+                        salt = BitConverter.GetBytes((int)userRow[1]),
                         userHash = (string)userRow[2]
                     };
 
