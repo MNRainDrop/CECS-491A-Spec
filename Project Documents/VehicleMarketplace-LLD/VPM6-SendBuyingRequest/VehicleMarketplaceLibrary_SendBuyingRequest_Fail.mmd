@@ -1,0 +1,82 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as VehicleMarketPlaceEntryPoint<br>(Entry Point)
+participant vpm as VehicleMarketPlaceManager<br>(Manager Layer)
+participant vps as VehicleMarketplaceSendRequestService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to create new vehicle profile
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: SendBuyRequest(what parameter to pass here if user on this page) : IActionResult
+    Note over u,e: All of the parameters in the Creation should have been stored locally or can be retrieved from db by inside the method hence no need to be passed here
+
+    e->>+vpm: SendBuyRequest() : IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to fetch vehicle profile detail either locally or from db 
+        
+        vpm->>vpm: 
+
+        vpm->>+vps: SendBuyRequest() : IResponse
+            Note over vpm,vps: VehicleMarketPlaceManager calls upon<br>VehicleMarketPlacePostCreationService to create the MarketPlaceStatus object
+
+            vps->>vps: Validate Parameters
+
+            # Use api to search for other details on the vehicle
+            #vps->>vps: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponseMessage>
+            #    Note over vps,vps: Requests information from API using the vin of the vehicle
+
+            # Create new IVehicleProfile Object
+            vps->>vps: VehicleMarketplaceSendRequestService creates a new INotification object (Assume Notification table)
+                Note over vps,vps: string VIN = vin
+
+            # Send to data store
+            vps->>+dg: VehicleMarketplaceSendRequestService(INotification) : IResponse
+                Note over vps,dg: VehicleMarketplaceSendRequestService calls upon SqlDbVechileTarget to generate the sql statement and parameters<br>SqlDbVehicleTarget will create sql statement and parameters first
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+                        ds->>ds: INSERT INTO Notification (VIN)<br>VALUES (@VIN)
+
+                         ds->>ds: Notification is unsuccessfully<br>written to the Data Store
+
+                    ds-->>-da: Database throws an exception
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the thrown exception
+
+                dg->>dg: SqlDbVehicleTarget checks the error to see if the error is safe to retry
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log unsuccessful vehicle creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+        # Log unsuccessful vehicle creation
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(500, IResponseObject.ErrorMessage)
