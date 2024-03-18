@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj" />
   </ItemGroup>
 
 </Project>

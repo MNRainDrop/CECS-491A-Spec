@@ -1,8 +1,6 @@
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.Services.HashService;
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
@@ -13,12 +11,12 @@ namespace TeamSpecs.RideAlong.UserAdministration
         private IHashService _hashService;
         private IPepperService _pepper;
 
-        public AccountModificationService(IUserTarget userTarget)
+        public AccountModificationService(IUserTarget userTarget, ILogService logService, IHashService hashService, IPepperService pepperService)
         {
             _userTarget = userTarget;
-            _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
-            _hashService = new HashService();
-            _pepper = new PepperService(new FilePepperTarget(new JsonFileDAO()));
+            _logService = logService;
+            _hashService = hashService;
+            _pepper = pepperService;
 
         }
         public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth, string secondaryEmail) 

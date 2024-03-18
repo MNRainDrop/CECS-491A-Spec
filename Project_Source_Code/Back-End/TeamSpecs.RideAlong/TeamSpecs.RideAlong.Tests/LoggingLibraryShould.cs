@@ -4,6 +4,7 @@ using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 
 public class LoggingLibraryShould
 {
@@ -13,7 +14,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
 
         // Expected values
         var expectedHasError = false;
@@ -44,7 +45,7 @@ public class LoggingLibraryShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
         var responseList = new List<IResponse>();
 
         // Expected values
@@ -101,7 +102,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
 
         // Expected values
         var expectedHasError = false;

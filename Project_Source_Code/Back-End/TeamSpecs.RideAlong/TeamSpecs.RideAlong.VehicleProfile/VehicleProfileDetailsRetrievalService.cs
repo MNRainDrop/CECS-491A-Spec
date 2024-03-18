@@ -44,11 +44,11 @@ public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetri
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not retrieve vehicle details";
+            response.ErrorMessage = "Could not retrieve vehicle profile details." + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful";
+            response.ErrorMessage = "Successful retrieval of vehicle profile details.";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
         #endregion

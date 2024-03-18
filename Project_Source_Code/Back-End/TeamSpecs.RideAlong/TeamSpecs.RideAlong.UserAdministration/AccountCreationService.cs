@@ -1,7 +1,6 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.DataAccess;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
@@ -10,17 +9,17 @@ namespace TeamSpecs.RideAlong.UserAdministration;
 /// </summary>
 public class AccountCreationService : IAccountCreationService
 {
-    private IUserTarget _userTarget;
-    private IPepperService _pepperService;
-    private IHashService _hashService;
-    private ILogService _logService;
+    private readonly IUserTarget _userTarget;
+    private readonly IPepperService _pepperService;
+    private readonly IHashService _hashService;
+    private readonly ILogService _logService;
     
-    public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IHashService hashService)
+    public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService)
     {
         _userTarget = userTarget;
         _pepperService = pepperService;
         _hashService = hashService;
-        _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        _logService = logService;
     }
     public IResponse CreateValidUserAccount(string userName)
     {

@@ -52,7 +52,8 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not generate Vehicle Profile Retrieval Sql";
+            response.ErrorMessage = "Could not generate Vehicle Profile Retrieval Sql.";
+            return response;
         }
 
         // DAO Executes the command
@@ -70,7 +71,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Vehicle Profile Retrieval execution failed";
+            response.ErrorMessage = "Vehicle Profile Retrieval execution failed.";
         }
         return response;
     }
@@ -114,7 +115,8 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not generate Vehicle Profile Details Retrieval Sql";
+            response.ErrorMessage = "Could not generate Vehicle Profile Details Retrieval Sql.";
+            return response;
         }
 
         // DAO Executes the command
@@ -132,7 +134,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Vehicle Profile Retrieval execution failed";
+            response.ErrorMessage = "Vehicle Profile Details Retrieval execution failed.";
         }
         return response;
     }
