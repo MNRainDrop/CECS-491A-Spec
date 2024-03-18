@@ -3,6 +3,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
+
 namespace TeamSpecs.RideAlong.SecurityLibrary
 {
     public class SecurityManager : ISecurityManager
@@ -10,6 +11,13 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         private IAuthService _authService;
 
         private ILogService _logger;
+
+        public SecurityManager(IAuthService authService, ILogService logger/*, IHttpContextAccessor httpContextAccessor*/)
+        {
+            _authService = authService;
+            _logger = logger;
+        }
+
         /// <summary>
         /// Creates an error response and logs it, based on message passed in through exception
         /// </summary>
@@ -25,11 +33,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         private object? unpackRespone(IResponse response)
         {
             return response.ReturnValue.First() ?? null;
-        }
-        public SecurityManager(IAuthService authService, ILogService logger)
-        {
-            _authService = authService;
-            _logger = logger;
         }
         public bool Authorize()
         {
@@ -84,7 +87,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             else
             {
 
-                return
             }
 
 

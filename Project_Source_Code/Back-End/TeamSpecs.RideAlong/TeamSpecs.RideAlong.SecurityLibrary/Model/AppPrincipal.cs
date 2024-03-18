@@ -1,5 +1,4 @@
-﻿using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+﻿using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary;
 
@@ -11,20 +10,20 @@ public class AppPrincipal : IAppPrincipal
         //expirationDate = getdatetimenow + expiration time
     }*/
 
-    public AppPrincipal(IAccountUserModel UserI, IDictionary<string, string> claims)
+    public AppPrincipal(IAuthUserModel UserI, IDictionary<string, string> Claims)
 
     {
-        UserIdentity = UserI;
-        Claims = claims;
+        userIdentity = UserI;
+        claims = Claims;
     }
 
 
-    public IAccountUserModel UserIdentity { get; set; }
+    public IAuthUserModel userIdentity { get; set; }
     // claims based add claims to the collection
     // roles based add the one role to the collection
 
     //public ICollection<(string ClaimName, string ClaimValue)> Claims { get; set; }
     // becomes a dictionary
     //DateTimeOffset? expirationdate { get; }
-    public IDictionary<string, string> Claims { get; set; }
+    public IDictionary<string, string> claims { get; set; }
 }

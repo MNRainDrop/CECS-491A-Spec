@@ -16,6 +16,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
         IResponse GetFirstFailedLogin(IAuthUserModel model);
         IResponse SetFirstFailedLogin(IAuthUserModel model, DateTime datetime);
         bool Authenticate(AuthNRequest loginAttempt, string otpHash);
-        bool Authorize(IAppPrincipal, Dictionary<string, string> requiredClaims);
+        bool Authorize(IAppPrincipal principal, Dictionary<string, string> requiredClaims);
     }
 }
