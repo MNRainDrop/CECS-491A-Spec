@@ -96,16 +96,10 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
 
             if (searchParameters is not null)
             {
-                foreach (var item in searchParameters)
+                foreach (KeyValuePair<string, string> item in searchParameters)
                 {
-                    KeyValuePair<string, long> searchItem;
-                    if (item is KeyValuePair<string, long>)
-                    {
-                        searchItem = (KeyValuePair<string, long>)item;
-
-                        whereSql += defaultWhereSql + searchItem.Key + " = @" + searchItem.Key + " ";
-                        parameters.Add(new SqlParameter("@" + searchItem.Key, searchItem.Value));
-                    }
+                    whereSql += defaultWhereSql + item.Key + " = @" + item.Key + " ";
+                    parameters.Add(new SqlParameter("@" + item.Key, item.Value));
                 }
             }
             var sqlString = commandSql + fromSql + whereSql;

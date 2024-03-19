@@ -13,7 +13,7 @@ public class SqlServerDAO : IGenericDAO
     public SqlServerDAO ()
     {
         _connString = "";
-        _server = @"LAPTOP-Marlone\RIDEALONG";
+        _server = @".\RIDEALONG";
         _database = "RideAlong";
         _access = "";
     }
