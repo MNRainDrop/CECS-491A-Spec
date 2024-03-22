@@ -6,12 +6,14 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
     {
         IResponse StartLogin(string username);
         IResponse TryAuthenticating(string username, string otp);
-        IResponse CreateIdToken();
-        IResponse CreateAccessToken();
+        IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTime timeAuthorized);
+        IResponse CreateAccessToken(IAppPrincipal userPrincpal);
+        IResponse CreateRefreshToken(IAppPrincipal userPrincpal);
         IResponse RefreshTokens();
-        IResponse Logout();
-        bool Authorize();
-        RideAlongPrincipal JwtToPrincipal(string idJwt, string accessJwt);
-        string GetUsernameFromJwt(string idJwt);
+        // Removing Logout, as this would simply be deleting the token from front end. No backend work required
+        //IResponse Logout();
+        bool isAuthorize(Dictionary<string, string> requiredClaims);
+        IAppPrincipal JwtToPrincipal();
+        string GetUsernameFromJwt();
     }
 }

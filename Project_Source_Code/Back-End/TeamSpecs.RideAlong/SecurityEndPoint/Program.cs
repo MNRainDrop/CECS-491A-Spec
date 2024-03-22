@@ -1,4 +1,6 @@
 using TeamSpecs.RideAlong.Middleware;
+using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+
+// The following should add stuff to the Security Manager, but I don't know how to define the Security manager as a "Service" for this application
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

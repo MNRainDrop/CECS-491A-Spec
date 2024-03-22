@@ -118,7 +118,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         /// </summary>
         /// <param name="UID"></param>
         /// <param name="passHash"></param>
-        /// <returns></returns>
+        /// <returns>Response with rows affected</returns>
         public IResponse savePass(long UID, string passHash)
         {
             // Create SQL statement
@@ -127,7 +127,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                 "BEGIN TRANSACTION" +
                 "UPDATE OTP SET PassHash = @passHash WHERE UID = @uid;" +
                 "IF @@ROWCOUNT = 0" +
-                "BEGIN INSERT INTO OTP (UID, PassHash, attempts) VALUES (@uid, @passHash, 0); END" +
+                "BEGIN INSERT INTO OTP (UID, PassHash, attempts, firstFailedLogin) VALUES (@uid, @passHash, 0, @firstFailedLogin); END" +
                 "COMMIT TRANSACTION;";
 
             //Create parameters
@@ -136,8 +136,11 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             uidParam.Value = UID;
             SqlParameter passHashParam = new SqlParameter("@passHash", SqlDbType.VarChar);
             passHashParam.Value = passHash;
+            SqlParameter failedLoginParam = new SqlParameter("@firstFailedLogin", SqlDbType.DateTime);
+            failedLoginParam.Value = DateTime.UtcNow;
             parameters.Add(uidParam);
             parameters.Add(passHashParam);
+            parameters.Add(failedLoginParam);
 
             //Create Key Value pair with sql string and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(CommandText, parameters);

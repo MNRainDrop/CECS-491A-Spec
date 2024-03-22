@@ -7,7 +7,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary;
 
-public class AuthService : IAuthService, IAuthorizer
+public class AuthService : IAuthService
 {
     IAuthTarget _authTarget;
     ILogService _logService;
