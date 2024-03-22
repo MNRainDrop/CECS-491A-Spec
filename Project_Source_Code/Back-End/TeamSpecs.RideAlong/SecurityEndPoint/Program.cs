@@ -29,8 +29,9 @@ if (app.Environment.IsDevelopment())
 app.useCorsPreflight();
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point
 app.useCorsMiddleware();
