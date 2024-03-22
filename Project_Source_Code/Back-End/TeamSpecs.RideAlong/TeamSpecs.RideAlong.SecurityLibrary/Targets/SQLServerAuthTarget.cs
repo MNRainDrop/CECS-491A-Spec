@@ -302,7 +302,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         {
             // Create SQL statement and parameters
             SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT ClaimID, ClaimScope FROM UserClaim WHERE UID = @uid";
+            sql.CommandText = "SELECT c.Claim, uc.ClaimScope FROM UserClaim uc INNER JOIN claim c on uc.ClaimId = c.ClaimId WHERE UID = @uid";
             sql.Parameters.AddWithValue("@uid", UID);
             // Execute SQL statement
             IResponse response = _dao.ExecuteReadOnly(sql);

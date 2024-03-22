@@ -11,7 +11,7 @@ namespace TeamSpecs.RideAlong.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            context.Response.Headers["Access-Control-Allow-Origin"] = "url"; // Replace "url" with your desired URL
+            context.Response.Headers["Access-Control-Allow-Origin"] = "*"; // Replace "url" with your desired URL
             context.Response.Headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"; // Add more methods as needed
             context.Response.Headers["Access-Control-Allow-Headers"] = "*"; // Specify the allowed headers
             context.Response.Headers["Access-Control-Allow-Credentials"] = "true";

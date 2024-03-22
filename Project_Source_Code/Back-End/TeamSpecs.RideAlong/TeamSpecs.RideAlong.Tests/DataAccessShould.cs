@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
-
+#pragma warning disable
 public class DataAccessShould
 {
     //Generates hashes for testing purposes
@@ -444,3 +444,4 @@ public class DataAccessShould
         }
     }
 }
+#pragma warning restore

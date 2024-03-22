@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Bson;
 using System.Diagnostics;
+using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -30,9 +31,24 @@ namespace TeamSpecs.RideAlong.TestingLibrary;
         dao.ExecuteWriteOnly(sqlCommands);
         #endregion
 */
-
+#pragma warning disable
 public class AuthenticateUserShould
 {
+    private string GenerateRandomHash()
+    {
+        string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
+        int length = 64; //Length of a hash is 64
+        StringBuilder sb = new StringBuilder(length);
+        Random random = new Random();
+        for (int i = 0; i < length; i++)
+        {
+            int index = random.Next(AllowedChars.Length);
+            sb.Append(AllowedChars[index]);
+        }
+        return sb.ToString();
+    }
+
+
     [Fact]
     public void Authenticate_A_Username_pass()
     {
@@ -70,7 +86,7 @@ public class AuthenticateUserShould
         var timer = new Stopwatch();
         var expectedResult = true;
         var actualResult = false;
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('SecurityTestUser', 123456, 'TestHash')";
+        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('SecurityTestUser', 123456, {GenerateRandomHash()})";
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
         IResponse response;
         IAuthUserModel authModel;
@@ -140,7 +156,7 @@ public class AuthenticateUserShould
         {
             //Check if we got what we ex
             authModel = (AuthUserModel)response.ReturnValue.First();
-            AuthUserModel expectedAuthModel = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(123456), "TestHash");//The UID doesn't matter here
+            AuthUserModel expectedAuthModel = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(123456), GenerateRandomHash());//The UID doesn't matter here
             if (expectedAuthModel.userName.Equals(authModel.userName) & expectedAuthModel.salt.SequenceEqual(authModel.salt) & expectedAuthModel.userHash.Equals(authModel.userHash))
             { actualResult = true; }
         }
@@ -168,7 +184,9 @@ public class AuthenticateUserShould
 
         //Act
         #region Generating test user
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('SecurityTestUser', 123456, 'TestHash')";
+        var sql = $"INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('GetUserPrincipalSecurityTestUser', 123456, '{GenerateRandomHash()}');" +
+            $"DECLARE @UID BIGINT; SET @UID = SCOPE_IDENTITY();" +
+            $"INSERT INTO UserClaim(UID, ClaimID, ClaimScope) VALUES (@UID, 1, 'true')";
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
         dao.ExecuteWriteOnly(sqlCommands);
         #endregion
@@ -191,7 +209,7 @@ public class AuthenticateUserShould
 
         timer.Stop();
         #region Deleting test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'SecurityTestUser'";
+        sql = "DELETE FROM UserAccount WHERE UserName = 'GetUserPrincipalSecurityTestUser'";
         sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
         dao.ExecuteWriteOnly(sqlCommands);
         #endregion
@@ -204,3 +222,4 @@ public class AuthenticateUserShould
 
 
 }
+#pragma warning restore

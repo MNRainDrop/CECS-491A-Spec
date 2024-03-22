@@ -1,6 +1,10 @@
+using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using Microsoft.Extensions.DependencyInjection;
+using TeamSpecs.RideAlong.LoggingLibrary;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,10 +13,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
+builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
+builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
 
-// The following should add stuff to the Security Manager, but I don't know how to define the Security manager as a "Service" for this application
-builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

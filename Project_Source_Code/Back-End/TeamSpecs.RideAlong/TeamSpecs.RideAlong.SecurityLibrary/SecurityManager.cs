@@ -316,7 +316,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             }
             else
             {
-                LogInAttempt.ErrorMessage = "The user could not be retreived";
+                LogInAttempt.ErrorMessage = "This user could not be found";
                 if (tryGetUserModel.ErrorMessage.IsNullOrEmpty())
                 {
                     LogInAttempt.ErrorMessage += $": {tryGetUserModel.ErrorMessage}";
@@ -368,6 +368,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             LogInAttempt.ReturnValue = new List<object>();
             LogInAttempt.ReturnValue.Append(otp);
             // End
+
             // If we got here, then all was completed successfully. Set error to false, return response
             LogInAttempt.HasError = false;
             return LogInAttempt;
