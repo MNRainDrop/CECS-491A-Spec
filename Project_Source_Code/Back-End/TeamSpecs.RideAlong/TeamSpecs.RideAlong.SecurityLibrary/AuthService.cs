@@ -1,116 +1,195 @@
-﻿using TeamSpecs.RideAlong.Model;
+﻿using Microsoft.IdentityModel.Tokens;
+using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 
 namespace TeamSpecs.RideAlong.SecurityLibrary;
-// Library built in
 
-public class AuthService : IAuthenticator, IAuthorizer
+public class AuthService : IAuthService
 {
     IAuthTarget _authTarget;
-    public AuthService(IAuthTarget authTarget)
+    ILogService _logService;
+    public AuthService(IAuthTarget authTarget, ILogService logService)
     {
         _authTarget = authTarget;
-    }
-    private bool validatePass(AuthenticationRequest authRequest)
-    {
-        throw new NotImplementedException();
-        //string storedPass = _authTarget.fetchPass(authRequest.UserIdentity);
-        //return false;
-    }
-    private Dictionary<string, string> getClaims(IAccountUserModel userIdentity)
-    {
-        return new Dictionary<string, string>();
+        _logService = logService;
     }
 
-    /// <summary>
-    /// For Authentication
-    /// </summary>
-    /// <param name="authRequest"></param>
-    /// <returns>This will return an AppPrincipal </returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
-    public AppPrincipal? Authenticate(AuthenticationRequest authRequest)
+    public bool Authenticate(AuthNRequest loginAttempt, string otpHash)
     {
-        // parameter is the name in the signature
-        // argument is the actual value
-
-        // Early Exit - uses less resource
-        #region Validate Arguments
-        if (authRequest is null)
-        {
-            // user nameof instead of just quotes because it will flag it when there's a rename
-            throw new ArgumentNullException(nameof(authRequest));
-        }
-
-        if (authRequest.UserIdentity is null)
-        {
-            throw new ArgumentException($"{nameof(authRequest.UserIdentity)} must be valid");
-        }
-
-        if (String.IsNullOrWhiteSpace(authRequest.UserIdentity.UserName))
-        {
-            throw new ArgumentException($"{nameof(authRequest.UserIdentity.UserName)} must be valid");
-        }
-
-        if (String.IsNullOrWhiteSpace(authRequest.Proof))
-        {
-            throw new ArgumentException($"{nameof(authRequest.Proof)} must be valid");
-        }
-        #endregion
-
-        AppPrincipal? appPrincipal = null;
-
-        try
-        {
-
-            // Step 1: Validate auth request 
-            // go to db
-            // check if it matches
-            // return the roles/claims if it matches
-
-            // Step 2: Populate AppPrincipal
-            var claims = new Dictionary<string, string>();
-
-            appPrincipal = new AppPrincipal(authRequest.UserIdentity, claims)
-            {
-                UserIdentity = authRequest.UserIdentity,
-                Claims = claims
-            };
-
-        }
-        catch (Exception ex)
-        {
-            var errorMessage = ex.GetBaseException().Message;
-            // log error message
-            // Should be Asynchronous
-        }
-
-        return appPrincipal;
+        return loginAttempt.otp == otpHash;
     }
 
-    // depending on design goals, implementation drastically changes
-    // why do we throw only in the beginning, but not at the end
-    // if user error, they have to correct it. we just check if it is a possible valid one
-    // it is user/caller's responsiblity
-
-
-    // use bool because all you need to know is true and false
-    // creating a resposne object would use more memory
-    public bool IsAuthorize(AppPrincipal currentPrincipal, IDictionary<string, string> requiredClaims)
+    public bool Authorize(IAppPrincipal principal, Dictionary<string, string> requiredClaims)
     {
-
-        // Dictionary<string, string>() {new ("RoleName", "Admin")}
-        // key - RoleName, value - Admin
+        bool hasMissingPermission = false;
 
         foreach (var claim in requiredClaims)
         {
-            // all of the rquired claims must be within the claims of the current user
-            if (!currentPrincipal.Claims.Contains(claim))
+            if (!principal.claims.Contains(claim))
             {
-                return false;
+                hasMissingPermission = true;
+                break;
             }
         }
+        return !hasMissingPermission;
+    }
 
-        return true;
+    public IResponse GetOtpHash(IAuthUserModel model)
+    {
+        long uid = model.UID;
+        IResponse response = _authTarget.fetchPass(uid);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown Layer occurred at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+
+    public IResponse GetUserLogInAttempts(IAuthUserModel model)
+    {
+        long uid = model.UID;
+        IResponse response = _authTarget.fetchAttempts(uid);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown Error occurred at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+
+    public IResponse GetUserModel(string username)
+    {
+        IResponse response = _authTarget.fetchUserModel(username);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage is null)
+            {
+                response.ErrorMessage = $"Unknown error occurred at target layer or below for user {username}";
+            }
+            else
+            {
+                response.ErrorMessage += $"for user {username}";
+            }
+            _logService.CreateLogAsync("Error", "data", response.ErrorMessage, null);
+        }
+        return response;
+    }
+
+    public IResponse GetUserPrincipal(IAuthUserModel model)
+    {
+        // Get response with claims from ds
+        IResponse userClaimsResponse = _authTarget.getClaims(model.UID);
+        // Check if there are errors present
+        if (userClaimsResponse.HasError)
+        {
+            IResponse errorResponse = new Response();
+            if (userClaimsResponse.ErrorMessage is null)
+            {
+                errorResponse.ErrorMessage = "Unknown Error occurred at target or below";
+            }
+            else
+            {
+                errorResponse.ErrorMessage = userClaimsResponse.ErrorMessage;
+            }
+            _logService.CreateLogAsync("Error", "Server", errorResponse.ErrorMessage, model.userHash);
+            return errorResponse;
+        }
+        // Check for presense of returnValue list
+        if (userClaimsResponse.ReturnValue is null)
+        {
+            IResponse errorResponse = new Response();
+            errorResponse.ErrorMessage = "Successful Response from Target, but no return value present";
+            _logService.CreateLogAsync("Error", "Server", errorResponse.ErrorMessage, model.userHash); //Log error
+            return errorResponse;
+        }
+        var value = userClaimsResponse.ReturnValue.First();
+        // Check for null response
+        if (value is null)
+        {
+            IResponse errorResponse = new Response();
+            errorResponse.ErrorMessage = "DB returned a null value";
+            return errorResponse;
+        }
+        if (value is Dictionary<string, string>)
+        {
+            // Combine user model and claims to create a principal
+            Dictionary<string, string> claims = (Dictionary<string, string>)value;
+            IAppPrincipal principal = new RideAlongPrincipal(model, claims);
+            IResponse successResponse = new Response();
+            successResponse.ReturnValue = new List<object> { principal };
+            successResponse.HasError = false;
+            return successResponse;
+        }
+        else
+        {
+            IResponse errorResponse = new Response();
+            errorResponse.ErrorMessage = "An unknown error has occcurred";
+            _logService.CreateLogAsync("Error", "Server", errorResponse.ErrorMessage, model.userHash);
+            return errorResponse;
+        }
+    }
+
+    public IResponse UpdateOtp(IAuthUserModel model, string opt)
+    {
+        IResponse response = _authTarget.savePass(model.UID, opt);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown Layer occurred at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+
+    public IResponse updateLoginAttempt(IAuthUserModel model, int attempts)
+    {
+        IResponse response = _authTarget.updateAttempts(model.UID, attempts);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+    public IResponse GetFirstFailedLogin(IAuthUserModel model)
+    {
+        IResponse response = _authTarget.fetchFirstFailedLogin(model.UID);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
+    }
+    public IResponse SetFirstFailedLogin(IAuthUserModel model, DateTime datetime)
+    {
+        IResponse response = _authTarget.setFirstFailedLogin(model.UID, datetime);
+        if (response.HasError)
+        {
+            if (response.ErrorMessage.IsNullOrEmpty() || response.ErrorMessage is null)
+            {
+                response.ErrorMessage = "Unknown error happened at target layer or below";
+            }
+            _logService.CreateLogAsync("Error", "Service", response.ErrorMessage, model.userHash);
+        }
+        return response;
     }
 }

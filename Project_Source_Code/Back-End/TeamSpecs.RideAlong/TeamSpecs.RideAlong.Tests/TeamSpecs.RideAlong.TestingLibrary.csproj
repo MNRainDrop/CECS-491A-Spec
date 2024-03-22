@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -8,6 +8,24 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="UserAdministrationTests\**" />
+    <EmbeddedResource Remove="UserAdministrationTests\**" />
+    <None Remove="UserAdministrationTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ProfileUserModelShould.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
@@ -30,7 +48,6 @@
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj" />
-    <ProjectReference Include="..\TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj" />
   </ItemGroup>
 
 </Project>

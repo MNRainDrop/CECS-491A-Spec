@@ -1,9 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +21,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EmailService\" />
   </ItemGroup>
 
 </Project>

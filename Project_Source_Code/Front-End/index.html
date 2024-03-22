@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Models</title>
+    <style>
+        /* Add your CSS styles here */
+        .fleet-model {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#">Rental Fleet</a>
+        <a href="#">Login</a>
+    </nav>
+    
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username">
+        <button id="fetchFleetButton">Fetch Fleet</button>
+    </div>
+
+    <div id="fleetContainer">
+        <!-- Fleet models will be dynamically added here -->
+    </div>
+
+    <script src="RentalFleetViewGenerator.js"></script>
+</body>
+</html>

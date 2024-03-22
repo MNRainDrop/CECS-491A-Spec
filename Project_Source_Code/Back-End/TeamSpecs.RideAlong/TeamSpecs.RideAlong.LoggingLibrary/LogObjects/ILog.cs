@@ -7,4 +7,5 @@ public interface ILog
     string LogCategory { get; set; }
     string LogContext { get; set; }
     string? UserHash { get; set; }
+    public string LogHash { get; set; }
 }
