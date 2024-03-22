@@ -352,7 +352,40 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
         }
         public IResponse setFirstFailedLogin(long uid, DateTime datetime)
         {
-            throw new NotImplementedException();
+            // Make sql command
+
+            string sql = "UPDATE OTP SET firstFailedLogin = @ffLogin WHERE UID = @uid";
+
+            // Set up parameters
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            SqlParameter uidParam = new SqlParameter("@uid", SqlDbType.BigInt);
+            uidParam.Value = uid;
+            SqlParameter ffLogin = new SqlParameter("@ffLogin", SqlDbType.DateTime);
+            ffLogin.Value = datetime;
+            parameters.Add(uidParam);
+            parameters.Add(ffLogin);
+
+
+            // Create Key value pair
+            KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(sql, parameters);
+
+            // Place in list
+            List< KeyValuePair<string, HashSet<SqlParameter>?> > sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { sqlStatement };
+
+            //Execute
+            int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
+
+            //Validate
+            try
+            {
+                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                return createSuccessResponse(null);
+            }
+            catch (Exception ex)
+            {
+                return createErrorResponse(ex);
+            }
+
         }
         public IResponse fetchFirstFailedLogin(long uid)
         {

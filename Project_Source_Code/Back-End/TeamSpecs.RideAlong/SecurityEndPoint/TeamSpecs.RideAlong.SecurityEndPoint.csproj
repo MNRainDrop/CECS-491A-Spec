@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
   </ItemGroup>
 
 </Project>
