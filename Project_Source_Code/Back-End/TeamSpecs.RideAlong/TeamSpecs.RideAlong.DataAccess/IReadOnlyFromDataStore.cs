@@ -5,5 +5,7 @@ using TeamSpecs.RideAlong.Model;
 
 public interface IReadOnlyFromDataStore
 {
-    public IResponse ExecuteReadOnly(SqlCommand sql);
+    public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands);
+
+    public IResponse ExecuteReadOnly(SqlCommand sqlCommand);
 }

@@ -1,17 +1,16 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.DataAccess;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class AccountDeletionService : IAccountDeletionService
 {
-    private IUserTarget _userTarget;
-    private ILogService _logService;
-    public AccountDeletionService(IUserTarget userTarget)
+    private readonly IUserTarget _userTarget;
+    private readonly ILogService _logService;
+    public AccountDeletionService(IUserTarget userTarget, ILogService logService)
     {
         _userTarget = userTarget;
-        _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        _logService = logService;
     }
     public IResponse DeleteUserAccount(IAccountUserModel userAccount)
     {

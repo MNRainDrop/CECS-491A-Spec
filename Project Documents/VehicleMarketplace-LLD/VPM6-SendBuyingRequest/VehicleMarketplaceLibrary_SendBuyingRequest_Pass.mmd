@@ -5,7 +5,7 @@ participant e as VehicleMarketPlaceEntryPoint<br>(Entry Point)
 participant vpm as VehicleMarketPlaceManager<br>(Manager Layer)
 participant vps as VehicleMarketplaceSendRequestService<br>(Services Layer)
 participant ll as LogService<br>(Services Layer)
-participant dg as SqlDbVehicleMarketplaceTarget<br>(Data Gateway)
+participant dg as SqlDbVehicleTarget<br>(Data Gateway)
 participant da as SqlServerDAO<br>(Data Access Object)
 participant ds as Data Store<br>(Sql Server)
 
@@ -14,15 +14,16 @@ u->>+az: CheckToken()
     Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
 az-->>-u: Return valid check
 
-u->>+e: SendBuyRequest(buyRequest: IRequest) : IActionResult
+u->>+e: SendBuyRequest(what parameter to pass here if user on this page) : IActionResult
+    Note over u,e: All of the parameters in the Creation should have been stored locally or can be retrieved from db by inside the method hence no need to be passed here
 
     e->>+vpm: SendBuyRequest() : IResponse
-        Note over e,vpm: Entry point calls upon manager<br>to send buy request 
+        Note over e,vpm: Entry point calls upon manager<br>to fetch vehicle profile detail either locally or from db 
         
         vpm->>vpm: 
 
-        vpm->>+vps: SendBuyRequest(vin: string, price: int) : IResponse
-            Note over vpm,vps: VehicleMarketPlaceManager calls upon<br>VehicleMarketPlacePostCreationService to create the IRequest object
+        vpm->>+vps: SendBuyRequest() : IResponse
+            Note over vpm,vps: VehicleMarketPlaceManager calls upon<br>VehicleMarketPlacePostCreationService to create the MarketPlaceStatus object
 
             vps->>vps: Validate Parameters
 
@@ -31,11 +32,11 @@ u->>+e: SendBuyRequest(buyRequest: IRequest) : IActionResult
             #    Note over vps,vps: Requests information from API using the vin of the vehicle
 
             # Create new IVehicleProfile Object
-            vps->>vps: VehicleMarketplaceSendRequestService creates a new IRequest object (Assume Notification table)
+            vps->>vps: VehicleMarketplaceSendRequestService creates a new INotification object (Assume Notification table)
                 Note over vps,vps: string VIN = vin
 
             # Send to data store
-            vps->>+dg: VehicleMarketplaceSendRequestService(buyRequest: IRequest) : IResponse
+            vps->>+dg: VehicleMarketplaceSendRequestService(INotification) : IResponse
                 Note over vps,dg: VehicleMarketplaceSendRequestService calls upon SqlDbVechileTarget to generate the sql statement and parameters<br>SqlDbVehicleTarget will create sql statement and parameters first
 
                 dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int

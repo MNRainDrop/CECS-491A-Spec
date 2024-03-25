@@ -78,12 +78,14 @@ namespace TeamSpecs.RideAlong.DataAccess
 
         }
 
-        public IResponse ExecuteReadOnly(SqlCommand sql)
+        public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
         {
             throw new NotImplementedException();
         }
 
-
-
+        public IResponse ExecuteReadOnly(SqlCommand sqlCommand)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

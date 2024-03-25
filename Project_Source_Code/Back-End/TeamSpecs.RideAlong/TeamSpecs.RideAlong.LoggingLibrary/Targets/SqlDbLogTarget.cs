@@ -12,6 +12,9 @@ public class SqlDbLogTarget : ILogTarget
         _dao = dao;
     }
 
+    public SqlDbLogTarget()
+    { }
+
     public IResponse WriteLog(ILog log)
     {
         #region Default sql setup
@@ -20,7 +23,7 @@ public class SqlDbLogTarget : ILogTarget
         var rowsSql = "(";
         var valuesSql = "VALUES (";
         #endregion
-
+        
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
         var response = new Response();
 
