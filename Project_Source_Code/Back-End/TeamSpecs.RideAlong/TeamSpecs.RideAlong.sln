@@ -22,7 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Securit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConsoleApp", "TeamSpecs.RideAlong.ConsoleApp\TeamSpecs.RideAlong.ConsoleApp.csproj", "{17925BD2-8682-4F58-B60C-44BF5394300B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.VehicleProfileWebService", "TeamSpecs.RideAlong.VehicleProfileWebService\TeamSpecs.RideAlong.VehicleProfileWebService.csproj", "{B4DAB9E3-F44C-456E-ADAA-425EB5721648}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +68,10 @@ Global
 		{20C84C49-760E-45B8-8600-61F1F4790856}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20C84C49-760E-45B8-8600-61F1F4790856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20C84C49-760E-45B8-8600-61F1F4790856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4DAB9E3-F44C-456E-ADAA-425EB5721648}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4DAB9E3-F44C-456E-ADAA-425EB5721648}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4DAB9E3-F44C-456E-ADAA-425EB5721648}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4DAB9E3-F44C-456E-ADAA-425EB5721648}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

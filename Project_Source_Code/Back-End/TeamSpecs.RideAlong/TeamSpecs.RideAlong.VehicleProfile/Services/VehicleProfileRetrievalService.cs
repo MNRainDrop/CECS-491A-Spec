@@ -13,7 +13,7 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         _logService = logService;
     }
 
-    public IResponse retrieveVehicleProfilesForUser(IAccountUserModel userAccount)
+    public IResponse retrieveVehicleProfilesForUser(IAccountUserModel userAccount, int numOfResults, int page)
     {
         #region Validate Parameters
         if (userAccount is null)
@@ -30,7 +30,7 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         {
             new KeyValuePair<string, long>("Owner_UID", userAccount.UserId)
         };
-        var response = _vehicleTarget.ReadVehicleProfileSql(search);
+        var response = _vehicleTarget.ReadVehicleProfileSql(search, numOfResults, page);
 
         #region Log the action to the database
         if (response.HasError)
@@ -44,10 +44,5 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
         #endregion
         return response;
-    }
-
-    public IResponse retrieveVehicleProfilesForMarketplace()
-    {
-        throw new NotImplementedException();
     }
 }

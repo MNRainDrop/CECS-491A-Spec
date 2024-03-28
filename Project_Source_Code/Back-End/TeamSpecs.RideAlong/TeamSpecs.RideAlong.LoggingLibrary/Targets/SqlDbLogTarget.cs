@@ -12,9 +12,6 @@ public class SqlDbLogTarget : ILogTarget
         _dao = dao;
     }
 
-    public SqlDbLogTarget()
-    { }
-
     public IResponse WriteLog(ILog log)
     {
         #region Default sql setup
