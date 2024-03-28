@@ -38,14 +38,12 @@ if (app.Environment.IsDevelopment())
 // This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
 app.useCorsPreflight();
 
+app.useIDValidator();
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point
 app.useCorsMiddleware();
 
 app.MapControllers();
-
 app.Run();

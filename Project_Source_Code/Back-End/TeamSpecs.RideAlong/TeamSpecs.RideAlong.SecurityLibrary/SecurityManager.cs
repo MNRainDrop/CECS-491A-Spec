@@ -23,7 +23,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
 
         private ILogService _logger;
         private IHttpContextAccessor _httpContextAccessor;
-        private string _rideAlongSecretKey = "Ride-Along-Super-secret-string";
+        private string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         private string _rideAlongIssuer = "Ride Along by Team Specs";
         private string _accessTokenHeader = "X-Access-Token";
         private string _refreshTokenHeader = "X-Refresh-Token";
@@ -145,7 +145,10 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             string jwt = new JwtSecurityTokenHandler().WriteToken(token);
             IResponse accessTokenResponse = new Response();
             accessTokenResponse.HasError = false;
-            accessTokenResponse.ReturnValue = new List<object>() { jwt };
+            accessTokenResponse.ReturnValue = new List<object>
+            {
+                jwt
+            };
             return accessTokenResponse;
         }
         public IResponse CreateRefreshToken(IAppPrincipal userPrincpal)
@@ -366,7 +369,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
 
             // For A Development Environment Only
             LogInAttempt.ReturnValue = new List<object>();
-            LogInAttempt.ReturnValue.Append(otp);
+            LogInAttempt.ReturnValue.Add(otp);
             // End
 
             // If we got here, then all was completed successfully. Set error to false, return response

@@ -31,18 +31,20 @@ public class LogService : ILogService
 
     public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
-        string logDetails = logLevel + logCategory + logContext + userHash;
+        DateTime time = DateTime.UtcNow;
+        string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
         //changed to work with log object
-        ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, logHash, userHash);
+        ILog log = new Log(time , logLevel, logCategory, logContext, logHash, userHash);
         return _logTarget.WriteLog(log);
     }
 
     public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
-        string logDetails = logLevel + logCategory + logContext + userHash;
+        DateTime time = DateTime.UtcNow;
+        string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
-        ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, logHash, userHash);
+        ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
         return await Task.Run(() => _logTarget.WriteLog(log));
     }
 }

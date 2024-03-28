@@ -21,11 +21,11 @@ public class RandomService : IRandomService
         char character;
         string result ="";
         int characterValue;
-        int Case = RandomNumberGenerator.GetInt32(0,3);
 
         for (int i = 0; i < size; i++)
-        { 
-            switch(Case)
+        {
+            int Case = RandomNumberGenerator.GetInt32(0, 3);
+            switch (Case)
             {
                 case 0:
                     characterValue = RandomNumberGenerator.GetInt32(48,58);
