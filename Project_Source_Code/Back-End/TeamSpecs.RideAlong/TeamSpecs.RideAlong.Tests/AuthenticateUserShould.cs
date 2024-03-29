@@ -9,6 +9,7 @@ using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.Services;
 using Xunit.Sdk;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
@@ -55,7 +56,8 @@ public class AuthenticateUserShould
         //Arrange
         var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var logger = new LogService(logTarget); 
+        var hashService = new HashService(); 
+        var logger = new LogService(logTarget,hashService); 
         var authRequest = new AuthNRequest("UserName", "OTP");
         var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
@@ -78,7 +80,8 @@ public class AuthenticateUserShould
         //Arrange
         var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var logger = new LogService(logTarget);
+        var hashService = new HashService();
+        var logger = new LogService(logTarget,hashService);
         var authRequest = new AuthNRequest("UserName", "OTP");
         var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
@@ -137,7 +140,8 @@ public class AuthenticateUserShould
         //Arrange
         var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var logger = new LogService(logTarget);
+        var hashService = new HashService();
+        var logger = new LogService(logTarget, hashService);
         var authRequest = new AuthNRequest("UserName", "OTP");
         var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
@@ -172,7 +176,8 @@ public class AuthenticateUserShould
         //Arrange
         var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var logger = new LogService(logTarget);
+        var hashService = new HashService();
+        var logger = new LogService(logTarget, hashService);
         var authRequest = new AuthNRequest("UserName", "OTP");
         var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);

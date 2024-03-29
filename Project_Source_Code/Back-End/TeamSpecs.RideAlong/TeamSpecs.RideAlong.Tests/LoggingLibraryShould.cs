@@ -29,7 +29,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
         
 
         // Expected values
