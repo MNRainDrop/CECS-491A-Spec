@@ -6,9 +6,11 @@ public class ProfileUserModel : IProfileUserModel
 
     public DateTime DateCreated { get; set; }
 
-    public ProfileUserModel(DateTime dateOfBirth)
+    public string AlternateUserName { get; set; }
+    public ProfileUserModel(DateTime dateOfBirth, string alternateUserName)
     {
         DateOfBirth = dateOfBirth;
         DateCreated = DateTime.Now;
+        AlternateUserName = alternateUserName;
     }
 }

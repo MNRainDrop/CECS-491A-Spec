@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
@@ -18,7 +20,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             var testUsername = "RecoverTestEmail@gmail.com";
 
             #region Creating Test User and Test Claim
@@ -51,7 +53,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             var testUsername = "RecoverTestEmail@gmail.com";
 
             #region Creating Test User 
@@ -84,7 +86,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var AccountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             var testUsername = "Modifytestemail@gmail.com";
             var testAltUsername = "testAltEmail@gmail.com";
             var testDateTime = DateTime.Now;
@@ -126,7 +128,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = null;
 
             // Act and Assert
@@ -147,7 +149,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "";
 
             // Act and Assert
@@ -169,7 +171,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "          ";
 
             // Act and Assert
@@ -190,7 +192,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = null;
 
             // Act and Assert
@@ -211,7 +213,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "";
 
             // Act and Assert
@@ -233,7 +235,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "          ";
 
             // Act and Assert
@@ -254,7 +256,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = null;
 
             // Act and Assert
@@ -275,7 +277,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "";
 
             // Act and Assert
@@ -297,7 +299,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests
             // Arrange
             IResponse response;
             var _DAO = new SqlServerDAO();
-            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO));
+            var accountRecoveryService = new AccountRecoveryService(new SqlDbUserTarget(_DAO), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()), new PepperService(new FilePepperTarget(new JsonFileDAO())));
             string testUsername = "          ";
 
             // Act and Assert

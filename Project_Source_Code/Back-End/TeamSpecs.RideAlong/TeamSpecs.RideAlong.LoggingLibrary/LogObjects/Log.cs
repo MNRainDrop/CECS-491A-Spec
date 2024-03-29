@@ -11,11 +11,12 @@ public class Log : ILog
         this.UserHash = UserHash;
         this.LogHash = LogHash;
     }
+
     private int? LogID { get; set; }
     public DateTimeOffset LogTime { get; set; }
     public string LogLevel { get; set; }
     public string LogCategory { get; set; }
     public string LogContext { get; set; }
-    public string? UserHash { get; set; }
     public string LogHash { get; set; }
+    public string? UserHash { get; set; }
 }

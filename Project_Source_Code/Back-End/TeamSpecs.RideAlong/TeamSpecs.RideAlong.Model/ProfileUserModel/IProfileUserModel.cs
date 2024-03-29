@@ -4,5 +4,6 @@ public interface IProfileUserModel
 {
     DateTime DateOfBirth {get; set;}
     DateTime DateCreated {get; set;}
+    string AlternateUserName { get; set;}
 }
 

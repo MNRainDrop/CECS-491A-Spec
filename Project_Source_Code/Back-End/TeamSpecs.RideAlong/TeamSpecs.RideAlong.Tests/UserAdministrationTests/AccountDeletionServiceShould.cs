@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
@@ -15,7 +17,7 @@ public class AccountDeletionServiceShoud
         var timer = new Stopwatch();
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO));
+        var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()));
         var testUsername = "Deletetestemail@gmail.com";
 
         var userAccount = new AccountUserModel(testUsername);
@@ -54,7 +56,7 @@ public class AccountDeletionServiceShoud
         // Arrange
         var _DAO = new SqlServerDAO();
         IResponse response;
-        var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO));
+        var accountDeletionService = new AccountDeletionService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()));
         string testUsername = null;
 
         var userAccount = new AccountUserModel(testUsername);

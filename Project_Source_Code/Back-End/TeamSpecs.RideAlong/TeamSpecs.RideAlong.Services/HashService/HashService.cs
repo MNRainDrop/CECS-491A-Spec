@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace TeamSpecs.RideAlong.Services.HashService;
+namespace TeamSpecs.RideAlong.Services;
 
 public class HashService : IHashService
 {

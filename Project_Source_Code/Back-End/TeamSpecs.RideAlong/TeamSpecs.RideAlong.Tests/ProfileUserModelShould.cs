@@ -48,7 +48,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             Assert.Equal(expectedEmail, user.AlternateUserName);
         }
         [Fact]
-        public void ProfileUserModel_SetSecondaryEmail_ValidStringParameterPassedIn_NewvalueExpected_Passed()
+        public void ProfileUserModel_SetSecondaryEmail_ValidStringParameterPassedIn_NewValueExpected_Passed()
         {
             // Arrange
             DateTime testDateOfBirth = new DateTime(1995, 5, 5);
