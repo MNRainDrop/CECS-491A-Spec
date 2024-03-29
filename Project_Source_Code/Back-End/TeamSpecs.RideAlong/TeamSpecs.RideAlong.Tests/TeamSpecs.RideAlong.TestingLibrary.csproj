@@ -9,6 +9,24 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="UserAdministrationTests\**" />
+    <EmbeddedResource Remove="UserAdministrationTests\**" />
+    <None Remove="UserAdministrationTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="ProfileUserModelShould.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />

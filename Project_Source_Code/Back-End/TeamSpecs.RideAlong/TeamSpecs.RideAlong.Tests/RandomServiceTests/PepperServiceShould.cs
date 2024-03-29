@@ -2,7 +2,7 @@
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
-
+#pragma warning disable
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class PepperServiceShould
@@ -116,3 +116,4 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
     }
 }
+#pragma warning restore

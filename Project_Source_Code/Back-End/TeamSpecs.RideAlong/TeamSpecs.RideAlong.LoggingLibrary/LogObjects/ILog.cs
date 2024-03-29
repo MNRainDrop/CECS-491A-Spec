@@ -8,5 +8,4 @@ public interface ILog
     string LogContext { get; set; }
     string LogHash { get; set; }
     string? UserHash { get; set; }
-
 }

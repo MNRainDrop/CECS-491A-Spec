@@ -1,4 +1,8 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
+
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
@@ -13,18 +17,34 @@ public class LogService : ILogService
         _logTarget = logTarget;
         _hashService = hashService;
     }
+    private string createLogHash(string logDetails)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(logDetails));
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                sb.Append(bytes[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+    }
 
     public IResponse CreateLog(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
+        string logDetails = logLevel + logCategory + logContext + userHash;
+        string logHash = createLogHash(logDetails);
         //changed to work with log object
-        var logHash = _hashService.hashUser(DateTime.UtcNow.ToString() + logLevel + logCategory + logContext + userHash, 0);
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, logHash, userHash);
         return _logTarget.WriteLog(log);
     }
 
     public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
-        var logHash = _hashService.hashUser(DateTime.UtcNow.ToString() + logLevel + logCategory + logContext + userHash, 0);
+        string logDetails = logLevel + logCategory + logContext + userHash;
+        string logHash = createLogHash(logDetails);
         ILog log = new Log(DateTime.UtcNow, logLevel, logCategory, logContext, logHash, userHash);
         return await Task.Run(() => _logTarget.WriteLog(log));
     }

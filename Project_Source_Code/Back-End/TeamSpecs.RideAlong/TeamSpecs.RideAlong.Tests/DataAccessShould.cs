@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
-
+#pragma warning disable
 public class DataAccessShould
 {
     //Generates hashes for testing purposes
@@ -33,7 +33,6 @@ public class DataAccessShould
 
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')";
-
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
@@ -244,7 +243,8 @@ public class DataAccessShould
 
         // Expected 
         var expectedHasError = false;
-        string? expectedErrorMessage = null;
+
+        string ?expectedErrorMessage = null;
         Object[] expectedReturnValue = { "TestUsername", "TestUserHash" };
 
         // Act
@@ -275,12 +275,13 @@ public class DataAccessShould
 
         var dao = new SqlServerDAO();
 
-        var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('TestUsername', 654321, '{GenerateRandomHash()}')");
+
+        var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')");
 
         // Expected 
         var expectedHasError = true;
-       // string expectedErrorMessage = "The INSERT permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
-        ICollection<object>? expectedReturnValueAmount = null;
+        string expectedErrorMessage = "The INSERT permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
+        ICollection<object> ?expectedReturnValueAmount = null;
 
         // Act
         timer.Start();
@@ -340,8 +341,9 @@ public class DataAccessShould
 
         // Expected values
         var expectedHasError = true;
-        //string expectedErrorMessage = "The UPDATE permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
-        ICollection<object>? expectedReturnValue = null;
+
+        string expectedErrorMessage = "The UPDATE permission was denied on the object 'UserAccount', database 'RideAlongDevDB', schema 'dbo'.";
+        ICollection<object> ?expectedReturnValue = null;
 
         // Act
         timer.Start();
@@ -444,3 +446,4 @@ public class DataAccessShould
         }
     }
 }
+#pragma warning restore
