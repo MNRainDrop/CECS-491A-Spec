@@ -5,12 +5,23 @@ nav {
     color: white;
     padding: 10px;
     text-align: center;
+    cursor: default;
 }
 
 nav > li {
     display: inline;
     margin: 10px;
     font-weight: bold;
+}
+
+nav > p {
+    display: inline;
+    margin: 10px;
+    font-weight: bold;
+}
+
+nav > li:hover {
+    cursor: pointer;
 }
 
 #pages > li {

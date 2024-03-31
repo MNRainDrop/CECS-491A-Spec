@@ -58,7 +58,7 @@
                 for (let i = 0; i < data.length; i++) {
                     content.innerHTML += `
                         <div id='${data[i].vin}' class='vehicles'>
-                            <h1 id=\'vehicle\'>${data[i].name}</h1>
+                            <h1 id=\'vehicle\'>${data[i].make} ${data[i].model} ${data[i].year}</h1>
                             <ul>
                                 <li>${data[i].make}</li>
                                 <li>${data[i].model}</li>
@@ -264,7 +264,7 @@
 
         content.innerHTML = `
             <li id='back'><</li>
-            <li id='current-page'>1</li>
+            <p id='current-page'>1</p>
             <li id='next'>></li>
         `;
         var next = document.getElementById('next');
