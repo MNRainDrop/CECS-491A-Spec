@@ -5,14 +5,14 @@
 (function (root) {
 
     // NOT exposed to the global object ("Private" functions)
-    function getVehicles() {
+    function getVehicles(username) {
         // this should be in config file
         const webServiceUrl = 'http://localhost:8727/MyVehicleProfiles';
-        
+    
         // make this dynamic
         // retrieve values from tokens
         const userAccount = {
-            "userId": 97,
+            "userId": username,
             "userName": "123",
             "salt": 0,
             "userHash": "string"
@@ -31,10 +31,16 @@
             body: JSON.stringify(data)
         };
 
+        // Insert Vehicle Creation Button Here
+        // Make new function
+        var content = document.getElementById('vehicle-profile-creation-button');
+        content.innerHTML = `<button>Click Me</button>`;
+
         fetch(webServiceUrl, options)
             .then(response => {
                 if (!response.ok) {
                     console.log('error');
+                    return;
                 }
                 else {
                     return response.json();
@@ -48,7 +54,6 @@
                 }
                 var content = document.getElementById('vehicle-profile');
                 content.innerHTML = '';
-                
 
                 for (let i = 0; i < data.length; i++) {
                     content.innerHTML += `
@@ -82,14 +87,14 @@
         // this should be in config file
         const webServiceUrl = 'http://localhost:8727/MyVehicleProfileDetails';
 
+        const car = JSON.parse(sessionStorage.getItem(id));
+
         const userAccount = {
-            "userId": 97,
+            "userId": car.owner_UID,
             "userName": "123",
             "salt": 0,
             "userHash": "string"
         }
-
-        const car = JSON.parse(sessionStorage.getItem(id));
         
         const data = {
             "vehicleProfile": car,
@@ -173,6 +178,69 @@
                 console.log(error);
             })
     }
+
+    function getFleet(username) {
+        // Get the username from the input field
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: username
+        }
+        
+        // Send POST request to fetch fleet data
+        fetch('http://localhost:5145/rentals/RentalFleet/GetFleet', options)
+            .then(response => {
+                if (!response.ok) {
+                    console.log('error');
+                    return;
+                }
+                else {
+                    return response.json()
+                }
+            })
+            .then(data => {
+                // Handle the response data
+                displayFleetModels(data);
+            })
+            .catch(error => {
+                alert('Error fetching fleet data:', error);
+            });
+    }
+
+    function displayFleetModels(fleetModels) {
+        const content = document.getElementsByClassName('dynamic-content')[0];
+        content.innerHTML = `<div id="fleetContainer"></div>`;
+        const fleetContainer = document.getElementById('fleetContainer');
+        
+        // Clear existing content
+        fleetContainer.innerHTML = '';
+    
+        // Loop through each fleet model object and create corresponding HTML elements
+        fleetModels.forEach(fleetModel => {
+            const fleetModelDiv = document.createElement('div');
+            fleetModelDiv.classList.add('fleet-model');
+    
+            // Populate the fleet model details
+            fleetModelDiv.innerHTML = `
+                <h2>Fleet Model</h2>
+                <p>VIN: ${fleetModel.vin}</p>
+                <p>Make: ${fleetModel.make}</p>
+                <p>Model: ${fleetModel.model}</p>
+                <p>Year: ${fleetModel.year}</p>
+                <p>Date Created: ${fleetModel.dateCreated}</p>
+                <p>Color: ${fleetModel.color}</p>
+                <p>Status: ${fleetModel.status}</p>
+                <p>Status Info: ${fleetModel.statusInfo}</p>
+                <p>Expected Return Date: ${fleetModel.expectedReturnDate}</p>
+            `;
+    
+            // Append the fleet model element to the container
+            fleetContainer.appendChild(fleetModelDiv);
+        });
+    }
     
     function incrementPages() {
         var content = document.getElementById('current-page');
@@ -214,25 +282,51 @@
 
     function resetView() {
         var content = document.getElementsByClassName('dynamic-content')[0];
-
-        content.innerHTML = '<p>Placeholder</p>';
+        
+        content.innerHTML = '<label for="username">Username: </label><input type="text" id="username" name="username">'
     }
 
     // Initialize the current view by attaching event handlers 
     function init() {
         var login = document.getElementById('login-view');
         var vp = document.getElementById('vehicle-profile-view');
+        var rf = document.getElementById('rental-fleet-view');
+        var im = document.getElementById('inventory-management-view');
 
         // Dynamic event registration
         login.addEventListener('click', () => resetView());
         vp.addEventListener('click', () => {
+            var username = document.getElementById('username');
+            if (username != null)
+            {
+                username = parseInt(username.value);
+            }
+            else {
+                return error;
+            }
             var content = document.getElementsByClassName('dynamic-content')[0];
-            content.innerHTML = `<div id='vehicle-profile'></div>`
+            content.innerHTML = `<div id='vehicle-profile-creation-button'></div>`
+            content.innerHTML += `<div id='vehicle-profile'></div>`
             content.innerHTML += `<nav id='pages'></nav>`
             content.innerHTML += '<div id="vehicle-details"></div>'
             pages();
-            getVehicles();
+            getVehicles(username);
         });
+        rf.addEventListener('click', () => {
+            var username = document.getElementById('username');
+            if (username != null)
+            {
+                username = parseInt(username.value);
+            }
+            else {
+                return username;
+            }
+            getFleet(username);
+        });
+        im.addEventListener('click', () => {
+
+        });
+
         resetView();
     }
 

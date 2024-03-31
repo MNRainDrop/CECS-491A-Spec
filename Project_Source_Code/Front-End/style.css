@@ -1,6 +1,10 @@
 nav {
     list-style-type: none;
     margin: 0;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
 }
 
 nav > li {
@@ -43,4 +47,10 @@ nav > li {
     border-color: lightgray;
     border-width: 1px;
     background-color: white;
+}
+
+.fleet-model {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
 }
