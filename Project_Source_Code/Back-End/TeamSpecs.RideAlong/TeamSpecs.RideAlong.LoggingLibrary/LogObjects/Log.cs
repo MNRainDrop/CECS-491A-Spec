@@ -2,7 +2,7 @@
 
 public class Log : ILog
 {
-    public Log(DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string LogHash, string? UserHash = null)
+    public Log(DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string logHash, string? userHash = null)
     {
         this.LogTime = logTime;
         this.LogLevel = logLevel;

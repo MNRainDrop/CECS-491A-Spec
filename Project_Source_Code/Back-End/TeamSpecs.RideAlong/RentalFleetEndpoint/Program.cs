@@ -4,6 +4,7 @@ using TeamSpecs.RideAlong.RentalFleetLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IRentalFleetTarget, SqlServerRentalFleetTarget>();
 builder.Services.AddScoped<IRentalFleetService, RentalFleetService>();

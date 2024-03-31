@@ -1,6 +1,0 @@
-@VehicleProfileWebService_HostAddress = http://localhost:5287
-
-GET {{VehicleProfileWebService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

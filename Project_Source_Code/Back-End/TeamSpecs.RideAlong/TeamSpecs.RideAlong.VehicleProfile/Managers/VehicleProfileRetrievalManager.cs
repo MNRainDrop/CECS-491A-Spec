@@ -1,5 +1,4 @@
-﻿using Azure;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 
