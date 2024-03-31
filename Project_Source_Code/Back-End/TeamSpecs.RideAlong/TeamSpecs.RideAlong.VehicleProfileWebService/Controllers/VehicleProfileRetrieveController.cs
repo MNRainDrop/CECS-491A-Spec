@@ -36,9 +36,79 @@ public class VehicleProfileRetrieveController : Controller
 
     [HttpPost]
     [Route("/MyVehicleProfiles")]
-    public IActionResult Post([FromBody] AccountUserModel userAccount, int page)
+    public IActionResult Post([FromBody]UserPageModel requestData)
     {
-        var result = _retrievalManager.GetVehicleProfiles(userAccount, page);
-        return Ok("Recieved Something");
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfiles(requestData.AccountUser, requestData.Page);
+            if (result is not null)
+            {
+                if (result.HasError)
+                {
+                    return BadRequest(result.ErrorMessage);
+                }
+                else
+                {
+                    return Ok(result.ReturnValue);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        
+    }
+
+    [HttpPost]
+    [Route("/MyVehicleProfileDetails")]
+    public IActionResult Post([FromBody]VehicleAccountModel requestData)
+    {
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfileDetails(requestData.VehicleProfile, requestData.AccountUser);
+            if (result is not null)
+            {
+                if (result.HasError)
+                {
+                    return BadRequest(result.ErrorMessage);
+                }
+                else
+                {
+                    if (result.ReturnValue is null || result.ReturnValue.Count == 0)
+                    {
+                        // Could not retrieve values for vehicle details
+                        return StatusCode(202);
+                    }
+                    // Could find vehicle details
+                    return Ok(result.ReturnValue);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            // Input values are wrong
+            return BadRequest(ex.Message);
+        }
+    }
+
+    public class UserPageModel
+    {
+        public AccountUserModel AccountUser { get; set; }
+        public int Page { get; set; }
+    }
+
+    public class VehicleAccountModel
+    {
+        public VehicleProfileModel VehicleProfile { get; set; }
+        public AccountUserModel AccountUser { get; set; }
     }
 }

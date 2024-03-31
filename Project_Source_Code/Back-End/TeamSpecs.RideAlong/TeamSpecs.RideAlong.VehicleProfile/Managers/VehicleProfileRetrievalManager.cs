@@ -33,7 +33,17 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
             _logService.CreateLogAsync("Debug", "Data", "Null VIN in Vehicle Profile Passed Into Vehicle Profile Retrieval Manager", userAccount.UserHash);
             throw new ArgumentNullException(nameof(vehicleProfile.VIN));
         }
-        if (vehicleProfile.VIN.Length != 17)
+        if (vehicleProfile.VIN.Length > 17)
+        {
+            _logService.CreateLogAsync("Debug", "Data", "Invalid VIN in Vehicle Profile Passed Into Vehicle Profile Retrieval Manager", userAccount.UserHash);
+            throw new ArgumentOutOfRangeException(nameof(vehicleProfile.VIN));
+        }
+        if (string.IsNullOrWhiteSpace(vehicleProfile.LicensePlate))
+        {
+            _logService.CreateLogAsync("Debug", "Data", "Null VIN in Vehicle Profile Passed Into Vehicle Profile Retrieval Manager", userAccount.UserHash);
+            throw new ArgumentNullException(nameof(vehicleProfile.VIN));
+        }
+        if (vehicleProfile.LicensePlate.Length > 7)
         {
             _logService.CreateLogAsync("Debug", "Data", "Invalid VIN in Vehicle Profile Passed Into Vehicle Profile Retrieval Manager", userAccount.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicleProfile.VIN));
