@@ -30,7 +30,6 @@ public class LoggingLibraryShould
         var timer = new Stopwatch();
         IResponse response;
         var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
-        
 
         // Expected values
         var expectedHasError = false;

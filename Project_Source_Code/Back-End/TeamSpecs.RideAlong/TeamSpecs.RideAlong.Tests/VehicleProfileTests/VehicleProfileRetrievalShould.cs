@@ -27,6 +27,9 @@ public class VehicleProfileRetrievalShould
 
         var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
+        var numOfResults = 10;
+        var page = 1;
+
         // Create Test Objects
         var user = new AccountUserModel("testUser")
         {
@@ -45,7 +48,7 @@ public class VehicleProfileRetrievalShould
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null),
             });
-            var getUserID = $"SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'";
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
@@ -59,7 +62,7 @@ public class VehicleProfileRetrievalShould
         catch
         {
             // In case creating the initial sql data does not work
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -71,12 +74,12 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleProfilesForUser(user);
+            response = retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page);
             timer.Stop();
         }
         finally
         {
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = ' {user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -89,6 +92,7 @@ public class VehicleProfileRetrievalShould
         Assert.NotNull(response);
         Assert.True(!response.HasError);
         Assert.NotNull(response.ReturnValue);
+        Assert.True(response.ReturnValue.Count <= numOfResults);
         Assert.True(response.ReturnValue.Count == 1);
         Assert.True(response.ReturnValue.FirstOrDefault() is not null);
         Assert.True(response.ReturnValue.FirstOrDefault() is VehicleProfileModel);
@@ -120,6 +124,9 @@ public class VehicleProfileRetrievalShould
 
         var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
+        var numOfResults = 10;
+        var page = 1;
+
         // Create Test Objects
         var user = new AccountUserModel("testUser")
         {
@@ -139,7 +146,7 @@ public class VehicleProfileRetrievalShould
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null),
             });
-            var getUserID = $"SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'";
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
@@ -154,7 +161,7 @@ public class VehicleProfileRetrievalShould
         catch
         {
             // In case creating the initial sql data does not work
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -166,12 +173,12 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleProfilesForUser(user);
+            response = retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page);
             timer.Stop();
         }
         finally
         {
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -184,6 +191,7 @@ public class VehicleProfileRetrievalShould
         Assert.NotNull(response);
         Assert.True(!response.HasError);
         Assert.NotNull(response.ReturnValue);
+        Assert.True(response.ReturnValue.Count <= numOfResults);
         Assert.True(response.ReturnValue.Count == 0);
         #endregion
     }
@@ -205,6 +213,9 @@ public class VehicleProfileRetrievalShould
 
         var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
+        var numOfResults = 10;
+        var page = 1;
+
         // Create Test Objects
         var user = new AccountUserModel("testUser")
         {
@@ -222,14 +233,14 @@ public class VehicleProfileRetrievalShould
             var vehicle1Sql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle1.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle1.LicensePlate}', '{vehicle1.Make}', '{vehicle1.Model}', {vehicle1.Year})";
             var vehicle2Sql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle2.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle2.LicensePlate}', '{vehicle2.Make}', '{vehicle2.Model}', {vehicle2.Year})";
             var vehicle3Sql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle3.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle3.LicensePlate}', '{vehicle3.Make}', '{vehicle3.Model}', {vehicle3.Year})";
-            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            var writes = dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicle1Sql, null),
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicle2Sql, null),
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicle3Sql, null)
             });
-            var getUserID = $"SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'";
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
@@ -245,7 +256,7 @@ public class VehicleProfileRetrievalShould
         catch
         {
             // In case creating the initial sql data does not work
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -257,12 +268,12 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleProfilesForUser(user);
+            response = retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page);
             timer.Stop();
         }
         finally
         {
-            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -275,6 +286,7 @@ public class VehicleProfileRetrievalShould
         Assert.NotNull(response);
         Assert.True(!response.HasError);
         Assert.NotNull(response.ReturnValue);
+        Assert.True(response.ReturnValue.Count <= numOfResults);
         Assert.True(response.ReturnValue.Count == 3);
         Assert.True(response.ReturnValue.FirstOrDefault() is not null);
         Assert.True(response.ReturnValue.FirstOrDefault() is VehicleProfileModel);
@@ -287,6 +299,128 @@ public class VehicleProfileRetrievalShould
             Assert.True(vehicle.Year == vehicle1.Year || vehicle.Year == vehicle2.Year || vehicle.Year == vehicle3.Year);
             Assert.True(vehicle.LicensePlate == vehicle1.LicensePlate || vehicle.LicensePlate == vehicle2.LicensePlate || vehicle.LicensePlate == vehicle3.LicensePlate);
             Assert.True(vehicle.Owner_UID == vehicle1.Owner_UID || vehicle.Owner_UID == vehicle2.Owner_UID || vehicle.Owner_UID == vehicle3.Owner_UID);
+        }
+        #endregion
+    }
+
+    [Fact]
+    public void VehicleProfileRetrieval_ReadVehicleProfilesFromDatabase_ValidUserAccountPassedIn_VehicleProfilesPaginated_Pass()
+    {
+        #region Arrange
+        var timer = new Stopwatch();
+
+        var responseList = new List<IResponse>();
+
+        var dao = new SqlServerDAO();
+        var vehicleTarget = new SqlDbVehicleTarget(dao);
+
+        var hashService = new HashService();
+        var logTarget = new SqlDbLogTarget(dao);
+        var logService = new LogService(logTarget, hashService);
+
+        var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
+
+        var numOfResults = 10;
+        var page = 1;
+
+        // Create Test Objects
+        var user = new AccountUserModel("testUser")
+        {
+            Salt = 0,
+            UserHash = "testUserHash",
+        };
+
+
+        var vehicleList = new List<VehicleProfileModel>();
+
+        // Create Initial SQL
+        try
+        {
+            var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
+            var writes = dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
+            });
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
+            });
+
+            foreach (var item in uid)
+            {
+                user.UserId = (long)item[0];
+            }
+
+
+            for (int i = 0; i < 100; i++)
+            {
+                vehicleList.Add(new VehicleProfileModel($"testVin{i}", user.UserId, "test", "testMake", "testMode", 0000));
+            }
+            var vehicleSql = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+            foreach (var vehicle in vehicleList)
+            {
+                var sql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
+                vehicleSql.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null));
+            }
+            var vehiclewrites = dao.ExecuteWriteOnly(vehicleSql);
+        }
+        catch
+        {
+            // In case creating the initial sql data does not work
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+
+        #region Act
+        try
+        {
+            timer.Start();
+            for(var i = 1; i <= 10; i++)
+            {
+                responseList.Add(retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, i));
+            }
+            
+            timer.Stop();
+        }
+        finally
+        {
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+
+        #region Assert
+        var totalResults = new List<VehicleProfileModel>();
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        foreach (var response in responseList)
+        {
+            Assert.NotNull(response);
+            Assert.True(!response.HasError);
+            Assert.NotNull(response.ReturnValue);
+            Assert.True(response.ReturnValue.Count <= numOfResults);
+            Assert.True(response.ReturnValue.FirstOrDefault() is not null);
+            Assert.True(response.ReturnValue.FirstOrDefault() is VehicleProfileModel);
+            foreach (VehicleProfileModel vehicle in response.ReturnValue)
+            {
+                totalResults.Add(vehicle);
+            }
+        }
+        for (var i = 0; i < totalResults.Count; i++)
+        {
+            Assert.True(totalResults[i].VIN == vehicleList[i].VIN);
+            Assert.True(totalResults[i].Make == vehicleList[i].Make);
+            Assert.True(totalResults[i].Model == vehicleList[i].Model);
+            Assert.True(totalResults[i].Year == vehicleList[i].Year);
+            Assert.True(totalResults[i].LicensePlate == vehicleList[i].LicensePlate);
+            Assert.True(totalResults[i].Owner_UID == vehicleList[i].Owner_UID);
         }
         #endregion
     }

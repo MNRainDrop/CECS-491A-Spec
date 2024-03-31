@@ -67,8 +67,10 @@ public class SqlServerDAO : IGenericDAO
         _access = "User Id=RIDEALONGRead;Password=readme;TrustServerCertificate=True";
         _connString = $"Server={_server};Database={_database};{_access}";
 
-        var response = new Response();
-
+        var response = new Response()
+        {
+            ReturnValue = new List<object>()
+        };
         try
         {
             
@@ -111,7 +113,7 @@ public class SqlServerDAO : IGenericDAO
     }
     public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RIDEALONGAdmin;Password=readme;TrustServerCertificate=True";
+        _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
         _connString = $"Server={_server};Database={_database};{_access}";
 
         var returnList = new List<object[]>();

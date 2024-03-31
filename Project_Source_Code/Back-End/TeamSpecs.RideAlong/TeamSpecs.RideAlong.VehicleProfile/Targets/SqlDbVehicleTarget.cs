@@ -13,13 +13,17 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         _dao = dao;
     }
 
-    public IResponse ReadVehicleProfileSql(ICollection<object> searchParameters)
+    public IResponse ReadVehicleProfileSql(ICollection<object> searchParameters, int numOfResults, int page)
     {
         #region Default sql setup
-        var commandSql = "Select * ";
-        var fromSql = "From VehicleProfile ";
-        var defaultWhereSql = "Where ";
+        var commandSql = "SELECT * ";
+        var fromSql = "FROM VehicleProfile ";
+        var defaultWhereSql = "WHERE ";
         var whereSql = "";
+        var orderBySql = "ORDER BY DateCreated ";
+        var offsetSql = $"OFFSET {(page - 1) * numOfResults} ROWS ";
+        var fetchSql = $"FETCH NEXT {numOfResults} ROWS ONLY;";
+
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -45,7 +49,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
                     }
                 }
             }
-            var sqlString = commandSql + fromSql+ whereSql;
+            var sqlString = commandSql + fromSql+ whereSql + orderBySql + offsetSql + fetchSql;
 
             sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
         }

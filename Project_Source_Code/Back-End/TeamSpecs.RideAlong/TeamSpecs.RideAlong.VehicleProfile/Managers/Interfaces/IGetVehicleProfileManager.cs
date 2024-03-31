@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public interface IGetVehicleProfilesManager
 {
-    IResponse GetVehicleProfiles(IAccountUserModel userAccount);
+    IResponse GetVehicleProfiles(IAccountUserModel userAccount, int page);
 }

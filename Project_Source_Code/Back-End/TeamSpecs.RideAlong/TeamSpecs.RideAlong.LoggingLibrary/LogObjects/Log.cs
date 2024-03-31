@@ -8,8 +8,8 @@ public class Log : ILog
         this.LogLevel = logLevel;
         this.LogCategory = logCategory;
         this.LogContext = logContext;
-        this.UserHash = UserHash;
-        this.LogHash = LogHash;
+        this.UserHash = userHash;
+        this.LogHash = logHash;
     }
 
     private int? LogID { get; set; }
