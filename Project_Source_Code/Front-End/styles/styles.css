@@ -1,0 +1,34 @@
+/* Hide the nav initially */
+nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 10px 0; /* Adjust the padding to increase vertical size */
+    background-color: #333;
+    color: white;
+    text-align: center;
+    cursor: default;
+    /* Apply hidden style by default */
+    display: none;
+}
+
+    /* Style for list items in the navigation */
+    nav > ul {
+        padding: 0;
+        list-style-type: none;
+        display: flex; /* Use flexbox to arrange items horizontally */
+        justify-content: center; /* Center align items horizontally */
+    }
+
+        nav > ul > li {
+            margin: 0 10px; /* Add some spacing between items */
+        }
+
+            /* Hover effect for list items */
+            nav > ul > li:hover {
+                cursor: pointer;
+            }
+
+    /* Show the navigation when not hidden */
+    nav:not(.hidden) {
+        display: block;
+    }

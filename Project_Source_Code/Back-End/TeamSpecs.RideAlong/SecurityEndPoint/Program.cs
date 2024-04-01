@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using TeamSpecs.RideAlong.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
