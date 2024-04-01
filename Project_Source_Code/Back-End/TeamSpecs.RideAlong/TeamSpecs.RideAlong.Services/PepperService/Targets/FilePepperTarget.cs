@@ -35,7 +35,10 @@ namespace TeamSpecs.RideAlong.Services
                 {
                     try
                     {
-                        temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                        if (!string.IsNullOrEmpty(i))
+                        {
+                            temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                        }
                     }
                     catch (JsonException e)
                     {
