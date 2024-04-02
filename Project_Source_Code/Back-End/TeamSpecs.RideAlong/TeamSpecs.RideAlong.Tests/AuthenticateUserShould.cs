@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
@@ -237,9 +238,24 @@ public class AuthenticateUserShould
         string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         string _rideAlongIssuer = "Ride Along by Team Specs";
 
-        string token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9." +
-            "eyJzdWIiOiJUZXN0VXNlcjIiLCJpYXQiOiI0LzIvMjAyNCAxOjA0OjEyIEFNIiwiYXV0aF90aW1lIjoiNC8yLzIwMjQgMTowNDoxMiBBTSIsImV4cCI6MTcxMjAyMDc1MywiaXNzIjoiUmlkZSBBbG9uZyBieSBUZWFtIFNwZWNzIiwiYXVkIjoiMCJ9." +
-            "L-WYCYzvEe8amsavobHtKaNYsW0FW9C_NGtQk2NXwgs";
+        var dao = new SqlServerDAO();
+        var hasher = new HashService();
+        var logTarget = new SqlDbLogTarget();
+        var logger = new LogService(logTarget, hasher);
+        var authTarget = new SQLServerAuthTarget(dao, logger);
+        var authService = new AuthService(authTarget, logger);
+        var httpContext = new HttpContextAccessor();
+        var sm = new SecurityManager(authService, logger, httpContext);
+        var name = "sample_user@gmail.com";
+
+        var modelResponse = authService.GetUserModel(name);
+        var model = (AuthUserModel)modelResponse.ReturnValue.First();
+        var principalResponse = authService.GetUserPrincipal(model);
+        var principal = (RideAlongPrincipal)principalResponse.ReturnValue.First();
+
+        var IdTokenResponse = sm.CreateIdToken(principal, DateTime.UtcNow);
+        var token = (string)IdTokenResponse.ReturnValue.First();
+
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_rideAlongSecretKey);
@@ -251,8 +267,7 @@ public class AuthenticateUserShould
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
                 ValidIssuer = _rideAlongIssuer,
-                ValidateAudience = true,
-                ValidAudience = "0"
+                ValidateAudience = false,
             }, out SecurityToken validatedToken);
             ;
             actual = true;

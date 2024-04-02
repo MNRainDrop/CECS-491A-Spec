@@ -116,7 +116,9 @@ function submitOTP() {
                 if (response.ok)
                 {
                     return response.json();
-                } else{
+                } 
+                else
+                {
                     alert("Authentication failed!");
                     console.error("Error:", response.statusText);
                 }
@@ -127,24 +129,15 @@ function submitOTP() {
                 sessionStorage.setItem ('IDToken', data.idToken);
                 sessionStorage.setItem ('AccessToken' , data.accessToken);
                 sessionStorage.setItem ('RefreshToken' , data.refreshToken);
-                fetchResponse = true;
+                showMainContent();
+                unhideNavigation();
             })
             .catch(error =>
             {
                 alert("Something went wrong!" + " " + error)
                 console.error("Error:", error);
             });
-            // if OK --> generate ShowMainContent(), UnhideNavigation
-
-            if (fetchResponse)
-            {
-                // If OTP is valid, show main content and unhide navigation
-                showMainContent();
-                unhideNavigation();
-            } else
-            {
-                alert("Invalid OTP!")
-            }
+            
         }
         else
         {

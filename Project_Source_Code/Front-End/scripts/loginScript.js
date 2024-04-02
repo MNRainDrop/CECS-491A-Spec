@@ -91,25 +91,16 @@ function submitOTP() {
             })
                 .then(function (data) {
                 alert("Got to the data Stage");
-                fetchResponse = true;
                 sessionStorage.setItem('IDToken', data.idToken);
                 sessionStorage.setItem('AccessToken', data.accessToken);
                 sessionStorage.setItem('RefreshToken', data.refreshToken);
-                alert("Set tokens");
+                showMainContent();
+                unhideNavigation();
             })
                 .catch(function (error) {
                 alert("Something went wrong!" + " " + error);
                 console.error("Error:", error);
             });
-            // if OK --> generate ShowMainContent(), UnhideNavigation
-            if (fetchResponse) {
-                // If OTP is valid, show main content and unhide navigation
-                showMainContent();
-                unhideNavigation();
-            }
-            else {
-                alert("Invalid OTP!");
-            }
         }
         else {
             alert("You have entered a bad OTP");
