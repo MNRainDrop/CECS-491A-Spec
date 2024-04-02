@@ -4,7 +4,7 @@ using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
-public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetailsTarget, ICreateVehiclesTarget
+public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetailsTarget, ICreateVehicleTarget, IModifyVehicleTarget, IDeleteVehicleTarget
 {
     private readonly IGenericDAO _dao;
 
@@ -207,7 +207,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
             // create new hash set of SqlParameters
             var parameters = new HashSet<SqlParameter>();
 
-            // convert Log model to sql statement
+            // convert VehicleProfile model to sql statement
             var configType = typeof(IVehicleProfileModel);
             var properties = configType.GetProperties();
 
@@ -296,5 +296,178 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
 
         response.HasError = false;
         return response;
+    }
+
+    public IResponse ModifyVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails)
+    {
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        var vehicleSql = modifyVehicle(vehicleProfile);
+        if (vehicleSql.HasError == false)
+        {
+            if (vehicleSql.ReturnValue is not null)
+            {
+                sqlCommands.Add((KeyValuePair<string, HashSet<SqlParameter>?>)vehicleSql.ReturnValue.First());
+            }
+        }
+        else
+        {
+            return vehicleSql;
+        }
+
+        var vehicleDetailsSql = modifyVehicleDetails(vehicleDetails);
+        if (vehicleDetailsSql.HasError == false)
+        {
+            if (vehicleDetailsSql.ReturnValue is not null)
+            {
+                sqlCommands.Add((KeyValuePair<string, HashSet<SqlParameter>?>)vehicleDetailsSql.ReturnValue.First());
+            }
+        }
+        else
+        {
+            return vehicleDetailsSql;
+        }
+
+        // DAO Executes the command
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Database execution failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+
+    private IResponse modifyVehicle(IVehicleProfileModel vehicleProfile)
+    {
+        #region Default sql setup
+        var commandSql = "UPDATE ";
+        var tableSql = "VehicleProfile ";
+        var setSql = "SET ";
+        var whereSql = "WHERE ";
+        #endregion
+
+        var response = new Response()
+        {
+            ReturnValue = new List<object>()
+        };
+
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>();
+
+            // convert VehicleProfile model to sql statement
+            var configType = typeof(IVehicleProfileModel);
+            var properties = configType.GetProperties();
+
+            foreach (var property in properties)
+            {
+                if (property.GetValue(vehicleProfile) != null)
+                {
+                    if (property.Name == "VIN")
+                    {
+                        whereSql += property.Name + "=@" + property.Name;
+                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleProfile)));
+                    }
+                    else if (property.Name != "Owner_UID")
+                    {
+                        setSql += property.Name + "=@" + property.Name + ",";
+                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleProfile)));
+                    }
+                    
+                }
+            }
+            setSql = setSql.Remove(setSql.Length - 1, 1);
+            setSql += " ";
+
+            var sqlString = commandSql + tableSql + setSql + whereSql;
+
+            // Add string and hash set to list that the dao will execute
+            response.ReturnValue.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate Vehicle Profile Update Sql";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+
+    private IResponse modifyVehicleDetails(IVehicleDetailsModel vehicleDetails)
+    {
+        #region Default sql setup
+        var commandSql = "UPDATE ";
+        var tableSql = "VehicleDetails ";
+        var setSql = "SET ";
+        var whereSql = "WHERE ";
+        #endregion
+
+        var response = new Response()
+        {
+            ReturnValue = new List<object>()
+        };
+
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>();
+
+            // convert VehicleProfile model to sql statement
+            var configType = typeof(IVehicleDetailsModel);
+            var properties = configType.GetProperties();
+
+            foreach (var property in properties)
+            {
+                if (property.GetValue(vehicleDetails) != null)
+                {
+                    if (property.Name == "VIN")
+                    {
+                        whereSql += property.Name + "=@" + property.Name;
+                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleDetails)));
+                    }
+                    else
+                    {
+                        setSql += property.Name + "=@" + property.Name + ",";
+                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleDetails)));
+                    }
+
+                }
+            }
+            setSql = setSql.Remove(setSql.Length - 1, 1);
+            setSql += " ";
+            var sqlString = commandSql + tableSql + setSql + whereSql;
+
+            // Add string and hash set to list that the dao will execute
+            response.ReturnValue.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate Vehicle Profile Update Sql";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+    }
+
+    public IResponse DeleteVehicleProfileSql(IVehicleProfileModel vehicleProfile)
+    {
+        throw new NotImplementedException();
     }
 }

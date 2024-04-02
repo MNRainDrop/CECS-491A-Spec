@@ -5,10 +5,10 @@ using TeamSpecs.RideAlong.Model;
 
 public class VehicleProfileCreationService : IVehicleProfileCreationService
 {
-    private readonly ICreateVehiclesTarget _createVehiclesTarget;
+    private readonly ICreateVehicleTarget _createVehiclesTarget;
     private readonly ILogService _logService;
 
-    public VehicleProfileCreationService(ILogService logService, ICreateVehiclesTarget createVehiclesTarget)
+    public VehicleProfileCreationService(ILogService logService, ICreateVehicleTarget createVehiclesTarget)
     {
         _logService = logService;
         _createVehiclesTarget = createVehiclesTarget;
@@ -24,14 +24,8 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         {
             throw new ArgumentNullException(nameof(licensePlate));
         }
-        if (string.IsNullOrWhiteSpace(make))
-        {
-            throw new ArgumentNullException(nameof(make));
-        }
-        if (string.IsNullOrWhiteSpace(model))
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
+        // Make can be null
+        // Model can be null
         // Color can be null
         // Description can be null
         if (userAccount is null)
@@ -59,7 +53,7 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         #region Log to database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not create vehicle." + response.ErrorMessage;
+            response.ErrorMessage = "Could not create vehicle. " + response.ErrorMessage;
         }
         else
         {
