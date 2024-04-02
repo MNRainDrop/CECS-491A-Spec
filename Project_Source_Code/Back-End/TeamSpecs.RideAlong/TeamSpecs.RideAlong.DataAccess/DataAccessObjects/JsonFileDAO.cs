@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {

@@ -34,7 +34,7 @@ public class AuthService : IAuthService
                 break;
             }
         }
-        return !hasMissingPermission;
+        return hasMissingPermission;
     }
 
     public IResponse GetOtpHash(IAuthUserModel model)
