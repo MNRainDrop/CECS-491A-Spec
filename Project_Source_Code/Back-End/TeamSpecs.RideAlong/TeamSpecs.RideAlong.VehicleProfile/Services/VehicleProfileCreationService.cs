@@ -48,7 +48,7 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         var vehicle = new VehicleProfileModel(vin, userAccount.UserId, licensePlate, make, model, year);
         var vehicleDetails = new VehicleDetailsModel(vin, color, description);
 
-        var response = _createVehiclesTarget.CreateVehicleProfileSql(vehicle, vehicleDetails);
+        var response = _createVehiclesTarget.createVehicleProfileSql(vehicle, vehicleDetails);
 
         #region Log to database
         if (response.HasError)

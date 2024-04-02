@@ -8,10 +8,10 @@ using TeamSpecs.RideAlong.VehicleProfile;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
-public class VehicleProfileModificationShould
+public class VehicleProfileDeletionShould
 {
     [Fact]
-    public void VehicleProfileModificationShould_ModifyVehicleProfileAndVehicleDetailsInDatabase_ValidParametersPassedIn_OneVehicleProfileAndVehicleDetailsUpdated_Pass()
+    public void VehicleProfileDeletion_DeleteVehicleProfileInDatabase_ValidParametersPassedIn_OneVehicleProfileAndOneVehicleDetailsDeleted_Pass()
     {
         #region Arrange
         var timer = new Stopwatch();
@@ -25,7 +25,7 @@ public class VehicleProfileModificationShould
         var logTarget = new SqlDbLogTarget(dao);
         var logService = new LogService(logTarget, hashService);
 
-        var modificationService = new VehicleProfileModificationService(vehicleTarget, logService);
+        var deletionService = new VehicleProfileDeletionService(vehicleTarget, logService);
 
         var vehicle = new VehicleProfileModel("testVin", 1, "test", "testMake", "testModel", 0000);
         var vehicledetails = new VehicleDetailsModel("testVin");
@@ -36,7 +36,9 @@ public class VehicleProfileModificationShould
             UserId = 1
         };
         var numOfResults = 1;
-        var changedRows = 2;
+        var changedRows = 1;
+
+        List<object[]> databaseItem;
         try
         {
             var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
@@ -70,22 +72,18 @@ public class VehicleProfileModificationShould
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
             });
         }
-
-        var updatedvehicle = new VehicleProfileModel("testVin", vehicle.Owner_UID, "NEWTEST", "NEWMAKE", "NEWMODEL", 727);
-        var updatedvehicledetails = new VehicleDetailsModel("testVin", "NEWCOLOR", "NEWDESCRIPTION");
-        List<object[]> databaseItem;
         #endregion
 
         #region Act
         try
         {
             timer.Start();
-            response = modificationService.ModifyVehicleProfile(updatedvehicle, updatedvehicledetails, user);
+            response = deletionService.deleteVehicleProfile(vehicle, user);
             timer.Stop();
         }
         finally
         {
-            var databaseItemSql = $"SELECT vp.VIN, Owner_UID, LicensePlate, Make, Model, Year, Color, Description FROM VehicleProfile as vp INNER JOIN VehicleDetails as vd on vp.VIN = vd.VIN WHERE vp.VIN = '{updatedvehicle.VIN}'";
+            var databaseItemSql = $"SELECT vp.VIN, Owner_UID, LicensePlate, Make, Model, Year, Color, Description FROM VehicleProfile as vp INNER JOIN VehicleDetails as vd on vp.VIN = vd.VIN WHERE vp.VIN = '{vehicle.VIN}'";
             databaseItem = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(databaseItemSql, null)
@@ -105,59 +103,20 @@ public class VehicleProfileModificationShould
         Assert.NotNull(response.ReturnValue);
         Assert.True(response.ReturnValue.Count == numOfResults);
         Assert.True((int)response.ReturnValue.First() == changedRows);
-        Assert.True(updatedvehicle.VIN == (string)databaseItem.First()[0]);
-        Assert.True(updatedvehicle.Owner_UID == (long)databaseItem.First()[1]);
-        Assert.True(updatedvehicle.LicensePlate == (string)databaseItem.First()[2]);
-        Assert.True(updatedvehicle.Make == (string)databaseItem.First()[3]);
-        Assert.True(updatedvehicle.Model == (string)databaseItem.First()[4]);
-        Assert.True(updatedvehicle.Year == (int)databaseItem.First()[5]);
-        Assert.True(updatedvehicledetails.Color == (string)databaseItem.First()[6]);
-        Assert.True(updatedvehicledetails.Description == (string)databaseItem.First()[7]);
+        Assert.True(databaseItem.Count == 0);
         #endregion
     }
 
     [Fact]
-    public void VehicleProfileModificationShould_ModifyVehicleProfileAndVehicleDetailsInDatabase_NoExistingVehiclePassedIn_NoVehicleProfileAndVehicleDetailsUpdated_Pass()
+    public void VehicleProfileDeletion_DeleteVehicleProfileInDatabase_InvalidParametersPassedIn_NoVehicleProfileAndOneVehicleDetailsDeleted_Pass()
     {
         #region Arrange
-        var timer = new Stopwatch();
-
-        IResponse response;
-
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var modificationService = new VehicleProfileModificationService(vehicleTarget, logService);
-
-        var user = new AccountUserModel("testUsername")
-        {
-            UserHash = "123",
-            Salt = 1,
-            UserId = 100
-        };
-        var numOfResults = 1;
-        var changedRows = 0;
-        
-        var updatedvehicle = new VehicleProfileModel("VinNotInDB", user.UserId, "NEWTEST", "NEWMAKE", "NEWMODEL", 727);
-        var updatedvehicledetails = new VehicleDetailsModel("VinNotInDB", "NEWCOLOR", "NEWDESCRIPTION");
         #endregion
 
         #region Act
-        timer.Start();
-        response = modificationService.ModifyVehicleProfile(updatedvehicle, updatedvehicledetails, user);
-        timer.Stop();
         #endregion
 
         #region Assert
-        Assert.True(timer.Elapsed.TotalSeconds <= 3);
-        Assert.True(!response.HasError);
-        Assert.NotNull(response.ReturnValue);
-        Assert.True(response.ReturnValue.Count == numOfResults);
-        Assert.True((int)response.ReturnValue.First() == changedRows);
         #endregion
     }
 }

@@ -55,6 +55,7 @@ public class SqlServerDAO : IGenericDAO
                             throw;
                         }
                     }
+                    Thread.Sleep(5);
                 }
                 transaction.Commit();
             }

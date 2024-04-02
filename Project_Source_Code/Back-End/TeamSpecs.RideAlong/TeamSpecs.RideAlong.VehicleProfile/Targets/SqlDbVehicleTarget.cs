@@ -13,7 +13,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         _dao = dao;
     }
 
-    public IResponse ReadVehicleProfileSql(ICollection<object> searchParameters, int numOfResults, int page)
+    public IResponse readVehicleProfileSql(ICollection<object> searchParameters, int numOfResults, int page)
     {
         #region Default sql setup
         var commandSql = "SELECT * ";
@@ -80,7 +80,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         return response;
     }
 
-    public IResponse ReadVehicleProfileDetailsSql(ICollection<object> searchParameters)
+    public IResponse readVehicleProfileDetailsSql(ICollection<object> searchParameters)
     {
         #region Default sql setup
         var commandSql = "Select * ";
@@ -137,7 +137,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         return response;
     }
 
-    public IResponse CreateVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails)
+    public IResponse createVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
         var response = new Response();
@@ -262,7 +262,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
             // create new hash set of SqlParameters
             var parameters = new HashSet<SqlParameter>();
 
-            // convert Log model to sql statement
+            // convert vehicle profile model to sql statement
             var configType = typeof(IVehicleDetailsModel);
             var properties = configType.GetProperties();
 
@@ -298,7 +298,7 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         return response;
     }
 
-    public IResponse ModifyVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails)
+    public IResponse modifyVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails)
     {
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
         var response = new Response();
@@ -466,8 +466,60 @@ public class SqlDbVehicleTarget : IRetrieveVehiclesTarget, IRetrieveVehicleDetai
         return response;
     }
 
-    public IResponse DeleteVehicleProfileSql(IVehicleProfileModel vehicleProfile)
+    public IResponse deleteVehicleProfileSql(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount)
     {
-        throw new NotImplementedException();
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        // DELETE FROM VehicleProfile WHERE Vin = @vin and Owner_UID = @uid
+        #region Default sql setup
+        var commandSql = "DELETE ";
+        var tableSql = "FROM VehicleProfile ";
+        var defaultWhereSql = "WHERE ";
+        var whereSql = "";
+        #endregion
+
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>();
+
+            if (vehicleProfile is not null && userAccount is not null)
+            {
+                whereSql += "VIN = @vin and Owner_UID = @uid";
+                parameters.Add(new SqlParameter("@vin", vehicleProfile.VIN));
+                parameters.Add(new SqlParameter("@uid", userAccount.UserId));
+            }
+            
+            var sqlString = commandSql + tableSql + defaultWhereSql + whereSql;
+
+            // Add string and hash set to list that the dao will execute
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate Vehicle Profile deletion Sql. ";
+            return response;
+        }
+
+        // DAO Executes the command
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Database execution failed";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
     }
 }

@@ -58,7 +58,7 @@ public class VehicleProfileModificationService : IVehicleProfileModificationServ
         }
         #endregion
 
-        var response = _modifyVehicleTarget.ModifyVehicleProfileSql(vehicle, vehicleDetails);
+        var response = _modifyVehicleTarget.modifyVehicleProfileSql(vehicle, vehicleDetails);
 
         #region Log to database
         if (response.HasError)

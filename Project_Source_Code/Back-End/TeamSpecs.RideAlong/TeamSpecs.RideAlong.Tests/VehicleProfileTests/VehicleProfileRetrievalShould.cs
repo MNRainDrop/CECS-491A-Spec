@@ -42,11 +42,9 @@ public class VehicleProfileRetrievalShould
         try
         {
             var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
-            var vehicleSql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
-                KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
-                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null),
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null)
             });
             var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
             var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -58,6 +56,12 @@ public class VehicleProfileRetrievalShould
                 user.UserId = (long)item[0];
                 vehicle.Owner_UID = user.UserId;
             }
+
+            var vehicleSql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null)
+            });
         }
         catch
         {
