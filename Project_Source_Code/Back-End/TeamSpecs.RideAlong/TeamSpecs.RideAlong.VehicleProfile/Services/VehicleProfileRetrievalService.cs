@@ -30,7 +30,7 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         {
             new KeyValuePair<string, long>("Owner_UID", userAccount.UserId)
         };
-        var response = _vehicleTarget.ReadVehicleProfileSql(search, numOfResults, page);
+        var response = _vehicleTarget.readVehicleProfileSql(search, numOfResults, page);
 
         #region Log the action to the database
         if (response.HasError)

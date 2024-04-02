@@ -7,5 +7,5 @@ public interface IVehicleProfileModel
     string LicensePlate { get; set; }
     string? Make {  get; set; }
     string? Model {  get; set; }
-    int? Year { get; set; }
+    int Year { get; set; }
 }

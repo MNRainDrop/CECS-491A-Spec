@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 
-namespace TeamSpecs.RideAlong.TestingLibrary;
+namespace TeamSpecs.RideAlong.TestingLibrary.ModelTests;
 
 public class AccountUserModelShould
 {
