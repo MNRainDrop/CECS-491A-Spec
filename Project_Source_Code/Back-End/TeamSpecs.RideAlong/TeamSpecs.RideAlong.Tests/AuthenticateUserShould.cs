@@ -1,6 +1,10 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
@@ -218,6 +222,41 @@ public class AuthenticateUserShould
         Assert.True(actualResult ==  expectedResult);
         Assert.True(timer.Elapsed.TotalSeconds < 3);
 
+    }
+
+    [Fact]
+    public void confirmTokensAreValid_Pass()
+    {
+        var expected = true;
+        var actual = false;
+        string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
+        string _rideAlongIssuer = "Ride Along by Team Specs";
+
+        string token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9." +
+            "eyJzdWIiOiJUZXN0VXNlcjIiLCJpYXQiOiI0LzIvMjAyNCAxOjA0OjEyIEFNIiwiYXV0aF90aW1lIjoiNC8yLzIwMjQgMTowNDoxMiBBTSIsImV4cCI6MTcxMjAyMDc1MywiaXNzIjoiUmlkZSBBbG9uZyBieSBUZWFtIFNwZWNzIiwiYXVkIjoiMCJ9." +
+            "L-WYCYzvEe8amsavobHtKaNYsW0FW9C_NGtQk2NXwgs";
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_rideAlongSecretKey);
+        try
+        {
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = true,
+                ValidIssuer = _rideAlongIssuer,
+                ValidateAudience = true,
+                ValidAudience = "0"
+            }, out SecurityToken validatedToken);
+            ;
+            actual = true;
+        } catch (Exception ex)
+        {
+            actual = false;
+        }
+
+        Assert.Equal(expected, actual);
     }
 
 
