@@ -19,7 +19,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
 
             //Parameters 
-            string VIN = "1234567891012345";
+            string VIN = "VIN2";
             int view = 1;
             string description = "This is test case 1";
             int status = 1;

@@ -6,7 +6,6 @@ using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.Services.HashService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 

@@ -11,6 +11,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         public void PepperService_GeneratePepper_KeyPassedIn_ReturnValue_Pass()
         {
             //Arrange 
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var flag = true;
             var timer = new Stopwatch();
             IResponse response;
             var dao = new JsonFileDAO();
@@ -26,21 +28,25 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
             //Act 
             timer.Start();
+            File.Delete(Path.Combine(docPath, "PepperOutput.json"));
             foreach (var i in test_key)
             {
                 result = PepperObject.GeneratePepper(i); 
                 test_result.Add(result);
             }
-            //result = PepperObject.GeneratePepper(key);
+            foreach (var i in test_result)
+            {
+                if (i.GetType() != typeof(uint))
+                {
+                    flag = false; break;
+                }
+            }
+            File.Delete(Path.Combine(docPath, "PepperOutput.json"));
             timer.Stop();
 
             //Assert 
             Assert.True(timer.Elapsed.TotalSeconds <= 5);
-            //Assert.True(result.GetType() == typeof(uint));
-            foreach (var i in test_result)
-            {
-                Assert.True(i.GetType() == typeof(uint));
-            }
+            Assert.True(flag==true);
         }
 
         [Fact]
@@ -70,6 +76,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         public void PepperService_RetrievePepper_KeyPassedIn_ReturnValue_Pass()
         {
             //Arrange 
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var flag = true;
             uint result;
             var timer = new Stopwatch();
             IResponse response;
@@ -85,20 +93,31 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
             //Act 
             timer.Start();
-            //var result = PepperObject.RetrievePepper(key);
+            File.Delete(Path.Combine(docPath, "PepperOutput.json"));
+            foreach (var i in test_key)
+            {
+                result = PepperObject.GeneratePepper(i);
+                test_result.Add(result);
+            }
             foreach (var i in test_key)
             {
                 result = PepperObject.RetrievePepper(i);
                 test_result.Add(result);
             }
+            foreach (var i in test_result)
+            {
+                if (i.GetType() != typeof(uint))
+                {
+                    flag = false; break;
+                }
+            }
+            File.Delete(Path.Combine(docPath, "PepperOutput.json"));
             timer.Stop();
 
             //Assert 
             Assert.True(timer.Elapsed.TotalSeconds <= 3);
-            foreach (var i in test_result)
-            {
-                Assert.True(i.GetType() == typeof(uint));
-            }
+            Assert.True(flag == true);
+            
 
         }
 
