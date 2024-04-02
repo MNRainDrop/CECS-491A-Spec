@@ -124,10 +124,10 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
             // Create SQL statement
             //The following SQL command tries to update a row for the user's otp. If the row doesnt exist, then it creates it
             string CommandText =
-                "BEGIN TRANSACTION" +
+                "BEGIN TRANSACTION " +
                 "UPDATE OTP SET PassHash = @passHash WHERE UID = @uid;" +
                 "IF @@ROWCOUNT = 0" +
-                "BEGIN INSERT INTO OTP (UID, PassHash, attempts, firstFailedLogin) VALUES (@uid, @passHash, 0, @firstFailedLogin); END" +
+                "BEGIN INSERT INTO OTP (UID, PassHash, attempts, firstFailedLogin) VALUES (@uid, @passHash, 0, @firstFailedLogin); END " +
                 "COMMIT TRANSACTION;";
 
             //Create parameters
@@ -263,9 +263,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 
             //Create Parameters
             HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
-            SqlParameter uidParam = new SqlParameter();
+            SqlParameter uidParam = new SqlParameter("@uid", SqlDbType.BigInt);
             uidParam.Value = UID;
-            SqlParameter attemptsParam = new SqlParameter();
+            SqlParameter attemptsParam = new SqlParameter("@attempts", SqlDbType.Int);
             attemptsParam.Value = attempts;
             parameters.Add(uidParam);
             parameters.Add(attemptsParam);

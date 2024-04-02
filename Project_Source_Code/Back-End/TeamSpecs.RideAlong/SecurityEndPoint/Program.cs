@@ -5,9 +5,16 @@ using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.Services.HashService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Using configuration files
+var configuration = builder.Configuration;
+// var myConfig = configuration.GetSection("").Get<>();
 
 // Add services to the container.
 
@@ -19,7 +26,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -40,14 +49,12 @@ if (app.Environment.IsDevelopment())
 // This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
 app.useCorsPreflight();
 
+//app.useIDValidator();
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point
 app.useCorsMiddleware();
 
 app.MapControllers();
-
 app.Run();
