@@ -27,6 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Securit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConsoleApp", "TeamSpecs.RideAlong.ConsoleApp\TeamSpecs.RideAlong.ConsoleApp.csproj", "{17925BD2-8682-4F58-B60C-44BF5394300B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleMarketplace", "TeamSpecs.RideAlong.VehicleMarketplace\TeamSpecs.RideAlong.VehicleMarketplace.csproj", "{1FD52138-F096-4F7C-BC20-6C932D387341}"
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityEndPoint", "SecurityEndPoint\TeamSpecs.RideAlong.SecurityEndPoint.csproj", "{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0} = {20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}
@@ -84,6 +87,14 @@ Global
 		{17925BD2-8682-4F58-B60C-44BF5394300B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17925BD2-8682-4F58-B60C-44BF5394300B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17925BD2-8682-4F58-B60C-44BF5394300B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20C84C49-760E-45B8-8600-61F1F4790856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C84C49-760E-45B8-8600-61F1F4790856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20C84C49-760E-45B8-8600-61F1F4790856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C84C49-760E-45B8-8600-61F1F4790856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD52138-F096-4F7C-BC20-6C932D387341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD52138-F096-4F7C-BC20-6C932D387341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD52138-F096-4F7C-BC20-6C932D387341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD52138-F096-4F7C-BC20-6C932D387341}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}.Release|Any CPU.ActiveCfg = Release|Any CPU

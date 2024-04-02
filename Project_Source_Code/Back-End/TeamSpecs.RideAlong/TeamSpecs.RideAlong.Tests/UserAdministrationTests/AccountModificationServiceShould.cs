@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
@@ -13,7 +15,7 @@ public class AccountModificationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO));
+        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()), new HashService(), new PepperService(new FilePepperTarget(new JsonFileDAO())));
         var testUsername = "Modifytestemail@gmail.com";
         var testAltUsername = "testAltEmail@gmail.com";
         var testDateTime = DateTime.Now;
@@ -55,7 +57,7 @@ public class AccountModificationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO));
+        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()), new HashService(), new PepperService(new FilePepperTarget(new JsonFileDAO())));
         string testUsername = null;
         var testDateTime = DateTime.Now;
 
@@ -78,7 +80,7 @@ public class AccountModificationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO));
+        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()), new HashService(), new PepperService(new FilePepperTarget(new JsonFileDAO())));
         string testUsername = "";
         var testDateTime = DateTime.Now;
 
@@ -101,7 +103,7 @@ public class AccountModificationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO));
+        var accountModificationService = new AccountModificationService(new SqlDbUserTarget(_DAO), new LogService(new SqlDbLogTarget(), new HashService()), new HashService(), new PepperService(new FilePepperTarget(new JsonFileDAO())));
         string testUsername = "           ";
         var testDateTime = DateTime.Now;
 

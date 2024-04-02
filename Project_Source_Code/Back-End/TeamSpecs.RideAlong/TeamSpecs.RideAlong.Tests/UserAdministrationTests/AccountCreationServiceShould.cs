@@ -4,8 +4,8 @@ using TeamSpecs.RideAlong.UserAdministration;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Services;
 using Microsoft.Data.SqlClient;
-using TeamSpecs.RideAlong.Services.HashService;
 using Microsoft.IdentityModel.Tokens;
+using TeamSpecs.RideAlong.LoggingLibrary;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
@@ -18,7 +18,7 @@ public class AccountCreationServiceShould
         var timer = new Stopwatch();
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
+        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()));
         var testUsername = "Createtestemail@gmail.com";
 
         // Expected Outcome
@@ -54,7 +54,7 @@ public class AccountCreationServiceShould
         // Arrange
         IResponse response;
         var _DAO = new SqlServerDAO();
-        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService());
+        var accountCreationService = new AccountCreationService(new SqlDbUserTarget(_DAO), new PepperService(new FilePepperTarget(new JsonFileDAO())), new HashService(), new LogService(new SqlDbLogTarget(), new HashService()));
         string testUsername = null;
 
         // Act and Assert

@@ -1,8 +1,6 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.Services.HashService;
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
@@ -12,12 +10,12 @@ namespace TeamSpecs.RideAlong.UserAdministration
         private ILogService _logService;
         private IHashService _hashService;
         private IPepperService _pepper;
-        public AccountRecoveryService(IUserTarget userTarget)
+        public AccountRecoveryService(IUserTarget userTarget, IHashService hashService, ILogService logService, IPepperService pepperService)
         {
             _userTarget = userTarget;
-            _logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()));
-            _hashService = new HashService();
-            _pepper = new PepperService(new FilePepperTarget(new JsonFileDAO()));
+            _logService = logService;
+            _hashService = hashService;
+            _pepper = pepperService;
         }
 
         public IResponse EnableUserAccount(string userName)

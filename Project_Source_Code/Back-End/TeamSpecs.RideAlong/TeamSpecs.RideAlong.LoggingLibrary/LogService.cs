@@ -6,13 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 public class LogService : ILogService
 {
     private readonly ILogTarget _logTarget;
+    private readonly IHashService _hashService;
 
-    public LogService(ILogTarget logTarget)
+    public LogService(ILogTarget logTarget, IHashService hashService)
     {
         _logTarget = logTarget;
+        _hashService = hashService;
     }
     private string createLogHash(string logDetails)
     {

@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.Services.HashService;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Using configuration files
@@ -23,6 +26,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();

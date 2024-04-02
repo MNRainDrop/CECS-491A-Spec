@@ -11,7 +11,6 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.Services.HashService;
 
 
 
