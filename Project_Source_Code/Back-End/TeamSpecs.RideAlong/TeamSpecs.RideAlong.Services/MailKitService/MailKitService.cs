@@ -61,6 +61,7 @@ namespace TeamSpecs.RideAlong.Services
             catch (Exception ex)
             {
                 response.HasError = true;
+                response.ErrorMessage = ex.Message;
                 return response;
             }
         }

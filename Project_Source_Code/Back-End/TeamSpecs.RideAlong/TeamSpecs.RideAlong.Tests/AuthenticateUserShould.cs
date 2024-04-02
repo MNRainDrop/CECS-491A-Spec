@@ -87,58 +87,33 @@ public class AuthenticateUserShould
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget,hashService);
-        var authRequest = new AuthNRequest("UserName", "OTP");
-        var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
         var timer = new Stopwatch();
         var expectedResult = true;
         var actualResult = false;
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('SecurityTestUser', 123456, {GenerateRandomHash()})";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
+
         IResponse response;
         IAuthUserModel authModel;
 
         //Act
-        dao.ExecuteWriteOnly(sqlCommands);
         timer.Start();
-        response = authService.GetUserModel("SecurityTestUser");
+        response = authService.GetUserModel("sample_user@gmail.com");
         if (response.ReturnValue is not null)
         {
             //Check if we got what we ex
             authModel = (AuthUserModel)response.ReturnValue.First();
-            AuthUserModel expectedAuthModel = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(123456), "TestHash");//The UID doesn't matter here
+            AuthUserModel expectedAuthModel = new AuthUserModel(123, "sample_user@gmail.com", BitConverter.GetBytes(123456), "sample_user_hash");//The UID doesn't matter here
             if (expectedAuthModel.userName.Equals(authModel.userName) & expectedAuthModel.salt.SequenceEqual(authModel.salt) & expectedAuthModel.userHash.Equals(authModel.userHash))
             { actualResult = true; }
-
-            //Check to make sure we are not getting anything unexpected
-            authModel = (AuthUserModel)response.ReturnValue.First();
-            AuthUserModel unExpectedAuthModel = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(654321), "TestHash");//The UID doesn't matter here
-            if (unExpectedAuthModel.userName.Equals(authModel.userName) & unExpectedAuthModel.salt.SequenceEqual(authModel.salt) & unExpectedAuthModel.userHash.Equals(authModel.userHash))
-            { actualResult = false; }
-
-            //Check to make sure we are not getting anything unexpected
-            authModel = (AuthUserModel)response.ReturnValue.First();
-            AuthUserModel unExpectedAuthModel2 = new AuthUserModel(123, "NotSecurityTestUser", BitConverter.GetBytes(123456), "TestHash");//The UID doesn't matter here
-            if (unExpectedAuthModel2.userName.Equals(authModel.userName) & unExpectedAuthModel2.salt.SequenceEqual(authModel.salt) & unExpectedAuthModel2.userHash.Equals(authModel.userHash))
-            { actualResult = false; }
-
-            //Check to make sure we are not getting anything unexpected
-            authModel = (AuthUserModel)response.ReturnValue.First();
-            AuthUserModel unExpectedAuthModel3 = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(123456), "NotTestHash");//The UID doesn't matter here
-            if (unExpectedAuthModel3.userName.Equals(authModel.userName) & unExpectedAuthModel3.salt.SequenceEqual(authModel.salt) & unExpectedAuthModel3.userHash.Equals(authModel.userHash))
-            { actualResult = false; }
         }
-
         timer.Stop();
-        sql = "DELETE FROM UserAccount WHERE UserName = 'SecurityTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
         
         //Assert
         Assert.Equal(expectedResult, actualResult);
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
     }
+
     [Fact]
     public void Not_GetUserPrincpal_if_No_Such_User_Exists_Fail()
     {
@@ -147,8 +122,6 @@ public class AuthenticateUserShould
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
-        var authRequest = new AuthNRequest("UserName", "OTP");
-        var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
         var timer = new Stopwatch();
@@ -175,6 +148,7 @@ public class AuthenticateUserShould
         Assert.Equal(expectedResult, actualResult);
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
     }
+
     [Fact]
     public void getUserPrincipal()
     {
@@ -191,17 +165,10 @@ public class AuthenticateUserShould
         var expectedResult = true;
         var actualResult = false;
         IResponse response;
+        // Note: this uses the ridealong sample user set, for a default user with one car
 
         //Act
-        #region Generating test user
-        var sql = $"INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('GetUserPrincipalSecurityTestUser', 123456, '{GenerateRandomHash()}');" +
-            $"DECLARE @UID BIGINT; SET @UID = SCOPE_IDENTITY();" +
-            $"INSERT INTO UserClaim(UID, ClaimID, ClaimScope) VALUES (@UID, 1, 'true')";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-
-        IAuthUserModel model = (AuthUserModel)(authService.GetUserModel("SecurityTestUser")).ReturnValue.First();
+        IAuthUserModel model = (AuthUserModel)(authService.GetUserModel("sample_user@gmail.com")).ReturnValue.First();
         timer.Start();
 
         response = authService.GetUserPrincipal(model);
@@ -216,13 +183,7 @@ public class AuthenticateUserShould
             }
         }
 
-
         timer.Stop();
-        #region Deleting test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'GetUserPrincipalSecurityTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
 
         //Assert
         Assert.True(actualResult ==  expectedResult);

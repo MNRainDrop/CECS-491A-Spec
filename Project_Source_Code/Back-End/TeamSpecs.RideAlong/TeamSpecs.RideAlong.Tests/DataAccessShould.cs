@@ -367,15 +367,16 @@ public class DataAccessShould
 
         var dao = new SqlServerDAO();
 
-        var sql = "DELETE FROM UserAccount " +
-            "WHERE UID > 2";
+        var sql2 = "INSERT INTO UserAccount (UserName, Salt, UserHash) VALUES ('dummyUsername', 123456, 'dummyUserHash')";
+        var sql = "DELETE FROM UserAccount WHERE UserName = 'dummyUsername'";
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
         {
+            KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql2, null),
             KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null)
         };
         // Expected values
-        var expectedReturnValue = 0;
+        var expectedReturnValue = 2;
 
         // Act
         timer.Start();
@@ -385,7 +386,7 @@ public class DataAccessShould
 
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 5);
-        Assert.True(response >= expectedReturnValue);
+        Assert.True(response == expectedReturnValue);
 
     }
 

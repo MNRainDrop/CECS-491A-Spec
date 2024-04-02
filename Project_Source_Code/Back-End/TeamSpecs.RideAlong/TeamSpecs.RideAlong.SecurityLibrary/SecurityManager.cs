@@ -88,9 +88,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         public bool isAuthorize(Dictionary<string, string> requiredClaims)
         {
             bool result = false;
-            RideAlongPrincipal rideAlongPrincipal;
+            IAppPrincipal rideAlongPrincipal;
 
-            try { rideAlongPrincipal = (RideAlongPrincipal)JwtToPrincipal(); }
+            try { rideAlongPrincipal = JwtToPrincipal(); } 
             catch (Exception ex) { throw new Exception("Error Retrieving Principal: " + ex.Message); }
 
             result = _authService.Authorize(rideAlongPrincipal, requiredClaims);
@@ -351,8 +351,10 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         }
 
         //Returns a response object with 3 tokens [ID, Access, Refresh]
-        public IResponse TryAuthenticating(string username, string otp)
+        public IResponse TryAuthenticating(AuthNRequest loginRequest)
         {
+            string username = loginRequest.username;
+            string otp = loginRequest.otp;
 
             IResponse LogInAttempt = new Response();
             // Get User model from username

@@ -22,7 +22,7 @@ public class SqlServerDAO : IGenericDAO
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
         _access = "User Id=RIDEALONGWrite;Password=writeme;TrustServerCertificate=True;";
-        _connString = $"Server={_server};Database={_database};{_access}";
+        _connString = @"Server=.\RIDEALONG; Database=RideAlongDevDB; User Id=RideAlongWrite; Password=writeme; TrustServerCertificate=True;";
 
         var rowsAffected = 0;
 
@@ -65,7 +65,7 @@ public class SqlServerDAO : IGenericDAO
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
         _access = "User Id=RIDEALONGRead;Password=readme;TrustServerCertificate=True";
-        _connString = $"Server={_server};Database={_database};{_access}";
+        _connString = @"Server=.\RIDEALONG; Database=RideAlongDevDB; User Id=RideAlongRead; Password=readme; TrustServerCertificate=True;";
 
         var response = new Response();
 
@@ -80,6 +80,8 @@ public class SqlServerDAO : IGenericDAO
                 using (var command = sql)
                 {
                     var reader = command.ExecuteReader();
+
+                    response.ReturnValue = new List<object>();
 
                     while (reader.Read())
                     {

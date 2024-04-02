@@ -33,7 +33,7 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         [Route("tryAuthentication")]
         public IActionResult tryAuthentication([FromBody] AuthNRequest loginRequest)
         {
-            var tryAuthentication = _securityManager.TryAuthenticating(loginRequest.username, loginRequest.otp);
+            var tryAuthentication = _securityManager.TryAuthenticating(loginRequest);
             if (tryAuthentication.HasError)
             {
                 return BadRequest(tryAuthentication.ErrorMessage);

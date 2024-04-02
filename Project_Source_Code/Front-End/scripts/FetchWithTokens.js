@@ -1,12 +1,18 @@
-export function fetchWithTokens( url ) {
-    const IDToken = sessionStorage.getItem('IDToken');
-    const AccessToken = sessionStorage.getItem('AccessToken');
-    const RefreshToken = sessionStorage.getItem('RefreshToken');
-    if (IDToken && AccessToken && RefreshToken) {
-        options.headers = {"Content-Type": "application/json"};
-        options.headers.Authorization = `Bearer ${jwt}`;
-
-      }
-      // Make the HTTP request using fetch
-      return fetch(url, options);
+export function fetchWithTokens( url, method, body) {  
+  // Fetch the tokens from session storage
+  const idToken = sessionStorage.getItem('IDToken');
+  const accessToken = sessionStorage.getItem('AccessToken');
+  const refreshToken = sessionStorage.getItem('RefreshToken');
+  // Create the headers object with the tokens
+  const headers = {
+    'Authorization': `Bearer ${idToken}`,
+    'X-Access-Token': accessToken,
+    'X-Refresh-Token': refreshToken,
+    'Content-Type': 'application/json' // Set the Content-Type header for the request body
+  };
+  return fetch(url, {
+    method: method,
+    headers: headers,
+    body: JSON.stringify(body)
+  });
 }

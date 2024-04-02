@@ -72,7 +72,6 @@ function submitOTP() {
         if (isValidOTP(otp) && isValidEmailAddress(username)) {
             var fetchResponse = false; // Assuming Fail response by default
             // Make fetch request to back - end
-            alert("Trying Fetch");
             fetch("http://localhost:8080/Auth/tryAuthentication", {
                 method: "POST",
                 body: JSON.stringify({ username: username, otp: otp }),
@@ -90,7 +89,6 @@ function submitOTP() {
                 }
             })
                 .then(function (data) {
-                alert("Got to the data Stage");
                 sessionStorage.setItem('IDToken', data.idToken);
                 sessionStorage.setItem('AccessToken', data.accessToken);
                 sessionStorage.setItem('RefreshToken', data.refreshToken);
