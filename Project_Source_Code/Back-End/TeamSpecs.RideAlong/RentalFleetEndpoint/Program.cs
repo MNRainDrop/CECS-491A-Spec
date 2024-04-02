@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
+builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogService, LogService>();

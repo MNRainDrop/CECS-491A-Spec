@@ -14,7 +14,7 @@ namespace TeamSpecs.RideAlong.Middleware
     public class IDTokenValidationMiddleware
     {
         private readonly RequestDelegate _next;
-        private string _rideAlongSecretKey = "Ride-Along-Super-secret-string";
+        private string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         private string _rideAlongIssuer = "Ride Along by Team Specs";
         public IDTokenValidationMiddleware(RequestDelegate next)
         {

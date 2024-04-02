@@ -6,7 +6,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
 namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
 {
-    [Route("Auth/[controller]")]
+    [Route( "[controller]")]
     public class AuthController: Controller
     {
         private readonly ISecurityManager _securityManager;
@@ -44,7 +44,7 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
                 var idToken = tokenList[0];
                 var accessToken = tokenList[1];
                 var refreshToken = tokenList[2];
-                Ok(new { IdToken = idToken, AccessToken = accessToken, RefreshToken = refreshToken});
+                return Ok(new { IdToken = idToken, AccessToken = accessToken, RefreshToken = refreshToken});
             }
             return Ok("");
         }
