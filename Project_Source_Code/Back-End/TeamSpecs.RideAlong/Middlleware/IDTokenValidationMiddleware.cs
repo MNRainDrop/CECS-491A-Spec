@@ -22,12 +22,20 @@ namespace TeamSpecs.RideAlong.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            string token = context.Request.Headers["Authorization"].First()?.Split(" ").Last() ?? "";
-            if (!token.IsNullOrEmpty())
+            try 
             {
-                await AttachUserToContext(context, token);
+                string token = context.Request.Headers["Authorization"].First()?.Split(" ").Last() ?? "";
+                if (!token.IsNullOrEmpty())
+                {
+                    await AttachUserToContext(context, token);
+                }
+                await _next(context);
+            } catch (Exception)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("No Token Provided");
             }
-            await _next(context);
+            return;
         }
         private async Task AttachUserToContext(HttpContext context, string token)
         {

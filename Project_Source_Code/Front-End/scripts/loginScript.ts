@@ -2,7 +2,7 @@
 
 // Attach event listener to submit username button
 const submitUsernameButton = document.getElementById("submit-username");
-submitUsernameButton.addEventListener("click", submitUsername);
+submitUsernameButton!.addEventListener("click", submitUsername);
 
 
 // Checks user username
@@ -31,11 +31,11 @@ function submitUsername()
     {
         if (isValidEmailAddress(username))
         {
-            // Calls Web API controller -- login --> cbange when moved to Ride Along
-            fetch("/api/login",
+            // Calls Web API controller -- login --> change when moved to Ride Along
+            fetch("http://localhost:8080/Auth/startLogin",
                 {
                 method: "POST",
-                body: JSON.stringify({ username }),
+                body: JSON.stringify(username),
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -50,7 +50,7 @@ function submitUsername()
                     else
                     {
                         // If response is not OK, display to user process failed
-                        alert("Authencation failed!")
+                        alert("Authentication failed!")
                         console.error("Error:", response.statusText);
                     }
                 })
@@ -75,7 +75,7 @@ function submitUsername()
 // Function to show OTP view
 function showOTPView() {
     const dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = `
+    dynamicContent!.innerHTML += `
         <div id="otp-container">
             <p>An OTP has been sent to your email address. Please enter the OTP:</p>
             <input type="text" id="otp-input" placeholder="Enter OTP">
@@ -85,23 +85,55 @@ function showOTPView() {
 
     // Attach event listener to submit OTP button
     const submitOTPButton = document.getElementById("submit-otp");
-    submitOTPButton.addEventListener("click", submitOTP);
+    submitOTPButton!.addEventListener("click", submitOTP);
 }
 
 // Function to handle submitting OTP
 function submitOTP() {
     const otpInput = document.getElementById("otp-input") as HTMLInputElement;
     const otp = otpInput.value.trim();
+    const usernameInput = document.getElementById("username-input") as HTMLInputElement;
+    const username = usernameInput.value.trim();
 
     // Check if OTP is not empty
-    if (otp)
+    if (otp && username)
     {
-        if (isValidOTP(otp))
-        { 
+        if (isValidOTP(otp) && isValidEmailAddress(username))
+        {
+            var fetchResponse = false; // Assuming Fail response by default
+
             // Make fetch request to back - end
-
-            const fetchResponse = true; // Assuming OTP validation is successful
-
+            alert("Trying Fetch");
+            fetch("http://localhost:8080/Auth/tryAuthentication",
+                {
+                method: "POST",
+                body: JSON.stringify({username, otp}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => { 
+                if (response.ok)
+                {
+                    return response.json();
+                } else{
+                    alert("Authentication failed!");
+                    console.error("Error:", response.statusText);
+                }
+                
+            })
+            .then(data => {
+                alert("Got to the data Stage");
+                sessionStorage.setItem ('IDToken', data.idToken);
+                sessionStorage.setItem ('AccessToken' , data.accessToken);
+                sessionStorage.setItem ('RefreshToken' , data.refreshToken);
+                fetchResponse = true;
+            })
+            .catch(error =>
+            {
+                alert("Something went wrong!" + " " + error)
+                console.error("Error:", error);
+            });
             // if OK --> generate ShowMainContent(), UnhideNavigation
 
             if (fetchResponse)
@@ -129,7 +161,7 @@ function submitOTP() {
 // Where we want access to all features such as VP, SL, CHR....
 function showMainContent() {
     const dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = `
+    dynamicContent!.innerHTML = `
         <div id="main-content">
             <p>Welcome, user! You are now logged in.</p>
             <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>
@@ -141,10 +173,10 @@ function showMainContent() {
 // Function to unhide navigation
 function unhideNavigation() {
     const navigation = document.getElementById("navigation");
-    navigation.classList.remove("hidden");
+    navigation!.classList.remove("hidden");
 
     // Add Event listeners to nagvigation items
-    const navigationItems = navigation.querySelectorAll('li');
+    const navigationItems = navigation!.querySelectorAll('li');
     navigationItems.forEach(item => {
         item.addEventListener('click', handleNavigationItemClick);
     });
