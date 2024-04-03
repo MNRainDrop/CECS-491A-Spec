@@ -1,13 +1,24 @@
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 #pragma warning disable
 public class DataAccessShould
 {
     //Generates hashes for testing purposes
+
+    private ConnectionStrings _connStrings;
+    public DataAccessShould()
+    {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+    }
     private string GenerateRandomHash()
     {
         string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
@@ -29,7 +40,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')";
@@ -56,7 +67,7 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_SqlCommandWithNoContextPassedIn_WriteToDatabase_Fail()
     {
         // Arrange=
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var sql = "";
 
 
@@ -82,7 +93,7 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_InsertToInvalidTableSqlCommandPassedIn_WriteToDatabase_Fail()
     {
         // Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var sql = "INSERT INTO dbo.NotImplementedTable (something)" +
             "VALUES ('This should not work')";
 
@@ -109,7 +120,7 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_InsertSqlCommandWithVariableLimitExceededPassedIn_WriteToDatabase_Fail()
     {
         // Arrange        
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             "VALUES ('username should fail it has more than 50 characters', 2147483648, 'this user hash is expected to fail it has more than 64 characters')";
 
@@ -136,7 +147,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             "VALUES (null, null, null)";
@@ -167,7 +178,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = new SqlCommand("SELECT UID, UserName, Salt, UserHash FROM UserAccount WHERE UID = 1;");
 
@@ -202,7 +213,7 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = new SqlCommand("SELECT  UID, UserName, Salt, UserHash FROM UserAccount WHERE UserName LIKE '%Haha Funny Number lololol';");
 
@@ -236,7 +247,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         string hash = GenerateRandomHash();
 
         var sql = new SqlCommand("SELECT UserName, UserHash FROM UserAccount WHERE UserName LIKE '%TestUsername%' and UserHash LIKE '%TestUserHash%';");
@@ -273,7 +284,7 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
 
         var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')");
@@ -302,7 +313,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = "UPDATE UserAccount " +
             "SET UserHash = 'This is an update test'" +
@@ -333,7 +344,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = new SqlCommand("UPDATE UserAccount " +
             "SET UserHash = 'This is a test for updating' " +
@@ -365,7 +376,7 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql2 = "INSERT INTO UserAccount (UserName, Salt, UserHash) VALUES ('dummyUsername', 123456, 'dummyUserHash')";
         var sql = "DELETE FROM UserAccount WHERE UserName = 'dummyUsername'";
@@ -395,7 +406,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         var sql = "DELETE FROM UserAccount " +
             "WHERE UID = null";
@@ -424,7 +435,7 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
 
         // Expected values
         var minimumExpectedReturnValue = 0;

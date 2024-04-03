@@ -1,15 +1,26 @@
 ﻿namespace TeamSpecs.RideAlong.TestingLibrary;
 
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.Services;
 
 public class LoggingLibraryShould
 {
+    private readonly ConnectionStrings _connStrings;
+    public LoggingLibraryShould()
+    {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+#pragma warning disable CS8604 // Possible null reference argument.
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+#pragma warning restore CS8604 // Possible null reference argument.
+    }
     private string GenerateRandomHash()
     {
         string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
@@ -29,7 +40,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
         
 
         // Expected values
@@ -62,7 +73,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
 
 
         // Expected values
@@ -94,7 +105,7 @@ public class LoggingLibraryShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
         var responseList = new List<IResponse>();
 
         // Expected values
@@ -152,7 +163,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
 
         // Expected values
         var expectedHasError = false;

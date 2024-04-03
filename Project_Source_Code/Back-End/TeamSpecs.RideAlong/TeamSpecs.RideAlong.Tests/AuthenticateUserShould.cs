@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
@@ -10,6 +11,7 @@ using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
@@ -18,28 +20,16 @@ using TeamSpecs.RideAlong.Services;
 using Xunit.Sdk;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
-
-// This is a copy of the act + create testing user setupp
-/*
-        //Act
-        #region Generating test user
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('SecurityTestUser', 123456, 'TestHash')";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-        timer.Start();
-
-
-        timer.Stop();
-        #region Deleting test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'SecurityTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-*/
 #pragma warning disable
 public class AuthenticateUserShould
 {
+    private readonly ConnectionStrings _connStrings;
+    public AuthenticateUserShould()
+    {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+    }
     private string GenerateRandomHash()
     {
         string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
@@ -59,7 +49,7 @@ public class AuthenticateUserShould
     public void Authenticate_A_Username_pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService(); 
         var logger = new LogService(logTarget,hashService); 
@@ -83,7 +73,7 @@ public class AuthenticateUserShould
     public void GetUserModel_FromDatabase_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget,hashService);
@@ -118,7 +108,7 @@ public class AuthenticateUserShould
     public void Not_GetUserPrincpal_if_No_Such_User_Exists_Fail()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -153,7 +143,7 @@ public class AuthenticateUserShould
     public void getUserPrincipal()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -199,7 +189,7 @@ public class AuthenticateUserShould
         string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         string _rideAlongIssuer = "Ride Along by Team Specs";
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var hasher = new HashService();
         var logTarget = new SqlDbLogTarget();
         var logger = new LogService(logTarget, hasher);

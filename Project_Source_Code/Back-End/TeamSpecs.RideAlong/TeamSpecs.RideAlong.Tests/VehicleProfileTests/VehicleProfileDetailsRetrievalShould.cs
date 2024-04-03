@@ -1,15 +1,25 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleProfile;
+using static System.Collections.Specialized.BitVector32;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileDetailsRetrievalShould
 {
+    private readonly ConnectionStrings _connStrings;
+    public VehicleProfileDetailsRetrievalShould()
+    {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+    }
     [Fact]
     public void VehicleProfileDetailsRetrieval_ReadVehicleProfileDetailsFromDatabase_ValidVINPassedIn_OneVehicleProfileDetailsRetrieved_Pass()
     {
@@ -18,7 +28,7 @@ public class VehicleProfileDetailsRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var vehicleTarget = new SqlDbVehicleTarget(dao);
 
         var hashService = new HashService();
@@ -111,7 +121,7 @@ public class VehicleProfileDetailsRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var vehicleTarget = new SqlDbVehicleTarget(dao);
 
         var hashService = new HashService();

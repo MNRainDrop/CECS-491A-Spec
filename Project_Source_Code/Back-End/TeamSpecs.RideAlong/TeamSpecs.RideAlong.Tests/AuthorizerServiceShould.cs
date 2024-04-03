@@ -7,16 +7,25 @@ using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.Services;
 using System.Security.Principal;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using Microsoft.Extensions.Configuration;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
 public class AuthorizeUserShould
 {
+    private readonly ConnectionStrings _connStrings;
+    public AuthorizeUserShould()
+    {
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+    }
     [Fact]
     public void AuthService_Authorize_RequiredClaimsPassedIn_ReturnTrue_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var actualResult = false;
         var hashService = new HashService();
@@ -51,7 +60,7 @@ public class AuthorizeUserShould
     public void AuthService_Authorize_InavlidClaimsPassedIn_ReturnFalse_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var actualResult = false;
         var hashService = new HashService();
@@ -86,7 +95,7 @@ public class AuthorizeUserShould
     public void AuthService_Authorize_MissingClaimsPassedIn_ReturnFalse_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        var dao = new SqlServerDAO(_connStrings);
         var logTarget = new SqlDbLogTarget(dao);
         var actualResult = false;
         var hashService = new HashService();

@@ -1,28 +1,22 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using Microsoft.Data.SqlClient;
 using System.Text;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
-    private string _connString;
-    private readonly string _server;
-    private readonly string _database;
-    private string _access;
+    ConnectionStrings _connStrings;
 
-    public SqlServerDAO ()
+    public SqlServerDAO (ConnectionStrings connStrings)
     {
-        _connString = "";
-        _server = @".\RIDEALONG";
-        _database = "RideAlong";
-        _access = "";
+        _connStrings = connStrings;
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RIDEALONGWrite;Password=writeme;TrustServerCertificate=True;";
-        _connString = @"Server=.\RIDEALONG; Database=RideAlongDevDB; User Id=RideAlongWrite; Password=writeme; TrustServerCertificate=True;";
+        string _connString = _connStrings.writeOnly;
 
         var rowsAffected = 0;
 
@@ -64,8 +58,7 @@ public class SqlServerDAO : IGenericDAO
 
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
-        _access = "User Id=RIDEALONGRead;Password=readme;TrustServerCertificate=True";
-        _connString = @"Server=.\RIDEALONG; Database=RideAlongDevDB; User Id=RideAlongRead; Password=readme; TrustServerCertificate=True;";
+        string _connString = _connStrings.readOnly;
 
         var response = new Response();
 
@@ -113,8 +106,8 @@ public class SqlServerDAO : IGenericDAO
     }
     public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RIDEALONGAdmin;Password=readme;TrustServerCertificate=True";
-        _connString = $"Server={_server};Database={_database};{_access}";
+
+        string _connString = _connStrings.readOnly;
 
         var returnList = new List<object[]>();
 
