@@ -102,13 +102,13 @@ public class VehicleProfileRetrieveController : Controller
 
     public class UserPageModel
     {
-        public AccountUserModel AccountUser { get; set; }
+        public AccountUserModel? AccountUser { get; set; }
         public int Page { get; set; }
     }
 
     public class VehicleAccountModel
     {
-        public VehicleProfileModel VehicleProfile { get; set; }
-        public AccountUserModel AccountUser { get; set; }
+        public VehicleProfileModel? VehicleProfile { get; set; }
+        public AccountUserModel? AccountUser { get; set; }
     }
 }

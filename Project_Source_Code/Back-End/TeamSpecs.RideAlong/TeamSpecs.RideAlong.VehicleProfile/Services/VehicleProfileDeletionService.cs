@@ -8,12 +8,10 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
 {
     private readonly IDeleteVehicleTarget _deleteVehicleTarget;
     private readonly ILogService _logService;
-    private readonly IAccountModificationService _accountModificationService;
-    public VehicleProfileDeletionService(IDeleteVehicleTarget deleteVehicleTarget, ILogService logService, IAccountModificationService accountModificationService)
+    public VehicleProfileDeletionService(IDeleteVehicleTarget deleteVehicleTarget, ILogService logService)
     {
         _deleteVehicleTarget = deleteVehicleTarget;
         _logService = logService;
-        _accountModificationService = accountModificationService;
     }
 
     public IResponse deleteVehicleProfile(IVehicleProfileModel vehicle, IAccountUserModel userAccount)
