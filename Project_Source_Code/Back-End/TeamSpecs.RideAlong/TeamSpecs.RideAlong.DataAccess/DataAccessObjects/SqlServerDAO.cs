@@ -1,17 +1,22 @@
-﻿using TeamSpecs.RideAlong.Model;
-using Microsoft.Data.SqlClient;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Model.ConfigModels;
-
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
     ConnectionStrings _connStrings;
 
-    public SqlServerDAO (ConnectionStrings connStrings)
+    public SqlServerDAO()
     {
-        _connStrings = connStrings;
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+#pragma warning disable CS8604 // Possible null reference argument.
+        var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
+        var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+#pragma warning restore CS8604 // Possible null reference argument.
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
@@ -64,7 +69,7 @@ public class SqlServerDAO : IGenericDAO
 
         try
         {
-            
+
             using (var connection = new SqlConnection(_connString))
             {
                 connection.Open();
@@ -157,7 +162,7 @@ public class SqlServerDAO : IGenericDAO
     }
     public IResponse ExecuteReadOnly()
     {
-        throw new NotImplementedException(); 
+        throw new NotImplementedException();
     }
 
     public IResponse ExecuteWriteOnly(string value)

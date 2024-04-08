@@ -1,35 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Bson;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using TeamSpecs.RideAlong.Services;
-using Xunit.Sdk;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 #pragma warning disable
 public class AuthenticateUserShould
 {
-    private readonly ConnectionStrings _connStrings;
-    public AuthenticateUserShould()
-    {
-        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-        var section = configuration.GetSection("ConnectionStrings");
-        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
-    }
     private string GenerateRandomHash()
     {
         string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
@@ -44,15 +30,14 @@ public class AuthenticateUserShould
         return sb.ToString();
     }
 
-
     [Fact]
     public void Authenticate_A_Username_pass()
     {
         //Arrange
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var hashService = new HashService(); 
-        var logger = new LogService(logTarget,hashService); 
+        var hashService = new HashService();
+        var logger = new LogService(logTarget, hashService);
         var authRequest = new AuthNRequest("UserName", "OTP");
         var otp = "OTP";
         var authTarget = new SQLServerAuthTarget(dao, logger);
@@ -73,10 +58,10 @@ public class AuthenticateUserShould
     public void GetUserModel_FromDatabase_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
-        var logger = new LogService(logTarget,hashService);
+        var logger = new LogService(logTarget, hashService);
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
         var timer = new Stopwatch();
@@ -98,7 +83,7 @@ public class AuthenticateUserShould
             { actualResult = true; }
         }
         timer.Stop();
-        
+
         //Assert
         Assert.Equal(expectedResult, actualResult);
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
@@ -108,7 +93,7 @@ public class AuthenticateUserShould
     public void Not_GetUserPrincpal_if_No_Such_User_Exists_Fail()
     {
         //Arrange
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -143,7 +128,7 @@ public class AuthenticateUserShould
     public void getUserPrincipal()
     {
         //Arrange
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -162,7 +147,7 @@ public class AuthenticateUserShould
         timer.Start();
 
         response = authService.GetUserPrincipal(model);
-        if (response.HasError != true )
+        if (response.HasError != true)
         {
             if (response.ReturnValue is not null)
             {
@@ -176,7 +161,7 @@ public class AuthenticateUserShould
         timer.Stop();
 
         //Assert
-        Assert.True(actualResult ==  expectedResult);
+        Assert.True(actualResult == expectedResult);
         Assert.True(timer.Elapsed.TotalSeconds < 3);
 
     }
@@ -189,7 +174,7 @@ public class AuthenticateUserShould
         string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         string _rideAlongIssuer = "Ride Along by Team Specs";
 
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var hasher = new HashService();
         var logTarget = new SqlDbLogTarget();
         var logger = new LogService(logTarget, hasher);
@@ -222,7 +207,8 @@ public class AuthenticateUserShould
             }, out SecurityToken validatedToken);
             ;
             actual = true;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             actual = false;
         }

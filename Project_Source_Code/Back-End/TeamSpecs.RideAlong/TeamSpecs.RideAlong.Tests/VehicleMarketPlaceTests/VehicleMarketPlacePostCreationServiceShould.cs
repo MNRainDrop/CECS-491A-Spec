@@ -1,29 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleMarketplace;
-using static System.Collections.Specialized.BitVector32;
 
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class VehicleMarketPlacePostCreationServiceShould
     {
-        private readonly ConnectionStrings _connStrings;
-        public VehicleMarketPlacePostCreationServiceShould()
-        {
-            var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-            var section = configuration.GetSection("ConnectionStrings");
-            _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
-        }
+
         [Fact]
         public void VehicleMarketPlacePostCreationServiceShould_CreateVehicleProfile_RequiredParametersPassedIn_ReturnValue_Pass()
         {
             //Arrange 
             var timer = new Stopwatch();
-            var _dao = new SqlServerDAO(_connStrings);
+            var _dao = new SqlServerDAO();
             var _target = new SqlDbMarketplaceTarget(_dao);
 
             IResponse response;
@@ -46,7 +37,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             //Assert 
             Assert.True(timer.Elapsed.TotalSeconds <= 5);
             Assert.True(response.HasError == false);
-            
+
 
 
         }

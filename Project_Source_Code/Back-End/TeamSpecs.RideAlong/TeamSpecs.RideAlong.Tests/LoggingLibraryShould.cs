@@ -1,47 +1,20 @@
 ﻿namespace TeamSpecs.RideAlong.TestingLibrary;
-
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
-using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.Services;
 
 public class LoggingLibraryShould
 {
-    private readonly ConnectionStrings _connStrings;
-    public LoggingLibraryShould()
-    {
-        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-        var section = configuration.GetSection("ConnectionStrings");
-#pragma warning disable CS8604 // Possible null reference argument.
-        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
-#pragma warning restore CS8604 // Possible null reference argument.
-    }
-    private string GenerateRandomHash()
-    {
-        string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
-        int length = 64; //Length of a hash is 64
-        StringBuilder sb = new StringBuilder(length);
-        Random random = new Random();
-        for (int i = 0; i < length; i++)
-        {
-            int index = random.Next(AllowedChars.Length);
-            sb.Append(AllowedChars[index]);
-        }
-        return sb.ToString();
-    }
     [Fact]
     public void LL_Log_CreateAndStoreOneLog_LogWillBeStoredToDataStore_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
-        
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+
 
         // Expected values
         var expectedHasError = false;
@@ -73,19 +46,19 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
 
 
         // Expected values
         var expectedHasError = false;
         string? expectedErrorMessage = null;
         var expectedReturnValue = 1;
-        
+
         // Act
         timer.Start();
         response = await logService.CreateLogAsync("Info", "View", "This is an Async test message", "sample_user_hash");
         timer.Stop();
-        
+
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
@@ -105,7 +78,7 @@ public class LoggingLibraryShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
         var responseList = new List<IResponse>();
 
         // Expected values
@@ -163,7 +136,7 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO(_connStrings)), new HashService());
+        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
 
         // Expected values
         var expectedHasError = false;

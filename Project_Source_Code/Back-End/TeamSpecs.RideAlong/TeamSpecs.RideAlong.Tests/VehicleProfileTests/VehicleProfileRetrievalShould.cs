@@ -1,25 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model.ConfigModels;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleProfile;
-using static System.Collections.Specialized.BitVector32;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileRetrievalShould
 {
-    private readonly ConnectionStrings _connStrings;
-    public VehicleProfileRetrievalShould()
-    {
-        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); var configPath = Path.Combine(directory, "..","..","..", "..", "RideAlongConfiguration.json"); var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-        var section = configuration.GetSection("ConnectionStrings");
-        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
-    }
+
     [Fact]
     public void VehicleProfileRetrieval_ReadVehicleProfilesFromDatabase_ValidUserAccountPassedIn_OneVehicleProfileRetrieved_Pass()
     {
@@ -28,7 +19,7 @@ public class VehicleProfileRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var vehicleTarget = new SqlDbVehicleTarget(dao);
 
         var hashService = new HashService();
@@ -121,7 +112,7 @@ public class VehicleProfileRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var vehicleTarget = new SqlDbVehicleTarget(dao);
 
         var hashService = new HashService();
@@ -206,7 +197,7 @@ public class VehicleProfileRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO(_connStrings);
+        var dao = new SqlServerDAO();
         var vehicleTarget = new SqlDbVehicleTarget(dao);
 
         var hashService = new HashService();
@@ -288,7 +279,7 @@ public class VehicleProfileRetrievalShould
         Assert.True(response.ReturnValue.Count == 3);
         Assert.True(response.ReturnValue.FirstOrDefault() is not null);
         Assert.True(response.ReturnValue.FirstOrDefault() is VehicleProfileModel);
-        foreach(VehicleProfileModel vehicle in response.ReturnValue)
+        foreach (VehicleProfileModel vehicle in response.ReturnValue)
         {
             Assert.NotNull(vehicle);
             Assert.True(vehicle.VIN == vehicle1.VIN || vehicle.VIN == vehicle2.VIN || vehicle.VIN == vehicle3.VIN);
