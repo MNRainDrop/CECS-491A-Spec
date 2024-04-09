@@ -6,7 +6,7 @@ public class VehicleDetailsModel : IVehicleDetailsModel
     public string Color { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 
-    public VehicleDetailsModel(string vin, string color, string description)
+    public VehicleDetailsModel(string vin, string color = "", string description = "")
     {
         VIN = vin;
         Color = color;
