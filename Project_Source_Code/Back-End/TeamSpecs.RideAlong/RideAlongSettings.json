@@ -1,8 +1,0 @@
-{
-  "ConnectionStrings": {
-    "ReadOnlyUser": "Server=localhost\\RIDEALONG;Datase=RidealongDevDB;User Id=RideAlongRead;Password=readme;Trusted_Connection=True;",
-    "WriteOnlyUser": "Server=localhost\\RIDEALONG;Datase=RidealongDevDB;User Id=RideAlongWrite;Password=writeme;Trusted_Connection=True;",
-    "AdminUser": "Server=localhost\\RIDEALONG;Datase=RidealongDevDB;User Id=RideAlongAdmin;Password=admin;Trusted_Connection=True;"
-  },
-  "Environment": "Dev"
-}
