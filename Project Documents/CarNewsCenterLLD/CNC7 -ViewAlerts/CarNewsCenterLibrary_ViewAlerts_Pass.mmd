@@ -39,9 +39,9 @@ u->>+e: ViewAlert() : IActionResult
                     da->>+ds: SqlCommand.ExecuteNonQuery() : Int
                         Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
 
-                        ds->>ds: SELECT Notification (VIN, recall)<br>VALUES (@VIN, @recall)
+                        ds->>ds: SELECT (Description, Type, Date) FROM NotificationObject<br>INNER JOIN NotificationCenter <br>on NotificationObject.Notification_ID = NotificationCenter.Notification_ID 
 
-                        ds->>ds: Recall status is successfully<br>written to the Data Store
+                        ds->>ds: Alerts are successfuly retrieved from DataStore 
 
                     ds-->>-da: Database returns the number of rows affected
 

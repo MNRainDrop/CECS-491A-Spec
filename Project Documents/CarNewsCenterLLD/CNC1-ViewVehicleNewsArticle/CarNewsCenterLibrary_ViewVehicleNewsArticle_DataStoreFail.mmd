@@ -41,24 +41,21 @@ u->>+e: GetNewsForAllVehicles(UID: bigint) : IActionResult
 
                         ds->>ds: SELECT (Make, Model, Year) FROM VehicleProfile <br> WHERE Owner_UID = UID 
 
-                        ds->>ds: All Vehicles are successfully<br>retrieved from the Data Store
+                        ds->>ds: Vehicles are unsuccessfully<br>retrieved from the Data Store
 
-                    ds-->>-da: Database returns the number of rows affected
+                    ds-->>-da: Database throws an exception
 
                     da->>da: Check for thrown exceptions
 
-                da-->>-dg: SqlServerDAO returns the number of rows affected
+                da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the thrown exception
 
-                dg->>dg: SqlDbVehicleTarget checks to see that one and only one row was affected
+                dg->>dg: SqlDbVehicleTarget checks the error to see if the error is safe to retry
 
-            dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to false
+            dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
 
             vps->>vps: Check for errors in IResponseObject
-               # Use api to search for other details on the vehicle
-            vps->>vps: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponseMessage>
-                Note over vps,vps: Requests information from API using the make, model, and year of the vehicle
 
-            # Log successful vehicle creation
+            # Log unsuccessful vehicle creation
             vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
                 Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
 
@@ -68,12 +65,12 @@ u->>+e: GetNewsForAllVehicles(UID: bigint) : IActionResult
 
         vpm->>vpm: Check for violation of business rules
 
-        # Log successful vehicle creation
+        # Log unsuccessful vehicle creation
         vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
             Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
 
     vpm-->>-e: IResponse object returned
+
     e->>e: Check for errors in returned IResponse object
 
-    e->>e: Inject success into HTML
-e-->>-u: Return OK IActionResult
+e-->>-u: Return StatusCode(500, IResponseObject.ErrorMessage)

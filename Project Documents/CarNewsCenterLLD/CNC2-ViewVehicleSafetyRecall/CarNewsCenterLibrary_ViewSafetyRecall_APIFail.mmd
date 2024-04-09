@@ -21,7 +21,7 @@ u->>u: ViewSafetyRecall(make: string, model: string, year: int) : IActionResult
 u->>u: HttpCleint.SendAsync(request: HttpRequestMessage) : Task<HttpResponseMessage>
  Note over u,u: Requests information from API using the make, model, and year of the vehicle
 
-u->>u: Extract parameters Date,Component,Summary from JSON result from API 
+u->>u: API error timeout return API FAIL 
 
 u->>+e: DisplayRecall(RecallDate: string, Component: string, Summary: string)
     e->>e: Validate Parameters
