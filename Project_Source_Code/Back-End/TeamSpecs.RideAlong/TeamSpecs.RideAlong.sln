@@ -42,6 +42,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Middleware", "Middlleware\TeamSpecs.RideAlong.Middleware.csproj", "{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RentalFleetEndpoint", "RentalFleetEndpoint\TeamSpecs.RideAlong.RentalFleetEndpoint.csproj", "{6BDE397C-A305-4526-81B2-BCF2A817FEDC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB} = {8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RentalFleetLibrary", "RentalFleetLibrary\TeamSpecs.RideAlong.RentalFleetLibrary.csproj", "{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}"
 	ProjectSection(ProjectDependencies) = postProject

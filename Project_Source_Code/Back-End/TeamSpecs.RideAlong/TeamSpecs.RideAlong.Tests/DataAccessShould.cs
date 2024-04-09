@@ -276,7 +276,7 @@ public class DataAccessShould
         var dao = new SqlServerDAO();
 
 
-        var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('test_user@gmail.com', 123456, 'This is a real user hash value')");
+        var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('test_user@gmail.com', 123456, '{GenerateRandomHash()}')");
 
         // Expected
         var expectedHasError = true;

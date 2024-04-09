@@ -11,6 +11,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.Services;
+using Org.BouncyCastle.X509.Store;
 
 
 
@@ -54,9 +55,14 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         public IAppPrincipal JwtToPrincipal()
         {
             HttpContext context = _httpContextAccessor.HttpContext;
-            string accessToken = context.Request.Headers[_accessTokenHeader];
+            string accessToken;
             var handler = new JwtSecurityTokenHandler();
+
+            #region Check for null, then get token
+            if (!context.Request.Headers[_accessTokenHeader].IsNullOrEmpty()) { throw new Exception("No Token found"); }
+            accessToken = context.Request.Headers[_accessTokenHeader]!;
             var token = handler.ReadJwtToken(accessToken);
+            #endregion
 
             #region Validate Access Token
             if (accessToken.IsNullOrEmpty()) { throw new Exception("No Token Provided"); }
@@ -229,8 +235,12 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             }
 
             IAppPrincipal userPrincpal = JwtToPrincipal();
-
-            string idToken = context.Request.Headers["Authorization"].First().Split(" ").Last();
+            
+            if (context.Request.Headers["Authorization"].First() is null)
+            {
+                throw new Exception("No ID Token Found");
+            }
+            string idToken = context.Request.Headers["Authorization"].First()!.Split(" ").Last();
             var handler2 = new JwtSecurityTokenHandler();
             var token = handler2.ReadJwtToken(idToken);
             string auth_time = token.Claims.First(c => c.Type == "sub").Value;

@@ -6,7 +6,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
 namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
 {
-    [Route( "[controller]")]
+    [Route("[controller]")]
     public class AuthController: Controller
     {
         private readonly ISecurityManager _securityManager;

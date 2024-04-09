@@ -167,7 +167,7 @@ public class AuthenticateUserShould
     }
 
     [Fact]
-    public void confirmTokensAreValid_Pass()
+    public void confirmIdTokensAreValid_Pass()
     {
         var expected = true;
         var actual = false;
@@ -176,7 +176,7 @@ public class AuthenticateUserShould
 
         var dao = new SqlServerDAO();
         var hasher = new HashService();
-        var logTarget = new SqlDbLogTarget();
+        var logTarget = new SqlDbLogTarget(dao);
         var logger = new LogService(logTarget, hasher);
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
@@ -215,7 +215,5 @@ public class AuthenticateUserShould
 
         Assert.Equal(expected, actual);
     }
-
-
 }
 #pragma warning restore

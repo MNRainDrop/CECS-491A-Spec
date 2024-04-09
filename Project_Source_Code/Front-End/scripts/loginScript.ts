@@ -46,6 +46,8 @@ function submitUsername()
                     {
                         // If response is OK, display OTP view
                         showOTPView();
+                        // Trying to attach original username input into text box
+                        usernameInput.value = username;
                     }
                     else
                     {
@@ -74,14 +76,38 @@ function submitUsername()
 
 // Function to show OTP view
 function showOTPView() {
+    // Retrieving the page's dynamic html div
     const dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent!.innerHTML += `
+    
+    // Getting rid of the first submit button, for increased clarity
+    var submitUsernameButton = document.getElementById("submit-username");
+    submitUsernameButton!.remove();
+
+    // Create a paragraph element to display the username
+    var usernameParagraph = document.createElement('p');
+    var usernameInputField = document.getElementById("username-input") as HTMLInputElement;
+    usernameParagraph.textContent = 'Username: ' + usernameInputField!.value.trim();
+    usernameParagraph.id = 'username-paragraph';
+    
+    // Remove the username input field
+    var usernameInput = document.getElementById("username-input");
+    usernameInput!.remove();
+
+    // Creating the new HTML for the OTP view
+    var otpContainer = document.createElement('div');
+    otpContainer.innerHTML += `
         <div id="otp-container">
             <p>An OTP has been sent to your email address. Please enter the OTP:</p>
             <input type="text" id="otp-input" placeholder="Enter OTP">
             <button id="submit-otp">Submit</button>
         </div>
     `;
+    otpContainer.id = 'otp-container';
+    
+    // Append the OTP view and the username paragraph to the dynamic content
+    dynamicContent!.innerHTML = ''
+    dynamicContent!.appendChild(usernameParagraph);
+    dynamicContent!.appendChild(otpContainer);
 
     // Attach event listener to submit OTP button
     const submitOTPButton = document.getElementById("submit-otp");
@@ -92,8 +118,9 @@ function showOTPView() {
 function submitOTP() {
     const otpInput = document.getElementById("otp-input") as HTMLInputElement;
     const otp = otpInput.value.trim();
-    const usernameInput = document.getElementById("username-input") as HTMLInputElement;
-    const username = usernameInput.value.trim();
+    // Retrieve the username from the paragraph element
+    var usernameParagraph = document.querySelector("#username-paragraph");
+    var username = usernameParagraph!.textContent!.replace('Username: ', '').trim();
 
     // Check if OTP is not empty
     if (otp && username)
@@ -103,7 +130,6 @@ function submitOTP() {
             var fetchResponse = false; // Assuming Fail response by default
 
             // Make fetch request to back - end
-            alert("Trying Fetch");
             fetch("http://localhost:8080/Auth/tryAuthentication",
                 {
                 method: "POST",
@@ -125,7 +151,6 @@ function submitOTP() {
                 
             })
             .then(data => {
-                alert("Got to the data Stage");
                 sessionStorage.setItem ('IDToken', data.idToken);
                 sessionStorage.setItem ('AccessToken' , data.accessToken);
                 sessionStorage.setItem ('RefreshToken' , data.refreshToken);
