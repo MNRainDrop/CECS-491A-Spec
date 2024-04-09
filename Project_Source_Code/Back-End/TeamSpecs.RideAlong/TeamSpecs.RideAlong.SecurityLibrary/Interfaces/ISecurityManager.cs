@@ -5,7 +5,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
     public interface ISecurityManager
     {
         IResponse StartLogin(string username);
-        IResponse TryAuthenticating(string username, string otp);
+        IResponse TryAuthenticating(AuthNRequest loginRequest);
         IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTime timeAuthorized);
         IResponse CreateAccessToken(IAppPrincipal userPrincpal);
         IResponse CreateRefreshToken(IAppPrincipal userPrincpal);

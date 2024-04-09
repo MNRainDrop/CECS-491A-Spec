@@ -155,7 +155,7 @@ public class VehicleProfileDetailsRetrievalShould
         catch
         {
             // In case creating the initial sql data does not work
-            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}';" + 
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}';" +
                                 $"DELETE FROM VehicleDetails WHERE VIN = '{vehicleDetails.VIN}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {

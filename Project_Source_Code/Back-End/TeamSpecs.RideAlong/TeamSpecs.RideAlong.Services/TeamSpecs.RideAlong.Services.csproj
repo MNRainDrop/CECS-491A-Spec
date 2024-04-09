@@ -15,6 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EmailService\**" />
+    <EmbeddedResource Remove="EmailService\**" />
+    <None Remove="EmailService\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
   </ItemGroup>
@@ -22,10 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="EmailService\" />
   </ItemGroup>
 
 </Project>

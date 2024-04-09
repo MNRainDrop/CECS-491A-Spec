@@ -1,19 +1,125 @@
+import { fetchWithTokens } from "./FetchWithTokens";
+
+const generateViewButton = document.getElementById("rental-fleet-view");
+generateViewButton.addEventListener("click", generateMainView);
+
+function generateMainView () {
+    alert("Got Here");
+    var permissionGranted;
+    fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'GET', '')
+    .then(function (response) {
+        if(response.ok){
+            permissionGranted = true;
+        } else {
+            permissionGranted = false;
+        }
+    })asdf;Lockj
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    a;SVGFEDiffuseLightingElementjas;DOMTokenListj;Lockj;Lockj;lengthkj;lengthkjj
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .catch(error => {
+        permissionGranted = false;
+        alert(error);
+    });
+    if (permissionGranted)
+    {
+        const dynamicContent = document.querySelector(".dynamic-content");
+        dynamicContent.innerHTML = `
+        <div id="fleet-button-div">
+            <button id="submit-username">Submit</button>
+        </div>
+        `;
+    }
+};
+
+
 document.addEventListener("DOMContentLoaded", function() {
     // Add event listener to the fetch fleet button
     const fetchFleetButton = document.getElementById('fetchFleetButton');
     fetchFleetButton.addEventListener('click', function() {
-        // Get the username from the input field
-        const username = document.getElementById('username').value;
-
         // Send POST request to fetch fleet data
-        fetch('http://localhost:5145/rentals/GetFleet', {
+        fetch('http://localhost:8081/Rentals/GetFleet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                uid: username
-            })
+            body: ''
         })
         .then(response => response.json())
         .then(data => {
@@ -27,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function displayFleetModels(fleetModels) {
-    const fleetContainer = document.getElementById('fleetContainer');
+    const fleetContainer = document.querySelector(".dynamic-content");
     
     // Clear existing content
     fleetContainer.innerHTML = '';
