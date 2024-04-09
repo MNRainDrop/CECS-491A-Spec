@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Tokens;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 

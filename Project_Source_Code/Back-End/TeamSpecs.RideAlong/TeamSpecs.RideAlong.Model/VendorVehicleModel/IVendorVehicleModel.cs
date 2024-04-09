@@ -1,10 +1,10 @@
 ﻿namespace TeamSpecs.RideAlong.Model;
 
-internal interface IVendorVehicleModel
+public interface IVendorVehicleModel : IVehicleProfileModel
 {
-    int Status { get; set; }
+    string Status { get; set; }
     DateTime PostingDate { get; set; }
-    double Price { get; set; }
+    decimal Price { get; set; }
     DateTime PriceDate { get; set; }
     long Inquiries { get; set; }
 }

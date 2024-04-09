@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.DataAccess;

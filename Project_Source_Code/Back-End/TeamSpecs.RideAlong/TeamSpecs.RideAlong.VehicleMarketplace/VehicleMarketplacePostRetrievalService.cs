@@ -9,7 +9,7 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
 
         public VehicleMarketplacePostRetrievalService(SqlDbMarketplaceTarget target)
         {
-            target = _target;
+            _target = target;
         }
 
         public IResponse RetrieveAllPublicPost()

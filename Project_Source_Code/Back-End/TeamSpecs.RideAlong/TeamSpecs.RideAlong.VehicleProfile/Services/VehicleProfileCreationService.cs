@@ -45,8 +45,8 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
 
-        var vehicle = new VehicleProfileModel(vin, userAccount.UserId, licensePlate, make, model, year);
-        var vehicleDetails = new VehicleDetailsModel(vin, color, description);
+        var vehicle = new VehicleProfileModel(vin, userAccount.UserId, licensePlate, (!string.IsNullOrWhiteSpace(make)) ? make : "", (!string.IsNullOrWhiteSpace(model)) ? model : "", year);
+        var vehicleDetails = new VehicleDetailsModel(vin, (!string.IsNullOrWhiteSpace(color)) ? color : "", (!string.IsNullOrWhiteSpace(description)) ? description : "");
 
         var response = _createVehiclesTarget.createVehicleProfileSql(vehicle, vehicleDetails);
 

@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RentalFleetLibrary\TeamSpecs.RideAlong.RentalFleetLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />

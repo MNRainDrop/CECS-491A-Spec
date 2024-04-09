@@ -15,7 +15,7 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
 
         public VehicleMarketplaceSendBuyRequest(SqlDbMarketplaceTarget target)
         {
-            target = _target;
+            _target = target;
         }
 
         public IResponse SendBuyRequest(long uid, string vin, int price)
