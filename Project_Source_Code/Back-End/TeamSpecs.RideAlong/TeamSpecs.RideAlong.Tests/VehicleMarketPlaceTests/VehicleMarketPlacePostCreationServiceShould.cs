@@ -8,6 +8,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class VehicleMarketPlacePostCreationServiceShould
     {
+
         [Fact]
         public void VehicleMarketPlacePostCreationServiceShould_CreateVehicleProfile_RequiredParametersPassedIn_ReturnValue_Pass()
         {
@@ -36,7 +37,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             //Assert 
             Assert.True(timer.Elapsed.TotalSeconds <= 5);
             Assert.True(response.HasError == false);
-            
+
 
 
         }

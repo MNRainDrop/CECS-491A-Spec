@@ -1,19 +1,16 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {
     public class JsonFileDAO : IGenericDAO
     {
+
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly string _currentFile;
         private string _relativePath;
         private readonly string _newfile;
+#pragma warning restore IDE0052 // Remove unread private members
         public JsonFileDAO()
         {
             //Default get relative path to PepperService folder
@@ -21,18 +18,16 @@ namespace TeamSpecs.RideAlong.DataAccess
             _newfile = @"\PepperOutput.json";
             _relativePath = "";
             //_relativePath = Path.GetFullPath(_currentFile)+_newfile;
-
-
         }
         public IResponse ExecuteWriteOnly(string Writevalue)
         {
             var response = new Response();
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"),false))
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "PepperOutput.json"), false))
             {
                 outputFile.WriteLine(Writevalue);
             }
-       
+
             //try-catch block and see which to return 
             response.HasError = false;
             return response;
@@ -42,7 +37,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
-            string text="";
+            string text = "";
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
