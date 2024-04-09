@@ -1,28 +1,27 @@
-﻿using TeamSpecs.RideAlong.Model;
-using Microsoft.Data.SqlClient;
-using System.Text;
-
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Model.ConfigModels;
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
-    private string _connString;
-    private readonly string _server;
-    private readonly string _database;
-    private string _access;
+    ConnectionStrings _connStrings;
 
-    public SqlServerDAO ()
+    public SqlServerDAO()
     {
-        _connString = "";
-        _server = @".\RIDEALONG";
-        _database = "RideAlong";
-        _access = "";
+        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+#pragma warning disable CS8604 // Possible null reference argument.
+        var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
+        var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+        var section = configuration.GetSection("ConnectionStrings");
+        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+#pragma warning restore CS8604 // Possible null reference argument.
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RIDEALONGWrite;Password=writeme;TrustServerCertificate=True;";
-        _connString = $"Server={_server};Database={_database};{_access}";
+        string _connString = _connStrings.writeOnly;
 
         var rowsAffected = 0;
 
@@ -65,8 +64,7 @@ public class SqlServerDAO : IGenericDAO
 
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
-        _access = "User Id=RIDEALONGRead;Password=readme;TrustServerCertificate=True";
-        _connString = $"Server={_server};Database={_database};{_access}";
+        string _connString = _connStrings.readOnly;
 
         var response = new Response()
         {
@@ -74,7 +72,7 @@ public class SqlServerDAO : IGenericDAO
         };
         try
         {
-            
+
             using (var connection = new SqlConnection(_connString))
             {
                 connection.Open();
@@ -83,6 +81,8 @@ public class SqlServerDAO : IGenericDAO
                 using (var command = sql)
                 {
                     var reader = command.ExecuteReader();
+
+                    response.ReturnValue = new List<object>();
 
                     while (reader.Read())
                     {
@@ -114,8 +114,8 @@ public class SqlServerDAO : IGenericDAO
     }
     public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        _access = "User Id=RideAlongRead;Password=readme;TrustServerCertificate=True";
-        _connString = $"Server={_server};Database={_database};{_access}";
+
+        string _connString = _connStrings.readOnly;
 
         var returnList = new List<object[]>();
 
@@ -165,7 +165,7 @@ public class SqlServerDAO : IGenericDAO
     }
     public IResponse ExecuteReadOnly()
     {
-        throw new NotImplementedException(); 
+        throw new NotImplementedException();
     }
 
     public IResponse ExecuteWriteOnly(string value)

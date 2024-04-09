@@ -10,6 +10,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileRetrievalShould
 {
+
     [Fact]
     public void VehicleProfileRetrieval_ReadVehicleProfilesFromDatabase_ValidUserAccountPassedIn_OneVehicleProfileRetrieved_Pass()
     {
@@ -292,7 +293,7 @@ public class VehicleProfileRetrievalShould
         Assert.True(response.ReturnValue.Count == 3);
         Assert.True(response.ReturnValue.FirstOrDefault() is not null);
         Assert.True(response.ReturnValue.FirstOrDefault() is VehicleProfileModel);
-        foreach(VehicleProfileModel vehicle in response.ReturnValue)
+        foreach (VehicleProfileModel vehicle in response.ReturnValue)
         {
             Assert.NotNull(vehicle);
             Assert.True(vehicle.VIN == vehicle1.VIN || vehicle.VIN == vehicle2.VIN || vehicle.VIN == vehicle3.VIN);

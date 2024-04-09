@@ -2,7 +2,7 @@
 
 // Attach event listener to submit username button
 const submitUsernameButton = document.getElementById("submit-username");
-submitUsernameButton.addEventListener("click", submitUsername);
+submitUsernameButton!.addEventListener("click", submitUsername);
 
 
 // Checks user username
@@ -31,11 +31,11 @@ function submitUsername()
     {
         if (isValidEmailAddress(username))
         {
-            // Calls Web API controller -- login --> cbange when moved to Ride Along
-            fetch("/api/login",
+            // Calls Web API controller -- login --> change when moved to Ride Along
+            fetch("http://localhost:8080/Auth/startLogin",
                 {
                 method: "POST",
-                body: JSON.stringify({ username }),
+                body: JSON.stringify(username),
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -46,11 +46,13 @@ function submitUsername()
                     {
                         // If response is OK, display OTP view
                         showOTPView();
+                        // Trying to attach original username input into text box
+                        usernameInput.value = username;
                     }
                     else
                     {
                         // If response is not OK, display to user process failed
-                        alert("Authencation failed!")
+                        alert("Authentication failed!")
                         console.error("Error:", response.statusText);
                     }
                 })
@@ -74,45 +76,93 @@ function submitUsername()
 
 // Function to show OTP view
 function showOTPView() {
+    // Retrieving the page's dynamic html div
     const dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = `
+    
+    // Getting rid of the first submit button, for increased clarity
+    var submitUsernameButton = document.getElementById("submit-username");
+    submitUsernameButton!.remove();
+
+    // Create a paragraph element to display the username
+    var usernameParagraph = document.createElement('p');
+    var usernameInputField = document.getElementById("username-input") as HTMLInputElement;
+    usernameParagraph.textContent = 'Username: ' + usernameInputField!.value.trim();
+    usernameParagraph.id = 'username-paragraph';
+    
+    // Remove the username input field
+    var usernameInput = document.getElementById("username-input");
+    usernameInput!.remove();
+
+    // Creating the new HTML for the OTP view
+    var otpContainer = document.createElement('div');
+    otpContainer.innerHTML += `
         <div id="otp-container">
             <p>An OTP has been sent to your email address. Please enter the OTP:</p>
             <input type="text" id="otp-input" placeholder="Enter OTP">
             <button id="submit-otp">Submit</button>
         </div>
     `;
+    otpContainer.id = 'otp-container';
+    
+    // Append the OTP view and the username paragraph to the dynamic content
+    dynamicContent!.innerHTML = ''
+    dynamicContent!.appendChild(usernameParagraph);
+    dynamicContent!.appendChild(otpContainer);
 
     // Attach event listener to submit OTP button
     const submitOTPButton = document.getElementById("submit-otp");
-    submitOTPButton.addEventListener("click", submitOTP);
+    submitOTPButton!.addEventListener("click", submitOTP);
 }
 
 // Function to handle submitting OTP
 function submitOTP() {
     const otpInput = document.getElementById("otp-input") as HTMLInputElement;
     const otp = otpInput.value.trim();
+    // Retrieve the username from the paragraph element
+    var usernameParagraph = document.querySelector("#username-paragraph");
+    var username = usernameParagraph!.textContent!.replace('Username: ', '').trim();
 
     // Check if OTP is not empty
-    if (otp)
+    if (otp && username)
     {
-        if (isValidOTP(otp))
-        { 
+        if (isValidOTP(otp) && isValidEmailAddress(username))
+        {
+            var fetchResponse = false; // Assuming Fail response by default
+
             // Make fetch request to back - end
-
-            const fetchResponse = true; // Assuming OTP validation is successful
-
-            // if OK --> generate ShowMainContent(), UnhideNavigation
-
-            if (fetchResponse)
-            {
-                // If OTP is valid, show main content and unhide navigation
+            fetch("http://localhost:8080/Auth/tryAuthentication",
+                {
+                method: "POST",
+                body: JSON.stringify({username, otp}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => { 
+                if (response.ok)
+                {
+                    return response.json();
+                } 
+                else
+                {
+                    alert("Authentication failed!");
+                    console.error("Error:", response.statusText);
+                }
+                
+            })
+            .then(data => {
+                sessionStorage.setItem ('IDToken', data.idToken);
+                sessionStorage.setItem ('AccessToken' , data.accessToken);
+                sessionStorage.setItem ('RefreshToken' , data.refreshToken);
                 showMainContent();
                 unhideNavigation();
-            } else
+            })
+            .catch(error =>
             {
-                alert("Invalid OTP!")
-            }
+                alert("Something went wrong!" + " " + error)
+                console.error("Error:", error);
+            });
+            
         }
         else
         {
@@ -129,7 +179,7 @@ function submitOTP() {
 // Where we want access to all features such as VP, SL, CHR....
 function showMainContent() {
     const dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = `
+    dynamicContent!.innerHTML = `
         <div id="main-content">
             <p>Welcome, user! You are now logged in.</p>
             <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>
@@ -141,10 +191,10 @@ function showMainContent() {
 // Function to unhide navigation
 function unhideNavigation() {
     const navigation = document.getElementById("navigation");
-    navigation.classList.remove("hidden");
+    navigation!.classList.remove("hidden");
 
     // Add Event listeners to nagvigation items
-    const navigationItems = navigation.querySelectorAll('li');
+    const navigationItems = navigation!.querySelectorAll('li');
     navigationItems.forEach(item => {
         item.addEventListener('click', handleNavigationItemClick);
     });
