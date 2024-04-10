@@ -7,4 +7,5 @@ public interface IVendorVehicleModel : IVehicleProfileModel
     decimal Price { get; set; }
     DateTime PriceDate { get; set; }
     long Inquiries { get; set; }
+    string Color { get; set; }
 }

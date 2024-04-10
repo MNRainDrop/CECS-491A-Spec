@@ -35,11 +35,11 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not retrieve vehicles." + response.ErrorMessage;
+            response.ErrorMessage = "Could not retrieve vehicles. " + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful retrieval of vehicle profile.";
+            response.ErrorMessage = "Successful retrieval of vehicle profile. ";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
         #endregion

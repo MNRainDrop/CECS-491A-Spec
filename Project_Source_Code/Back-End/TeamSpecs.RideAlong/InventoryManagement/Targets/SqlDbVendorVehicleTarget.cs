@@ -1,11 +1,10 @@
-﻿using MailKit.Search;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.InventoryManagement;
 
-public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, ISortVendorVehiclesTarget, IModifyVendorVehicleTarget
+public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, IModifyVendorVehicleTarget
 {
     private readonly IGenericDAO _dao;
 
@@ -13,13 +12,13 @@ public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, ISortVendo
     {
         _dao = dao;
     }
-    public IResponse readVendorVehicleProfiles(ICollection<object> searchParameters, int numOfResults, int page)
+    public IResponse readVendorVehicleProfilesSql(ICollection<object> searchParameters, int numOfResults, int page)
     {
         #region Default sql setup
         var commandSql = "SELECT vp.VIN, Owner_UID, LicensePlate, Make, Model, Year, Color, Status, PostingDate, Price, PriceDate, Inquiries ";
         var fromSql = "FROM VehicleProfile as vp ";
         var whereSql = "WHERE ";
-        var joinSql = "INNER JOIN VendingStatus as vs ON vs.VIN = vp.VIN INNER JOIN VehicleDetails as vd ON vd.VIN = vp.VIN ";
+        var joinSql = "LEFT JOIN VendingStatus as vs ON vs.VIN = vp.VIN LEFT JOIN VehicleDetails as vd ON vd.VIN = vp.VIN ";
         var orderBySql = "ORDER BY DateCreated ";
         var offsetSql = $"OFFSET {(page - 1) * numOfResults} ROWS ";
         var fetchSql = $"FETCH NEXT {numOfResults} ROWS ONLY;";
@@ -54,12 +53,12 @@ public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, ISortVendo
                         parameters.Add(new SqlParameter("@value1", searchItem.Value[0]));
                         parameters.Add(new SqlParameter("@value2", searchItem.Value[1]));
                     }
-                    else
+                    else if (item is KeyValuePair<string, string>)
                     {
-                        var searchItem = (KeyValuePair<string, object>)item;
+                        var searchItem = (KeyValuePair<string, string>)item;
 
                         whereSql += searchItem.Key + " = @" + searchItem.Key + " AND ";
-                        parameters.Add(new SqlParameter("@" + searchItem.Key, (string)searchItem.Value));
+                        parameters.Add(new SqlParameter("@" + searchItem.Key, searchItem.Value));
                     }
                 }
                 whereSql = whereSql.Remove(whereSql.Length - 4);
@@ -76,7 +75,7 @@ public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, ISortVendo
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not generate Vehicle Profile Retrieval Sql.";
+            response.ErrorMessage = "Could not generate Vendor Vehicle Profile Retrieval Sql.";
             return response;
         }
 
@@ -95,17 +94,12 @@ public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, ISortVendo
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Vehicle Profile Retrieval execution failed.";
+            response.ErrorMessage = "Vendor Vehicle Profile Retrieval execution failed.";
         }
         return response;
     }
 
-    public IResponse sortVendorVehicleProfiles(ICollection<object> searchParameters, int numOfResults, int page)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IResponse modifyVendorVehicleProfile(IVendorVehicleModel vehicle, IAccountUserModel userModel)
+    public IResponse modifyVendorVehicleProfileSql(IVendorVehicleModel vehicle, IAccountUserModel userModel)
     {
         throw new NotImplementedException();
     }
