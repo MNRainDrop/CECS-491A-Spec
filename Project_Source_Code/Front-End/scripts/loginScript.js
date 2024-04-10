@@ -2,6 +2,20 @@
 // Attach event listener to submit username button
 var submitUsernameButton = document.getElementById("submit-username");
 submitUsernameButton.addEventListener("click", submitUsername);
+/*
+document.addEventListener("DOMContentLoaded", function() {
+    const navObserver = new MutationObserver(function() {
+        alert("Adding Dynamic Script");
+        var script = document.createElement('script');
+        script.innerHTML = '<script src = "./scripts/navScript.js"></script>';
+        alert("Done with all");
+    });
+    // Defining the objservers target
+    const target = document.getElementById('navigation');
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: true, subtree: true };
+    navObserver.observe(target!, config);
+})*/
 // Checks user username
 var isValidEmailAddress = function (email) {
     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -138,17 +152,9 @@ function showMainContent() {
 }
 // Function to unhide navigation
 function unhideNavigation() {
+    // Updating nav
+    alert("Updating nav");
     var navigation = document.getElementById("navigation");
     navigation.classList.remove("hidden");
-    // Add Event listeners to nagvigation items
-    var navigationItems = navigation.querySelectorAll('li');
-    navigationItems.forEach(function (item) {
-        item.addEventListener('click', handleNavigationItemClick);
-    });
-}
-function handleNavigationItemClick(event) {
-    // Handle navigation item click
-    var selectedItem = event.target.id;
-    // Perform actions based on the selected item, such as navigating to different pages or triggering specific functionality
-    console.log(selectedItem + ' clicked');
+    alert("Nav update done");
 }

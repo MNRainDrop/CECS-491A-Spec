@@ -74,7 +74,7 @@ namespace TeamSpecs.RideAlong.Services
                 response.HasError = false;
                 return response;
             }
-            catch
+            catch (Exception ex)
             {
                 response.HasError = true;
                 response.ErrorMessage = ex.Message;

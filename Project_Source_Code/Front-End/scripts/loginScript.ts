@@ -4,6 +4,21 @@
 const submitUsernameButton = document.getElementById("submit-username");
 submitUsernameButton!.addEventListener("click", submitUsername);
 
+/*
+document.addEventListener("DOMContentLoaded", function() {
+    const navObserver = new MutationObserver(function() {
+        alert("Adding Dynamic Script");
+        var script = document.createElement('script');
+        script.innerHTML = '<script src = "./scripts/navScript.js"></script>';
+        alert("Done with all");
+    });
+    // Defining the objservers target
+    const target = document.getElementById('navigation');
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: true, subtree: true };
+    navObserver.observe(target!, config);
+})*/
+
 
 // Checks user username
 const isValidEmailAddress = (email: string): boolean =>
@@ -190,19 +205,9 @@ function showMainContent() {
 
 // Function to unhide navigation
 function unhideNavigation() {
+    // Updating nav
+    alert("Updating nav");
     const navigation = document.getElementById("navigation");
     navigation!.classList.remove("hidden");
-
-    // Add Event listeners to nagvigation items
-    const navigationItems = navigation!.querySelectorAll('li');
-    navigationItems.forEach(item => {
-        item.addEventListener('click', handleNavigationItemClick);
-    });
-}
-
-function handleNavigationItemClick(event) {
-    // Handle navigation item click
-    const selectedItem = event.target.id;
-    // Perform actions based on the selected item, such as navigating to different pages or triggering specific functionality
-    console.log(selectedItem + ' clicked');
+    alert("Nav update done");
 }

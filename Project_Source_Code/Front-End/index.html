@@ -15,7 +15,7 @@
         <!--Add Naviation functions with Event Listeners to navigation obj. Id inside JS files -->
         <nav class="hidden" id="navigation">
             <ul>
-                <li id="vehicle-profile-view">Vehicle Profile</li>
+                <button id="vehicle-profile-view">Vehicle Profile</button>
                 <li id="rental-fleet-view">Rental Fleet</li>
                 <li id="inventory-management-view">Inventory Management</li>
                 <li id="vehicle-marketplace-view">Vehicle Marketplace</li>
@@ -29,9 +29,11 @@
             <button id="submit-username">Submit</button>
         </div>
     </div>
-    <script src="main.js"></script>
-    <script src="./scripts/loginScript.js"></script>
-    <script src="./scripts/RentalFleetViewGenerator.js"></script>
+    <div class ="dynamic-scripts">
+        <script src="main.js"></script>
+        <script src="./scripts/loginScript.js"></script>
+        <script src="./scripts/navScript.js"></script>
+    </div>
 </body>
 </html>
 
