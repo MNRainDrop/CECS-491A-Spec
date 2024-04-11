@@ -67,7 +67,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.SecurityLibraryTests
                 foreach (var item in uid)
                 {
                     AuthObj.UID = (long)item[0];
-                    vehicle.Owner_UID = user.UserId;
+                    //vehicle.Owner_UID = user.UserId;
                 }
             }
             catch

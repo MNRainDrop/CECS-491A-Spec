@@ -30,6 +30,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleMarketplace", "TeamSpecs.RideAlong.VehicleMarketplace\TeamSpecs.RideAlong.VehicleMarketplace.csproj", "{1FD52138-F096-4F7C-BC20-6C932D387341}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityEndPoint", "SecurityEndPoint\TeamSpecs.RideAlong.SecurityEndPoint.csproj", "{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0} = {20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}
@@ -42,11 +43,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Middlew
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RentalFleetEndpoint", "RentalFleetEndpoint\TeamSpecs.RideAlong.RentalFleetEndpoint.csproj", "{6BDE397C-A305-4526-81B2-BCF2A817FEDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.RentalFleetLibrary", "RentalFleetLibrary\TeamSpecs.RideAlong.RentalFleetLibrary.csproj", "{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RentalFleetLibrary", "RentalFleetLibrary\TeamSpecs.RideAlong.RentalFleetLibrary.csproj", "{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
 		{4AB88406-3491-4915-AB0F-0952F69C07A1} = {4AB88406-3491-4915-AB0F-0952F69C07A1}
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.CarNewsCenter", "TeamSpecs.RideAlong.CarNewsCenter\TeamSpecs.RideAlong.CarNewsCenter.csproj", "{0385A45D-6440-4F10-82CA-EB389804D04F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
+		{4AB88406-3491-4915-AB0F-0952F69C07A1} = {4AB88406-3491-4915-AB0F-0952F69C07A1}
 	EndProjectSection
 EndProject
 Global
@@ -111,6 +118,10 @@ Global
 		{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16A222E4-A5E7-43A9-B436-5FEEF4D0BFA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0385A45D-6440-4F10-82CA-EB389804D04F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0385A45D-6440-4F10-82CA-EB389804D04F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0385A45D-6440-4F10-82CA-EB389804D04F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0385A45D-6440-4F10-82CA-EB389804D04F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
