@@ -263,7 +263,7 @@ namespace TeamSpecs.RideAlong.Services
         }
 
         //This method is for sedning buy request VPM-6
-        public IResponse VehicleMarketplaceSendRequestService(IRequest buyRequest)
+        public IResponse VehicleMarketplaceSendRequestService(INotification buyRequest)
         {
 
             #region Validate Arguments

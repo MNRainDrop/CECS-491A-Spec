@@ -7,8 +7,7 @@ namespace TeamSpecs.RideAlong.Model
     { 
         long UID { get; set; }
         string VIN { get; set; }
-        int price {  get; set; }
-
-        string message { get; set; }
+        int type {  get; set; }
+        string description { get; set; }
     }
 }

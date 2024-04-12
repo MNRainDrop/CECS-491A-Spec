@@ -23,7 +23,7 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
             IResponse response;
             //Poppulate message to pass to target 
             string message = uid + " want to buy " + vin + " for " + price;
-            Request request = new Request(uid, vin, price, message);
+            Notification request = new Notification(uid, vin, price, message);
             response = _target.VehicleMarketplaceSendRequestService(request);
 
             return response;
