@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +22,11 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<IHashService, HashService>();
+builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
-builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISecurityManager, SecurityManager>();
 builder.Services.AddScoped<IRentalFleetTarget, SqlServerRentalFleetTarget>();
 builder.Services.AddScoped<IRentalFleetService, RentalFleetService>();
 
@@ -35,42 +40,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.useCorsPreflight();
 
-// app.useCorsPreflight();
-app.Use((httpContext, next) =>
-{
-    // Preflight
-    if (httpContext.Request.Method == nameof(HttpMethod.Options).ToUpperInvariant())
-    {
-        httpContext.Response.StatusCode = 204;      // This reduces the payload for a preflight check, will save a lot of money :P
-        httpContext.Response.Headers.AccessControlAllowOrigin = "*"; // This should be dynamic
-        //Typically we will scan all incoming requests, and find out if it belongs to an *allow list*
-        httpContext.Response.Headers.AccessControlAllowMethods = "GET,POST,OPTIONS" + /*This is optional*/ ",PUT,DELETE";
-        httpContext.Response.Headers.AccessControlAllowHeaders = "*"; // DO NOT USE STAR, Specify the headers we want them to have
-        //Things such as content length, content type, authorization, expiration times, etc..... are all super important
-        httpContext.Response.Headers.AccessControlAllowCredentials = "true"; // This is if we are going to use AJAX, since we need to send cookies
+app.UseHttpsRedirection();
 
-        return Task.CompletedTask; // Terminates the HTTP Request
-    }
-    return next(); // If this is not an options request, we should skip 
-});
-
-//app.UseAuthentication();
-
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
-//app.useCorsMiddleware();
-app.Use((httpContext, next) =>
-{
-    httpContext.Response.Headers.AccessControlAllowOrigin = "*";
-    httpContext.Response.Headers.AccessControlAllowMethods = "GET,POST,OPTIONS" + /*This is optional*/ ",PUT,DELETE";
-    httpContext.Response.Headers.AccessControlAllowHeaders = "*";
-    httpContext.Response.Headers.AccessControlAllowCredentials = "true";
-
-    return next();
-});
+app.useCorsMiddleware();
 
 app.MapControllers();
 

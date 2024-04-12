@@ -33,7 +33,7 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
             }            
             return Ok("No Json Values returned");
         }
-        [HttpGet]
+        [HttpPost]
         [Route("GetAuthStatus")]
         public IActionResult GetAuthStatus()
         {

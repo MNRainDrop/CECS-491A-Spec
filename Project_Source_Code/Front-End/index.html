@@ -15,7 +15,7 @@
         <!--Add Naviation functions with Event Listeners to navigation obj. Id inside JS files -->
         <nav class="hidden" id="navigation">
             <ul>
-                <button id="vehicle-profile-view">Vehicle Profile</button>
+                <li id="vehicle-profile-view">Vehicle Profile</li>
                 <li id="rental-fleet-view">Rental Fleet</li>
                 <li id="inventory-management-view">Inventory Management</li>
                 <li id="vehicle-marketplace-view">Vehicle Marketplace</li>
@@ -30,9 +30,9 @@
         </div>
     </div>
     <div class ="dynamic-scripts">
-        <script src="main.js"></script>
+        <script type="module" src="./scripts/FetchWithTokens.js"></script>
+        <script type="module" src="./scripts/navScript.js"></script>
         <script src="./scripts/loginScript.js"></script>
-        <script src="./scripts/navScript.js"></script>
     </div>
 </body>
 </html>
