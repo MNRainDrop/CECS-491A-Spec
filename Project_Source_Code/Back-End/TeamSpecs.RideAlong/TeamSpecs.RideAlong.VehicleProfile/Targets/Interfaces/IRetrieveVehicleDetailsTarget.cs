@@ -2,5 +2,5 @@
 
 public interface IRetrieveVehicleDetailsTarget
 {
-    IResponse ReadVehicleProfileDetailsSql(ICollection<object> searchParameters);
+    IResponse readVehicleProfileDetailsSql(ICollection<object> searchParameters);
 }

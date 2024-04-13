@@ -102,23 +102,6 @@ public class VehicleProfileModelShould
         // Assert
         Assert.Equal(actual, year);
     }
-
-    [Fact]
-    public void VehicleProfileModel_GetName_NoParametersPassedIn_OneStringReturned_Pass()
-    {
-        // Arrange
-        var vin = "12345678901234567";
-        long ownerID = 1;
-        var licensePlate = "licenseplate";
-        var name = "testName";
-        var vehicle = new VehicleProfileModel(vin, ownerID, licensePlate, name: name);
-
-        // Act
-        var actual = vehicle.Name;
-
-        // Assert
-        Assert.Equal(actual, name);
-    }
     #endregion
 
     #region Set Functions
@@ -222,23 +205,6 @@ public class VehicleProfileModelShould
 
         // Assert
         Assert.Equal(vehicle.Year, newValue);
-    }
-
-    [Fact]
-    public void VehicleProfileModel_SetName_OneStringPassedIn_NoValuesReturned_Pass()
-    {
-        // Arrange
-        var vin = "12345678901234567";
-        var ownerID = 1;
-        var licensePlate = "licenseplate";
-        var vehicle = new VehicleProfileModel(vin, ownerID, licensePlate);
-        var newValue = "11111111111111111";
-
-        // Act
-        vehicle.Name = newValue;
-
-        // Assert
-        Assert.Equal(vehicle.Name, newValue);
     }
     #endregion
 }

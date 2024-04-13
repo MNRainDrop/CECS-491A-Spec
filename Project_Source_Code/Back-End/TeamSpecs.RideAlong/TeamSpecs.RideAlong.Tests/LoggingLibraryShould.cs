@@ -1,8 +1,5 @@
 ﻿namespace TeamSpecs.RideAlong.TestingLibrary;
-
-using Microsoft.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -10,19 +7,6 @@ using TeamSpecs.RideAlong.Services;
 
 public class LoggingLibraryShould
 {
-    private string GenerateRandomHash()
-    {
-        string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ0123456789";
-        int length = 64; //Length of a hash is 64
-        StringBuilder sb = new StringBuilder(length);
-        Random random = new Random();
-        for (int i = 0; i < length; i++)
-        {
-            int index = random.Next(AllowedChars.Length);
-            sb.Append(AllowedChars[index]);
-        }
-        return sb.ToString();
-    }
     [Fact]
     public void LL_Log_CreateAndStoreOneLog_LogWillBeStoredToDataStore_Pass()
     {
@@ -30,31 +14,16 @@ public class LoggingLibraryShould
         var timer = new Stopwatch();
         IResponse response;
         var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
-        
 
         // Expected values
         var expectedHasError = false;
         string? expectedErrorMessage = null;
         var expectedReturnValue = 1;
 
-        #region Generating a test user
-        var userHash = GenerateRandomHash();
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('LoggingTestUser', 123456, '{userHash}')";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        var dao = new SqlServerDAO();
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-
         // Act
         timer.Start();
-        response = logService.CreateLog("Info", "View", "This is a test message", userHash);
+        response = logService.CreateLog("Info", "View", "This is a test message", "sample_user_hash");
         timer.Stop();
-
-        #region Deleting the test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'LoggingTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
 
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
@@ -84,25 +53,11 @@ public class LoggingLibraryShould
         string? expectedErrorMessage = null;
         var expectedReturnValue = 1;
 
-        #region Generating a test user
-        var userHash = GenerateRandomHash();
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('LoggingTestUser', 123456, '{userHash}')";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        var dao = new SqlServerDAO();
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-
         // Act
         timer.Start();
-        response = await logService.CreateLogAsync("Info", "View", "This is an Async test message", userHash);
+        response = await logService.CreateLogAsync("Info", "View", "This is an Async test message", "sample_user_hash");
         timer.Stop();
-        
-        #region Deleting the test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'LoggingTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-        
+
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);
         Assert.True(response.HasError == expectedHasError);
@@ -130,17 +85,9 @@ public class LoggingLibraryShould
         string? expectedErrorMessage = null;
         var expectedNumberOfResponses = 20;
         var expectedReturnValue = 1;
+        var userHash = "sample_user_hash";
 
-        #region Generating a test user
-        var userHash = GenerateRandomHash();
-        var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" + $"VALUES ('LoggingTestUser', 123456, '{userHash}')";
-        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        var dao = new SqlServerDAO();
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
-
-
-        // 
+        // Act
         timer.Start();
         responseList.Add(logService.CreateLog("Info", "View", "This tests all level/category combinations", userHash));
         responseList.Add(logService.CreateLog("Info", "Business", "This tests all level/category combinations", userHash));
@@ -163,12 +110,6 @@ public class LoggingLibraryShould
         responseList.Add(logService.CreateLog("Error", "Data", "This tests all level/category combinations", userHash));
         responseList.Add(logService.CreateLog("Error", "Data Store", "This tests all level/category combinations", userHash));
         timer.Stop();
-
-        #region Deleting the test user
-        sql = "DELETE FROM UserAccount WHERE UserName = 'LoggingTestUser'";
-        sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(sql, null) };
-        dao.ExecuteWriteOnly(sqlCommands);
-        #endregion
 
         // Assert
         Assert.True(timer.Elapsed.TotalSeconds <= 3);

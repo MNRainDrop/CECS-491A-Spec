@@ -1,17 +1,16 @@
 ﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.Services;
-using System.Security.Principal;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 
 public class AuthorizeUserShould
 {
+
     [Fact]
     public void AuthService_Authorize_RequiredClaimsPassedIn_ReturnTrue_Pass()
     {
@@ -29,7 +28,7 @@ public class AuthorizeUserShould
         Claims.Add("canLogin", "true");
         Claims.Add("canLogout", "true");
         AuthUserModel expectedAuthModel = new AuthUserModel(123, "SecurityTestUser", BitConverter.GetBytes(123456), "TestHash");
-        var principal = new AppPrincipal(expectedAuthModel,Claims);
+        var principal = new AppPrincipal(expectedAuthModel, Claims);
 
         //Setting up RequiredClaims 
         Dictionary<string, string> RClaims = new Dictionary<string, string>();

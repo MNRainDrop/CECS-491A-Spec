@@ -1,0 +1,67 @@
+nav {
+    list-style-type: none;
+    margin: 0;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    cursor: default;
+}
+
+nav > li {
+    display: inline;
+    margin: 10px;
+    font-weight: bold;
+}
+
+nav > p {
+    display: inline;
+    margin: 10px;
+    font-weight: bold;
+}
+
+nav > li:hover {
+    cursor: pointer;
+}
+
+#pages > li {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#vehicle {
+    display: inline;
+}
+
+.vehicles {
+    width: calc(17*20px);
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 1px;
+    padding: 5px;
+    margin: 5px;
+}
+
+#vehicle-profile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+#vehicle-details {
+    display: none;
+    position: fixed;
+    inset: 0px;
+    max-width: 800px;
+    height: calc(17*20px);
+    margin: auto;
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 1px;
+    background-color: white;
+}
+
+.fleet-model {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}

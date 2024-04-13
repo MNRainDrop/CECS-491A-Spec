@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using MailKit.Search;
 
 namespace TeamSpecs.RideAlong.RentalFleetLibrary
 {
@@ -60,11 +61,12 @@ namespace TeamSpecs.RideAlong.RentalFleetLibrary
             IResponse fleetResponse = new Response();
 
             SqlCommand sql = new SqlCommand();
-            sql.CommandText = "SELECT vp.VIN, vp.Make, vp.Model, vp.Year, vp.DateCreated, fm.Status, fm.StatusInfo, fm.expectedReturnDate " +
+            sql.CommandText = "SELECT vp.VIN, vp.Make, vp.Model, vp.Year, vp.DateCreated, vd.Color, fm.Status, fm.StatusInfo, fm.expectedReturnDate " +
                 "FROM VehicleProfile as vp " +
-                "RIGHT JOIN FleetManagement as fm " +
+                "RIGHT JOIN FleetManagement as fm on vp.VIN = fm.VIN " +
+                "RIGHT JOIN VehicleDetails as vd on vd.VIN = vp.VIN " +
                 "WHERE vp.Owner_UID = @uid";
-            sql.Parameters.AddWithValue("@uid", uid);
+            sql.Parameters.Add(new SqlParameter("@uid", uid));
             IResponse response = _dao.ExecuteReadOnly(sql);
             if (response.HasError == true)
             {

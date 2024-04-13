@@ -3,5 +3,5 @@ using TeamSpecs.RideAlong.Model;
 
 public interface IRetrieveVehiclesTarget
 {
-    IResponse ReadVehicleProfileSql(ICollection<object> searchParameters);
+    IResponse readVehicleProfileSql(ICollection<object> searchParameters, int numOfResults, int page);
 }

@@ -1,19 +1,19 @@
+import { fetchWithTokens } from "./FetchWithTokens";
+
+const generateViewButton = document.getElementById("rental-fleet-view");
+generateViewButton.addEventListener("click", generateMainView);
+
 document.addEventListener("DOMContentLoaded", function() {
     // Add event listener to the fetch fleet button
     const fetchFleetButton = document.getElementById('fetchFleetButton');
     fetchFleetButton.addEventListener('click', function() {
-        // Get the username from the input field
-        const username = document.getElementById('username').value;
-
         // Send POST request to fetch fleet data
-        fetch('http://localhost:5145/rentals/GetFleet', {
+        fetch('http://localhost:8081/Rentals/GetFleet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                uid: username
-            })
+            body: ''
         })
         .then(response => response.json())
         .then(data => {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function displayFleetModels(fleetModels) {
-    const fleetContainer = document.getElementById('fleetContainer');
+    const fleetContainer = document.querySelector(".dynamic-content");
     
     // Clear existing content
     fleetContainer.innerHTML = '';

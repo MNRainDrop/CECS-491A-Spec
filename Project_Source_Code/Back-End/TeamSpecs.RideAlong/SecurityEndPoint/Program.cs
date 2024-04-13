@@ -8,12 +8,8 @@ using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Using configuration files
-var configuration = builder.Configuration;
-// var myConfig = configuration.GetSection("").Get<>();
 
 // Add services to the container.
 
@@ -27,7 +23,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
-builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -48,6 +43,7 @@ if (app.Environment.IsDevelopment())
 // This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
 app.useCorsPreflight();
 
+// Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
 //app.useIDValidator();
 app.UseHttpsRedirection();
 

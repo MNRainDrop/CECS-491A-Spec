@@ -2,12 +2,12 @@
 {
     public class AuthNRequest
     {
-        public string username { get; }
-        public string otp { get; }
-        public AuthNRequest(string pUsername, string pOtp)
+        public string username { get; set; }
+        public string otp { get; set; }
+        public AuthNRequest(string username, string otp)
         {
-            username = pUsername;
-            otp = pOtp;
+            this.username = username;
+            this.otp = otp;
         }
     }
 }

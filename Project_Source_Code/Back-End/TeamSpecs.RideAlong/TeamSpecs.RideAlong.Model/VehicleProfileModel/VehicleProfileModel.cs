@@ -5,14 +5,11 @@ public class VehicleProfileModel : IVehicleProfileModel
     public string VIN { get; set; }
     public long Owner_UID { get; set; }
     public string LicensePlate { get; set; }
-    public string? Make { get; set; } = null;
-    public string? Model { get; set; } = null;
-    public int? Year { get; set; }
+    public string Make { get; set; } = string.Empty;
+    public string Model { get; set; } = string.Empty;
+    public int Year { get; set; } = 0000;
 
-    // Added 'Name' attribute since it is a viewable option when put on the marketplace
-    public string? Name { get; set; } = null;
-
-    public VehicleProfileModel(string vin, long owner_UID, string licensePlate, string? make = null, string? model = null, int? year = null, string? name = null)
+    public VehicleProfileModel(string vin, long owner_UID, string licensePlate, string make = "", string model = "", int year = 0)
     {
         VIN = vin;
         Owner_UID = owner_UID;
@@ -20,7 +17,5 @@ public class VehicleProfileModel : IVehicleProfileModel
         Make = make;
         Model = model;
         Year = year;
-        Name = name;
     }
-
 }

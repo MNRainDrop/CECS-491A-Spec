@@ -2,14 +2,14 @@
 
 public class Log : ILog
 {
-    public Log(DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string LogHash, string? UserHash = null)
+    public Log(DateTimeOffset logTime, string logLevel, string logCategory, string logContext, string logHash, string? userHash = null)
     {
         this.LogTime = logTime;
         this.LogLevel = logLevel;
         this.LogCategory = logCategory;
         this.LogContext = logContext;
-        this.UserHash = UserHash;
-        this.LogHash = LogHash;
+        this.UserHash = userHash;
+        this.LogHash = logHash;
     }
 
     private int? LogID { get; set; }
