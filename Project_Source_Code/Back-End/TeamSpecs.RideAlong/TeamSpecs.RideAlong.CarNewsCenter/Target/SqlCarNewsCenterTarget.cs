@@ -86,21 +86,17 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
             var response = new Response();
 
             #region Setting SQL Command
-            var declareCommand = "DECLARE @UpdatedIDs TABLE (ID INT)";
-            var commandSql = "UPDATE ";
-            var tableSql = "VehicleProfile ";
-            var setSql = "SET ";
-            var whereSql = "WHERE ";
-
+            var declareCommand = "DECLARE @UpdatedIDs TABLE (ID INT);";
+            
             //These 3 to insert into NotificationObject and Output the NotificationID 
-            var insertSQL_notifObject = "INSERT INTO NotficationObject (Description,Type)";//MACTH DB
+            var insertSQL_notifObject = "INSERT INTO NotificationObject (Description,Type)";//MACTH DB
             var outputSQL = "OUTPUT INSERTED.NotificationID INTO @UpdatedIDs(ID)";
-            var insertSQL_notifObject2 = "VALUES (@Description,@Type)"; 
+            var insertSQL_notifObject2 = "VALUES (@Description,@Type);"; 
 
             //These to use that NotificationID to update the NotificationCenter table 
             var insertSQL_notifCenter = "INSERT INTO NotificationCenter(UID, VIN, NotificationID)";
             var selectSQL = "SELECT @UID,@VIN,U.ID";
-            var fromSQL = "FROM @UpdatedIDs U ";
+            var fromSQL = " FROM @UpdatedIDs U ;";
             #endregion
 
             #region Extracting value 
@@ -115,10 +111,12 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
                 };
 
                 //Combine into SQL command 
-                var sqlString = insertSQL_notifObject + outputSQL + insertSQL_notifObject2 + insertSQL_notifCenter + selectSQL + fromSQL;
+                var sqlString = declareCommand + insertSQL_notifObject + outputSQL + insertSQL_notifObject2 + insertSQL_notifCenter + selectSQL + fromSQL;
 
                 // Add string and hash set to list that the dao will execute
                 sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+
+
 
             }
             catch
@@ -128,6 +126,22 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
                 return response;
             }
             #endregion
+
+            // DAO Executes the command
+            try
+            {
+                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+                response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Database execution failed";
+                return response;
+            }
 
             response.HasError = false;
             return response;

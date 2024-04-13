@@ -294,7 +294,7 @@ namespace TeamSpecs.RideAlong.Services
             {
                 new SqlParameter("@UID",buyRequest.UID),
                 new SqlParameter("@VIN", buyRequest.VIN),
-                new SqlParameter("@Notification", buyRequest.message),
+                //new SqlParameter("@Notification", buyRequest.message),
             };
 
             //Combine into SQL command 

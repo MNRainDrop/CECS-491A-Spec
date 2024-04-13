@@ -5,7 +5,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TeamSpecs.RideAlong.CarNewsCenter
 {
-    public interface IViewVehicleNewsArticleServices
+    public interface ICarNewsCenterViewVehicleNewsArticleServices
     {
         IResponse GetNewsForAllVehicles(IAccountUserModel userAccount);
     }

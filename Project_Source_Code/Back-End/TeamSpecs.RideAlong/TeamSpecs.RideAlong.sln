@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Model",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.TestingLibrary", "TeamSpecs.RideAlong.Tests\TeamSpecs.RideAlong.TestingLibrary.csproj", "{070DA01A-0796-44D3-A9D4-6DF462D4DE48}"
 	ProjectSection(ProjectDependencies) = postProject
+		{0385A45D-6440-4F10-82CA-EB389804D04F} = {0385A45D-6440-4F10-82CA-EB389804D04F}
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
@@ -50,7 +51,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RentalF
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.CarNewsCenter", "TeamSpecs.RideAlong.CarNewsCenter\TeamSpecs.RideAlong.CarNewsCenter.csproj", "{0385A45D-6440-4F10-82CA-EB389804D04F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarNewsCenter", "TeamSpecs.RideAlong.CarNewsCenter\TeamSpecs.RideAlong.CarNewsCenter.csproj", "{0385A45D-6440-4F10-82CA-EB389804D04F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
 		{4AB88406-3491-4915-AB0F-0952F69C07A1} = {4AB88406-3491-4915-AB0F-0952F69C07A1}

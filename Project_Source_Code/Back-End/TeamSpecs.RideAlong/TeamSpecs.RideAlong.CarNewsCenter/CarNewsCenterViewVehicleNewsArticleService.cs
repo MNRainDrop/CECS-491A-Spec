@@ -5,11 +5,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TeamSpecs.RideAlong.CarNewsCenter
 {
-    public class ViewVehicleNewsArticleService : IViewVehicleNewsArticleServices
+    public class CarNewsCenterViewVehicleNewsArticleService : ICarNewsCenterViewVehicleNewsArticleServices
     {
         private readonly ICarNewsCenterTarget _vehicleTarget;
         private readonly ILogService _logService;
-        public ViewVehicleNewsArticleService(ICarNewsCenterTarget sqlDbCarNewsCenterTarget, ILogService logService)
+        public CarNewsCenterViewVehicleNewsArticleService(ICarNewsCenterTarget sqlDbCarNewsCenterTarget, ILogService logService)
         {
             _vehicleTarget = sqlDbCarNewsCenterTarget;
             _logService = logService;
@@ -28,9 +28,9 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
             #endregion
 
             var search = new List<object>()
-        {
+            {
             new KeyValuePair<string, long>("Owner_UID", userAccount.UserId)
-        };
+            };
             var response = _vehicleTarget.GetsAllVehicles(search);
 
             #region Log the action to the database

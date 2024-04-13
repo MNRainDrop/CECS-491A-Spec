@@ -20,13 +20,15 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
 
         public IResponse SendBuyRequest(long uid, string vin, int price)
         {
+            /*
             IResponse response;
             //Poppulate message to pass to target 
             string message = uid + " want to buy " + vin + " for " + price;
             Notification request = new Notification(uid, vin, price, message);
             response = _target.VehicleMarketplaceSendRequestService(request);
 
-            return response;
+            return response;*/
+            throw new NotImplementedException();
         }
     }
 }
