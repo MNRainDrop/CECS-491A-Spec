@@ -9,11 +9,11 @@ using Newtonsoft.Json;
 namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
 {
     [Route("rentals/[controller]")]
-    public class RentalFleetEndpoint : Controller
+    public class RentalFleetController : Controller
     {
 
         IRentalFleetService _service;
-        public RentalFleetEndpoint(IRentalFleetService service)
+        public RentalFleetController(IRentalFleetService service)
         {
             _service = service;
         }
@@ -29,10 +29,8 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
             IResponse response = _service.GetFleetFullModel(uid);
             if (response.ReturnValue is not null)
             {
-                List<FleetFullModel> vehicles = (List<FleetFullModel>)response.ReturnValue;
-                var jsonVehicles = JsonConvert.SerializeObject(vehicles);
-                return Ok(jsonVehicles);
-            }            
+                return Ok(response.ReturnValue);
+            }
             return Ok("Did Not get JSON Values");
         }
     }

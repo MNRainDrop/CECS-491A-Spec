@@ -39,7 +39,7 @@ public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetri
         {
             new KeyValuePair<string, string>("VIN", vehicleProfile.VIN)
         };
-        var response = _vehicleDetailsTarget.ReadVehicleProfileDetailsSql(search);
+        var response = _vehicleDetailsTarget.readVehicleProfileDetailsSql(search);
 
         #region Log the action to the database
         if (response.HasError)

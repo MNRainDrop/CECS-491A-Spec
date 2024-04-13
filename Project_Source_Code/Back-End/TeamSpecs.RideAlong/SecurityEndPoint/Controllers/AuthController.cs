@@ -6,7 +6,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Model;
 
 namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
 {
-    [Route( "[controller]")]
+    [Route("[controller]")]
     public class AuthController: Controller
     {
         private readonly ISecurityManager _securityManager;
@@ -31,9 +31,9 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         }
         [HttpPost]
         [Route("tryAuthentication")]
-        public IActionResult tryAuthentication([FromBody] string username, string otp)
+        public IActionResult tryAuthentication([FromBody] AuthNRequest loginRequest)
         {
-            var tryAuthentication = _securityManager.TryAuthenticating(username, otp);
+            var tryAuthentication = _securityManager.TryAuthenticating(loginRequest);
             if (tryAuthentication.HasError)
             {
                 return BadRequest(tryAuthentication.ErrorMessage);

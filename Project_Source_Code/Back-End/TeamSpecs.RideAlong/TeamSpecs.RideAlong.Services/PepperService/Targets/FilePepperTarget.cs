@@ -25,7 +25,7 @@ namespace TeamSpecs.RideAlong.Services
             //Setting up variables 
             var response1 = _fileDao.ExecuteReadOnly();
             IResponse response = new Response();
-            List<KeyValuePair<string, uint>>? temp = new List<KeyValuePair<string, uint>>();
+            List<KeyValuePair<string, uint>> temp = new List<KeyValuePair<string, uint>>();
 
             
             //Loading the Json file
@@ -37,7 +37,7 @@ namespace TeamSpecs.RideAlong.Services
                     {
                         if (!string.IsNullOrEmpty(i))
                         {
-                            temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i);
+                            temp = JsonSerializer.Deserialize<List<KeyValuePair<string, uint>>>(i)!;
                         }
                     }
                     catch (JsonException e)
@@ -83,10 +83,7 @@ namespace TeamSpecs.RideAlong.Services
    
             var res = result;
             var Response1 = new Response();
-            Response1.ReturnValue = new List<object>();
-            Response1.ReturnValue.Add(res);
-
-
+            Response1.ReturnValue = [res!];
 
             return Response1;
         }
