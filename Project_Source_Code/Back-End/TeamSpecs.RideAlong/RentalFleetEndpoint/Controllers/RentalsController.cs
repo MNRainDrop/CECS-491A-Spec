@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using TeamSpecs.RideAlong.RentalFleetLibrary.Interfaces;
-using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.RentalFleetLibrary.Models;
 using System.Text.Json;
+using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.RentalFleetLibrary.Interfaces;
+using TeamSpecs.RideAlong.RentalFleetLibrary.Models;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
 namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
@@ -30,7 +29,7 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
                 List<FleetFullModel> vehicles = (List<FleetFullModel>)response.ReturnValue;
                 var jsonVehicles = JsonSerializer.Serialize(vehicles);
                 return Ok(jsonVehicles);
-            }            
+            }
             return Ok("No Json Values returned");
         }
         [HttpPost]
@@ -43,12 +42,14 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
             try
             {
                 hasPermission = _securityManager.isAuthorize(requiredClaims);
-            } catch (Exception ex) { 
+            }
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
             if (!hasPermission)
             {
-                return StatusCode(StatusCodes.Status403Forbidden);
+                return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
             }
             return NoContent();
         }

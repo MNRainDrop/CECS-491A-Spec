@@ -6,7 +6,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
     {
         IResponse StartLogin(string username);
         IResponse TryAuthenticating(AuthNRequest loginRequest);
-        IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTime timeAuthorized);
+        IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTimeOffset timeAuthorized);
         IResponse CreateAccessToken(IAppPrincipal userPrincpal);
         IResponse CreateRefreshToken(IAppPrincipal userPrincpal);
         IResponse RefreshTokens();
@@ -14,6 +14,5 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Interfaces
         //IResponse Logout();
         bool isAuthorize(Dictionary<string, string> requiredClaims);
         IAppPrincipal JwtToPrincipal();
-        string GetUsernameFromJwt();
     }
 }

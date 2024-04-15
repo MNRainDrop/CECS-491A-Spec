@@ -1,7 +1,6 @@
 // Note, doing the import function breaks the files functionality. I am unsure why this is the case, but I have not found a solution
 //import { fetchWithTokens } from "./FetchWithTokens";
 function fetchWithTokens(url, method, body) {
-    alert("fetching with tokens");
     var _a;
     // Fetch the tokens from session storage
     var idToken = sessionStorage.getItem('IDToken');
@@ -25,30 +24,62 @@ document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
     //const vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
+    var logOutNav = document.getElementById("log-out");
+    logOutNav.addEventListener("click", logOut);
+    var refreshPermissionsNav = document.getElementById("refresh-permissions");
+    refreshPermissionsNav === null || refreshPermissionsNav === void 0 ? void 0 : refreshPermissionsNav.addEventListener("click", refreshUserTokens);
     var vehicleProfileNav = document.getElementById("vehicle-profile-view");
     vehicleProfileNav.addEventListener("click", function (doAThing) { alert("beep boop"); });
     var rentalFleetNav = document.getElementById("rental-fleet-view");
-    //rentalFleetNav!.addEventListener("click", () => {alert("boop beep");});
-    rentalFleetNav.addEventListener("click", generateRentalView);
+    rentalFleetNav.addEventListener("click", generateRentalDefaultView);
 });
-function generateRentalView() {
-    alert("Got Here");
+function generateRentalDefaultView() {
     var permissionGranted;
     fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
-        if (response.ok) {
-            permissionGranted = true;
+        if (response.status == 204) {
+            alert("permission granted!!!");
+            var dynamicContent = document.querySelector(".dynamic-content");
+            dynamicContent.innerHTML = "\n            <div id=\"fleet-button-div\">\n                <button id=\"submit-username\">Submit</button>\n            </div>\n            ";
         }
         else {
-            permissionGranted = false;
+            alert("Permission to view denied");
         }
     }).catch(function (error) {
         permissionGranted = false;
         alert(error);
     });
-    if (permissionGranted) {
-        var dynamicContent = document.querySelector(".dynamic-content");
-        dynamicContent.innerHTML = "\n        <div id=\"fleet-button-div\">\n            <button id=\"submit-username\">Submit</button>\n        </div>\n        ";
-    }
 }
 ;
+function logOut() {
+    // Remove the tokens from storage
+    sessionStorage.removeItem('IDToken');
+    sessionStorage.removeItem('AccessToken');
+    sessionStorage.removeItem('RefreshToken');
+    // Give user confirmation they've logged out
+    var dynamicContent = document.querySelector(".dynamic-content");
+    dynamicContent.innerHTML = "\n    <div id=\"logout-view\">\n        Logged Out!!!\n    </div>\n    ";
+    // Lets the view show for 5 seconds, then reloads the page
+    setTimeout(function () {
+        location.reload();
+    }, 5000);
+}
+function refreshUserTokens() {
+    fetchWithTokens('http://localhost:8080/Auth/refreshTokens', 'POST', '')
+        .then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+        else {
+            alert("Refresh Failed! " + response.statusText);
+        }
+    })
+        .then(function (data) {
+        sessionStorage.setItem('IDToken', data.idToken);
+        sessionStorage.setItem('AccessToken', data.accessToken);
+        alert("Your session has been refreshed!!!!");
+    })
+        .catch(function (error) {
+        alert("An error occurred while Refreshing your session: " + error);
+    });
+}
