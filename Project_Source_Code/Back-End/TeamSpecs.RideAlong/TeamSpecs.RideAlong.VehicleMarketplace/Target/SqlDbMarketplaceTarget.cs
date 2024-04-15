@@ -263,7 +263,7 @@ namespace TeamSpecs.RideAlong.Services
         }
 
         //This method is for sedning buy request VPM-6
-        public IResponse VehicleMarketplaceSendRequestService(IRequest buyRequest)
+        public IResponse VehicleMarketplaceSendRequestService(INotification buyRequest)
         {
 
             #region Validate Arguments
@@ -294,7 +294,7 @@ namespace TeamSpecs.RideAlong.Services
             {
                 new SqlParameter("@UID",buyRequest.UID),
                 new SqlParameter("@VIN", buyRequest.VIN),
-                new SqlParameter("@Notification", buyRequest.message),
+                //new SqlParameter("@Notification", buyRequest.message),
             };
 
             //Combine into SQL command 
