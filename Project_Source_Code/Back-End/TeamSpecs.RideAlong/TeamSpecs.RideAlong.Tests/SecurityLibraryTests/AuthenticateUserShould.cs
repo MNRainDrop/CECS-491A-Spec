@@ -205,7 +205,6 @@ public class AuthenticateUserShould
                 ValidIssuer = _rideAlongIssuer,
                 ValidateAudience = false,
             }, out SecurityToken validatedToken);
-            ;
             actual = true;
         }
         catch (Exception ex)
