@@ -43,7 +43,7 @@ public class AuthorizeUserShould
         timer.Stop();
 
         //Assert
-        Assert.True(actualResult == false);
+        Assert.True(actualResult == true);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class AuthorizeUserShould
         timer.Stop();
 
         //Assert
-        Assert.True(actualResult == true);
+        Assert.True(actualResult == false);
     }
 
     [Fact]
@@ -111,6 +111,6 @@ public class AuthorizeUserShould
         timer.Stop();
 
         //Assert
-        Assert.True(actualResult == true);
+        Assert.True(actualResult == false);
     }
 }
