@@ -72,12 +72,17 @@ function refreshUserTokens() {
         }
         else {
             alert("Refresh Failed! " + response.statusText);
+            return;
         }
     })
         .then(function (data) {
-        sessionStorage.setItem('IDToken', data.idToken);
-        sessionStorage.setItem('AccessToken', data.accessToken);
-        alert("Your session has been refreshed!!!!");
+        try {
+            sessionStorage.setItem('IDToken', data.idToken);
+            sessionStorage.setItem('AccessToken', data.accessToken);
+            alert("Your session has been refreshed!!!!");
+        }
+        catch (_a) { }
+        ;
     })
         .catch(function (error) {
         alert("An error occurred while Refreshing your session: " + error);
