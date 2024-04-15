@@ -1,5 +1,3 @@
-import { fetchWithTokens } from "./FetchWithTokens";
-
 const generateViewButton = document.getElementById("rental-fleet-view");
 generateViewButton.addEventListener("click", generateMainView);
 

@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Permissions;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.Services;
-using Org.BouncyCastle.X509.Store;
 
 
 
@@ -19,7 +16,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
 {
     public class SecurityManager : ISecurityManager
     {
-        private  IAuthService _authService;
+        private IAuthService _authService;
 
         private ILogService _logger;
         private IHttpContextAccessor _httpContextAccessor;
@@ -42,7 +39,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         /// <param name="ex"></param>
         /// <returns></returns>
         private object? unpackResponse(IResponse response)
-        {   
+        {
             if (response.ReturnValue is not null)
             {
                 return response.ReturnValue.First();
@@ -59,7 +56,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             var handler = new JwtSecurityTokenHandler();
 
             #region Check for null, then get token
-            if (!context.Request.Headers[_accessTokenHeader].IsNullOrEmpty()) { throw new Exception("No Token found"); }
+            if (context.Request.Headers[_accessTokenHeader].IsNullOrEmpty()) { throw new Exception("No Token found"); }
             accessToken = context.Request.Headers[_accessTokenHeader]!;
             var token = handler.ReadJwtToken(accessToken);
             #endregion
@@ -78,14 +75,39 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             };
             // Check Signature
             try { handler.ValidateToken(accessToken, tokenValidationParameters, out SecurityToken validatedToken); }
-            catch (Exception ex){ throw new Exception("Invalid Token: " + ex.Message); }
+            catch (Exception ex) { throw new Exception("Invalid Token: " + ex.Message); }
             #endregion
 
             #region Get principal from token
             string jsonPrincipal;
             try { jsonPrincipal = token.Claims.First(c => c.Type == "scope").Value; }
             catch (Exception ex) { throw new Exception("Could not get principal: " + ex.Message); }
-            IAppPrincipal principal = JsonSerializer.Deserialize<RideAlongPrincipal>(jsonPrincipal)!;
+            using JsonDocument jsonDocument = JsonDocument.Parse(jsonPrincipal);
+
+            AuthUserModel userIdentity;
+            Dictionary<string, string> claims;
+            if (jsonDocument.RootElement.TryGetProperty("userIdentity", out JsonElement uidElement) && uidElement.ValueKind == JsonValueKind.Object)
+            {
+                userIdentity = JsonSerializer.Deserialize<AuthUserModel>(uidElement.ToString())!;
+            }
+            else
+            {
+                throw new Exception("User Identity Not present in Principal");
+            }
+            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Object)
+            {
+                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsElement)!;
+            }
+            else
+            {
+                throw new Exception("User Claims not present in Principal");
+            }
+
+            RideAlongPrincipal principal = new RideAlongPrincipal()
+            {
+                userIdentity = userIdentity,
+                claims = claims
+            };
             #endregion
 
             return principal;
@@ -95,11 +117,11 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             bool result = false;
             IAppPrincipal rideAlongPrincipal;
 
-            try { rideAlongPrincipal = JwtToPrincipal(); } 
+            try { rideAlongPrincipal = JwtToPrincipal(); }
             catch (Exception ex) { throw new Exception("Error Retrieving Principal: " + ex.Message); }
 
             result = _authService.Authorize(rideAlongPrincipal, requiredClaims);
-            
+
             return result;
         }
 
@@ -108,7 +130,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             List<Claim> claims = new List<Claim>
             {
                 new Claim("sub", userPrincpal.userIdentity.userName ?? ""),
-                new Claim("iat", DateTime.UtcNow.ToString()),
+                new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
                 new Claim("azp", userPrincpal.userIdentity.UID.ToString()),
                 new Claim("scope", JsonSerializer.Serialize(userPrincpal)),
             };
@@ -118,29 +140,29 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             string jwt = new JwtSecurityTokenHandler().WriteToken(token);
             IResponse accessTokenResponse = new Response();
             accessTokenResponse.HasError = false;
-            accessTokenResponse.ReturnValue = new List<object>() {jwt};
+            accessTokenResponse.ReturnValue = new List<object>() { jwt };
             return accessTokenResponse;
         }
 
-        public IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTime timeAuthorized)
+        public IResponse CreateIdToken(IAppPrincipal userPrincpal, DateTimeOffset timeAuthorized)
         {
             List<Claim> claims = new List<Claim>
-            { 
+            {
                 new Claim("sub", userPrincpal.userIdentity.userName ?? ""),
-                new Claim("iat",DateTime.UtcNow.ToString()),
-                new Claim("auth_time", timeAuthorized.ToString())
+                new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim("auth_time", timeAuthorized.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_rideAlongSecretKey)); // This should be replaced as soon as we have configuration working
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
             var token = new JwtSecurityToken(claims: claims, signingCredentials: credentials, issuer: _rideAlongIssuer, audience: userPrincpal.userIdentity.UID.ToString(), expires: DateTime.UtcNow.AddMinutes(15));
             string jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            IResponse accessTokenResponse = new Response();
-            accessTokenResponse.HasError = false;
-            accessTokenResponse.ReturnValue = new List<object>
+            IResponse idTokenResponse = new Response();
+            idTokenResponse.HasError = false;
+            idTokenResponse.ReturnValue = new List<object>
             {
                 jwt
             };
-            return accessTokenResponse;
+            return idTokenResponse;
         }
         public IResponse CreateRefreshToken(IAppPrincipal userPrincpal)
         {
@@ -152,8 +174,8 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 new Claim("iss",_rideAlongIssuer),
                 new Claim("sub", userPrincpal.userIdentity.userName ?? ""),
                 new Claim("aud", userPrincpal.userIdentity.UID.ToString()),
-                new Claim("exp",DateTime.UtcNow.AddMinutes(120).ToString()),
-                new Claim("iat",DateTime.UtcNow.ToString()),
+                new Claim("exp", DateTimeOffset.UtcNow.AddMinutes(120).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_rideAlongSecretKey)); // This should be replaced as soon as we have configuration working
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
@@ -165,33 +187,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             return accessTokenResponse;
         }
 
-        public string GetUsernameFromJwt()
-        {
-            HttpContext context = _httpContextAccessor.HttpContext;
-            string jwt;
-#pragma warning disable
-            if (context.Request.Headers["Authorization"].FirstOrDefault() is not null && context.Request.Headers["Authorization"].FirstOrDefault().Split(" ").Last() is not null)
-            {
-                jwt = context.Request.Headers["Authorization"].FirstOrDefault().Split(" ").Last();
-            }
-#pragma warning restore
-            else
-            {
-                throw new Exception("User is not logged in");
-            }
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(jwt);
-
-#pragma warning disable
-            string userName;
-            if (token.Claims is not null && token.Claims.FirstOrDefault() != null && token.Claims.FirstOrDefault(c => c.Type == "sub") != null && token.Claims.FirstOrDefault(c => c.Type == "sub").Value is not null)
-            {
-                userName = token.Claims.FirstOrDefault(c => c.Type == "sub").Value;
-#pragma warning restore
-            } else { throw new Exception("No Username found"); }
-            
-            return userName;
-        }
 
         // Returns a response object with 2 tokens [ID, Access]
         public IResponse RefreshTokens()
@@ -206,7 +201,48 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 return refreshResponse;
             }
 
-            string aud = GetUsernameFromJwt();
+            #region Check for null, then get token
+            string accessToken;
+            var tempHandler = new JwtSecurityTokenHandler();
+
+            if (context.Request.Headers[_accessTokenHeader].IsNullOrEmpty()) { throw new Exception("No Token found"); }
+            accessToken = context.Request.Headers[_accessTokenHeader]!;
+            var token = tempHandler.ReadJwtToken(accessToken);
+            #endregion
+
+            #region Get principal from token
+            string jsonPrincipal;
+            try { jsonPrincipal = token.Claims.First(c => c.Type == "scope").Value; }
+            catch (Exception ex) { throw new Exception("Could not get principal: " + ex.Message); }
+            using JsonDocument jsonDocument = JsonDocument.Parse(jsonPrincipal);
+
+            AuthUserModel userIdentity;
+            Dictionary<string, string> claims;
+            if (jsonDocument.RootElement.TryGetProperty("userIdentity", out JsonElement uidElement) && uidElement.ValueKind == JsonValueKind.Object)
+            {
+                userIdentity = JsonSerializer.Deserialize<AuthUserModel>(uidElement.ToString())!;
+            }
+            else
+            {
+                throw new Exception("User Identity Not present in Principal");
+            }
+            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Object)
+            {
+                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsElement)!;
+            }
+            else
+            {
+                throw new Exception("User Claims not present in Principal");
+            }
+
+            RideAlongPrincipal principal = new RideAlongPrincipal()
+            {
+                userIdentity = userIdentity,
+                claims = claims
+            };
+            #endregion
+
+            long aud = principal.userIdentity.UID!;
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -215,7 +251,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 ValidateIssuer = true,
                 ValidIssuer = _rideAlongIssuer,
                 ValidateAudience = true,
-                ValidAudience = aud
+                ValidAudience = aud.ToString(),
             };
 
             try
@@ -223,10 +259,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 // Trying to validate the refresh token here
                 SecurityToken validatedToken;
                 var handler = new JwtSecurityTokenHandler();
-                handler.ValidateToken( refreshToken,tokenValidationParameters, out validatedToken);
-
-                // Check Expiration
-                if (validatedToken.ValidTo < DateTime.UtcNow) { throw new Exception("Expired Token"); }
+                handler.ValidateToken(refreshToken, tokenValidationParameters, out validatedToken);
             }
             catch (Exception ex)
             {
@@ -234,42 +267,42 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 return refreshResponse;
             }
 
-            IAppPrincipal userPrincpal = JwtToPrincipal();
-            
+            IAppPrincipal userPrincpal = (RideAlongPrincipal)_authService.GetUserPrincipal(principal.userIdentity).ReturnValue!.First()!;
+
             if (context.Request.Headers["Authorization"].First() is null)
             {
                 throw new Exception("No ID Token Found");
             }
             string idToken = context.Request.Headers["Authorization"].First()!.Split(" ").Last();
             var handler2 = new JwtSecurityTokenHandler();
-            var token = handler2.ReadJwtToken(idToken);
-            string auth_time = token.Claims.First(c => c.Type == "sub").Value;
+            token = handler2.ReadJwtToken(idToken);
+            string auth_time = token.Claims.First(c => c.Type == "auth_time").Value;
 
-            DateTime timeAuthorized = DateTime.Parse(auth_time);
+            DateTimeOffset timeAuthorized = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddSeconds(Convert.ToUInt32(auth_time));
 
             try
             {
                 string newIdToken;
                 string newAccessToken;
                 IResponse newIdResponse = CreateIdToken(userPrincpal, timeAuthorized);
-                if(newIdResponse.HasError is true) { throw new Exception(newIdResponse.ErrorMessage); }
+                if (newIdResponse.HasError is true) { throw new Exception(newIdResponse.ErrorMessage); }
 
-                if (newIdResponse.ReturnValue is not null && newIdResponse.ReturnValue.FirstOrDefault() is not null && newIdResponse.ReturnValue.FirstOrDefault() is string)
+                if (newIdResponse.ReturnValue is not null && newIdResponse.ReturnValue.First() is not null && newIdResponse.ReturnValue.First() is string)
                 {
                     newIdToken = (string)newIdResponse.ReturnValue.First();
-                } else { throw new Exception("Could Not refresh ID Token"); }
+                }
+                else { throw new Exception("Could Not refresh ID Token"); }
 
                 IResponse newAccessResponse = CreateAccessToken(userPrincpal);
                 if (newAccessResponse.HasError is true) { throw new Exception(newAccessResponse.ErrorMessage); }
 
-                if (newAccessResponse.ReturnValue is not null && newAccessResponse.ReturnValue.FirstOrDefault() is not null && newAccessResponse.ReturnValue.FirstOrDefault() is string)
+                if (newAccessResponse.ReturnValue is not null && newAccessResponse.ReturnValue.First() is not null && newAccessResponse.ReturnValue.First() is string)
                 {
                     newAccessToken = (string)newAccessResponse.ReturnValue.First();
-                } else { throw new Exception("could not refresh Access Token"); }
+                }
+                else { throw new Exception("could not refresh Access Token"); }
 
-                List<object> newTokens = new List<object>();
-                newTokens.Append(newIdToken);
-                newTokens.Append(newAccessToken);
+                List<object> newTokens = [newIdToken, newAccessToken];
                 refreshResponse.ReturnValue = newTokens;
                 refreshResponse.HasError = false;
             }
@@ -335,7 +368,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 return LogInAttempt;
             }
 
-            
+
             // create OTP, hash it and pass it in
             IRandomService randomizer = new RandomService();
             IHashService hasher = new HashService();
@@ -407,7 +440,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             // Get Last login time
             IResponse tryGetFirstFailed = _authService.GetFirstFailedLogin(model);
             DateTime firstFailed;
-            if(!tryGetFirstFailed.HasError && tryGetFirstFailed.ReturnValue is not null)
+            if (!tryGetFirstFailed.HasError && tryGetFirstFailed.ReturnValue is not null)
             {
                 firstFailed = (DateTime)tryGetFirstFailed.ReturnValue.First();
             }
@@ -439,7 +472,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             string otpHash;
             if (tryGetOtpHash.ReturnValue is not null && tryGetOtpHash.ReturnValue.First() is not null)
             {
-                otpHash = (string) tryGetOtpHash.ReturnValue.First();
+                otpHash = (string)tryGetOtpHash.ReturnValue.First();
             }
             else
             {
@@ -473,8 +506,8 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 LogInAttempt.ErrorMessage = "Incorrect login or password, please try again";
                 return LogInAttempt;
             }
-            
-            
+
+
             // If they do match
             // Set attempts to 0
             IResponse tryClearAttempts = _authService.updateLoginAttempt(model, 0);
