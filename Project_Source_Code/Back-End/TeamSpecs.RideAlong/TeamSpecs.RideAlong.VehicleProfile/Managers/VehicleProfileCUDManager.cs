@@ -1,8 +1,9 @@
 ﻿using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
-public class VehicleProfileCUDManager
+public class VehicleProfileCUDManager : ICreateVehicleProfileManager, IDeleteVehicleProfileManager, IModifyVehicleProfileManager
 {
     private readonly ILogService _logService;
     private readonly IVehicleProfileCreationService _vpCreate;
@@ -15,5 +16,20 @@ public class VehicleProfileCUDManager
         _vpCreate = vpCreate;
         _vpModify = vpModify;
         _vpDelete = vpDelete;
+    }
+
+    public IResponse createVehicleProfile()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IResponse deleteVehicleProfile()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IResponse modifyVehicleProfile()
+    {
+        throw new NotImplementedException();
     }
 }
