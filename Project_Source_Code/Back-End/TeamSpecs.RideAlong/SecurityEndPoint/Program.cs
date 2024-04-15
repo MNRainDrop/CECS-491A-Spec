@@ -10,9 +10,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
-// Using configuration files
-var configuration = builder.Configuration;
-// var myConfig = configuration.GetSection("").Get<>();
 
 // Add services to the container.
 
