@@ -1,13 +1,12 @@
-using TeamSpecs.RideAlong.RentalFleetLibrary.Interfaces;
 using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.RentalFleetLibrary;
-using Microsoft.Extensions.DependencyInjection;
-using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.Middleware;
+using TeamSpecs.RideAlong.RentalFleetLibrary;
+using TeamSpecs.RideAlong.RentalFleetLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +40,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.useCorsPreflight();
+
+app.useIDValidator();
 
 app.UseHttpsRedirection();
 
