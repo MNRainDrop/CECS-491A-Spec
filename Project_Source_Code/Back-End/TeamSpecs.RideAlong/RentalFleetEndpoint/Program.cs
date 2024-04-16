@@ -43,7 +43,7 @@ app.useCorsPreflight();
 
 app.useIDValidator();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.useCorsMiddleware();
 
