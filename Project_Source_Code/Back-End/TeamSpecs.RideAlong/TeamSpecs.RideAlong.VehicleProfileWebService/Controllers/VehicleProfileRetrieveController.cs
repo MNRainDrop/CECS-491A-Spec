@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.VehicleProfile;
 
 namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers;
@@ -11,36 +10,48 @@ namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers;
 [Route("[controller]")]
 public class VehicleProfileRetrieveController : Controller
 {
-    private readonly IGenericDAO _DAO;
-    private readonly IHashService _hashService;
-    private readonly ILogTarget _logTaret;
     private readonly ILogService _logService;
-    private readonly IRetrieveVehiclesTarget _retrieveVehiclesTarget;
-    private readonly IRetrieveVehicleDetailsTarget _retrieveVehicleDetailsTarget;
-    private readonly IVehicleProfileDetailsRetrievalService _vpdRetrievalService;
-    private readonly IVehicleProfileRetrievalService _vpRetrievalService;
     private readonly IVehicleProfileRetrievalManager _retrievalManager;
+    private readonly ISecurityManager _securityManager;
 
-    public VehicleProfileRetrieveController()
+    public VehicleProfileRetrieveController(ILogService logService, IVehicleProfileRetrievalManager retrievalManager, ISecurityManager securityManager)
     {
-        _hashService = new HashService();
-        _DAO = new SqlServerDAO();
-        _logTaret = new SqlDbLogTarget(_DAO);
-        _logService = new LogService(_logTaret, _hashService);
-        _retrieveVehicleDetailsTarget = new SqlDbVehicleTarget(_DAO);
-        _retrieveVehiclesTarget = new SqlDbVehicleTarget(_DAO);
-        _vpdRetrievalService = new VehicleProfileDetailsRetrievalService(_retrieveVehicleDetailsTarget, _logService);
-        _vpRetrievalService = new VehicleProfileRetrievalService(_retrieveVehiclesTarget, _logService);
-        _retrievalManager = new VehicleProfileRetrievalManager(_logService, _vpRetrievalService, _vpdRetrievalService);
+        _logService = logService;
+        _retrievalManager = retrievalManager;
+        _securityManager = securityManager;
     }
 
     [HttpPost]
     [Route("/MyVehicleProfiles")]
-    public IActionResult Post([FromBody]UserPageModel requestData)
+    public IActionResult Post([FromBody]int page)
     {
+        IAccountUserModel user;
         try
         {
-            var result = _retrievalManager.GetVehicleProfiles(requestData.AccountUser, requestData.Page);
+            var temp = _securityManager.JwtToPrincipal().userIdentity;
+            if (!string.IsNullOrWhiteSpace(temp.userName))
+            {
+                user = new AccountUserModel(temp.userName)
+                {
+                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    UserHash = temp.userHash,
+                    UserId = temp.UID
+                };
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfiles(user, page);
             if (result is not null)
             {
                 if (result.HasError)
@@ -66,11 +77,35 @@ public class VehicleProfileRetrieveController : Controller
 
     [HttpPost]
     [Route("/MyVehicleProfileDetails")]
-    public IActionResult Post([FromBody]VehicleAccountModel requestData)
+    public IActionResult Post([FromBody]IVehicleProfileModel vehicle)
     {
+        IAccountUserModel user;
         try
         {
-            var result = _retrievalManager.GetVehicleProfileDetails(requestData.VehicleProfile, requestData.AccountUser);
+            var temp = _securityManager.JwtToPrincipal().userIdentity;
+            if (!string.IsNullOrWhiteSpace(temp.userName))
+            {
+                user = new AccountUserModel(temp.userName)
+                {
+                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    UserHash = temp.userHash,
+                    UserId = temp.UID
+                };
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfileDetails(vehicle, user);
             if (result is not null)
             {
                 if (result.HasError)
@@ -104,11 +139,5 @@ public class VehicleProfileRetrieveController : Controller
     {
         public AccountUserModel? AccountUser { get; set; }
         public int Page { get; set; }
-    }
-
-    public class VehicleAccountModel
-    {
-        public VehicleProfileModel? VehicleProfile { get; set; }
-        public AccountUserModel? AccountUser { get; set; }
     }
 }

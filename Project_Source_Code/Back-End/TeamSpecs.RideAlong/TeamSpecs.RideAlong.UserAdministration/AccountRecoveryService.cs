@@ -39,8 +39,9 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             if(response.HasError) 
             {
+                response.ErrorMessage = "User Account was unable to be enabled ";
                 _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
-                response.ErrorMessage = "User Account was unable to be enabled";
+                
             }
             _logService.CreateLogAsync("Info", "Server", "EnableUserAccount Successful", userHash);
             return response;
@@ -67,8 +68,8 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             if (response.HasError)
             {
-                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
                 response.ErrorMessage = "User Account was unable to be disabled";
+                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
             }
             _logService.CreateLogAsync("Info", "Server", "DisableUserAccount Successful", userHash);
             return response;
@@ -95,8 +96,8 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             if (response.HasError)
             {
-                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
                 response.ErrorMessage = "User secondary email was unable to be recovered";
+                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
             }
             _logService.CreateLogAsync("Info", "Server", "DisableUserAccount Successful", userHash);
             // Response will hold secondaryEmail string and be sent to Manager Layer to process OTP sending
