@@ -33,7 +33,7 @@ function submitUsername()
     {
         if (isValidEmailAddress(username))
         {
-            // Calls Web API controller -- login --> change when moved to Ride Along
+            // Calls Web API controller
             fetch("http://localhost:8080/Auth/startLogin",
                 {
                 method: "POST",

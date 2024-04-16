@@ -18,6 +18,7 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
             _service = service;
             _securityManager = securityManager;
         }
+
         [HttpPost]
         [Route("GetFleet")]
         public IActionResult GetFleet()
@@ -32,6 +33,7 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
             }
             return Ok("No Json Values returned");
         }
+
         [HttpPost]
         [Route("GetAuthStatus")]
         public IActionResult GetAuthStatus()

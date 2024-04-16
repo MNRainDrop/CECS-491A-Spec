@@ -52,9 +52,12 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             response = _target.ReadValidVehicleProfiles(userAccount.UserId);
 
             #region logging to DB
-            if(response.HasError == true)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            if (response.HasError == true)
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 _logService.CreateLogAsync( "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+#pragma warning restore CS8604 // Possible null reference argument.
                 return response;
             }
             else if(response.HasError == false && response.ReturnValue.Count == 0)
@@ -67,6 +70,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
                 _logService.CreateLogAsync("Info", "Server", "Successful retrieval of vehicle profile(s).", userAccount.UserHash);
                 return response;
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             #endregion
         }
 
@@ -111,6 +115,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             }
 
             // Check for 10 objects 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             if (response.ReturnValue.Count == 0)
             {
                 _logService.CreateLogAsync("Info", "Server", "Successful retrieval of no Service Logs", userAccount.UserHash);
@@ -136,10 +141,16 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
                     if (serviceLogObject is object[] array)
                     {
                         var currentPart = array[0].ToString();
+#pragma warning disable CS8604 // Possible null reference argument.
                         var currentDate = DateTime.Parse(array[1].ToString());
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning disable CS8604 // Possible null reference argument.
                         var currentMileage = Int32.Parse(array[2].ToString());
+#pragma warning restore CS8604 // Possible null reference argument.
 
+#pragma warning disable CS8604 // Possible null reference argument.
                         IServiceLogModel currentServiceLog = new ServiceLogModel(currentPart, currentDate, currentMileage, vin);
+#pragma warning restore CS8604 // Possible null reference argument.
 
                         // For edge case, if List/Category only has one item
                         if (iterator == 0)
@@ -184,7 +195,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
                 #region Calculating CHR Rank
                 for (int i = 0; i < fluidServiceLogs.Count - 1; i++) 
                 {
-                    var totalMileage = fluidServiceLogs[i + 1].Mileage - fluidServiceLogs[i].Mileage;
+                    var totalMileage = fluidServiceLogs[i].Mileage - fluidServiceLogs[i + 1].Mileage;
 
                     totalPoints += 6;
 
@@ -214,7 +225,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
 
                 for (int i = 0; i < mechanicallyWearingServiceLogs.Count - 1; i++)
                 {
-                    var totalMileage = mechanicallyWearingServiceLogs[i + 1].Mileage - mechanicallyWearingServiceLogs[i].Mileage;
+                    var totalMileage = mechanicallyWearingServiceLogs[i].Mileage - mechanicallyWearingServiceLogs[i + 1].Mileage;
 
                     totalPoints += 12;
 
@@ -241,7 +252,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
 
                 for (int i = 0; i < nonMechanicalServiceLogs.Count - 1; i++)
                 {
-                    var totalMileage = nonMechanicalServiceLogs[i + 1].Mileage - nonMechanicalServiceLogs[i].Mileage;
+                    var totalMileage = nonMechanicalServiceLogs[i].Mileage - nonMechanicalServiceLogs[i + 1].Mileage;
 
                     totalPoints += 6;
 
@@ -275,6 +286,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
                 return response;
                 #endregion
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
        

@@ -61,7 +61,6 @@ public class SqlDBCarHealthRatingTarget: ISqlDbCarHealthRatingTarget
         IResponse response = new Response();
 
         #region SQL Setup
-        // TOP 11 selected in case of potential 5, 4, 1 edge CASE 
         string sqlQuery = @"SELECT TOP 10 Part, Date, Mileage
                             FROM ServiceLog
                             WHERE Category = 'Maintenance' 

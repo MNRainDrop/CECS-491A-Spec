@@ -57,6 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Vehicle
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5BC5D755-BED8-4932-8B85-256320D97C0E}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		RideAlongConfiguration.json = RideAlongConfiguration.json
 	EndProjectSection
 EndProject
@@ -70,7 +71,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.CarHealthRatingEntryPoint", "TeamSpecs.RideAlong.CarHealthRatingEntryPoint\TeamSpecs.RideAlong.CarHealthRatingEntryPoint.csproj", "{7E26749D-09C6-4109-AD64-56129D7A4CD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHealthRatingEntryPoint", "TeamSpecs.RideAlong.CarHealthRatingEntryPoint\TeamSpecs.RideAlong.CarHealthRatingEntryPoint.csproj", "{7E26749D-09C6-4109-AD64-56129D7A4CD0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
 		{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0} = {20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}

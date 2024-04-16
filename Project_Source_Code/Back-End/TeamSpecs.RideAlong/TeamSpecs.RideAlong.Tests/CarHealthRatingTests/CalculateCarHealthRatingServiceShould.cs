@@ -135,8 +135,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             IResponse response;
 
             long realUID;
-            var pointsCheck = 0;
-            var categoryCheck = 0;
 
             var dao = new SqlServerDAO();
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
@@ -410,6 +408,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Check results
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var resultObject in response.ReturnValue)
             {
                 if (resultObject is IList list)
@@ -431,6 +430,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
                     pointsCheck++;
                 }
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             #endregion
 
             #endregion
@@ -592,6 +592,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Check results
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var resultObject in response.ReturnValue)
             {
                 if (resultObject is IList list)
@@ -613,6 +614,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
                     pointsCheck++;
                 }
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             #endregion
 
             #endregion
