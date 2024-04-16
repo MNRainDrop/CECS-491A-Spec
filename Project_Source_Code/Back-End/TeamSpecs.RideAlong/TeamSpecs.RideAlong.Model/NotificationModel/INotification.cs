@@ -3,12 +3,11 @@ using System.Numerics;
 
 namespace TeamSpecs.RideAlong.Model
 {
-    public interface IRequest
+    public interface INotification
     { 
         long UID { get; set; }
         string VIN { get; set; }
-        int price {  get; set; }
-
-        string message { get; set; }
+        string type {  get; set; }
+        string description { get; set; }
     }
 }

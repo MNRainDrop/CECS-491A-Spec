@@ -12,6 +12,6 @@ public interface IMarketplaceTarget
 
     public IResponse SearchMarketplaceVehicleProfile(ICollection<object> searchParameters);
 
-    public IResponse VehicleMarketplaceSendRequestService(IRequest buyRequest);
+    public IResponse VehicleMarketplaceSendRequestService(INotification buyRequest);
 
 }
