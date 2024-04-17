@@ -8,16 +8,14 @@ using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleProfile;
 
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -28,8 +26,8 @@ builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
-builder.Services.AddScoped<IRetrieveVehicleDetailsTarget, IRetrieveVehicleDetailsTarget>();
-builder.Services.AddScoped<IRetrieveVehiclesTarget, IRetrieveVehiclesTarget>();
+builder.Services.AddScoped<IRetrieveVehicleDetailsTarget, SqlDbVehicleTarget>();
+builder.Services.AddScoped<IRetrieveVehiclesTarget, SqlDbVehicleTarget>();
 builder.Services.AddScoped<IVehicleProfileRetrievalService, VehicleProfileRetrievalService>();
 builder.Services.AddScoped<IVehicleProfileDetailsRetrievalService, VehicleProfileDetailsRetrievalService>();
 builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrievalManager>();
@@ -45,6 +43,8 @@ app.useCorsPreflight();
 //    app.UseSwaggerUI();
 //}
 
+app.UseAuthorization();
+
 app.Use((httpContent, next) =>
 {
     httpContent.Response.Headers.AccessControlAllowOrigin = "*";
@@ -54,8 +54,6 @@ app.Use((httpContent, next) =>
 
     return next();
 });
-
-app.UseAuthorization();
 
 app.MapControllers();
 

@@ -1,5 +1,4 @@
-
-export function fetchWithTokens(url: string, method: string, body: any) {  
+function fetchWithTokens(url: string, method: string, body: any) {  
     // Fetch the tokens from session storage
     const idToken = sessionStorage.getItem('IDToken');
     const accessToken = sessionStorage.getItem('AccessToken');
@@ -19,7 +18,7 @@ export function fetchWithTokens(url: string, method: string, body: any) {
 };
 
 // 
-export function incrementPages() {
+function incrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content!.innerText);
     value += 1;
@@ -49,12 +48,12 @@ function pages() {
 
     next!.addEventListener('click', () => {
         incrementPages();
-        // this is not extensible
+        // Not extensible
         //getVehicles();
     });
     back!.addEventListener('click', () => {
         decrementPages();
-        // this is not extensible
+        // Not extensible
         //getVehicles();
     });
 }

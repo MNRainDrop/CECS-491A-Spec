@@ -1,25 +1,25 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // Note, doing the import function breaks the files functionality. I am unsure why this is the case, but I have not found a solution
-var UtilityScripts_1 = require("./UtilityScripts");
-// function fetchWithTokens(url: string, method: string, body: any) {  
-//     // Fetch the tokens from session storage
-//     const idToken = sessionStorage.getItem('IDToken');
-//     const accessToken = sessionStorage.getItem('AccessToken');
-//     const refreshToken = sessionStorage.getItem('RefreshToken');
-//     // Create the headers object with the tokens
-//     const headers : HeadersInit = {
-//         'Authorization': `Bearer ${idToken}` ?? '',
-//         'X-Access-Token': accessToken ?? '',
-//         'X-Refresh-Token': refreshToken ?? '',
-//         'Content-Type': 'application/json' // Set the Content-Type header for the request body
-//     };
-//     return fetch(url, {
-//         method: method,
-//         headers: headers,
-//         body: JSON.stringify(body)
-//     });
-// };
+//import { fetchWithTokens } from "./FetchWithTokens";
+function fetchWithTokens(url, method, body) {
+    var _a;
+    // Fetch the tokens from session storage
+    var idToken = sessionStorage.getItem('IDToken');
+    var accessToken = sessionStorage.getItem('AccessToken');
+    var refreshToken = sessionStorage.getItem('RefreshToken');
+    // Create the headers object with the tokens
+    var headers = {
+        'Authorization': (_a = "Bearer ".concat(idToken)) !== null && _a !== void 0 ? _a : '',
+        'X-Access-Token': accessToken !== null && accessToken !== void 0 ? accessToken : '',
+        'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
+        'Content-Type': 'application/json' // Set the Content-Type header for the request body
+    };
+    return fetch(url, {
+        method: method,
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+}
+;
 document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 function generateRentalDefaultView() {
     var permissionGranted;
-    (0, UtilityScripts_1.fetchWithTokens)('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
+    fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("permission granted!!!");
@@ -65,7 +65,7 @@ function logOut() {
     }, 5000);
 }
 function refreshUserTokens() {
-    (0, UtilityScripts_1.fetchWithTokens)('http://localhost:8080/Auth/refreshTokens', 'POST', '')
+    fetchWithTokens('http://localhost:8080/Auth/refreshTokens', 'POST', '')
         .then(function (response) {
         if (response.ok) {
             return response.json();

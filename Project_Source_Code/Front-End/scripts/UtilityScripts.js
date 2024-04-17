@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.incrementPages = exports.fetchWithTokens = void 0;
 function fetchWithTokens(url, method, body) {
     var _a;
     // Fetch the tokens from session storage
@@ -20,7 +17,6 @@ function fetchWithTokens(url, method, body) {
         body: JSON.stringify(body)
     });
 }
-exports.fetchWithTokens = fetchWithTokens;
 ;
 // 
 function incrementPages() {
@@ -29,7 +25,6 @@ function incrementPages() {
     value += 1;
     content.innerHTML = String(value);
 }
-exports.incrementPages = incrementPages;
 function decrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content.innerText);
@@ -46,12 +41,12 @@ function pages() {
     var back = document.getElementById('back');
     next.addEventListener('click', function () {
         incrementPages();
-        // this is not extensible
+        // Not extensible
         //getVehicles();
     });
     back.addEventListener('click', function () {
         decrementPages();
-        // this is not extensible
+        // Not extensible
         //getVehicles();
     });
 }
