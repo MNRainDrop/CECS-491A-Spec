@@ -25,6 +25,10 @@ public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetri
         {
             throw new ArgumentNullException(nameof(vehicleProfile.VIN));
         }
+        if (vehicleProfile.VIN.Length > 17)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vehicleProfile.VIN));
+        }
         if (userAccount is null)
         {
             throw new ArgumentNullException(nameof(userAccount));

@@ -2,7 +2,6 @@
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Reflection;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -174,14 +173,82 @@ public class VehicleProfileCreationShould
         #region Arrange
         IResponse vehicleInDB;
         IResponse detailsInDB;
-
-        
         #endregion
 
         // Create Test Objects
         var vehicle = new VehicleProfileModel("testVin", 1, "", "testMake", "testModel", 0000);
         var vehicledetails = new VehicleDetailsModel(vehicle.VIN);
         var user = new AccountUserModel("testUsername")
+        {
+            UserHash = "123",
+            Salt = 1,
+            UserId = 1
+        };
+
+        var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
+        dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+        {
+            KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null)
+        });
+        var getUserID = $"SELECT UID FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+        var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+        {
+            KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
+        });
+        foreach (var item in uid)
+        {
+            user.UserId = (long)item[0];
+            vehicle.Owner_UID = user.UserId;
+        }
+
+        #region Act and Assert
+        try
+        {
+            Assert.ThrowsAny<Exception>(
+                () => creationService.createVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
+            );
+        }
+        catch
+        {
+            Assert.Fail("Should throw error");
+        }
+        finally
+        {
+            vehicleInDB = retrieveVehicleTarget.readVehicleProfileSql(new List<object>()
+            {
+                new KeyValuePair<string, long>("Owner_UID", user.UserId)
+            }, 10, 1);
+            detailsInDB = retrieveDetailsTarget.readVehicleProfileDetailsSql(new List<object>()
+            {
+                new KeyValuePair<string, string>("VIN", vehicle.VIN)
+            });
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+
+        #region Assert
+        Assert.True(!vehicleInDB.HasError && !detailsInDB.HasError);
+        Assert.True(vehicleInDB.ReturnValue is not null && detailsInDB.ReturnValue is not null);
+        Assert.True(vehicleInDB.ReturnValue.Count == 0 && detailsInDB.ReturnValue.Count == 0);
+        #endregion
+    }
+
+    [Fact]
+    public void VehicleProfileCreation_CreateVehicleProfileInDatabase_InvalidUserAccountPassedIn_NoVehicleProfileAndVehicleDetailsWritten_Fail()
+    {
+        #region Arrange
+        IResponse vehicleInDB;
+        IResponse detailsInDB;
+        #endregion
+
+        // Create Test Objects
+        var vehicle = new VehicleProfileModel("testVin", 1, "test", "testMake", "testModel", 0000);
+        var vehicledetails = new VehicleDetailsModel(vehicle.VIN);
+        var user = new AccountUserModel("")
         {
             UserHash = "123",
             Salt = 1,
