@@ -10,6 +10,14 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileRetrievalShould
 {
+    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IRetrieveVehiclesTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+
+    private static readonly IHashService hashService = new HashService();
+    private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
+    private static readonly ILogService logService = new LogService(logTarget, hashService);
+
+    private static readonly IVehicleProfileRetrievalService retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
     [Fact]
     public void VehicleProfileRetrieval_ReadVehicleProfilesFromDatabase_ValidUserAccountPassedIn_OneVehicleProfileRetrieved_Pass()
@@ -18,15 +26,6 @@ public class VehicleProfileRetrievalShould
         var timer = new Stopwatch();
 
         IResponse response;
-
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
         var numOfResults = 10;
         var page = 1;
@@ -120,15 +119,6 @@ public class VehicleProfileRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
-
         var numOfResults = 10;
         var page = 1;
 
@@ -206,15 +196,6 @@ public class VehicleProfileRetrievalShould
         var timer = new Stopwatch();
 
         var responseList = new List<IResponse>();
-
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
         var numOfResults = 3;
 
@@ -326,15 +307,6 @@ public class VehicleProfileRetrievalShould
         var timer = new Stopwatch();
 
         var responseList = new List<IResponse>();
-
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileRetrievalService(vehicleTarget, logService);
 
         var numOfResults = 10;
 

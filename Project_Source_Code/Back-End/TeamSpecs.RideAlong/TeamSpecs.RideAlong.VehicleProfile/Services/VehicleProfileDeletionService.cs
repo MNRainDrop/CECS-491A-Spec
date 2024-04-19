@@ -53,7 +53,7 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
         var response = _deleteVehicleTarget.deleteVehicleProfileSql(vehicle, userAccount);
 
         #region Update Claims
-        
+        // add claims here once user administration claim modification is complete
         #endregion
 
         #region Log to database

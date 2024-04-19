@@ -20,9 +20,17 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         {
             throw new ArgumentNullException(nameof(vin));
         }
+        if (vin.Length > 17)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vin));
+        }
         if (string.IsNullOrWhiteSpace(licensePlate))
         {
             throw new ArgumentNullException(nameof(licensePlate));
+        }
+        if (licensePlate.Length > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(licensePlate));
         }
         // Make can be null
         // Model can be null
@@ -101,6 +109,10 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
         var response = _createVehiclesTarget.createVehicleProfileSql(vehicle, vehicleDetails);
+
+        #region Update Claims
+        // add claims here once user administration claim modification is complete
+        #endregion
 
         #region Log to database
         if (response.HasError)
