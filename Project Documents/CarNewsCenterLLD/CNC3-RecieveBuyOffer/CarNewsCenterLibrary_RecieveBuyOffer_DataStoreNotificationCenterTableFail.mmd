@@ -1,0 +1,103 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as CarNewsCenterEntryPoint<br>(Entry Point)
+participant vpm as CarNewsCenterManager<br>(Manager Layer)
+participant vps as NotificationService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDCarNewsCenterTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User attempts to to create new vehicle profile
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+e: NotificationAlert(notification:INotification) : IActionResult
+    Note over u,e: Invoked if there is a buy offer from Marketplace 
+
+    e->>+vpm:  NotificationAlert(notification:INotification) : IResponse
+        Note over e,vpm: Entry point calls upon car news manager
+        
+        vpm->>vpm: Validate Parameters
+
+        vpm->>+vps:   NotificationAlert(notification:INotification) : IResponse
+            Note over vpm,vps: CarNewsCenterManager calls upon<br> NotificationService 
+
+            vps->>vps: Validate Parameters
+
+            # Create default IPublicVehicleProfileDetails object
+
+            # Send to data store
+            vps->>+dg: UpdateNotification(notification: INotification) : IResponse
+            Note over vps,dg: NotificationService calls upon SqlDCarNewsCenterTarget to extract value and generate<br>the sql statement and parameters
+
+            dg->>dg: Extract value from "notification" object: VIN,Type,Description
+
+            dg->>dg: Generate SQL statement based on extracted value
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlDCarNewsCenterTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+                        ds->>ds: INSERT INTO NotificationObject (Description: string,Type: string) <br>OUTPUT INSERTED.ID<br>VALUES (@Description, @Type)
+
+                        ds->>ds: Notification Object is successfully written to the Data Store <br>and Notification_ID is returned
+
+                    ds-->>-da: Database returns the number of rows affected and Notification_ID 
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: SqlServerDAO returns the number of rows affected and Notification_ID 
+
+                dg->>dg: using Notification_ID to generate new SQL statement for inserting to Notification Center table 
+
+            dg->>+da:  ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                Note over dg,da: SqlDCarNewsCenterTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+                        
+                        ds->>ds: INSERT INTO NotificationCenter (UID: bigint, VIN: string, Notification_ID: int)
+
+
+                       ds->>ds: NotificationCenter is unsuccessfully updated
+
+                      ds-->>-da: Database throws an exception
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: IResponse object returned with<br>`IResponse.HasError` equal to true and<br>`IResponse.ErrorMessage` equal to the thrown exception
+
+                dg->>dg: SqlDbVehicleTarget checks the error to see if the error is safe to retry
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log unsuccessful vehicle creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+        # Log unsuccessful vehicle creation
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: VehicleProfileManager calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+e-->>-u: Return StatusCode(500, IResponseObject.ErrorMessage)
+
+
+
+           
