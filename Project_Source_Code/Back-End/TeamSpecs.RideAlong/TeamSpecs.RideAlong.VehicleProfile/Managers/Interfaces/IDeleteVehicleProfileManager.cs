@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public interface IDeleteVehicleProfileManager
 {
-    IResponse deleteVehicleProfile();
+    IResponse DeleteVehicleProfile();
 }

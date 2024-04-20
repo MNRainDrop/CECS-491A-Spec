@@ -3,5 +3,5 @@ using TeamSpecs.RideAlong.Model;
 
 public interface ICreateVehicleProfileManager
 {
-    IResponse createVehicleProfile();
+    IResponse CreateVehicleProfile(IVehicleProfileModel vehicle, IVehicleDetailsModel vehicleDetails, IAccountUserModel account);
 }
