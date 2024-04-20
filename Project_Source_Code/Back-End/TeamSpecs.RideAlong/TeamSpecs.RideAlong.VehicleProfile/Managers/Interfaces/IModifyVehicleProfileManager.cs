@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public interface IModifyVehicleProfileManager
 {
-    IResponse ModifyVehicleProfile();
+    IResponse ModifyVehicleProfile(IVehicleProfileModel vehicle, IVehicleDetailsModel vehicleDetails, IAccountUserModel account);
 }
