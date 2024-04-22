@@ -93,7 +93,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EndPoints", "EndPoints", "{7A22D9A7-165F-4580-808F-3F1536D90851}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarNewsCenterEntryPoint", "..\..\..\..\..\..\Users\marlo\OneDrive - CSULB\Desktop\COLLEGE\2023 Fall\CECS 491A\CECS-491A-Spec\Project_Source_Code\Back-End\TeamSpecs.RideAlong\CarNewsCenterEntryPoint\TeamSpecs.RideAlong.CarNewsCenterEntryPoint.csproj", "{187BAD46-D4D2-4BE0-92EB-5B652DC13FD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarNewsCenterEntryPoint", "CarNewsCenterEntryPoint\CarNewsCenterEntryPoint.csproj", "{187BAD46-D4D2-4BE0-92EB-5B652DC13FD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
