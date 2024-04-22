@@ -1,7 +1,6 @@
-﻿using Azure;
-using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
+﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using System.Text.Json;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -92,8 +91,8 @@ public class VehicleProfileCreationShould
         Assert.True((int)response.ReturnValue.First() == 2);
         Assert.True(!vehicleInDB.HasError && !detailsInDB.HasError);
         Assert.True(vehicleInDB.ReturnValue is not null && detailsInDB.ReturnValue is not null);
-        Assert.True(JsonConvert.SerializeObject(vehicleInDB.ReturnValue.First()) == JsonConvert.SerializeObject(vehicle));
-        Assert.True(JsonConvert.SerializeObject(detailsInDB.ReturnValue.First()) == JsonConvert.SerializeObject(vehicledetails));
+        Assert.True(JsonSerializer.Serialize(vehicleInDB.ReturnValue.First()) == JsonSerializer.Serialize(vehicle));
+        Assert.True(JsonSerializer.Serialize(detailsInDB.ReturnValue.First()) == JsonSerializer.Serialize(vehicledetails));
         #endregion
     }
 
