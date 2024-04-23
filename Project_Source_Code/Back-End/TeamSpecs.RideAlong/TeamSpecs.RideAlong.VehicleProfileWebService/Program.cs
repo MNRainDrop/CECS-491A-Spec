@@ -34,6 +34,8 @@ builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrie
 
 var app = builder.Build();
 
+app.useIDValidator();
+
 app.useCorsPreflight();
 
 //// Configure the HTTP request pipeline.
@@ -43,12 +45,10 @@ app.useCorsPreflight();
 //    app.UseSwaggerUI();
 //}
 
-app.UseAuthorization();
-
 app.Use((httpContent, next) =>
 {
     httpContent.Response.Headers.AccessControlAllowOrigin = "*";
-    httpContent.Response.Headers.AccessControlAllowMethods = "GET, POST, OPTIONS, PUT, DELETE";
+    httpContent.Response.Headers.AccessControlAllowMethods = "POST, OPTIONS";
     httpContent.Response.Headers.AccessControlAllowHeaders = "*";
     httpContent.Response.Headers.AccessControlAllowCredentials = "true";
 

@@ -22,6 +22,30 @@ public class VehicleProfileRetrieveController : Controller
     }
 
     [HttpPost]
+    [Route("GetAuthStatus")]
+    public IActionResult GetAuthStatus()
+    {
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+            {
+                { "canView", "vehicleProfile" }
+            };
+        bool hasPermission;
+        try
+        {
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        return NoContent();
+    }
+
+    [HttpPost]
     [Route("/MyVehicleProfiles")]
     public IActionResult Post([FromBody]int page)
     {
@@ -133,11 +157,5 @@ public class VehicleProfileRetrieveController : Controller
             // Input values are wrong
             return BadRequest(ex.Message);
         }
-    }
-
-    public class UserPageModel
-    {
-        public AccountUserModel? AccountUser { get; set; }
-        public int Page { get; set; }
     }
 }
