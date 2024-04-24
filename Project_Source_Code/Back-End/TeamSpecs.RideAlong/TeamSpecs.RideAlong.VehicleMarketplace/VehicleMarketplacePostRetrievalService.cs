@@ -5,9 +5,9 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
 {
     public class VehicleMarketplacePostRetrievalService : IVehiceMarketplacePostRetrievalService
     {
-        private SqlDbMarketplaceTarget _target;
+        private IMarketplaceTarget _target;
 
-        public VehicleMarketplacePostRetrievalService(SqlDbMarketplaceTarget target)
+        public VehicleMarketplacePostRetrievalService(IMarketplaceTarget target)
         {
             _target = target;
         }
