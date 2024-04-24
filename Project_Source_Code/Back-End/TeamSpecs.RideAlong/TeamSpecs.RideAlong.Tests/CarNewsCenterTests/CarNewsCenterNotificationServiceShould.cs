@@ -30,7 +30,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarNewsCenterTests
             //Parameters 
             long UID = 0;
             string VIN = "324324324";
-            int view = 1;
+            //int view = 1;
             string description = "For sale because it suks";
             string type = "Renting";
             INotification notification = new Notification(UID,VIN,type,description);

@@ -157,7 +157,7 @@ namespace TeamSpecs.RideAlong.Services
             #region Sql setup
             var commandSql = "Select * ";
             var fromSql = "From VehicleProfile ";
-            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN";
+            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN ";
             var whereSql = "WHERE MarketplaceStatus.ViewStatus = 1";
             #endregion
 
