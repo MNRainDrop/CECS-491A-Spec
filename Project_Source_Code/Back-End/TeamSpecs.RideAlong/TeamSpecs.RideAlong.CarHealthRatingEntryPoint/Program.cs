@@ -1,15 +1,15 @@
+using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
 using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.Middleware;
-using TeamSpecs.RideAlong.SecurityLibrary;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
-using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.CarHealthRatingLibrary;
 using Microsoft.Extensions.DependencyInjection;
+using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
-var builder = WebApplication.CreateBuilder(args);
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary;
 
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -20,18 +20,19 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+builder.Services.AddScoped<ISqlDbCarHealthRatingTarget, SqlDBCarHealthRatingTarget>();
+builder.Services.AddScoped<ICarHealthRatingManager, CarHealthRatingManager>();
+builder.Services.AddScoped<ICarHealthRatingService, CarHealthRatingService>();
 
 
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,16 +41,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
 app.useCorsPreflight();
 
-// Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
-//app.useIDValidator();
+app.useIDValidator();
+
 ////
 
-
-// This is the last middleware, as we want to make sure it is not going to be overwritten at any point
 app.useCorsMiddleware();
 
 app.MapControllers();
+
 app.Run();
