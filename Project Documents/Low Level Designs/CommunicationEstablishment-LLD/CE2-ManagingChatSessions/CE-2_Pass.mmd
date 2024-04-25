@@ -1,0 +1,132 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as CommunicationEstablishmentPoint<br>(Entry Point)
+participant m as CommunicationEstablishmentManager<br>(Manager Layer)
+participant s as ChatRetrieval<br>(Service Layer)
+participant cs as InsertNewMessage(Service Layer)
+participant ll as LogService<br>(Services Layer)
+participant dt as SqlDbCommunicationEstablishmentTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User visited Chat session page and <br>  show all of their chats
+
+u->>+az: CheckToken() 
+az-->>-u: Return valid check
+
+u->>+e:GetMyChats(userAccount: IUserAccount) :IActionResults
+Note over u,e: Involked when user visited the page <br> to view chats
+
+e->>+m:GetChats(userAccount: IUserAccount): IResponse
+Note over e,m: Entry point calls upon manager <br> to retrieve chat sessions
+
+m->>m: validate parameters
+
+m->>s: ChatRetrieval(useerAccount: IUserAccount): IResponse
+Note over m,s: Returns a collection of chat sessions in IRespons.ReturnValue
+
+s->>s:Validate
+
+s->>dt:ReadChatSql(search:ISearchParameters): IResponse
+Note over s,dt: ChatRetrieval service calls upon SqlChatTarget to generate <br> the sql statement and parameters
+
+dt->>dt:Convert search parameters into SQL state
+
+dt->>da:ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+
+da->>ds:SqlCommand.ExecuteReader() : SqlDataReader
+
+ds->>ds: SELECT(VIN, SessionID, BuyerUsername, SellerUsername, ViewStatus, MessageCreationTime,MessageContent) <br> FROM Chat WHERE BuyerUsername = @Username OR SellerUsername = @Username 
+
+ds->>ds: Chat sessions is successfully retrieved <br> from Data Store
+
+ds-->>da: Database returns query results
+
+da->>da: Check for thrown errors
+
+da->>da:Create new IResponse object
+
+da-->>dt:IResponse object returned 
+
+dt->>dt:Check for errors
+
+dt->>dt:Extract value from IResponse.Return value and cast it into a list of IChat objects
+
+dt->>dt:Set IResponse.ReturnValue to a new list of IChat objects
+
+dt-->>s: IResponse object returned
+
+s->>s:Check for errors
+
+s->>ll:CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+s-->>m:IResponse object returned
+
+m->>m: Check for errors in returnd IResponse object
+
+m->>m: Check for business rules
+
+m->>m:Convert IResponse.ReturnValue into JSON string
+
+m -->>ll:CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+m-->>e:IResponse object returned
+
+e-->>e: Check for errors in IResponse object
+
+e-->>e: Inject the chat sessions into HTML
+
+e-->>u: Return OK IActionResult
+
+Note Left of u: User selects a chat session and <br>  and write a message to send
+
+u->>e: PostSendMessage(chat :IChat): IActionResult
+Note over u,e: Involked when user is in a chat session<br> and has clicked to send a message
+
+e->>m: SendMessage(chat :IChat):IResponse
+Note over e,m: Entry point calls manager <br> to update message timestamp and message text
+
+m->>m: validate
+
+m->>cs: InsertNewMessage(message: IChat):IResponse
+Note over m,cs: Entry point calls service to insert a new message
+
+cs->>cs: Validate
+
+cs->>dt: InsertMessageSql(message: IChat): IResponse
+Note over cs,dt: Service calls upon SqlChatTarget to generate the SQL statement and parameters for inserting a new message and timestamp
+
+dt->>dt: Convert message parameters into SQL statement
+
+dt->>da: ExecuteInsertSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+
+da->>ds: SqlCommand.ExecuteNonQuery(): int
+
+ds->>ds: INSERT INTO Chat (VIN, SessionID, BuyerUsername, SellerUsername, ViewStatus, MessageCreationTime, MessageContent) <br> VALUES (message.VIN, message.SessionID, message.BuyerUsername, message.SellerUsername, message.ViewStatus, message.MessageCreationTime, message.MessageContent)
+
+ds->>ds: New message is successfully inserted into the Data Store
+
+ds-->>da: Database returns number of affected rows
+
+da->>da: Check for thrown errors
+
+da->>da: Create new IResponse object
+
+da-->>dt: IResponse object returned 
+
+dt->>dt: Check for errors
+
+dt-->>cs: IResponse object returned
+
+cs->>cs: Check for errors
+
+cs->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+cs-->>m: IResponse object returned
+
+m-->>e: IResponse object returned
+
+e-->>u: Return OK IActionResult
+
+Note right of e: Update UI with new message content

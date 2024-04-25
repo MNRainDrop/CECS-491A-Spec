@@ -1,0 +1,73 @@
+sequenceDiagram
+participant u as Browser
+participant az as AuthN/AuthZ<br>(Entry Point)
+participant e as CommunicationEstablishmentPoint<br>(Entry Point)
+participant m as CommunicationEstablishmentManager<br>(Manager Layer)
+participant s as ChatRetrieval<br>(Service Layer)
+participant cs as InsertNewMessage(Service Layer)
+participant ll as LogService<br>(Services Layer)
+participant dt as SqlDbCommunicationEstablishmentTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User visited Chat session page and <br>  show all of their chats
+
+u->>+az: CheckToken() 
+az-->>-u: Return valid check
+
+u->>+e:GetMyChats(userAccount: IUserAccount) :IActionResults
+Note over u,e: Involked when user visited the page <br> to view chats
+
+e->>+m:GetChats(userAccount: IUserAccount): IResponse
+Note over e,m: Entry point calls upon manager <br> to retrieve chat sessions
+
+m->>m: validate parameters
+
+m->>s: ChatRetrieval(useerAccount: IUserAccount): IResponse
+Note over m,s: Returns a collection of chat sessions in IRespons.ReturnValue
+
+s->>s:Validate
+
+s->>dt:ReadChatSql(search:ISearchParameters): IResponse
+Note over s,dt: ChatRetrieval service calls upon SqlChatTarget to generate <br> the sql statement and parameters
+
+dt->>dt:Convert search parameters into SQL state
+
+dt->>da:ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+
+da->>ds:SqlCommand.ExecuteReader() : SqlDataReader
+
+ds->>ds: SELECT(VIN, SessionID, BuyerUsername, SellerUsername, ViewStatus, MessageCreationTime,MessageContent) <br> FROM Chat WHERE BuyerUsername = @Username OR SellerUsername = @Username 
+
+ds->>ds: unable to retrieve chat sessions
+
+ds-->>da: Database throws an exception
+
+da->>da:Check for thrown exceptions
+
+da-->>dt:IResponse object returned with <br> `IResponse.HasError` equal to true and <br>`IResponse.ErrorMessage` equal to the thrown exception
+
+dt->>dt:SqlDbCommunicationEstablishmentTarget checks the error to see if the error is safe to retry
+
+dt-->>s:IResponse object returned with<br>`IResponse.IsSafeToRetry` updated
+
+s->>s:Check for errors in IResponseObject
+
+s-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+s-->>m: IResponse object returned
+
+m->>m: Check for erros in returned IResponse object
+
+m->>m: Check business rules
+
+m-->>ll:CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+
+m-->>e: IResponse object returned
+
+e->>e: Check for erros in returned IResponse object
+
+e-->>u:Return StatusCode(500, IResponseObject.ErrorMessage)
+
+
+

@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 
 namespace TeamSpecs.RideAlong.Middleware
@@ -22,23 +18,21 @@ namespace TeamSpecs.RideAlong.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            try 
+            try
             {
-                string token = context.Request.Headers["Authorization"].First()?.Split(" ").Last() ?? "";
+                string token = (string)context.Request.Headers["Authorization"].First()?.Split(" ").Last()!;
                 if (!token.IsNullOrEmpty())
                 {
-                    await AttachUserToContext(context, token);
+                    await ValidateTheToken(context, token);
                 }
-                await _next(context);
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("No Token Provided");
-                return;
             }
-            return;
         }
-        private async Task AttachUserToContext(HttpContext context, string token)
+        private async Task ValidateTheToken(HttpContext context, string token)
         {
             try
             {
@@ -58,7 +52,6 @@ namespace TeamSpecs.RideAlong.Middleware
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("Invalid Token: " + ex.Message);
-                return;
             }
         }
     }

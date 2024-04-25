@@ -10,9 +10,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
-// Using configuration files
-var configuration = builder.Configuration;
-// var myConfig = configuration.GetSection("").Get<>();
 
 // Add services to the container.
 
@@ -48,7 +45,7 @@ app.useCorsPreflight();
 
 // Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
 //app.useIDValidator();
-app.UseHttpsRedirection();
+////
 
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point

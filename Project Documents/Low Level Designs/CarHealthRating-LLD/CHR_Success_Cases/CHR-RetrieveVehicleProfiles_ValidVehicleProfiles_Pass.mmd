@@ -1,0 +1,116 @@
+sequenceDiagram
+participant u as Browser
+participant scr as carHealthRatingScript.js
+participant e as CarHealthRatingEntryPoint<br>(Entry Point)
+participant az as AuthN/AuthZ<br>(Manager Point)
+participant chrm as CarHealthRatingManager<br>(Manager Layer)
+participant chrs as CarHealthRatingService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbCarHealthRatingTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+u ->>+ scr: User clicks on Car Health Rating button<br> on Navigation Bar
+    Note over u,scr: Assume user has properly logged in
+
+    scr->>scr: Event listener "CarHealthRatingView" <br>is invoked by clicking on CHR button
+    scr->>scr: function chooseVehicleProfile invoked by<br> event listener<br> creating AJAX call to entry point
+
+        scr->>+e: GetVehicleProfiles() : IActionResult
+            Note over scr,e: Invoked by function <br> chooseVehicleProfile creating<br>AJAX call to CHR entry point
+
+            e->>+az: IsAuthorize( Dictionary <string, string>: requiredClaims): IResponse
+            Note over e,az: CarHealthRatingEntryPoint calls SecurityManager.isAuthorized to<br>verify user is able to access CHR view<br> by passing claims requried to access
+            
+            az-->>-e: User is authorized to access the CHR View 
+            Note over az,e: see Security LLD for successful user authorized case
+
+            e->>+az: GetPrincipalFromJwt() : IResponse
+            Note over e,az: Retrieves principal from tokens.<br>See Security success case.
+
+            az-->>-e:IResponse object returned
+            Note over az,e: IResponse.hasError = false
+
+            # Needed in order to find VP's under user.
+            e->>e: Extract user model from IResponse.ReturnValues
+                Note over e,e: userAccount = principal.UserModel
+
+                e->>+chrm: RetrieveValidVehicleProfiles( userAccount: IUserAccount): IResponse
+                    Note over e,chrm: CarHealthRatingEntryPoint calls upon<br>CarHealthRatingManager.RetrieveVehicleProfiles
+
+                    chrm->>chrm: Validiate parameters 
+
+                    chrm->>chrm: Begin timer for Non Functional Requirement logging purposes
+
+                        chrm->>+chrs: ValidVehicleProfilesRetrievalService( userAccount: IUserAccount): IResponse
+                            Note over chrm,chrs: CarHealthRatingManager calls upon<br> CarHealthRatingService.ValidVehicleProfilesRetrievalService
+
+                            chrs->>chrs: Validiate parameters
+
+                                chrs->>+dg: ReadValidVehicleProfilesSql( userAccount: IUserAccount): IResponse
+                                    Note over chrs,dg: CarHealthRatingService calls upon<br> SqlDbCarHealthRatingTarget to retrieve VP's.
+
+                                    dg->>dg: Convert search parameters into SQL statement
+
+                                        dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+                                            Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                                                da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                                                    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+
+                                                        ds->>ds: SELECT VP.VIN, VP.Make, VP.Year, VD.Color FROM VehicleProfile AS VP JOIN VehicleDetails AS VD ON VP.VIN = VD.VIN WHERE VP.Owner_UID = @UserID ORDER BY VP.DateCreated;
+
+                                                        ds->>ds: Vehicle profile(s) is successfully retireved<br>from the Data Store
+
+                                                ds-->>-da: Database returns query results
+
+                                                da->>da: Check for thrown errors
+
+                                                da->>da: Create new IResponse object
+                                                    Note over da: HasError = false<br>ErrorMessage = null<br>ReturnValue = new list containing returned query results
+
+                                        da-->>-dg: IResponse object returned
+
+                                    dg->>dg: Check for errors in returned IResponse object
+
+                                dg-->>-chrs: IResponse object returned
+
+                            chrs->>chrs: Check for errors in IResponseObject
+
+                                # Log successful vehicle profile retrieval
+                                chrs-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                                    Note over vps,ll: CarHealthRatingService calls upon LogService to log<br>successful retrieval of vehicle profiles.<br>See logging success case
+
+                            chrs->>chrs: Extract value from IResponse.Return value and cast it into a list of IVehicleProfile objects
+
+                            chrs->>chrs: Set IResponse.ReturnValue to the new list of Vehicle Profile Objects
+
+                            chrs->>chrs: Convert to JSON String
+
+                        chrs-->>-chrm: IResponse object returned
+                    
+                    chrm->>chrm: IResponse object returned
+
+                    chrm->>chrm: Check for errors in returned IResponse object
+
+                    chrm->>chrm: Check for any violations of business rules
+
+                chrm-->>-e: IResponse object returned
+
+            e->>e: Check for errors in returned IResponse object
+
+        e-->>-scr: Return OK ActionResult with JSON string
+        
+    scr->>scr: function chooseVehicleProfile dynmically injects<br> vehicle profiles into <select> element<br> to allow users to choose vehicles 
+
+scr-->>-u: User recieves new view and can now select a VP to view its Car Health Ranking
+
+
+
+
+                                                
+                                            
+                                
+
+
+
