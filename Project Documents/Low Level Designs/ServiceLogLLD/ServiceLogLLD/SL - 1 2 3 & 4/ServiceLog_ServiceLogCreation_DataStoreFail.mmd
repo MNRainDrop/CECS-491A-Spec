@@ -1,0 +1,96 @@
+sequenceDiagram
+participant u as Browser
+participant scr as script.js
+participant az as AuthN/AuthZ Entry Point<br>(Entry Point)
+participant e as ServiceLogController<br>(Entry Point)
+participant vpm as ServiceLogManager<br>(Manager Layer)
+participant vps as ServiceLogService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbServiceLogTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of u: User clicks on new service log button when on Vehicle Profile detailed view (See VP - 5)
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>u: Browser gives fourm for user to fill for new service log
+    Note over u,az: Prompts user on<br>Log Category<br>Part recieving care<br>Date<br>Description<br>Mileage
+
+u->>+scr: User clicks submit button
+    Note over u,scr: Event Listener executes code in<br>Script.js file calling a fetch request to<br>SerivceLogController
+
+
+scr->>+e: PostServiceLog( serviceLog: IServiceLogModel) : IActionResult
+    Note over scr,e: Invoked when user submits inputs for all fields to<br>create Service Log
+
+    e->>+vpm: CallCreateServiceLog( serviceLog: IServiceLogModel): IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to attempt to create service log
+
+        vpm->>vpm: Validate Parameters passed in by user<br>via following methods:
+        vpm->>vpm: CheckIfValidCategory( serviceLog: IServiceLogModel): bool
+        vpm->>vpm: CheckIfValidPart( serviceLog: IServiceLogModel): bool
+        vpm->>vpm: CheckIfValidDate( serviceLog: IServiceLogModel): bool
+        vpm->>vpm: CheckIfValidDescription( serviceLog: IServiceLogModel): bool
+        vpm->>vpm: CheckIfValidMileage( serviceLog: IServiceLogModel): bool
+
+        vpm->>+vps: CreateServiceLog( serviceLog: IServiceLogModel): IResponse
+            Note over vpm,vps: ServiceLogManager calls upon<br>ServiceLogService.CreateServiceLog to create the service log
+
+            vps->>vps: Validate Parameters
+
+            # Send to data store
+            vps->>+dg: GenerateCreateServiceLogSql( serviceLog: IServiceLogModel): IResponse
+                Note over vps,dg: ServiceLogSerivice.CreateServiceLog calls upon SqlDbServiceLogTarget to generate<br>the sql statement and parameters
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+                        ds->>ds: INSERT INTO ServiceLog (Category, Part, Date, Mileage)<br>VALUES (@Category, @Part, @Date, @Mileage)
+
+                        ds->>ds: Service Log is unsuccessfully<br>written to the Data Store
+
+                    ds-->>-da: Database returns the number of rows affected (0)
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: SqlServerDAO returns the number of rows affected
+
+                dg->>dg: SqlDbServiceLogTarget checks to see that one and only one row was affected
+
+                dg->>dg: No rows affected<br> Set IResponse.hasError equal to true<br> Set IResponse.errorMessage equal to "ServiceLog Creation failed"
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to true
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log unsuccessful service log creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: CreateServiceLog calls upon LogService to log<br>unsucessful creation of Service log.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+        vpm->>vps: CallCreateManteinceReminder(): IResponse
+            Note over vpm,vps: See Successful case for SL-9<br> Create Mantainence Reminder
+        vps->>vpm: IResponse Returned successfully
+
+
+        # Log unsuccessful vehicle creation
+        vpm-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+            Note over vpm,ll: ServiceLogManager calls upon LogService to log<br>successful creation of service.<br>See logging success case
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+    e->>scr: return unsuccessful 400 request to script.js
+
+scr-->>-u: Inject html with unsuccessful Service Log created and error message in IResponse.error message
