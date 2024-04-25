@@ -1,5 +1,6 @@
 // Note, doing the import function breaks the files functionality. I am unsure why this is the case, but I have not found a solution
 //import { fetchWithTokens } from "./FetchWithTokens";
+
 function fetchWithTokens(url, method, body) {
     var _a;
     // Fetch the tokens from session storage
@@ -20,6 +21,7 @@ function fetchWithTokens(url, method, body) {
     });
 }
 ;
+
 document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
@@ -29,9 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
     var refreshPermissionsNav = document.getElementById("refresh-permissions");
     refreshPermissionsNav === null || refreshPermissionsNav === void 0 ? void 0 : refreshPermissionsNav.addEventListener("click", refreshUserTokens);
     var vehicleProfileNav = document.getElementById("vehicle-profile-view");
-    vehicleProfileNav.addEventListener("click", generateVehicleProfileDefaultView);
+    vehicleProfileNav.addEventListener("click", generateVehicleProfileView);
     var rentalFleetNav = document.getElementById("rental-fleet-view");
     rentalFleetNav.addEventListener("click", generateRentalDefaultView);
+    var carHealthRatingNav = document.getElementById("car-health-rating-view");
+    carHealthRatingNav.addEventListener("click", generateCarHealthRatingDefaultView);
 });
 function generateRentalDefaultView() {
     var permissionGranted;
@@ -51,14 +55,16 @@ function generateRentalDefaultView() {
     });
 }
 ;
-function generateVehicleProfileDefaultView() {
+function generateCarHealthRatingDefaultView()
+{
     var permissionGranted;
-    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
+    fetchWithTokens('http://localhost:8082/CarHealthRating/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
-            alert("permission granted!!!");
+            alert("Permission Granted!");
             var dynamicContent = document.querySelector(".dynamic-content");
-            dynamicContent.innerHTML = "\n            <p>hello world</p>\n            ";
+            dynamicContent.innerHTML = "";
+            generateVehicleProfileRetrieval();
         }
         else {
             alert("Permission to view denied");
@@ -66,7 +72,33 @@ function generateVehicleProfileDefaultView() {
     }).catch(function (error) {
         permissionGranted = false;
         alert(error);
-    });
+    })
+}
+;
+
+function generateVehicleProfileView()
+{
+    var permissionGranted;
+    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
+        .then(function (response) {
+        if (response.status == 204) {
+            var dynamicContent = document.querySelector(".dynamic-content");
+            dynamicContent.innerHTML = "";
+            
+            dynamicContent.innerHTML = `<div id='vehicle-profile-creation-button'></div>`
+            dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
+            dynamicContent.innerHTML += `<nav id='pages'></nav>`
+            dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
+            pages(VehicleProfileView);
+            VehicleProfileView();
+        }
+        else {
+            alert("Permission to view denied");
+        }
+    }).catch(function (error) {
+        permissionGranted = false;
+        alert(error);
+    })
 }
 ;
 function logOut() {
@@ -106,3 +138,4 @@ function refreshUserTokens() {
         alert("An error occurred while Refreshing your session: " + error);
     });
 }
+

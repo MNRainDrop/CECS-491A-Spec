@@ -24,37 +24,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-function getFleet(username) {
-    // Get the username from the input field
-
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: username
-    }
-    
-    // Send POST request to fetch fleet data
-    fetch('http://localhost:5145/rentals/RentalFleet/GetFleet', options)
-        .then(response => {
-            if (!response.ok) {
-                console.log('error');
-                return;
-            }
-            else {
-                return response.json()
-            }
-        })
-        .then(data => {
-            // Handle the response data
-            displayFleetModels(data);
-        })
-        .catch(error => {
-            alert('Error fetching fleet data:', error);
-        });
-}
-
 function displayFleetModels(fleetModels) {
     const fleetContainer = document.querySelector(".dynamic-content");
     

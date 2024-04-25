@@ -63,15 +63,15 @@ function parseAndDisplayData(data) {
     html += "<button id='calculateButton'>Calculate</button>";
     dynamicContent.innerHTML = html;
 
-    // Add event listener to Calculate button
-    document.getElementById("calculateButton").addEventListener("click", function() {
-        var selectedOption = document.getElementById("vehicleSelect").options[document.getElementById("vehicleSelect").selectedIndex];
-        var selectedContent = selectedOption.textContent || selectedOption.innerText;
-        var indexOfComma = selectedContent.indexOf(",");
-        var selectedVIN = selectedContent.substring(0 , indexOfComma).trim(); // Extract VIN
-        //dynamicContent.innerHTML += selectedVIN; // Display VIN (optional)
-        generateCarHealthRatingView(selectedVIN); // Pass VIN to function
-    });
+// Add event listener to Calculate button
+document.getElementById("calculateButton").addEventListener("click", function() {
+    var selectedOption = document.getElementById("vehicleSelect").options[document.getElementById("vehicleSelect").selectedIndex];
+    var selectedContent = selectedOption.textContent || selectedOption.innerText;
+    var indexOfComma = selectedContent.indexOf(",");
+    var selectedVIN = selectedContent.substring(0 , indexOfComma).trim(); // Extract VIN
+    //dynamicContent.innerHTML += selectedVIN; // Display VIN (optional)
+    generateCarHealthRatingView(selectedVIN); // Pass VIN to function
+});
 
 
 

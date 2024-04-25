@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const refreshPermissionsNav = document.getElementById("refresh-permissions");
     refreshPermissionsNav?.addEventListener("click", refreshUserTokens)
     const vehicleProfileNav = document.getElementById("vehicle-profile-view");
-    vehicleProfileNav!.addEventListener("click", generateVehicleProfileDefaultView);
+    vehicleProfileNav!.addEventListener("click", doAThing => {alert("beep boop")});
     const rentalFleetNav = document.getElementById("rental-fleet-view");
     rentalFleetNav!.addEventListener("click", generateRentalDefaultView);
 });
@@ -45,25 +45,6 @@ function generateRentalDefaultView () {
             <div id="fleet-button-div">
                 <button id="submit-username">Submit</button>
             </div>
-            `;
-        } else {
-            alert("Permission to view denied");
-        }
-    }).catch(error => {
-        permissionGranted = false;
-        alert(error);
-    });
-};
-
-function generateVehicleProfileDefaultView () {
-    var permissionGranted;
-    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
-    .then(function (response) {
-        if(response.status == 204){
-            alert("permission granted!!!")
-            const dynamicContent = document.querySelector(".dynamic-content");
-            dynamicContent!.innerHTML = `
-            <p>hello world</p>
             `;
         } else {
             alert("Permission to view denied");

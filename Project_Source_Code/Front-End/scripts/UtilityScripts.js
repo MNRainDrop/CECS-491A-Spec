@@ -34,18 +34,24 @@ function decrementPages() {
     }
     content.innerHTML = String(value);
 }
-function pages() {
+function pages(functionCall) {
     var content = document.getElementById('pages');
-    content.innerHTML = "\n        <li id='back'><</li>\n        <p id='current-page'>1</p>\n        <li id='next'>></li>\n    ";
+    content.innerHTML = `
+        <li id='back'><</li>
+        <p id='current-page'>1</p>
+        <li id='next'>></li>
+    `;
     var next = document.getElementById('next');
     var back = document.getElementById('back');
     next.addEventListener('click', function () {
         incrementPages();
+        functionCall()
         // Not extensible
         //getVehicles();
     });
     back.addEventListener('click', function () {
         decrementPages();
+        functionCall()
         // Not extensible
         //getVehicles();
     });

@@ -54,7 +54,7 @@ public class VehicleProfileRetrieveController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };
@@ -98,7 +98,7 @@ public class VehicleProfileRetrieveController : Controller
 
     [HttpPost]
     [Route("MyVehicleProfileDetails")]
-    public IActionResult Post([FromBody]IVehicleProfileModel vehicle)
+    public IActionResult Post([FromBody]VehicleProfileModel vehicle)
     {
         #region Check for permissions
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
@@ -129,7 +129,7 @@ public class VehicleProfileRetrieveController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };

@@ -14,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -32,30 +32,28 @@ builder.Services.AddScoped<IVehicleProfileRetrievalService, VehicleProfileRetrie
 builder.Services.AddScoped<IVehicleProfileDetailsRetrievalService, VehicleProfileDetailsRetrievalService>();
 builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrievalManager>();
 
+builder.Services.AddScoped<ICreateVehicleTarget, SqlDbVehicleTarget>();
+builder.Services.AddScoped<IModifyVehicleTarget, SqlDbVehicleTarget>();
+builder.Services.AddScoped<IDeleteVehicleTarget, SqlDbVehicleTarget>();
+builder.Services.AddScoped<IVehicleProfileCreationService, VehicleProfileCreationService>();
+builder.Services.AddScoped<IVehicleProfileModificationService, VehicleProfileModificationService>();
+builder.Services.AddScoped<IVehicleProfileDeletionService, VehicleProfileDeletionService>();
+builder.Services.AddScoped<IVehicleProfileCUDManager, VehicleProfileCUDManager>();
+
 var app = builder.Build();
 
-
+//// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.useCorsPreflight();
 
 app.useIDValidator();
 
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
-app.Use((httpContent, next) =>
-{
-    httpContent.Response.Headers.AccessControlAllowOrigin = "*";
-    httpContent.Response.Headers.AccessControlAllowMethods = "POST, OPTIONS";
-    httpContent.Response.Headers.AccessControlAllowHeaders = "*";
-    httpContent.Response.Headers.AccessControlAllowCredentials = "true";
-
-    return next();
-});
+app.useCorsMiddleware();
 
 app.MapControllers();
 

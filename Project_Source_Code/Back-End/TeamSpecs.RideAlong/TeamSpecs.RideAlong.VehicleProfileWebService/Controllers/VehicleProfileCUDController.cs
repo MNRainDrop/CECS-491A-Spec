@@ -20,7 +20,7 @@ public class VehicleProfileCUDController : Controller
 
     [HttpPost]
     [Route("CreateVehicleProfile")]
-    public IActionResult PostCreateVehicleProfile([FromBody] VehicleProfileAndDetails profileAndDetailsModel)
+    public IActionResult PostCreateVehicleProfile([FromBody] RequestData requestData)
     {
         #region Check for valid claims
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
@@ -52,7 +52,7 @@ public class VehicleProfileCUDController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };
@@ -69,9 +69,12 @@ public class VehicleProfileCUDController : Controller
         }
         #endregion
 
+        var vehicle = new VehicleProfileModel(requestData.vehicleProfile.VIN, user.UserId, requestData.vehicleProfile.LicensePlate, requestData.vehicleProfile.Make, requestData.vehicleProfile.Model, requestData.vehicleProfile.Year);
+        var details = new VehicleDetailsModel(requestData.vehicleDetails.VIN, requestData.vehicleDetails.Color, requestData.vehicleDetails.Description);
+
         try
         {
-            var result = _vpCUD.CreateVehicleProfile(profileAndDetailsModel.vehicle, profileAndDetailsModel.vehicleDetails, user);
+            var result = _vpCUD.CreateVehicleProfile(vehicle, details, user);
             if (result is not null)
             {
                 if (result.HasError)
@@ -96,7 +99,7 @@ public class VehicleProfileCUDController : Controller
 
     [HttpPost]
     [Route("ModifyVehicleProfile")]
-    public IActionResult PostModifyVehicleProfile([FromBody] VehicleProfileAndDetails profileAndDetailsModel)
+    public IActionResult PostModifyVehicleProfile([FromBody] RequestData requestData)
     {
         #region Check for valid claims
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
@@ -128,7 +131,7 @@ public class VehicleProfileCUDController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };
@@ -145,9 +148,12 @@ public class VehicleProfileCUDController : Controller
         }
         #endregion
 
+        var vehicle = new VehicleProfileModel(requestData.vehicleProfile.VIN, user.UserId, requestData.vehicleProfile.LicensePlate, requestData.vehicleProfile.Make, requestData.vehicleProfile.Model, requestData.vehicleProfile.Year);
+        var details = new VehicleDetailsModel(requestData.vehicleDetails.VIN, requestData.vehicleDetails.Color, requestData.vehicleDetails.Description);
+
         try
         {
-            var result = _vpCUD.ModifyVehicleProfile(profileAndDetailsModel.vehicle, profileAndDetailsModel.vehicleDetails, user);
+            var result = _vpCUD.ModifyVehicleProfile(vehicle, details, user);
             if (result is not null)
             {
                 if (result.HasError)
@@ -170,15 +176,25 @@ public class VehicleProfileCUDController : Controller
         }
     }
 
-    public class VehicleProfileAndDetails
+    public class RequestData
     {
-        public VehicleProfileModel vehicle;
-        public VehicleDetailsModel vehicleDetails;
+        public required JavaScriptVehicle vehicleProfile { get; set; }
+        public required JavaScriptDetails vehicleDetails { get; set; }
 
-        public VehicleProfileAndDetails(VehicleProfileModel vehicle, VehicleDetailsModel vehicleDetails)
-        {
-            this.vehicle = vehicle;
-            this.vehicleDetails = vehicleDetails;
-        }
+    }
+    public class JavaScriptVehicle
+    {
+        public required string VIN { get; set; }
+        public required string LicensePlate { get; set; }
+        public required string Make { get; set; }
+        public required string Model { get; set; }
+        public required int Year { get; set; }
+    }
+
+    public class JavaScriptDetails
+    {
+        public required string VIN { get; set; }
+        public required string Color { get; set; }
+        public required string Description { get; set; }
     }
 }
