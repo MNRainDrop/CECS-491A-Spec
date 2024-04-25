@@ -8,6 +8,8 @@ using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
 namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class VehicleMarketplaceController : ControllerBase
     {
         private readonly ILogService _logService;
@@ -20,6 +22,34 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
             _logService = logService;
             _manager = marketplaceManager;
             _securityManager = securityManager;
+        }
+
+        [HttpPost]
+        [Route("GetAuthStatus")]
+        public IActionResult GetAuthStatus()
+        {
+            Dictionary<string, string> requiredClaims = new Dictionary<string, string>();
+            requiredClaims.Add("canView", "Marketplace");
+
+            bool hasPermission;
+
+            #region Security Check
+            try
+            {
+                hasPermission = _securityManager.isAuthorize(requiredClaims);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            if (hasPermission == false)
+            {
+
+                return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+            }
+            return NoContent();
+            #endregion
+
         }
 
 

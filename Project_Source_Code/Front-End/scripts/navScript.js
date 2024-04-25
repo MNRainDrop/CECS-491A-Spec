@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
     rentalFleetNav.addEventListener("click", generateRentalDefaultView);
     var carHealthRatingNav = document.getElementById("car-health-rating-view");
     carHealthRatingNav.addEventListener("click", generateCarHealthRatingDefaultView);
+    var vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
+    vehicleMarketPlaceNav.addEventListener("click",generateVehicleMarketplaceDefaultView);
 });
 function generateRentalDefaultView() {
     var permissionGranted;
@@ -65,6 +67,26 @@ function generateCarHealthRatingDefaultView()
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
             generateVehicleProfileRetrieval();
+        }
+        else {
+            alert("Permission to view denied");
+        }
+    }).catch(function (error) {
+        permissionGranted = false;
+        alert(error);
+    })
+}
+;
+function generateVehicleMarketplaceDefaultView()
+{
+    var permissionGranted;
+    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
+        .then(function (response) {
+        if (response.status == 204) {
+            alert("Permission Granted!");
+            var dynamicContent = document.querySelector(".dynamic-content");
+            dynamicContent.innerHTML = "";
+            displayMarketplace();
         }
         else {
             alert("Permission to view denied");
