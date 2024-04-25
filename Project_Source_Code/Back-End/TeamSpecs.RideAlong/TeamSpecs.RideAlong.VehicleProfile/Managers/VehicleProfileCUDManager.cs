@@ -4,7 +4,7 @@ using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
-public class VehicleProfileCUDManager : ICreateVehicleProfileManager, IModifyVehicleProfileManager, IDeleteVehicleProfileManager
+public class VehicleProfileCUDManager : IVehicleProfileCUDManager
 {
     private readonly ILogService _logService;
     private readonly IVehicleProfileCreationService _vpCreate;

@@ -1,19 +1,9 @@
-// NOT exposed to the global object ("Private" functions)
+
 function getVehicles(username) {
     // this should be in config file
-    const webServiceUrl = 'http://localhost:8727/MyVehicleProfiles';
-
-    // make this dynamic
-    // retrieve values from tokens
-    const userAccount = {
-        "userId": username,
-        "userName": "123",
-        "salt": 0,
-        "userHash": "string"
-    }
+    const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
     const data = {
-        "accountUser": userAccount,
         "page": document.getElementById("current-page").innerText
     };
 
@@ -82,17 +72,9 @@ function getVehicleDetails(id) {
     const webServiceUrl = 'http://localhost:8727/MyVehicleProfileDetails';
 
     const car = JSON.parse(sessionStorage.getItem(id));
-
-    const userAccount = {
-        "userId": car.owner_UID,
-        "userName": "123",
-        "salt": 0,
-        "userHash": "string"
-    }
-    
+   
     const data = {
-        "vehicleProfile": car,
-        "accountUser": userAccount,
+        "vehicleProfile": car
     };
 
     const options = {

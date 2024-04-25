@@ -35,7 +35,8 @@ function decrementPages() {
     content!.innerHTML = String(value);
 }
 
-function pages() {
+function pages(viewFunction) {
+    // view function is the function that you should pass in to get this to work
     var content = document.getElementById('pages');
 
     content!.innerHTML = `
@@ -48,12 +49,10 @@ function pages() {
 
     next!.addEventListener('click', () => {
         incrementPages();
-        // Not extensible
-        //getVehicles();
+        viewFunction();
     });
     back!.addEventListener('click', () => {
         decrementPages();
-        // Not extensible
-        //getVehicles();
+        viewFunction();
     });
 }

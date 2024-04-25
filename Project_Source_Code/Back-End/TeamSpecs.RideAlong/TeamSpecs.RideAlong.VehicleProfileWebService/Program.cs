@@ -34,9 +34,11 @@ builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrie
 
 var app = builder.Build();
 
-app.useIDValidator();
+
 
 app.useCorsPreflight();
+
+app.useIDValidator();
 
 //// Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
