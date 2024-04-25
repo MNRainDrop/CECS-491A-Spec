@@ -10,6 +10,15 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileDetailsRetrievalShould
 {
+    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IRetrieveVehicleDetailsTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+
+    private static readonly IHashService hashService = new HashService();
+    private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
+    private static readonly ILogService logService = new LogService(logTarget, hashService);
+
+    private static readonly IVehicleProfileDetailsRetrievalService retrievalService = new VehicleProfileDetailsRetrievalService(vehicleTarget, logService);
+    
     [Fact]
     public void VehicleProfileDetailsRetrieval_ReadVehicleProfileDetailsFromDatabase_ValidVINPassedIn_OneVehicleProfileDetailsRetrieved_Pass()
     {
@@ -17,15 +26,6 @@ public class VehicleProfileDetailsRetrievalShould
         var timer = new Stopwatch();
 
         IResponse response;
-
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileDetailsRetrievalService(vehicleTarget, logService);
 
         // Create Test Objects
         var user = new AccountUserModel("testUser")
@@ -111,15 +111,6 @@ public class VehicleProfileDetailsRetrievalShould
 
         IResponse response;
 
-        var dao = new SqlServerDAO();
-        var vehicleTarget = new SqlDbVehicleTarget(dao);
-
-        var hashService = new HashService();
-        var logTarget = new SqlDbLogTarget(dao);
-        var logService = new LogService(logTarget, hashService);
-
-        var retrievalService = new VehicleProfileDetailsRetrievalService(vehicleTarget, logService);
-
         // Create Test Objects
         var user = new AccountUserModel("testUser")
         {
@@ -187,6 +178,156 @@ public class VehicleProfileDetailsRetrievalShould
         Assert.True(!response.HasError);
         Assert.NotNull(response.ReturnValue);
         Assert.True(response.ReturnValue.Count == 0);
+        #endregion
+    }
+
+    [Fact]
+    public void VehicleProfileDetailsRetrieval_ReadVehicleProfileDetailsFromDatabase_InvalidVINPassedIn_OneVehicleProfileDetailsRetrieved_Pass()
+    {
+        #region Arrange
+        var timer = new Stopwatch();
+
+        // Create Test Objects
+        var user = new AccountUserModel("testUser")
+        {
+            Salt = 0,
+            UserHash = "testUserHash",
+        };
+        var vehicle = new VehicleProfileModel("testVin", 1, "test", "testMake", "testModel", 0000);
+        var vehicleDetails = new VehicleDetailsModel("testVin", "testColor", "testDescription");
+
+        var searchVehicle = vehicle;
+        searchVehicle.VIN = "";
+
+        // Create Initial SQL
+        try
+        {
+            var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
+            var vehicleSql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
+            var vehicleDetailsSql = $"INSERT INTO VehicleDetails (VIN, Color, Description) VALUES ('{vehicleDetails.VIN}', '{vehicleDetails.Color}', '{vehicleDetails.Description}')";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null),
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleDetailsSql, null)
+            });
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'";
+            var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
+            });
+            foreach (var item in uid)
+            {
+                user.UserId = (long)item[0];
+                vehicle.Owner_UID = user.UserId;
+            }
+        }
+        catch
+        {
+            // In case creating the initial sql data does not work
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+
+        #region Act
+        try
+        {
+            Assert.ThrowsAny<Exception>(
+                () => retrievalService.retrieveVehicleDetails(searchVehicle, user)
+            );
+            
+        }
+        catch
+        {
+            Assert.Fail("Should throw exception");
+        }
+        finally
+        {
+            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+    }
+
+    [Fact]
+    public void VehicleProfileDetailsRetrieval_ReadVehicleProfileDetailsFromDatabase_InvalidUserHashPassedIn_OneVehicleProfileDetailsRetrieved_Pass()
+    {
+        #region Arrange
+        var timer = new Stopwatch();
+
+        // Create Test Objects
+        var user = new AccountUserModel("testUser")
+        {
+            Salt = 0,
+            UserHash = "testUserHash",
+        };
+        var vehicle = new VehicleProfileModel("testVin", 1, "test", "testMake", "testModel", 0000);
+        var vehicleDetails = new VehicleDetailsModel("testVin", "testColor", "testDescription");
+
+        var paramUser = user;
+        user.UserHash = "";
+
+        // Create Initial SQL
+        try
+        {
+            var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
+            var vehicleSql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', (SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'), '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
+            var vehicleDetailsSql = $"INSERT INTO VehicleDetails (VIN, Color, Description) VALUES ('{vehicleDetails.VIN}', '{vehicleDetails.Color}', '{vehicleDetails.Description}')";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(accountSql, null),
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleSql, null),
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(vehicleDetailsSql, null)
+            });
+            var getUserID = $"SELECT UID FROM UserAccount WHERE UserName = '{user.UserName}'";
+            var uid = dao.ExecuteReadOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(getUserID, null)
+            });
+            foreach (var item in uid)
+            {
+                user.UserId = (long)item[0];
+                vehicle.Owner_UID = user.UserId;
+            }
+        }
+        catch
+        {
+            // In case creating the initial sql data does not work
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
+        #endregion
+
+        #region Act
+        try
+        {
+            Assert.ThrowsAny<Exception>(
+                () => retrievalService.retrieveVehicleDetails(vehicle, user)
+            );
+
+        }
+        catch
+        {
+            Assert.Fail("Should throw exception");
+        }
+        finally
+        {
+            var undoInsert = $"DELETE FROM UserAccount WHERE UID = '{user.UserId}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
+        }
         #endregion
     }
 }

@@ -129,7 +129,7 @@ public class VendorVehicleRetrievalShould
         }
         finally
         {
-            //deleteFromDB(dao, user);
+            deleteFromDB(dao, user);
         }
         #endregion
 
@@ -158,14 +158,35 @@ public class VendorVehicleRetrievalShould
     public void VendorVehicleRetrieval_ReadVendorVehicleProfilesFromDatabase_ValidUserAccountAndFiltersPassedIn_OneVehicleProfileRetrieved()
     {
         #region Arrange
-        var user = new AccountUserModel("testing")
-        {
-            UserId = 2,
-            UserHash = "100",
-            Salt = 1
-        };
+        IResponse response;
+        var timer = new Stopwatch();
+
+        var user = createTestUser();
         var page = 1;
         var itemsPerPage = 10;
+        var resultNum = 1;
+
+        try
+        {
+            user.UserId = writeUserToDB(dao, user);
+        }
+        catch
+        {
+            deleteFromDB(dao, user);
+        }
+        var vehicle = createTestVehicle(user.UserId);
+        vehicle.Make = "Acura";
+        vehicle.VIN = "TESTACURA";
+        var vehicle2 = createTestVehicle(user.UserId);
+        try
+        {
+            writeVehicleToDB(dao, vehicle);
+            writeVehicleToDB(dao, vehicle2);
+        }
+        catch
+        {
+            deleteFromDB(dao, user);
+        }
 
         var searchFilters = new List<object>()
         {
@@ -177,7 +198,7 @@ public class VendorVehicleRetrievalShould
         #region Act
         try
         {
-            var response = service.retrieveVendorVehicles(user, page, itemsPerPage, searchFilters);
+            response = service.retrieveVendorVehicles(user, page, itemsPerPage, searchFilters);
         }
         finally
         {
@@ -186,7 +207,24 @@ public class VendorVehicleRetrievalShould
         #endregion
 
         #region Assert
-        Assert.Fail();
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        Assert.NotNull(response);
+        Assert.True(!response.HasError);
+        Assert.NotNull(response.ReturnValue);
+        Assert.True(response.ReturnValue.Count <= itemsPerPage);
+        Assert.True(response.ReturnValue.Count == resultNum);
+        var returnedVehicle = response.ReturnValue.FirstOrDefault() as VendorVehicleModel;
+        Assert.NotNull(returnedVehicle);
+        Assert.True(returnedVehicle.VIN == vehicle.VIN);
+        Assert.True(returnedVehicle.Owner_UID == vehicle.Owner_UID);
+        Assert.True(returnedVehicle.LicensePlate == vehicle.LicensePlate);
+        Assert.True(returnedVehicle.Make == vehicle.Make);
+        Assert.True(returnedVehicle.Model == vehicle.Model);
+        Assert.True(returnedVehicle.Year == vehicle.Year);
+        Assert.True(returnedVehicle.Status == vehicle.Status);
+        Assert.True(returnedVehicle.Price == vehicle.Price);
+        Assert.True(returnedVehicle.Inquiries == vehicle.Inquiries);
+        Assert.True(returnedVehicle.Color == vehicle.Color);
         #endregion
     }
 }

@@ -20,6 +20,10 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         {
             throw new ArgumentNullException(nameof(userAccount));
         }
+        if (string.IsNullOrEmpty(userAccount.UserName))
+        {
+            throw new ArgumentNullException(nameof(userAccount.UserName));
+        }
         if (string.IsNullOrWhiteSpace(userAccount.UserHash))
         {
             throw new ArgumentNullException(nameof(userAccount.UserHash));

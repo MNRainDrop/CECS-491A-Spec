@@ -1,6 +1,5 @@
 ﻿using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.UserAdministration;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
@@ -33,27 +32,24 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
         {
             throw new ArgumentNullException(nameof(userAccount));
         }
-        else
+        if (string.IsNullOrWhiteSpace(userAccount.UserHash))
         {
-            if (string.IsNullOrWhiteSpace(userAccount.UserHash))
-            {
-                throw new ArgumentNullException(nameof(userAccount.UserHash));
-            }
-            if (string.IsNullOrWhiteSpace(userAccount.UserName))
-            {
-                throw new ArgumentNullException(nameof(userAccount.UserName));
-            }
-            if (userAccount.UserId != vehicle.Owner_UID)
-            {
-                throw new InvalidDataException(nameof(userAccount.UserId));
-            }
+            throw new ArgumentNullException(nameof(userAccount.UserHash));
+        }
+        if (string.IsNullOrWhiteSpace(userAccount.UserName))
+        {
+            throw new ArgumentNullException(nameof(userAccount.UserName));
+        }
+        if (userAccount.UserId != vehicle.Owner_UID)
+        {
+            throw new InvalidDataException(nameof(userAccount.UserId));
         }
         #endregion
 
         var response = _deleteVehicleTarget.deleteVehicleProfileSql(vehicle, userAccount);
 
         #region Update Claims
-        
+        // add claims here once user administration claim modification is complete
         #endregion
 
         #region Log to database

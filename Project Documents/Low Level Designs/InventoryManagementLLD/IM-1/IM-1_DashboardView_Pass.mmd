@@ -42,7 +42,7 @@ u->>+e: GetInventoryView(page: int) : IActionResult
                     da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
                         Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
                         
-                        ds->>ds: SELECT (VIN, Make, Model, Year, Color, Status, PostingDate, Price, PriceDate, Inquiries)<br>FROM VehicleProfile as VP<br>INNER JOIN VendingStatus as vs ON vs.VIN = VP.VIN <br> WHERE Owner_UID = @UserID<br> ORDER BY DateCreated<br> OFFSET (page * itemsPerPage) ROWS<br> FETCH NEXT (itemsPerPage) ROWS ONLY;
+                        ds->>ds: SELECT (VIN, Make, Model, Year, Color, Status, PostingDate, Price, PriceDate, Inquiries)<br>FROM VehicleProfile as VP<br>INNER JOIN VendingStatus as vs ON vs.VIN = <br> WHERE Owner_UID = @UserID<br> ORDER BY DateCreated<br> OFFSET (page * itemsPerPage) ROWS<br> FETCH NEXT (itemsPerPage) ROWS ONLY;
 
                         ds->>ds: Vehicle profile(s) is successfully retireved<br>from the Data Store
 

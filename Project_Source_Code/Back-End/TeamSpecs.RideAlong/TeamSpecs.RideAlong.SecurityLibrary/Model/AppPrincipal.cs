@@ -25,5 +25,5 @@ public class AppPrincipal : IAppPrincipal
     //public ICollection<(string ClaimName, string ClaimValue)> Claims { get; set; }
     // becomes a dictionary
     //DateTimeOffset? expirationdate { get; }
-    public IDictionary<string, string> claims { get; set; }
+    public ICollection<KeyValuePair<string, string>> claims { get; set; }
 }
