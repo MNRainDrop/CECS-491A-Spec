@@ -11,7 +11,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileDetailsRetrievalShould
 {
     private static readonly IGenericDAO dao = new SqlServerDAO();
-    private static readonly IRetrieveVehicleDetailsTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+    private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
@@ -74,7 +74,7 @@ public class VehicleProfileDetailsRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleDetails(vehicle, user);
+            response = retrievalService.RetrieveVehicleDetails(vehicle, user);
             timer.Stop();
         }
         finally
@@ -159,7 +159,7 @@ public class VehicleProfileDetailsRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleDetails(vehicle, user);
+            response = retrievalService.RetrieveVehicleDetails(vehicle, user);
             timer.Stop();
         }
         finally
@@ -237,7 +237,7 @@ public class VehicleProfileDetailsRetrievalShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => retrievalService.retrieveVehicleDetails(searchVehicle, user)
+                () => retrievalService.RetrieveVehicleDetails(searchVehicle, user)
             );
             
         }
@@ -312,7 +312,7 @@ public class VehicleProfileDetailsRetrievalShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => retrievalService.retrieveVehicleDetails(vehicle, user)
+                () => retrievalService.RetrieveVehicleDetails(vehicle, user)
             );
 
         }
