@@ -130,7 +130,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
             throw new NotImplementedException();
         }
 
-        public IResponse GenerateDeleteServiceLogSql()
+        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogIdentifier)
         {
             #region Variables
             IResponse response = new Response();

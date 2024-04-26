@@ -15,7 +15,7 @@ namespace TeamSpecs.RideAlong.ServiceLog.Interfaces
 
         public IResponse GenerateModifyServiceLogSql(IServiceLogModel serviceLog);
 
-        public IResponse GenerateDeleteServiceLogSql();
+        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogIdentifier );
 
         public IResponse GenerateRetrieveServiceLogSql(IPaginationModel page, string vin);
 
