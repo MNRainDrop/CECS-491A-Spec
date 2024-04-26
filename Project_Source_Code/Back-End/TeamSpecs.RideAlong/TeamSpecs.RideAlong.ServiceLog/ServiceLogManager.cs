@@ -26,6 +26,6 @@ namespace TeamSpecs.RideAlong.ServiceLog
         /// Also for different logs needed and such// Checks
         /// 
 
-
+         
     }
 }

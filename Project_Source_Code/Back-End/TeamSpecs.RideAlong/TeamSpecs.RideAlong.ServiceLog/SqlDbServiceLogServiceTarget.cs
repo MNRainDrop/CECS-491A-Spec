@@ -24,6 +24,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
             _dao = dao;
         }
 
+        #region Private Functions (Creating Sql Commands) 
         private IResponse CreateServiceLogSqlCommand(IServiceLogModel serviceLog)
         {
             #region Varaibles 
@@ -163,6 +164,8 @@ namespace TeamSpecs.RideAlong.ServiceLog
             // subject to change
             throw new NotImplementedException();
         }
+
+        #endregion
 
         public IResponse GenerateCreateServiceLogSql (IServiceLogModel serviceLog)
         {
