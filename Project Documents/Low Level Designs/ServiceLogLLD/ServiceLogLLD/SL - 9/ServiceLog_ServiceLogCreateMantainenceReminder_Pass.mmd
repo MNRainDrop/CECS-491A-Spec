@@ -1,0 +1,65 @@
+sequenceDiagram
+participant u as Browser
+participant scr as script.js
+participant az as AuthN/AuthZ Entry Point<br>(Entry Point)
+participant e as ServiceLogController<br>(Entry Point)
+participant vpm as ServiceLogManager<br>(Manager Layer)
+participant vps as ServiceLogService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbServiceLogTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+Note Left of vps: Assume a user has created, modified, or deleted a<br> Mantainence Category Service Log.<br> To which Create Mantainence Reminder has been called
+    
+    # Rerequirements: 3 valid mantainence category Service Logs
+    vpm->>vpm: Manager checks for pre requirements are met
+
+        vpm->>+vps: CreateManainenceReminder(): IResponse
+            Note over vpm,vps: ServiceLogManager calls upon<br>ServiceLogService.CreateServiceLog to create the service log
+
+            vps->>vps: Based on the 3 most recent Maintence Reminders<br> average the total amount of miles driven each month
+            vps->>vps: Take the average and calculate<br> the next expected date of service needed
+            # Send to data store
+            vps->>+dg: GenerateCreateMaintenceReminderSql( maintenceDate): IResponse
+                Note over vps,dg: ServiceLogSerivice.CreateMaintenceReminder calls upon SqlDbServiceLogTarget to generate<br>the sql statement and parameters
+
+                dg->>+da: ExecuteWriteSQL(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : int
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteNonQuery() : Int
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteNonQuery()`<br>to execute the sql command
+
+                        ds->>ds: INSERT INTO MantainenceReminder (MaintenceReminder)<br>VALUES (@MaintenceDate)
+
+                        ds->>ds: MaintenceReminder is successfully<br>written to the Data Store
+
+                    ds-->>-da: Database returns the number of rows affected
+
+                    da->>da: Check for thrown exceptions
+
+                da-->>-dg: SqlServerDAO returns the number of rows affected
+
+                dg->>dg: SqlDbServiceLogTarget checks to see that one and only one row was affected
+
+            dg-->>-vps: IResponse object returned with<br>`IResponse.HasError` equal to false
+
+            vps->>vps: Check for errors in IResponseObject
+
+            # Log successful service log creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: VehicleProfileCreationService calls upon LogService to log<br>successful creation of vehicle profile.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+    e->>scr: return successful request (OK request) to script.js
+
+scr-->>-u: Inject html with success Service Log created
