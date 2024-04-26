@@ -11,11 +11,21 @@ function fetchWithTokens(url, method, body) {
         'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
         'Content-Type': 'application/json' // Set the Content-Type header for the request body
     };
-    return fetch(url, {
-        method: method,
-        headers: headers,
-        body: JSON.stringify(body)
-    });
+    if (method === 'GET')
+    {
+        return fetch(url, {
+            method: method,
+            headers: headers
+        });
+    }
+    else {
+        return fetch(url, {
+            method: method,
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+    }
+    
 }
 ;
 // 

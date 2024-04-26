@@ -139,7 +139,7 @@ function generateCreateButton() {
         
         var formData = retrieveFromAPI();
 
-        if (formData !== null) {
+        if (formData != null) {
             fillInForm(formData);
         }
         document.addEventListener('submit', (event) => {
@@ -239,7 +239,7 @@ function generateVehicleForm() {
 }
 
 function retrieveFromAPI() {
-
+    return null;
 }
 
 function fillInForm(formData)

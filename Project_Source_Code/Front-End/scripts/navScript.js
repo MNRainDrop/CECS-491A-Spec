@@ -37,8 +37,15 @@ document.addEventListener("DOMContentLoaded", function () {
     var carHealthRatingNav = document.getElementById("car-health-rating-view");
     carHealthRatingNav.addEventListener("click", generateCarHealthRatingDefaultView);
     var vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
-    vehicleMarketPlaceNav.addEventListener("click",generateVehicleMarketplaceDefaultView);
+    vehicleMarketPlaceNav.addEventListener("click", generateVehicleMarketplaceDefaultView);
 });
+
+const content = document.getElementsByClassName("dynamic-content")[0];
+content.addEventListener("selectionchange", () => {
+    content.href = "styles/styles.css"
+});
+
+
 function generateRentalDefaultView() {
     var permissionGranted;
     fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
@@ -80,6 +87,7 @@ function generateCarHealthRatingDefaultView()
 
 function generateVehicleProfileView()
 {
+    changeCSS("styles/VPstyles.css")
     var permissionGranted;
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
@@ -105,8 +113,19 @@ function generateVehicleProfileView()
 ;
 
 function changeCSS(file) {
-    var cssLink = document.getElementById('cssLink');
-    cssLink.href = file; // Change CSS file dynamically according to given relative path
+    var head = document.getElementsByTagName('head')[0];
+    if (head.lastChild.id !== 'cssLink')
+    {
+        head.removeChild(head.lastChild);
+    }
+    if (file != null)
+    {
+        var style = document.createElement('link');
+        style.href = file;
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    }
 }
 ;
   
