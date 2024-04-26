@@ -89,8 +89,8 @@ function generateVehicleProfileView()
             dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
             dynamicContent.innerHTML += `<nav id='pages'></nav>`
             dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
-            pages(VehicleProfileView);
-            VehicleProfileView();
+            pages(vehicleProfileView);
+            vehicleProfileView();
         }
         else {
             alert("Permission to view denied");

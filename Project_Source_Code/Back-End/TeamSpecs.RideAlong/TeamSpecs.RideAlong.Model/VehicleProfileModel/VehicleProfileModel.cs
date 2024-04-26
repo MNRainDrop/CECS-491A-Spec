@@ -3,13 +3,13 @@
 public class VehicleProfileModel : IVehicleProfileModel
 {
     public string VIN { get; set; }
-    public long Owner_UID { get; set; }
+    public long? Owner_UID { get; set; }
     public string LicensePlate { get; set; }
     public string Make { get; set; } = string.Empty;
     public string Model { get; set; } = string.Empty;
     public int Year { get; set; } = 0000;
 
-    public VehicleProfileModel(string vin, long owner_UID, string licensePlate, string make = "", string model = "", int year = 0)
+    public VehicleProfileModel(string vin, long? owner_UID, string licensePlate, string make = "", string model = "", int year = 0)
     {
         VIN = vin;
         Owner_UID = owner_UID;

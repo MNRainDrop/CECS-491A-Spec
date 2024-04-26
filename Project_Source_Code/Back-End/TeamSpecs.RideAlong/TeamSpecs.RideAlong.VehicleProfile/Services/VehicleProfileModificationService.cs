@@ -5,10 +5,10 @@ using TeamSpecs.RideAlong.Model;
 
 public class VehicleProfileModificationService : IVehicleProfileModificationService
 {
-    private readonly IModifyVehicleTarget _modifyVehicleTarget;
+    private readonly ICRUDVehicleTarget _modifyVehicleTarget;
     private readonly ILogService _logService;
 
-    public VehicleProfileModificationService(IModifyVehicleTarget vehicleTarget, ILogService logService)
+    public VehicleProfileModificationService(ICRUDVehicleTarget vehicleTarget, ILogService logService)
     {
         _modifyVehicleTarget = vehicleTarget;
         _logService = logService;
@@ -58,7 +58,7 @@ public class VehicleProfileModificationService : IVehicleProfileModificationServ
         }
         #endregion
 
-        var response = _modifyVehicleTarget.modifyVehicleProfileSql(vehicle, vehicleDetails);
+        var response = _modifyVehicleTarget.ModifyVehicleProfileSql(vehicle, vehicleDetails);
 
         #region Log to database
         if (response.HasError)
