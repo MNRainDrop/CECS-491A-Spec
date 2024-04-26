@@ -7,6 +7,6 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
 {
     public interface ICarNewsCenterViewVehicleNewsArticleServices
     {
-        IResponse GetNewsForAllVehicles(IAccountUserModel userAccount);
+        Task<IResponse> GetNewsForAllVehicles(IAccountUserModel userAccount);
     }
 }

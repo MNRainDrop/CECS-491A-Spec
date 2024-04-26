@@ -1,0 +1,6 @@
+@VehiclesMarketplaceEntryPoint_HostAddress = http://localhost:5104
+
+GET {{VehiclesMarketplaceEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
