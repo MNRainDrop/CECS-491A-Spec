@@ -1,36 +1,12 @@
-// NOT exposed to the global object ("Private" functions)
-function getVehicles(username) {
+function VehicleProfileView() {
     // this should be in config file
-    const webServiceUrl = 'http://localhost:8727/MyVehicleProfiles';
-
-    // make this dynamic
-    // retrieve values from tokens
-    const userAccount = {
-        "userId": username,
-        "userName": "123",
-        "salt": 0,
-        "userHash": "string"
-    }
-
-    const data = {
-        "accountUser": userAccount,
-        "page": document.getElementById("current-page").innerText
-    };
-
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json', // Specify content type as JSON
-        },
-        body: JSON.stringify(data)
-    };
+    const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
     // Insert Vehicle Creation Button Here
     // Make new function
-    var content = document.getElementById('vehicle-profile-creation-button');
-    content.innerHTML = `<button>Click Me</button>`;
+    generateCreateButton()
 
-    fetch(webServiceUrl, options)
+    fetchWithTokens(webServiceUrl, 'POST', document.getElementById("current-page").innerText)
         .then(response => {
             if (!response.ok) {
                 console.log('error');
@@ -44,7 +20,7 @@ function getVehicles(username) {
             if (data.length == 0 && parseInt(document.getElementById('current-page').innerText) != 1)
             {
                 decrementPages();
-                getVehicles();
+                return;
             }
             var content = document.getElementById('vehicle-profile');
             content.innerHTML = '';
@@ -79,31 +55,11 @@ function getVehicles(username) {
 
 function getVehicleDetails(id) {
     // this should be in config file
-    const webServiceUrl = 'http://localhost:8727/MyVehicleProfileDetails';
+    const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfileDetails';
 
     const car = JSON.parse(sessionStorage.getItem(id));
 
-    const userAccount = {
-        "userId": car.owner_UID,
-        "userName": "123",
-        "salt": 0,
-        "userHash": "string"
-    }
-    
-    const data = {
-        "vehicleProfile": car,
-        "accountUser": userAccount,
-    };
-
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json', // Specify content type as JSON
-        },
-        body: JSON.stringify(data)
-    };
-
-    fetch(webServiceUrl, options)
+    fetchWithTokens(webServiceUrl, 'POST', car)
         .then(response => {
             if (!response.ok) {
                 var content = document.getElementById('vehicle-details');
@@ -125,7 +81,7 @@ function getVehicleDetails(id) {
                 {
                     var content = document.getElementById('vehicle-details');
                     content.innerHTML= `
-                        <h1 id='error-message'>There are no vehcile details available for your vehicle.</h1>
+                        <h1 id='error-message'>There are no vehicle details available for your vehicle. Would you like to add some?</h1>
                     `;
                     content.style.display = "block";
                     document.addEventListener('click', (event) => {
@@ -147,17 +103,16 @@ function getVehicleDetails(id) {
             {
                 var content = document.getElementById('vehicle-details');
                 content.innerHTML= `
-                    <h1 id='vehicle'>${car.name}</h1>
+                    <h1 id='vehicle'>${car.make} ${car.model} ${car.year}</h1>
                     <h2 id='vehicle-description'>${data[0].description}</h2>
                     <ul id='vehicle-detail-list'>
-                        <li>${car.make}</li>
-                        <li>${car.model}</li>
-                        <li>${car.year}</li>
                         <li>${data[0].color}</li>
                         <li>${car.licensePlate}</li>
                         <li>${car.vin}</li>
                     </ul>
                 `;
+                generateModifyButton()
+                generateDeleteButton()
                 content.style.display = "block";
 
                 document.addEventListener('click', (event) => {
@@ -171,4 +126,143 @@ function getVehicleDetails(id) {
         .catch(error => {
             console.log(error);
         })
+}
+
+function generateCreateButton() {
+    var content = document.getElementById('vehicle-profile-creation-button');
+    content.innerHTML = `<button id='create-vehicle-button'>Create Vehicle Profile</button>`;
+
+    const createButton = document.getElementById('create-vehicle-button');
+    createButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        createVehicleProfileView()
+    });
+}
+
+function createVehicleProfileView() {
+    var content = document.getElementById('vehicle-details');
+    content.innerHTML = '';
+    content.style.display = "block";
+
+    var form = document.createElement('form');
+
+    var title = document.createElement('h1');
+    title.textContent = "Create Vehicle";
+    var subtext = document.createElement('p');
+    subtext.textContent = "Click off pop-up to cancel";
+
+    var inputVIN = document.createElement('input');
+    inputVIN.type = 'text';
+    inputVIN.maxLength = 17;
+    inputVIN.id = 'vin';
+    inputVIN.placeholder = 'VIN';
+    var inputLicensePlate = document.createElement('input');
+    inputLicensePlate.type = 'text';
+    inputLicensePlate.maxLength = 8;
+    inputLicensePlate.id = 'licensePlate';
+    inputLicensePlate.placeholder = 'License Plate';
+    var inputMake = document.createElement('input');
+    inputMake.type = 'text';
+    inputMake.id = 'make';
+    inputMake.placeholder = 'Make';
+    var inputModel = document.createElement('input');
+    inputModel.type = 'text';
+    inputModel.id = 'model';
+    inputModel.placeholder = 'Model';
+    var inputYear = document.createElement('input');
+    inputYear.type = 'number';
+    inputYear.min = '1970';
+    inputYear.max = new Date().getFullYear();
+    inputYear.id = 'year';
+    inputYear.placeholder = 'Year';
+    var inputColor = document.createElement('input');
+    inputColor.type = 'text';
+    inputColor.id = 'color';
+    inputColor.placeholder = 'Color';
+    var inputDescription = document.createElement('input');
+    inputDescription.type = 'text';
+    inputDescription.maxLength = 500;
+    inputDescription.id = 'description';
+    inputDescription.placeholder = 'Description';
+    var inputSubmit = document.createElement('input');
+    inputSubmit.type = 'submit';
+    inputSubmit.value = 'Submit';
+    var inputCancel = document.createElement('button');
+    inputCancel.innerText = 'Cancel';
+
+    form.appendChild(title);
+    form.appendChild(subtext);
+    form.appendChild(inputVIN);
+    form.appendChild(inputLicensePlate);
+    form.appendChild(inputMake);
+    form.appendChild(inputModel);
+    form.appendChild(inputYear);
+    form.appendChild(inputColor);
+    form.appendChild(inputDescription);
+    form.appendChild(inputSubmit);
+    form.appendChild(inputCancel);
+    content.appendChild(form);
+
+    document.addEventListener('submit', (event) => {
+        const vehicle = {
+            vin: document.getElementById('vin').value.toUpperCase().trim(),
+            licensePlate: document.getElementById('licensePlate').value.trim(),
+            make: document.getElementById('make').value.trim(),
+            model: document.getElementById('model').value.trim(),
+            year: parseInt(document.getElementById('year').value),
+        };
+        const details = {
+            vin: document.getElementById('vin').value.toUpperCase().trim(),
+            color: document.getElementById('color').value.trim(),
+            description: document.getElementById('description').value.trim()
+        };
+        const data = {
+            vehicleProfile: vehicle,
+            vehicleDetails: details
+        };
+        postCreateVehicleProfileRequest(data);
+
+        event.stopImmediatePropagation();
+        
+
+        var content = document.getElementById('vehicle-details');
+        content.innerHTML = '';
+        content.style.display = "none";
+    });
+    
+    document.addEventListener('click', (event) => {
+        if (!content.contains(event.target)) {
+            content.innerHTML = '';
+            content.style.display = "none";
+        }
+    })
+}
+
+function postCreateVehicleProfileRequest(vehicle) {
+    const webServiceUrl = 'http://localhost:8727/VehicleProfileCUD/CreateVehicleProfile';
+    fetchWithTokens(webServiceUrl, 'POST', vehicle)
+        .then(response => {
+            if (!response.ok) {
+                console.log(response.statusText);
+                console.log('error');
+                return;
+            }
+            else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            VehicleProfileView()
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
+
+function generateModifyButton() {
+
+}
+
+function generateDeleteButton() {
+
 }

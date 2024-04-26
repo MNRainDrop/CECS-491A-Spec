@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var refreshPermissionsNav = document.getElementById("refresh-permissions");
     refreshPermissionsNav === null || refreshPermissionsNav === void 0 ? void 0 : refreshPermissionsNav.addEventListener("click", refreshUserTokens);
     var vehicleProfileNav = document.getElementById("vehicle-profile-view");
-    vehicleProfileNav.addEventListener("click", function (doAThing) { alert("beep boop"); });
+    vehicleProfileNav.addEventListener("click", generateVehicleProfileView);
     var rentalFleetNav = document.getElementById("rental-fleet-view");
     rentalFleetNav.addEventListener("click", generateRentalDefaultView);
     var carHealthRatingNav = document.getElementById("car-health-rating-view");
@@ -65,6 +65,32 @@ function generateCarHealthRatingDefaultView()
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
             generateVehicleProfileRetrieval();
+        }
+        else {
+            alert("Permission to view denied");
+        }
+    }).catch(function (error) {
+        permissionGranted = false;
+        alert(error);
+    })
+}
+;
+
+function generateVehicleProfileView()
+{
+    var permissionGranted;
+    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
+        .then(function (response) {
+        if (response.status == 204) {
+            var dynamicContent = document.querySelector(".dynamic-content");
+            dynamicContent.innerHTML = "";
+            
+            dynamicContent.innerHTML = `<div id='vehicle-profile-creation-button'></div>`
+            dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
+            dynamicContent.innerHTML += `<nav id='pages'></nav>`
+            dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
+            pages(VehicleProfileView);
+            VehicleProfileView();
         }
         else {
             alert("Permission to view denied");
