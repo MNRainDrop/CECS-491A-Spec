@@ -1,4 +1,4 @@
-function VehicleProfileView() {
+function vehicleProfileView() {
     // this should be in config file
     const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
@@ -135,11 +135,38 @@ function generateCreateButton() {
     const createButton = document.getElementById('create-vehicle-button');
     createButton.addEventListener('click', (event) => {
         event.stopPropagation();
-        createVehicleProfileView()
+        generateVehicleForm();
+        
+        var formData = retrieveFromAPI();
+
+        if (formData !== null) {
+            fillInForm(formData);
+        }
+        document.addEventListener('submit', (event) => {
+            const vehicle = {
+                vin: document.getElementById('vin').value.toUpperCase().trim(),
+                licensePlate: document.getElementById('licensePlate').value.trim(),
+                make: document.getElementById('make').value.trim(),
+                model: document.getElementById('model').value.trim(),
+                year: parseInt(document.getElementById('year').value),
+            };
+            const details = {
+                vin: document.getElementById('vin').value.toUpperCase().trim(),
+                color: document.getElementById('color').value.trim(),
+                description: document.getElementById('description').value.trim()
+            };
+            const data = {
+                vehicleProfile: vehicle,
+                vehicleDetails: details
+            };
+            postCreateVehicleProfileRequest(data);
+    
+            event.stopImmediatePropagation();
+        });
     });
 }
 
-function createVehicleProfileView() {
+function generateVehicleForm() {
     var content = document.getElementById('vehicle-details');
     content.innerHTML = '';
     content.style.display = "block";
@@ -148,8 +175,6 @@ function createVehicleProfileView() {
 
     var title = document.createElement('h1');
     title.textContent = "Create Vehicle";
-    var subtext = document.createElement('p');
-    subtext.textContent = "Click off pop-up to cancel";
 
     var inputVIN = document.createElement('input');
     inputVIN.type = 'text';
@@ -187,11 +212,12 @@ function createVehicleProfileView() {
     var inputSubmit = document.createElement('input');
     inputSubmit.type = 'submit';
     inputSubmit.value = 'Submit';
-    var inputCancel = document.createElement('button');
-    inputCancel.innerText = 'Cancel';
+    var inputCancel = document.createElement('input');
+    inputCancel.type = 'button';
+    inputCancel.value = 'Cancel';
+    inputCancel.id = 'cancel';
 
     form.appendChild(title);
-    form.appendChild(subtext);
     form.appendChild(inputVIN);
     form.appendChild(inputLicensePlate);
     form.appendChild(inputMake);
@@ -203,39 +229,35 @@ function createVehicleProfileView() {
     form.appendChild(inputCancel);
     content.appendChild(form);
 
-    document.addEventListener('submit', (event) => {
-        const vehicle = {
-            vin: document.getElementById('vin').value.toUpperCase().trim(),
-            licensePlate: document.getElementById('licensePlate').value.trim(),
-            make: document.getElementById('make').value.trim(),
-            model: document.getElementById('model').value.trim(),
-            year: parseInt(document.getElementById('year').value),
-        };
-        const details = {
-            vin: document.getElementById('vin').value.toUpperCase().trim(),
-            color: document.getElementById('color').value.trim(),
-            description: document.getElementById('description').value.trim()
-        };
-        const data = {
-            vehicleProfile: vehicle,
-            vehicleDetails: details
-        };
-        postCreateVehicleProfileRequest(data);
-
-        event.stopImmediatePropagation();
-        
-
-        var content = document.getElementById('vehicle-details');
-        content.innerHTML = '';
-        content.style.display = "none";
-    });
-    
-    document.addEventListener('click', (event) => {
-        if (!content.contains(event.target)) {
+    var cancel = document.getElementById('cancel');
+    cancel.addEventListener('click', (event) => {
+        if (content.contains(event.target)) {
             content.innerHTML = '';
             content.style.display = "none";
         }
     })
+}
+
+function retrieveFromAPI() {
+
+}
+
+function fillInForm(formData)
+{
+    var vinInput = document.getElementById('vin');
+    vinInput.value = formData.vin;
+    var licensePlateInput = document.getElementById('licensePlate');
+    licensePlateInput.value = formData.licensePlate;
+    var makeInput = document.getElementById('make');
+    makeInput.value = formData.make;
+    var modelInput = document.getElementById('model');
+    modelInput.value = formData.model;
+    var yearInput = document.getElementById('year');
+    yearInput.value = formData.year;
+    var colorInput = document.getElementById('color');
+    colorInput.value = formData.color;
+    var descriptionInput = document.getElementById('description');
+    descriptionInput.value = formData.description;
 }
 
 function postCreateVehicleProfileRequest(vehicle) {
@@ -251,9 +273,9 @@ function postCreateVehicleProfileRequest(vehicle) {
                 return response.json();
             }
         })
-        .then(data => {
-            VehicleProfileView()
-        })
+        .then(
+            vehicleProfileView()
+        )
         .catch(error => {
             console.log(error);
         })

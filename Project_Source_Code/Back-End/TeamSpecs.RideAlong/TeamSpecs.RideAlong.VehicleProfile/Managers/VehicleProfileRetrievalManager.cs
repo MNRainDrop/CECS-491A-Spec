@@ -64,7 +64,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         var timer = new Stopwatch();
 
         timer.Start();
-        response = _vpdRetrieve.retrieveVehicleDetails(vehicleProfile, userAccount);
+        response = _vpdRetrieve.RetrieveVehicleDetails(vehicleProfile, userAccount);
         timer.Stop();
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
@@ -110,7 +110,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         var timer = new Stopwatch();
 
         timer.Start();
-        var response = _vpRetrieve.retrieveVehicleProfilesForUser(userAccount, numOfResults, page);
+        var response = _vpRetrieve.RetrieveVehicleProfilesForUser(userAccount, numOfResults, page);
         timer.Stop();
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)

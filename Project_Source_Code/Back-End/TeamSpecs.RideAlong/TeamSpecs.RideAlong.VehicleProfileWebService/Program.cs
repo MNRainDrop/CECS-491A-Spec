@@ -26,18 +26,16 @@ builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
-builder.Services.AddScoped<IRetrieveVehicleDetailsTarget, SqlDbVehicleTarget>();
-builder.Services.AddScoped<IRetrieveVehiclesTarget, SqlDbVehicleTarget>();
+
+builder.Services.AddScoped<ICRUDVehicleTarget, SqlDbVehicleTarget>();
 builder.Services.AddScoped<IVehicleProfileRetrievalService, VehicleProfileRetrievalService>();
 builder.Services.AddScoped<IVehicleProfileDetailsRetrievalService, VehicleProfileDetailsRetrievalService>();
-builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrievalManager>();
 
-builder.Services.AddScoped<ICreateVehicleTarget, SqlDbVehicleTarget>();
-builder.Services.AddScoped<IModifyVehicleTarget, SqlDbVehicleTarget>();
-builder.Services.AddScoped<IDeleteVehicleTarget, SqlDbVehicleTarget>();
 builder.Services.AddScoped<IVehicleProfileCreationService, VehicleProfileCreationService>();
 builder.Services.AddScoped<IVehicleProfileModificationService, VehicleProfileModificationService>();
 builder.Services.AddScoped<IVehicleProfileDeletionService, VehicleProfileDeletionService>();
+
+builder.Services.AddScoped<IVehicleProfileRetrievalManager, VehicleProfileRetrievalManager>();
 builder.Services.AddScoped<IVehicleProfileCUDManager, VehicleProfileCUDManager>();
 
 var app = builder.Build();

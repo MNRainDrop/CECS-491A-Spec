@@ -96,7 +96,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         try
         {
             timer.Start();
-            response = _vpCreate.createVehicleProfile(vehicle, vehicleDetails, account);
+            response = _vpCreate.CreateVehicleProfile(vehicle, vehicleDetails, account);
             timer.Stop();
         }
         catch (Exception ex)
