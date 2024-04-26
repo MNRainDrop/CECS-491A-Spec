@@ -10,25 +10,94 @@ nav {
     /* Apply hidden style by default */
     display: none;
 }
+nav > li {
+    padding: 0;
+    list-style-type: none;
+    display: inline-flex; /* Use flexbox to arrange items horizontally */
+    justify-content: center; /* Center align items horizontally */
+    font-weight: bold;
+    margin: 0 10px;
+}
 
-    /* Style for list items in the navigation */
-    nav > ul {
-        padding: 0;
-        list-style-type: none;
-        display: flex; /* Use flexbox to arrange items horizontally */
-        justify-content: center; /* Center align items horizontally */
-    }
+nav > p {
+    display: inline-flex;
+    margin: 0 10px;
+    font-weight: bold;
+}
 
-        nav > ul > li {
-            margin: 0 10px; /* Add some spacing between items */
-        }
+#pages > li {
+    font-family: 'Courier New', Courier, monospace;
+}
 
-            /* Hover effect for list items */
-            nav > ul > li:hover {
-                cursor: pointer;
-            }
+/* Hover effect for list items */
+nav > li:hover {
+    cursor: pointer;
+}
 
-    /* Show the navigation when not hidden */
-    nav:not(.hidden) {
-        display: block;
-    }
+/* Show the navigation when not hidden */
+nav:not(.hidden) {
+    display: block;
+}
+
+#login-container {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+#OTP-View {
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.vehicles {
+    width: calc(17*20px);
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 1px;
+    padding: 5px;
+    margin: 5px;
+}
+
+#vehicle-profile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+#vehicle-details {
+    display: none;
+    position: fixed;
+    inset: 0px;
+    max-width: 800px;
+    height: fit-content;
+    margin: auto;
+    border-style: solid;
+    border-color: lightgray;
+    border-width: 1px;
+    background-color: white;
+}
+#vehicle-details > h1, h2 {
+    padding: 10px;
+}
+form {
+    margin: 10px;
+}
+
+form > input {
+    display: block;
+    max-width: 800px;
+    min-width: 200px;
+    padding: 2px;
+    margin: 5px;
+}
+
+.fleet-model {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    margin: 10px;
+}

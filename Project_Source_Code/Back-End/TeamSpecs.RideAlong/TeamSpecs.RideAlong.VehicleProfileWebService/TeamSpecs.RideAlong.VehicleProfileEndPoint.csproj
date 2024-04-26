@@ -12,7 +12,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj" />
   </ItemGroup>
 

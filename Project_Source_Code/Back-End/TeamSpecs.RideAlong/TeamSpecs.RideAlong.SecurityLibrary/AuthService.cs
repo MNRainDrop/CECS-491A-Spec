@@ -120,10 +120,10 @@ public class AuthService : IAuthService
             errorResponse.ErrorMessage = "DB returned a null value";
             return errorResponse;
         }
-        if (value is Dictionary<string, string>)
+        if (value is List<KeyValuePair<string, string>>)
         {
             // Combine user model and claims to create a principal
-            Dictionary<string, string> claims = (Dictionary<string, string>)value;
+            List<KeyValuePair<string, string>> claims = (List<KeyValuePair<string, string>>)value;
             IAppPrincipal principal = new RideAlongPrincipal(model, claims);
             IResponse successResponse = new Response();
             successResponse.ReturnValue = new List<object> { principal };

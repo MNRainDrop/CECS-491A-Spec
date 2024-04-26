@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public interface IVehicleProfileDetailsRetrievalService
 {
-    IResponse retrieveVehicleDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount);
+    IResponse RetrieveVehicleDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount);
 }

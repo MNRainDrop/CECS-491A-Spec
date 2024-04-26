@@ -75,7 +75,7 @@ public class SqlDbUserTarget : IUserTarget
                 valuesSql += "@" + property.Name + ",";
 
                 var value = property.GetValue(userModel);
-                if (value.GetType() == typeof(uint))
+                if (value is not null && value.GetType() == typeof(uint))
                 {
                     parameters.Add(new SqlParameter("@" + property.Name, Convert.ToInt32(value)));
                 }
