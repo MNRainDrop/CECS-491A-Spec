@@ -1,52 +1,37 @@
-// Note, doing the import function breaks the files functionality. I am unsure why this is the case, but I have not found a solution
-//import { fetchWithTokens } from "./FetchWithTokens";
-
-function fetchWithTokens(url, method, body) {
-    var _a;
-    // Fetch the tokens from session storage
-    var idToken = sessionStorage.getItem('IDToken');
-    var accessToken = sessionStorage.getItem('AccessToken');
-    var refreshToken = sessionStorage.getItem('RefreshToken');
-    // Create the headers object with the tokens
-    var headers = {
-        'Authorization': (_a = "Bearer ".concat(idToken)) !== null && _a !== void 0 ? _a : '',
-        'X-Access-Token': accessToken !== null && accessToken !== void 0 ? accessToken : '',
-        'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
-        'Content-Type': 'application/json' // Set the Content-Type header for the request body
-    };
-    return fetch(url, {
-        method: method,
-        headers: headers,
-        body: JSON.stringify(body)
-    });
-}
-;
-
 document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
     //const vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
     var logOutNav = document.getElementById("log-out");
     logOutNav.addEventListener("click", logOut);
+
     var refreshPermissionsNav = document.getElementById("refresh-permissions");
     refreshPermissionsNav === null || refreshPermissionsNav === void 0 ? void 0 : refreshPermissionsNav.addEventListener("click", refreshUserTokens);
+    
     var vehicleProfileNav = document.getElementById("vehicle-profile-view");
     vehicleProfileNav.addEventListener("click", generateVehicleProfileView);
+    
     var rentalFleetNav = document.getElementById("rental-fleet-view");
     rentalFleetNav.addEventListener("click", generateRentalDefaultView);
+    
     var carHealthRatingNav = document.getElementById("car-health-rating-view");
     carHealthRatingNav.addEventListener("click", generateCarHealthRatingDefaultView);
+    
     var vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
-    vehicleMarketPlaceNav.addEventListener("click",generateVehicleMarketplaceDefaultView);
+    vehicleMarketPlaceNav.addEventListener("click", generateVehicleMarketplaceDefaultView);
 });
+
 function generateRentalDefaultView() {
+    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
+    // replace the parameter inside changeCSS() to the path of the css file you need
+    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("permission granted!!!");
             var dynamicContent = document.querySelector(".dynamic-content");
-            dynamicContent.innerHTML = "\n            <div id=\"fleet-button-div\">\n                <button id=\"submit-username\">Submit</button>\n            </div>\n            ";
+            dynamicContent.innerHTML = '<div id="fleet-button-div"><button id="submit-username">Submit</button></div>';
         }
         else {
             alert("Permission to view denied");
@@ -55,10 +40,13 @@ function generateRentalDefaultView() {
         permissionGranted = false;
         alert(error);
     });
-}
-;
+};
+
 function generateCarHealthRatingDefaultView()
 {
+    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
+    // replace the parameter inside changeCSS() to the path of the css file you need
+    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:8082/CarHealthRating/GetAuthStatus', 'POST', '')
         .then(function (response) {
@@ -75,12 +63,13 @@ function generateCarHealthRatingDefaultView()
         permissionGranted = false;
         alert(error);
     })
-}
-;
+};
 
 function generateVehicleProfileView()
 {
-    var permissionGranted;
+    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
+    // replace the parameter inside changeCSS() to the path of the css file you need
+    changeCSS()
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
@@ -91,27 +80,23 @@ function generateVehicleProfileView()
             dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
             dynamicContent.innerHTML += `<nav id='pages'></nav>`
             dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
-            pages(vehicleProfileView);
-            vehicleProfileView();
+            changeCSS("styles/VPstyles.css")
+            pages(createVehicleProfileView);
+            createVehicleProfileView();
         }
         else {
             alert("Permission to view denied");
         }
     }).catch(function (error) {
-        permissionGranted = false;
         alert(error);
     })
-}
-;
-
-function changeCSS(file) {
-    var cssLink = document.getElementById('cssLink');
-    cssLink.href = file; // Change CSS file dynamically according to given relative path
-}
-;
+};
   
 function generateVehicleMarketplaceDefaultView()
 {
+    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
+    // replace the parameter inside changeCSS() to the path of the css file you need
+    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
         .then(function (response) {
@@ -120,6 +105,7 @@ function generateVehicleMarketplaceDefaultView()
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
             changeCSS("styles/VPMstyles.css");
+            pages(displayMarketplace);
             displayMarketplace();
         }
         else {
@@ -129,8 +115,8 @@ function generateVehicleMarketplaceDefaultView()
         permissionGranted = false;
         alert(error);
     })
-}
-;
+};
+
 function logOut() {
     // Remove the tokens from storage
     sessionStorage.removeItem('IDToken');
@@ -144,6 +130,7 @@ function logOut() {
         location.reload();
     }, 5000);
 }
+
 function refreshUserTokens() {
     fetchWithTokens('http://localhost:8080/Auth/refreshTokens', 'POST', '')
         .then(function (response) {
