@@ -46,7 +46,7 @@ public class VehicleProfileRetrieveController : Controller
     }
 
     [HttpPost]
-    [Route("/MyVehicleProfiles")]
+    [Route("MyVehicleProfiles")]
     public IActionResult Post([FromBody]int page)
     {
         IAccountUserModel user;

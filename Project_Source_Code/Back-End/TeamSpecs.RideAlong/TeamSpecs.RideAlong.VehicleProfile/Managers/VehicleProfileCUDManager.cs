@@ -145,9 +145,10 @@ public class VehicleProfileCUDManager : ICreateVehicleProfileManager, IModifyVeh
         {
             throw new ArgumentOutOfRangeException(nameof(vehicle.VIN));
         }
+        // License plate can be null or whitespace if the car is not registered.
         if (string.IsNullOrWhiteSpace(vehicle.LicensePlate))
         {
-            throw new ArgumentNullException(nameof(vehicle.LicensePlate));
+            vehicle.LicensePlate = "";
         }
         if (vehicle.LicensePlate.Length > 8)
         {
