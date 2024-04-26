@@ -24,8 +24,8 @@ function fetchWithTokens(url, method, body) {
 function exrtactData(jsonData) {
     //var data = JSON.parse(jsonData);
     var dynamicContent = document.querySelector(".dynamic-content");
-    var html = "<div>Vehicle Marketplace</div>";
-    html += "<h2 id='Vehicle'>";
+    var temp = "https://example.com";
+    var html = "<div class=container>";
     jsonData.forEach(function(data) {
         // Access values from each object
         var VIN = data.vin;
@@ -33,11 +33,18 @@ function exrtactData(jsonData) {
         var model = data.model;
         
         // Create HTML content with the extracted values
+        html += "<a href=temp>";
+        html += "<div class=vehicle-listings>";
+        html += '<img src=' + "VPM-resource/car.png" + '>'; 
+        html += '<h2> Vehicle' + '</h2>';
         html += '<p>VIN: ' + VIN + '</p>';
         html += '<p>Make: ' + make + '</p>';
         html += '<p>Model: ' + model + '</p>';
-        html += '<hr>'; 
-    });    
+        html += '</div>'; 
+        html += "</a>";
+
+    });   
+    html += "</div>"; 
     dynamicContent.innerHTML = html;
 
    
