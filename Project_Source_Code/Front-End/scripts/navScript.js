@@ -77,9 +77,10 @@ function generateCarHealthRatingDefaultView()
     })
 }
 ;
+
 function changeCSS(file) {
     var cssLink = document.getElementById('cssLink');
-    cssLink.href = 'styles/VPMstyles.css'; // Change CSS file dynamically
+    cssLink.href = file; // Change CSS file dynamically according to given relative path
 }
 ;  
 function generateVehicleMarketplaceDefaultView()
@@ -91,7 +92,7 @@ function generateVehicleMarketplaceDefaultView()
             alert("Permission Granted!");
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
-            changeCSS();
+            changeCSS("styles/VPMstyles.css");
             displayMarketplace();
         }
         else {
