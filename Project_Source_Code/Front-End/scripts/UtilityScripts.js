@@ -11,20 +11,47 @@ function fetchWithTokens(url, method, body) {
         'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
         'Content-Type': 'application/json' // Set the Content-Type header for the request body
     };
-    return fetch(url, {
-        method: method,
-        headers: headers,
-        body: JSON.stringify(body)
-    });
-}
-;
+    if (method === 'GET')
+    {
+        return fetch(url, {
+            method: method,
+            headers: headers
+        });
+    }
+    else {
+        return fetch(url, {
+            method: method,
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+    }
+    
+};
+
+function changeCSS(file) {
+    var head = document.getElementsByTagName('head')[0];
+    if (head.lastChild.id !== 'cssLink')
+    {
+        head.removeChild(head.lastChild);
+    }
+    if (file != null)
+    {
+        var style = document.createElement('link');
+        style.href = file;
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    }
+};
+
 // 
 function incrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content.innerText);
     value += 1;
     content.innerHTML = String(value);
-}
+};
+
 function decrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content.innerText);
@@ -33,7 +60,8 @@ function decrementPages() {
         value = 1;
     }
     content.innerHTML = String(value);
-}
+};
+
 function pages(functionCall) {
     var content = document.getElementById('pages');
     content.innerHTML = `
@@ -46,13 +74,9 @@ function pages(functionCall) {
     next.addEventListener('click', function () {
         incrementPages();
         functionCall()
-        // Not extensible
-        //getVehicles();
     });
     back.addEventListener('click', function () {
         decrementPages();
         functionCall()
-        // Not extensible
-        //getVehicles();
     });
-}
+};

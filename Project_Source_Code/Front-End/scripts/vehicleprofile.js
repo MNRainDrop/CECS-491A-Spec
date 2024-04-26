@@ -1,4 +1,4 @@
-function vehicleProfileView() {
+function createVehicleProfileView() {
     // this should be in config file
     const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
@@ -139,7 +139,7 @@ function generateCreateButton() {
         
         var formData = retrieveFromAPI();
 
-        if (formData !== null) {
+        if (formData != null) {
             fillInForm(formData);
         }
         document.addEventListener('submit', (event) => {
@@ -239,7 +239,8 @@ function generateVehicleForm() {
 }
 
 function retrieveFromAPI() {
-
+    // to be made
+    return null;
 }
 
 function fillInForm(formData)

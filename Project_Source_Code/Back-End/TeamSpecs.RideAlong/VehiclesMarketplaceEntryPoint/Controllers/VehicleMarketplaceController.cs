@@ -29,7 +29,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         public IActionResult GetAuthStatus()
         {
             Dictionary<string, string> requiredClaims = new Dictionary<string, string>();
-            requiredClaims.Add("canView", "Marketplace");
+            requiredClaims.Add("canView", "marketplace");
 
             bool hasPermission;
 

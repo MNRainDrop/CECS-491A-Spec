@@ -1,26 +1,6 @@
 const generateViewButton = document.getElementById("vehicle-marketplace-view");
 //generateViewButton.addEventListener("click", generateMainView);
 
-function fetchWithTokens(url, method, body) {
-    var _a;
-    // Fetch the tokens from session storage
-    var idToken = sessionStorage.getItem('IDToken');
-    var accessToken = sessionStorage.getItem('AccessToken');
-    var refreshToken = sessionStorage.getItem('RefreshToken');
-    // Create the headers object with the tokens
-    var headers = {
-        'Authorization': (_a = "Bearer ".concat(idToken)) !== null && _a !== void 0 ? _a : '',
-        'X-Access-Token': accessToken !== null && accessToken !== void 0 ? accessToken : '',
-        'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
-        'Content-Type': 'application/json' // Set the Content-Type header for the request body
-    };
-    return fetch(url, {
-        method: method,
-        headers: headers,
-        //body: JSON.stringify(body)
-    });
-}
-
 function exrtactData(jsonData) {
     //var data = JSON.parse(jsonData);
     var dynamicContent = document.querySelector(".dynamic-content");
