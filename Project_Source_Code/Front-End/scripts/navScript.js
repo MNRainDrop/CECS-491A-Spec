@@ -22,14 +22,13 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function generateRentalDefaultView() {
-    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
-    // replace the parameter inside changeCSS() to the path of the css file you need
-    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("permission granted!!!");
+            // replace the parameter inside changeCSS() to the path of the css file you need
+            changeCSS()
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = '<div id="fleet-button-div"><button id="submit-username">Submit</button></div>';
         }
@@ -44,14 +43,13 @@ function generateRentalDefaultView() {
 
 function generateCarHealthRatingDefaultView()
 {
-    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
-    // replace the parameter inside changeCSS() to the path of the css file you need
-    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:8082/CarHealthRating/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("Permission Granted!");
+            // replace the parameter inside changeCSS() to the path of the css file you need
+            changeCSS()
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
             generateVehicleProfileRetrieval();
@@ -67,9 +65,6 @@ function generateCarHealthRatingDefaultView()
 
 function generateVehicleProfileView()
 {
-    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
-    // replace the parameter inside changeCSS() to the path of the css file you need
-    changeCSS()
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
@@ -80,6 +75,7 @@ function generateVehicleProfileView()
             dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
             dynamicContent.innerHTML += `<nav id='pages'></nav>`
             dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
+            // replace the parameter inside changeCSS() to the path of the css file you need
             changeCSS("styles/VPstyles.css")
             pages(createVehicleProfileView);
             createVehicleProfileView();
@@ -94,9 +90,6 @@ function generateVehicleProfileView()
   
 function generateVehicleMarketplaceDefaultView()
 {
-    // keep this here to remove css that is not the base css. copy this in your successful post request to change css. 
-    // replace the parameter inside changeCSS() to the path of the css file you need
-    changeCSS()
     var permissionGranted;
     fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
         .then(function (response) {
@@ -104,8 +97,8 @@ function generateVehicleMarketplaceDefaultView()
             alert("Permission Granted!");
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
+            // replace the parameter inside changeCSS() to the path of the css file you need
             changeCSS("styles/VPMstyles.css");
-            pages(displayMarketplace);
             displayMarketplace();
         }
         else {
