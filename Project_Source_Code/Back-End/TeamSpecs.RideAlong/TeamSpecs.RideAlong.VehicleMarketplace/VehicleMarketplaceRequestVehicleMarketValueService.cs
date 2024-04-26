@@ -10,11 +10,11 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
     public  class VehicleMarketplaceRequestVehicleMarketValueService
     {
 
-        private SqlDbMarketplaceTarget _target;
+        private IMarketplaceTarget _target;
 
-        public VehicleMarketplaceRequestVehicleMarketValueService(SqlDbMarketplaceTarget target)
+        public VehicleMarketplaceRequestVehicleMarketValueService(IMarketplaceTarget target)
         {
-            _target = target;
+            _target = target; 
         }
     }
 }

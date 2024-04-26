@@ -12,9 +12,9 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace;
 
 public class VehiceMarketplacePostCreationService: IVehiceMarketplacePostCreationService
 {
-    private SqlDbMarketplaceTarget _target;
+    private IMarketplaceTarget _target;
 
-    public VehiceMarketplacePostCreationService(SqlDbMarketplaceTarget target)
+    public VehiceMarketplacePostCreationService(IMarketplaceTarget target)
     {
         _target = target;
     }
