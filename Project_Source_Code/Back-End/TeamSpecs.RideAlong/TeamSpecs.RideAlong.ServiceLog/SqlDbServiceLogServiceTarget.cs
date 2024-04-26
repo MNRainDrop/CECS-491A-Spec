@@ -24,52 +24,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
             _dao = dao;
         }
 
-        public IResponse GenerateCreateServiceLogSql (IServiceLogModel serviceLog)
-        {
-            #region Variables
-            IResponse response = new Response();
-            var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-            #endregion
-
-            #region Building Sql Command
-            // Pass reference of servicelog to sql build function
-            var serviceLogSql = CreateServiceLogSqlCommand(serviceLog);
-
-            if (serviceLogSql.HasError != false)
-            {
-                if (serviceLogSql.ReturnValue is not null)
-                {
-                    sqlCommands.Add((KeyValuePair<string, HashSet<SqlParameter>?>)serviceLogSql.ReturnValue.First());
-                }
-            }
-            else
-            {
-                return serviceLogSql;
-            }
-
-            #endregion
-
-            #region Executing Write to DB
-            // DAO Executes the command
-            try
-            {
-                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
-                response.ReturnValue = new List<object>() { daoValue };
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Database execution failed";
-                return response;
-            }
-
-            #endregion
-
-            response.HasError = false;
-            return response;
-        }
-
-        private IResponse CreateServiceLogSqlCommand (IServiceLogModel serviceLog) 
+        private IResponse CreateServiceLogSqlCommand(IServiceLogModel serviceLog)
         {
             #region Varaibles 
             var commandSql = "INSERT INTO ";
@@ -125,56 +80,14 @@ namespace TeamSpecs.RideAlong.ServiceLog
             return response;
         }
 
-        public IResponse GenerateModifyServiceLogSql(IServiceLogModel serviceLog)
+        private SqlCommand CreateModifyServiceLogSqlCommand(IServiceLogService serviceLog)
         {
             throw new NotImplementedException();
         }
 
-        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogIdentifier)
+        private SqlCommand CreateDeleteServiceLogSql()
         {
-            #region Variables
-            IResponse response = new Response();
-            #endregion
-
             throw new NotImplementedException();
-        }
-
-        public IResponse GenerateRetrieveServiceLogSql(IPaginationModel page, string vin)
-        {
-            #region Variables
-            IResponse response = new Response();
-            SqlCommand command = new SqlCommand();
-            #endregion
-
-            #region SqlCommand Creation 
-            try
-            {
-                command = CreateRetrieveServiceLogSqlCommand(page, vin);
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Could not generate Service Log retrieval Sql.";
-                return response;
-            }
-
-            #endregion
-
-            #region DAO execution 
-            try
-            {
-                response = _dao.ExecuteReadOnly(command);
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Unable to retrieve Service Logs";
-                return response;
-            }
-            #endregion
-
-            response.HasError = false;
-            return response;
         }
 
         private SqlCommand CreateRetrieveServiceLogSqlCommand(IPaginationModel page, string vin)
@@ -245,7 +158,110 @@ namespace TeamSpecs.RideAlong.ServiceLog
             return command;
         }
 
-        public  IResponse GenerateCreateMantainenceReminderSql()
+        private SqlCommand CreateMantainenceReminderSql()
+        {
+            // subject to change
+            throw new NotImplementedException();
+        }
+
+        public IResponse GenerateCreateServiceLogSql (IServiceLogModel serviceLog)
+        {
+            #region Variables
+            IResponse response = new Response();
+            var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+            #endregion
+
+            #region Building Sql Command
+            // Pass reference of servicelog to sql build function
+            var serviceLogSql = CreateServiceLogSqlCommand(serviceLog);
+
+            if (serviceLogSql.HasError != false)
+            {
+                if (serviceLogSql.ReturnValue is not null)
+                {
+                    sqlCommands.Add((KeyValuePair<string, HashSet<SqlParameter>?>)serviceLogSql.ReturnValue.First());
+                }
+            }
+            else
+            {
+                return serviceLogSql;
+            }
+
+            #endregion
+
+            #region Executing Write to DB
+            // DAO Executes the command
+            try
+            {
+                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+                response.ReturnValue = new List<object>() { daoValue };
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Database execution failed";
+                return response;
+            }
+
+            #endregion
+
+            response.HasError = false;
+            return response;
+        }
+
+        public IResponse GenerateModifyServiceLogSql(IServiceLogModel serviceLog)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogIdentifier)
+        {
+            #region Variables
+            IResponse response = new Response();
+            #endregion
+
+            throw new NotImplementedException();
+        }
+
+        public IResponse GenerateRetrieveServiceLogSql(IPaginationModel page, string vin)
+        {
+            #region Variables
+            IResponse response = new Response();
+            SqlCommand command = new SqlCommand();
+            #endregion
+
+            #region SqlCommand Creation 
+            try
+            {
+                command = CreateRetrieveServiceLogSqlCommand(page, vin);
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Could not generate Service Log retrieval Sql.";
+                return response;
+            }
+
+            #endregion
+
+            #region DAO execution 
+            try
+            {
+                response = _dao.ExecuteReadOnly(command);
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Unable to retrieve Service Logs";
+                return response;
+            }
+            #endregion
+
+            response.HasError = false;
+            return response;
+        }
+
+        public IResponse GenerateCreateMantainenceReminderSql()
         {
             #region Variables
             IResponse response = new Response();
