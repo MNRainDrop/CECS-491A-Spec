@@ -11,7 +11,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileModificationShould
 {
     private static readonly IGenericDAO dao = new SqlServerDAO();
-    private static readonly IModifyVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+    private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);

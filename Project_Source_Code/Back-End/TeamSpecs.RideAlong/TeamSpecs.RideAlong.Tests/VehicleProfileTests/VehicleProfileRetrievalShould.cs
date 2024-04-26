@@ -11,7 +11,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileRetrievalShould
 {
     private static readonly IGenericDAO dao = new SqlServerDAO();
-    private static readonly IRetrieveVehiclesTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+    private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
@@ -78,7 +78,7 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page);
+            response = retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, page);
             timer.Stop();
         }
         finally
@@ -166,7 +166,7 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            response = retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page);
+            response = retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, page);
             timer.Stop();
         }
         finally
@@ -259,7 +259,7 @@ public class VehicleProfileRetrievalShould
         try
         {
             timer.Start();
-            responseList.Add(retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, 1));
+            responseList.Add(retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, 1));
             timer.Stop();
         }
         finally
@@ -372,7 +372,7 @@ public class VehicleProfileRetrievalShould
             timer.Start();
             for(var i = 1; i <= 10; i++)
             {
-                responseList.Add(retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, i));
+                responseList.Add(retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, i));
             }
             
             timer.Stop();
@@ -475,7 +475,7 @@ public class VehicleProfileRetrievalShould
         try
         {
             Assert.ThrowsAny<Exception>( 
-                () => retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page)
+                () => retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, page)
             );
         }
         catch
@@ -553,7 +553,7 @@ public class VehicleProfileRetrievalShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => retrievalService.retrieveVehicleProfilesForUser(user, numOfResults, page)
+                () => retrievalService.RetrieveVehicleProfilesForUser(user, numOfResults, page)
             );
         }
         catch

@@ -12,7 +12,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileCreationShould
 {
     private static readonly IGenericDAO dao = new SqlServerDAO();
-    private static readonly ICreateVehicleTarget createVehicleTarget = new SqlDbVehicleTarget(dao);
+    private static readonly ICRUDVehicleTarget createVehicleTarget = new SqlDbVehicleTarget(dao);
     private static readonly IRetrieveVehiclesTarget retrieveVehicleTarget = new SqlDbVehicleTarget(dao);
     private static readonly IRetrieveVehicleDetailsTarget retrieveDetailsTarget = new SqlDbVehicleTarget(dao);
 
@@ -63,16 +63,16 @@ public class VehicleProfileCreationShould
         try
         {
             timer.Start();
-            response = creationService.createVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user);
+            response = creationService.CreateVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user);
             timer.Stop();
         }
         finally
         {
-            vehicleInDB = retrieveVehicleTarget.readVehicleProfileSql(new List<object>()
+            vehicleInDB = retrieveVehicleTarget.ReadVehicleProfileSql(new List<object>()
             {
                 new KeyValuePair<string, long>("Owner_UID", user.UserId)
             }, 10, 1);
-            detailsInDB = retrieveDetailsTarget.readVehicleProfileDetailsSql(new List<object>()
+            detailsInDB = retrieveDetailsTarget.ReadVehicleProfileDetailsSql(new List<object>()
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
@@ -134,7 +134,7 @@ public class VehicleProfileCreationShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => creationService.createVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
+                () => creationService.CreateVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
             );
         }
         catch
@@ -143,11 +143,11 @@ public class VehicleProfileCreationShould
         }
         finally
         {
-            vehicleInDB = retrieveVehicleTarget.readVehicleProfileSql(new List<object>()
+            vehicleInDB = retrieveVehicleTarget.ReadVehicleProfileSql(new List<object>()
             {
                 new KeyValuePair<string, long>("Owner_UID", user.UserId)
             }, 10, 1);
-            detailsInDB = retrieveDetailsTarget.readVehicleProfileDetailsSql(new List<object>()
+            detailsInDB = retrieveDetailsTarget.ReadVehicleProfileDetailsSql(new List<object>()
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
@@ -204,7 +204,7 @@ public class VehicleProfileCreationShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => creationService.createVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
+                () => creationService.CreateVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
             );
         }
         catch
@@ -213,11 +213,11 @@ public class VehicleProfileCreationShould
         }
         finally
         {
-            vehicleInDB = retrieveVehicleTarget.readVehicleProfileSql(new List<object>()
+            vehicleInDB = retrieveVehicleTarget.ReadVehicleProfileSql(new List<object>()
             {
                 new KeyValuePair<string, long>("Owner_UID", user.UserId)
             }, 10, 1);
-            detailsInDB = retrieveDetailsTarget.readVehicleProfileDetailsSql(new List<object>()
+            detailsInDB = retrieveDetailsTarget.ReadVehicleProfileDetailsSql(new List<object>()
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
@@ -274,7 +274,7 @@ public class VehicleProfileCreationShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => creationService.createVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
+                () => creationService.CreateVehicleProfile(vehicle.VIN, vehicle.LicensePlate, vehicle.Make, vehicle.Model, vehicle.Year, vehicledetails.Color, vehicledetails.Description, user)
             );
         }
         catch
@@ -283,11 +283,11 @@ public class VehicleProfileCreationShould
         }
         finally
         {
-            vehicleInDB = retrieveVehicleTarget.readVehicleProfileSql(new List<object>()
+            vehicleInDB = retrieveVehicleTarget.ReadVehicleProfileSql(new List<object>()
             {
                 new KeyValuePair<string, long>("Owner_UID", user.UserId)
             }, 10, 1);
-            detailsInDB = retrieveDetailsTarget.readVehicleProfileDetailsSql(new List<object>()
+            detailsInDB = retrieveDetailsTarget.ReadVehicleProfileDetailsSql(new List<object>()
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });

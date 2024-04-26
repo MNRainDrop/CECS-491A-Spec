@@ -11,7 +11,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileDeletionShould
 {
     private static readonly IGenericDAO dao = new SqlServerDAO();
-    private static readonly IDeleteVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
+    private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
@@ -78,7 +78,7 @@ public class VehicleProfileDeletionShould
         try
         {
             timer.Start();
-            response = deletionService.deleteVehicleProfile(vehicle, user);
+            response = deletionService.DeleteVehicleProfile(vehicle, user);
             timer.Stop();
         }
         finally
@@ -162,7 +162,7 @@ public class VehicleProfileDeletionShould
         try
         {
             Assert.ThrowsAny<Exception>(
-                () => deletionService.deleteVehicleProfile(vehicleToTest, user)
+                () => deletionService.DeleteVehicleProfile(vehicleToTest, user)
             );
         }
         catch
@@ -230,7 +230,7 @@ public class VehicleProfileDeletionShould
         try
         {
             timer.Start();
-            response = deletionService.deleteVehicleProfile(vehicle, user);
+            response = deletionService.DeleteVehicleProfile(vehicle, user);
             timer.Stop();
         }
         finally
