@@ -48,6 +48,7 @@
     <ProjectReference Include="..\TeamSpecs.RideAlong.CarHealthRatingLibrary\TeamSpecs.RideAlong.CarHealthRatingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.CarNewsCenter\TeamSpecs.RideAlong.CarNewsCenter.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
