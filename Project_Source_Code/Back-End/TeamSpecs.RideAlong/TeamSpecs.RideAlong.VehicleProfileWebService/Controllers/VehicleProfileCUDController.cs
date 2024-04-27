@@ -105,7 +105,7 @@ public class VehicleProfileCUDController : Controller
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
         {
             { "canView", "vehicleProfile" },
-            { "canModifyVehicle", "true"}
+            { "canModifyVehicle", requestData.vehicleProfile.VIN.ToString() }
         };
         bool hasPermission;
         try
@@ -154,6 +154,85 @@ public class VehicleProfileCUDController : Controller
         try
         {
             var result = _vpCUD.ModifyVehicleProfile(vehicle, details, user);
+            if (result is not null)
+            {
+                if (result.HasError)
+                {
+                    return BadRequest(result.ErrorMessage);
+                }
+                else
+                {
+                    return Ok(result.ReturnValue);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost]
+    [Route("DeleteVehicleProfile")]
+    public IActionResult PostDeleteVehicleProfile([FromBody] RequestData requestData)
+    {
+        #region Check for valid claims
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+        {
+            { "canView", "vehicleProfile" },
+            { "canDeleteVehicle", requestData.vehicleProfile.VIN.ToString() }
+        };
+        bool hasPermission;
+        try
+        {
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        #endregion
+
+        #region Get user model
+        IAccountUserModel user;
+        try
+        {
+            var temp = _securityManager.JwtToPrincipal().userIdentity;
+            if (!string.IsNullOrWhiteSpace(temp.userName))
+            {
+                user = new AccountUserModel(temp.userName)
+                {
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
+                    UserHash = temp.userHash,
+                    UserId = temp.UID
+                };
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        #endregion
+
+        var vehicle = new VehicleProfileModel(requestData.vehicleProfile.VIN, user.UserId, requestData.vehicleProfile.LicensePlate, requestData.vehicleProfile.Make, requestData.vehicleProfile.Model, requestData.vehicleProfile.Year);
+        var details = new VehicleDetailsModel(requestData.vehicleDetails.VIN, requestData.vehicleDetails.Color, requestData.vehicleDetails.Description);
+
+        try
+        {
+            var result = _vpCUD.DeleteVehicleProfile(vehicle, user);
             if (result is not null)
             {
                 if (result.HasError)

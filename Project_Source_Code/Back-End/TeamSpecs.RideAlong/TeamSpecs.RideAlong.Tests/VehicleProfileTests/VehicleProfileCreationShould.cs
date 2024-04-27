@@ -76,7 +76,7 @@ public class VehicleProfileCreationShould
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
-            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'; DELETE FROM VehicleProfile WHERE VIN LIKE '%{vehicle.VIN}%'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -139,6 +139,11 @@ public class VehicleProfileCreationShould
         }
         catch
         {
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'; DELETE FROM VehicleProfile WHERE VIN = '{vehicle.VIN}'; ";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
+            });
             Assert.Fail("Should throw error");
         }
         finally
@@ -221,7 +226,7 @@ public class VehicleProfileCreationShould
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
-            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'; DELETE FROM VehicleProfile WHERE VIN LIKE '%{vehicle.VIN}%'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
@@ -291,7 +296,7 @@ public class VehicleProfileCreationShould
             {
                 new KeyValuePair<string, string>("VIN", vehicle.VIN)
             });
-            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'; DELETE FROM VehicleProfile WHERE VIN LIKE '%{vehicle.VIN}%'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)

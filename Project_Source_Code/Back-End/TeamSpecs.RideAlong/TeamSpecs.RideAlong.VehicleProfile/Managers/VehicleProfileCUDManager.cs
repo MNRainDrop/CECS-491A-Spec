@@ -218,30 +218,118 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
         {
-            _logService.CreateLogAsync("Warning", "Server", "Creating Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Warning", "Server", "Modifying Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
         }
         if (timer.Elapsed.TotalSeconds > 10)
         {
-            _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Creation Service. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Modification Service. " + response.ErrorMessage, account.UserHash);
         }
         #endregion
 
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not create vehicle profile. " + response.ErrorMessage;
+            response.ErrorMessage = "Could not modify vehicle profile. " + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful retrieval of vehicle profile details. " + response.ErrorMessage;
+            response.ErrorMessage = "Successful modification of vehicle profile and details. " + response.ErrorMessage;
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, account.UserHash);
         #endregion
         return response;
     }
 
-    public IResponse DeleteVehicleProfile()
+    public IResponse DeleteVehicleProfile(IVehicleProfileModel vehicle, IAccountUserModel account)
     {
-        throw new NotImplementedException();
+        #region Validate Parameters
+        // Vehicle Profile
+        if (vehicle is null)
+        {
+            throw new ArgumentNullException(nameof(vehicle));
+        }
+        if (string.IsNullOrWhiteSpace(vehicle.VIN))
+        {
+            throw new ArgumentNullException(nameof(vehicle.VIN));
+        }
+        if (vehicle.VIN.Length > 17)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vehicle.VIN));
+        }
+        // License plate can be null or whitespace if the car is not registered.
+        if (string.IsNullOrWhiteSpace(vehicle.LicensePlate))
+        {
+            vehicle.LicensePlate = "";
+        }
+        if (vehicle.LicensePlate.Length > 8)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vehicle.LicensePlate));
+        }
+        if (string.IsNullOrEmpty(vehicle.Make))
+        {
+            throw new ArgumentNullException(nameof(vehicle.Make));
+        }
+        if (string.IsNullOrEmpty(vehicle.Model))
+        {
+            throw new ArgumentNullException(nameof(vehicle.Model));
+        }
+        if (vehicle.Year < 1990)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vehicle.Year));
+        }
+
+        // User Account
+        if (account is null)
+        {
+            throw new ArgumentNullException(nameof(account));
+        }
+        if (string.IsNullOrWhiteSpace(account.UserName))
+        {
+            throw new ArgumentNullException(nameof(account.UserName));
+        }
+        if (string.IsNullOrWhiteSpace(account.UserHash))
+        {
+            throw new ArgumentNullException(nameof(account.UserHash));
+        }
+        #endregion
+
+        #region Call Services
+        IResponse response = new Response();
+        var timer = new Stopwatch();
+
+        try
+        {
+            timer.Start();
+            response = _vpDelete.DeleteVehicleProfile(vehicle, account);
+            timer.Stop();
+        }
+        catch (Exception ex)
+        {
+            response.ErrorMessage += ex.Message;
+            response.HasError = true;
+        }
+
+        if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
+        {
+            _logService.CreateLogAsync("Warning", "Server", "Deleting Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
+        }
+        if (timer.Elapsed.TotalSeconds > 10)
+        {
+            _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Deletion Service. " + response.ErrorMessage, account.UserHash);
+        }
+        #endregion
+
+        #region Log the action to the database
+        if (response.HasError)
+        {
+            response.ErrorMessage = "Could not delete vehicle profile. " + response.ErrorMessage;
+        }
+        else
+        {
+            response.ErrorMessage = "Successful deletion vehicle profile. " + response.ErrorMessage;
+        }
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, account.UserHash);
+        #endregion
+        return response;
     }
 }
