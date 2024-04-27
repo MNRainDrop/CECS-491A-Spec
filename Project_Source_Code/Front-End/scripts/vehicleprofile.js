@@ -2,6 +2,10 @@ function createVehicleProfileView() {
     // this should be in config file
     const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
+    var popup = document.createElement('div');
+    popup.id = 'vehicle-details';
+
+    document.getElementsByClassName('dynamic-content')[0].appendChild(popup);
     // Insert Vehicle Creation Button Here
     // Make new function
     generateCreateButton()
@@ -70,6 +74,7 @@ function getVehicleDetails(id) {
                 content.style.display = "block";
                 document.addEventListener('click', (event) => {
                     if (!content.contains(event.target)) {
+                        content.innerHTML = '';
                         content.style.display = "none";
                     }
                 })
@@ -86,7 +91,8 @@ function getVehicleDetails(id) {
                     content.style.display = "block";
                     document.addEventListener('click', (event) => {
                         if (!content.contains(event.target)) {
-                            content.style.display = "none";
+                            content.innerHTML = '';
+                        content.style.display = "none";
                         }
                     })
                     return null;
@@ -123,6 +129,7 @@ function getVehicleDetails(id) {
 
                 document.addEventListener('click', (event) => {
                     if (!content.contains(event.target)) {
+                        content.innerHTML = '';
                         content.style.display = "none";
                     }
                 })
@@ -135,20 +142,42 @@ function getVehicleDetails(id) {
 }
 
 function generateCreateButton() {
-    var content = document.getElementById('vehicle-profile-creation-button');
-    content.innerHTML = `<button id='create-vehicle-button'>Create Vehicle Profile</button>`;
+    var createButton = document.createElement('input');
+    createButton.type = 'button';
+    createButton.id = 'create-vehicle-button';
+    createButton.value = 'Create Vehicle';
 
-    const createButton = document.getElementById('create-vehicle-button');
     createButton.addEventListener('click', (event) => {
         event.stopPropagation();
-        generateVehicleForm();
         
-        var formData = retrieveFromAPI();
+        var content = document.getElementById('vehicle-details');
+        content.innerHTML = '';
+        content.style.display = "block";
+        var title = document.createElement('h1');
+        title.textContent = "Create Vehicle";
+        content.appendChild(title);
 
-        if (formData != null) {
-            fillInForm(formData);
-        }
-        document.addEventListener('submit', (event) => {
+        var message = document.createElement('p');
+        message.textContent = "Click the button to automatically retrieve your Make Model and Year";
+        content.appendChild(message);
+
+        generateVehicleForm();
+        var form = document.getElementById('form');
+        var getMMYButton = document.createElement('input');
+        getMMYButton.type = 'button'
+        getMMYButton.id = 'get-MMY-button';
+        getMMYButton.value = 'Get Make Model Year';
+        
+        form.insertBefore(getMMYButton, form.children[1]);
+
+        getMMYButton = document.getElementById('get-MMY-button');
+        getMMYButton.addEventListener('click', async () => {
+            var vinInput = document.getElementById('vin');
+            var data = await retrieveMMYFromAPI(vinInput.value);
+            fillInForm(data);
+        });
+
+        document.getElementById('submit').addEventListener('click', (event) => {
             const vehicle = {
                 vin: document.getElementById('vin').value.toUpperCase().trim(),
                 licensePlate: document.getElementById('licensePlate').value.trim(),
@@ -170,17 +199,14 @@ function generateCreateButton() {
             event.stopImmediatePropagation();
         });
     });
+    var dynamicContent = document.getElementsByClassName('dynamic-content')[0];
+    dynamicContent.insertBefore(createButton, dynamicContent.children[0]);
 }
 
 function generateVehicleForm() {
     var content = document.getElementById('vehicle-details');
-    content.innerHTML = '';
-    content.style.display = "block";
-
     var form = document.createElement('form');
-
-    var title = document.createElement('h1');
-    title.textContent = "Create Vehicle";
+    form.id = 'form';
 
     var inputVIN = document.createElement('input');
     inputVIN.type = 'text';
@@ -216,14 +242,14 @@ function generateVehicleForm() {
     inputDescription.id = 'description';
     inputDescription.placeholder = 'Description';
     var inputSubmit = document.createElement('input');
-    inputSubmit.type = 'submit';
+    inputSubmit.type = 'button';
     inputSubmit.value = 'Submit';
+    inputSubmit.id = 'submit';
     var inputCancel = document.createElement('input');
     inputCancel.type = 'button';
     inputCancel.value = 'Cancel';
     inputCancel.id = 'cancel';
 
-    form.appendChild(title);
     form.appendChild(inputVIN);
     form.appendChild(inputLicensePlate);
     form.appendChild(inputMake);
@@ -244,27 +270,41 @@ function generateVehicleForm() {
     })
 }
 
-function retrieveFromAPI() {
-    // to be made
-    return null;
+async function retrieveMMYFromAPI(vin) {
+    const webServiceUrl = 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/' + vin + '?format=json'
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json', // Specify content type as JSON
+        },
+    };
+    return await fetch(webServiceUrl, options)
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            const vehicle = {
+                vin: data["Results"][0]['VIN'],
+                make : data["Results"][0]['Make'],
+                model: data["Results"][0]['Model'],
+                year: data["Results"][0]['ModelYear']
+            };
+            return vehicle;
+        })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 function fillInForm(formData)
 {
-    var vinInput = document.getElementById('vin');
-    vinInput.value = formData.vin;
-    var licensePlateInput = document.getElementById('licensePlate');
-    licensePlateInput.value = formData.licensePlate;
-    var makeInput = document.getElementById('make');
-    makeInput.value = formData.make;
-    var modelInput = document.getElementById('model');
-    modelInput.value = formData.model;
-    var yearInput = document.getElementById('year');
-    yearInput.value = formData.year;
-    var colorInput = document.getElementById('color');
-    colorInput.value = formData.color;
-    var descriptionInput = document.getElementById('description');
-    descriptionInput.value = formData.description;
+    for (const property in formData) {
+        if (formData[property] != '')
+        {
+            document.getElementById(`${property}`).value = formData[property];
+        }
+    }
 }
 
 function postCreateVehicleProfileRequest(vehicle) {
@@ -280,9 +320,9 @@ function postCreateVehicleProfileRequest(vehicle) {
                 return response.json();
             }
         })
-        .then(
-            vehicleProfileView()
-        )
+        .then( () => {
+            generateVehicleProfileView()
+        })
         .catch(error => {
             console.log(error);
         })
@@ -298,7 +338,8 @@ function generateModifyButton(content) {
 }
 
 function generateModifyView() {
-
+    generateVehicleForm();
+    fillInForm();
 }
 
 function generateDeleteButton(content) {

@@ -63,14 +63,20 @@ function decrementPages() {
 };
 
 function pages(functionCall) {
-    var content = document.getElementById('pages');
-    content.innerHTML = `
-        <li id='back'><</li>
-        <p id='current-page'>1</p>
-        <li id='next'>></li>
-    `;
-    var next = document.getElementById('next');
-    var back = document.getElementById('back');
+    var dynamicContent = document.getElementsByClassName('dynamic-content')[0];
+    var pages = document.createElement('nav');
+    pages.id = 'pages';
+    
+    var back = document.createElement('li');
+    back.id = 'back';
+    back.innerText = '<';
+    var currentPage = document.createElement('p');
+    currentPage.id = 'current-page';
+    currentPage.innerText = '1';
+    var next = document.createElement('li');
+    next.id = 'next';
+    next.innerText = '>';
+
     next.addEventListener('click', function () {
         incrementPages();
         functionCall()
@@ -79,4 +85,11 @@ function pages(functionCall) {
         decrementPages();
         functionCall()
     });
+
+    pages.appendChild(back);
+    pages.appendChild(currentPage);
+    pages.appendChild(next);
+
+    dynamicContent.appendChild(pages);
+    functionCall();
 };

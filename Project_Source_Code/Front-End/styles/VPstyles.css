@@ -1,10 +1,11 @@
 .vehicles {
     width: calc(17*20px);
     border-style: solid;
-    border-color: lightgray;
+    border-color: #686A6C;
     border-width: 1px;
     padding: 5px;
     margin: 0px 10px 10px 0px; /* top, right, bottom, left */
+    background-color: #FEFEFE;
 }
 
 #vehicle-profile {
@@ -21,7 +22,7 @@
     height: fit-content;
     margin: auto;
     border-style: solid;
-    border-color: lightgray;
+    border-color: #686A6C;
     border-width: 1px;
     background-color: white;
 }
@@ -30,6 +31,8 @@
 }
 form {
     margin: 10px;
+    display: justify;
+    justify-content: center;
 }
 
 form > input {
@@ -38,10 +41,12 @@ form > input {
     min-width: 200px;
     padding: 2px;
     margin: 5px;
+    box-sizing: content-box;
 }
 
-button {
+input {
     margin: 0px 0px 10px 0px; /* top, right, bottom, left */
+    font-size: 15px;
 }
 
 #vehicle-details-buttons {
