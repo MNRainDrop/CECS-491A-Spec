@@ -90,7 +90,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.DonateYourCarLibrary", "TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj", "{1227EA0F-F6D9-4812-9050-BF6DC563188C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarLibrary", "TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj", "{1227EA0F-F6D9-4812-9050-BF6DC563188C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -174,6 +176,10 @@ Global
 		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

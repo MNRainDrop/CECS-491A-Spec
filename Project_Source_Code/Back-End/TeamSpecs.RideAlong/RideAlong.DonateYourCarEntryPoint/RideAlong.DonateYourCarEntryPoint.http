@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.DonateYourCarEntryPoint_HostAddress = http://localhost:5212
+
+GET {{TeamSpecs.RideAlong.DonateYourCarEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
