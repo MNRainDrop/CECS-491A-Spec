@@ -5,7 +5,7 @@ function exrtactData(jsonData) {
     //var data = JSON.parse(jsonData);
     var dynamicContent = document.querySelector(".dynamic-content");
     var temp = "https://example.com";
-    var html = "<div class=container>";
+    var html = "<div class=VPMcontainer>";
     jsonData.forEach(function(data) {
         // Access values from each object
         var VIN = data.vin;

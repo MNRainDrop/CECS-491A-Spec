@@ -20,10 +20,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
 
             //Parameters 
-            string VIN = "VIN2";
+            /* string VIN = "VIN2";
             int view = 1;
             string description = "This is test case 1";
-            int status = 1;
+            int status = 1;*/
 
             //Service 
             VehicleMarketplacePostRetrievalService View = new VehicleMarketplacePostRetrievalService(_target);
