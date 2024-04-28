@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -71,7 +72,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
             catch
             {
                 response.HasError = true;
-                response.ErrorMessage = "Could not generate Service Log Sql";
+                response.ErrorMessage = "Could not generate Service Log creation Sql";
                 return response;
             }
 
@@ -81,14 +82,102 @@ namespace TeamSpecs.RideAlong.ServiceLog
             return response;
         }
 
-        private SqlCommand CreateModifyServiceLogSqlCommand(IServiceLogService serviceLog)
+        private IResponse CreateModifyServiceLogSqlCommand(IServiceLogService serviceLog)
         {
-            throw new NotImplementedException();
+            #region Varaibles 
+            var commandSql = "INSERT INTO ";
+            var tableSql = "ServiceLog ";
+            var rowsSql = "(";
+            var valuesSql = "VALUES (";
+            string query = "" +
+                "UPDATE ServiceLog" +
+                "SET Thing = thing";
+
+            var response = new Response() { ReturnValue = new List<object>() };
+            #endregion
+
+            #region Building Sql Command based on ServiceLog Obj. 
+
+            try
+            {
+                // create new hash set of SqlParameters
+                var parameters = new HashSet<SqlParameter>();
+
+                // convert VehicleProfile model to sql statement
+                var configType = typeof(IServiceLogModel);
+                var properties = configType.GetProperties();
+
+                foreach (var property in properties)
+                {
+                    if (property.GetValue(serviceLog) != null)
+                    {
+                        rowsSql += property.Name + ",";
+                        valuesSql += "@" + property.Name + ",";
+
+                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(serviceLog)));
+                    }
+
+                }
+                rowsSql = rowsSql.Remove(rowsSql.Length - 1, 1);
+                valuesSql = valuesSql.Remove(valuesSql.Length - 1, 1);
+                rowsSql += ") ";
+                valuesSql += ");";
+
+                var sqlString = commandSql + tableSql + rowsSql + valuesSql;
+
+                // Add string and hash set to list that the dao will execute
+                response.ReturnValue.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Could not generate Service Log creation Sql";
+                return response;
+            }
+
+            #endregion
+
+            response.HasError = false;
+            return response;
         }
 
-        private SqlCommand CreateDeleteServiceLogSql()
+        private IResponse CreateDeleteServiceLogSql(string vin, int serviceLogPosition)
         {
-            throw new NotImplementedException();
+            #region Sql Command Default Build 
+            string query = @"
+            DELETE FROM ServiceLog
+            WHERE ServiceLogID IN (
+                SELECT ServiceLogID
+                FROM (
+                    SELECT ServiceLogID,
+                           ROW_NUMBER() OVER (ORDER BY [Date] DESC) AS RowNumber
+                    FROM ServiceLog
+                    WHERE VIN = @Vin
+                ) AS OrderedServiceLogs
+                WHERE RowNumber = @Position
+            )";
+            var response = new Response() { ReturnValue = new List<object>() };
+            #endregion
+
+            try
+            {
+                var parameters = new HashSet<SqlParameter>();
+
+                parameters.Add(new SqlParameter("@Vin", vin));
+                parameters.Add(new SqlParameter("@Position", serviceLogPosition));
+
+                response.ReturnValue.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(query, parameters));
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Service Log Deletion Sql generation failed";
+                return response;
+            
+            }
+
+            response.HasError = false;
+            return response;
         }
 
         private SqlCommand CreateRetrieveServiceLogSqlCommand(IPaginationModel page, string vin)
@@ -178,7 +267,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
             // Pass reference of servicelog to sql build function
             var serviceLogSql = CreateServiceLogSqlCommand(serviceLog);
 
-            if (serviceLogSql.HasError != false)
+            if (serviceLogSql.HasError == false)
             {
                 if (serviceLogSql.ReturnValue is not null)
                 {
@@ -217,13 +306,49 @@ namespace TeamSpecs.RideAlong.ServiceLog
             throw new NotImplementedException();
         }
 
-        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogIdentifier)
+        public IResponse GenerateDeleteServiceLogSql(string vin, int serviceLogPostion)
         {
             #region Variables
             IResponse response = new Response();
+            var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
             #endregion
 
-            throw new NotImplementedException();
+            #region Building Sql Command
+            // Pass reference of servicelog to sql build function
+            var serviceLogSql = CreateDeleteServiceLogSql(vin, serviceLogPostion);
+
+            if (serviceLogSql.HasError == false)
+            {
+                if (serviceLogSql.ReturnValue is not null)
+                {
+                    sqlCommands.Add((KeyValuePair<string, HashSet<SqlParameter>?>)serviceLogSql.ReturnValue.First());
+                }
+            }
+            else
+            {
+                return serviceLogSql;
+            }
+
+            #endregion
+
+            #region Executing Write to DB
+            // DAO Executes the command
+            try
+            {
+                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+                response.ReturnValue = new List<object>() { daoValue };
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "Database execution failed";
+                return response;
+            }
+
+            #endregion
+
+            response.HasError = false;
+            return response;
         }
 
         public IResponse GenerateRetrieveServiceLogSql(IPaginationModel page, string vin)
