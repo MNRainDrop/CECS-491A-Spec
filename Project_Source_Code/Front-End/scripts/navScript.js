@@ -94,7 +94,6 @@ function generateVehicleMarketplaceDefaultView()
     fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
         .then(function (response) {
         if (response.status == 204) {
-            alert("Permission Granted!");
             var dynamicContent = document.querySelector(".dynamic-content");
             dynamicContent.innerHTML = "";
             // replace the parameter inside changeCSS() to the path of the css file you need

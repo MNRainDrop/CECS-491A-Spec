@@ -1,9 +1,4 @@
-nav {
-    background-color: red;
-    color: yellow;
-}
-
-.container {
+.VPMcontainer {
     display: flex; /* Use flexbox layout */
   }
 

@@ -8,6 +8,12 @@ namespace TeamSpecs.RideAlong.CarNewsCenter.Managers
         private ICarNewsCenterViewVehicleNewsArticleServices _ViewVehicleNewsArticleServices;
         private ICarNewsCenterNotificationService _NotifiationService;
 
+        public CarNewsCenterManager(ICarNewsCenterViewVehicleNewsArticleServices ViewVehicleNewsArticleServices, ICarNewsCenterNotificationService NotifiationService)
+        {
+            _ViewVehicleNewsArticleServices = ViewVehicleNewsArticleServices;
+            _NotifiationService = NotifiationService;
+        }
+
         public async Task<IResponse> GetNewsForAllVehicles(IAccountUserModel userAccount)
         {
             IResponse response;
