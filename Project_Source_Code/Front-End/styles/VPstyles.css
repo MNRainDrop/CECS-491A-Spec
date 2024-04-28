@@ -43,3 +43,16 @@ form > input {
 button {
     margin: 0px 0px 10px 0px; /* top, right, bottom, left */
 }
+
+#vehicle-details-buttons {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin: 10px; /* top, right, bottom, left */
+}
+
+#vehicle-details-buttons > input {
+    min-width: 100px;
+    width: auto;
+    margin: 5px;
+}

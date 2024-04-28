@@ -101,7 +101,7 @@ function getVehicleDetails(id) {
             }
             if (data.length == 1)
             {
-                var content = document.getElementById('vehicle-details');
+                const content = document.getElementById('vehicle-details');
                 content.innerHTML= `
                     <h1 id='vehicle'>${car.make} ${car.model} ${car.year}</h1>
                     <h2 id='vehicle-description'>${data[0].description}</h2>
@@ -111,8 +111,14 @@ function getVehicleDetails(id) {
                         <li>${car.vin}</li>
                     </ul>
                 `;
-                generateModifyButton()
-                generateDeleteButton()
+                var buttons = document.createElement('div');
+                buttons.id = 'vehicle-details-buttons';
+                content.appendChild(buttons);
+                generateModifyButton(buttons)
+                generateDeleteButton(buttons)
+                generateViewServiceLogButton(buttons)
+                generateUploadToMarketplaceButton(buttons)
+                generateDonationButton(buttons)
                 content.style.display = "block";
 
                 document.addEventListener('click', (event) => {
@@ -282,10 +288,58 @@ function postCreateVehicleProfileRequest(vehicle) {
         })
 }
 
-function generateModifyButton() {
+function generateModifyButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Modify Vehicle';
+
+    button.addEventListener('click', generateModifyView());
+    content.appendChild(button);
+}
+
+function generateModifyView() {
 
 }
 
-function generateDeleteButton() {
+function generateDeleteButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Delete Vehicle';
 
+    button.addEventListener('click', () => {
+        console.log("clicked delete vehicle button")
+    });
+    content.appendChild(button);
+}
+function generateUploadToMarketplaceButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Upload To Marketplace';
+
+    button.addEventListener('click', () => {
+        console.log("clicked marketplace vehicle button")
+    });
+    content.appendChild(button);
+}
+
+function generateViewServiceLogButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'View Service Log';
+
+    button.addEventListener('click', () => {
+        console.log("clicked service log vehicle button")
+    });
+    content.appendChild(button);
+}
+
+function generateDonationButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Donate Vehicle';
+
+    button.addEventListener('click', () => {
+        console.log("clicked donate vehicle button")
+    });
+    content.appendChild(button);
 }
