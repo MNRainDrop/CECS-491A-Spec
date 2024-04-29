@@ -91,5 +91,5 @@ function pages(functionCall) {
     pages.appendChild(next);
 
     dynamicContent.appendChild(pages);
-    functionCall();
+    //functionCall();
 };

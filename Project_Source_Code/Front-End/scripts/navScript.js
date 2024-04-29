@@ -67,10 +67,11 @@ function generateVehicleProfileView()
 {
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
-        if (response.status == 204) {          
+        if (response.status == 204) {
             // replace the parameter inside changeCSS() to the path of the css file you need
             changeCSS("styles/VPstyles.css")
-            pages(createVehicleProfileView);
+            createVehicleProfileView();
+            
         }
         else {
             alert("Permission to view denied");

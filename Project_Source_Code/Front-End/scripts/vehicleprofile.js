@@ -8,6 +8,8 @@ function createVehicleProfileView() {
     vehicleProfile.id = 'vehicle-profile';
 
     dynamicContent.appendChild(vehicleProfile);
+
+    pages(createVehicleProfileView);
     // this should be in config file
     const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
