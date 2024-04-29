@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InventoryManagement\TeamSpecs.RideAlong.InventoryManagement.csproj" />
     <ProjectReference Include="..\RentalFleetLibrary\TeamSpecs.RideAlong.RentalFleetLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.CarHealthRatingLibrary\TeamSpecs.RideAlong.CarHealthRatingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.CarNewsCenter\TeamSpecs.RideAlong.CarNewsCenter.csproj" />

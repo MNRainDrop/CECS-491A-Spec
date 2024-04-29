@@ -325,7 +325,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 
                     #endregion
 
-                    Dictionary<string, string> claims = new Dictionary<string, string>();
+                    ICollection<KeyValuePair<string, string>> claims = new List<KeyValuePair<string, string>>();
 
                     foreach (object[] row in rowsReturned)
                     {
@@ -334,7 +334,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
                         string claimScope = (string)row[1];
                         if (claimID is not null && claimScope is not null)
                         {
-                            claims.Add(claimID, claimScope);
+                            claims.Add(new KeyValuePair<string, string>(claimID, claimScope));
                         }
                         else
                         {

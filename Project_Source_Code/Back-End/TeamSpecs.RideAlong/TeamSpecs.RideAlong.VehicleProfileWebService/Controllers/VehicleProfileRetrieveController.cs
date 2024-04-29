@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.VehicleProfile;
 
 namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers;
@@ -11,36 +9,70 @@ namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers;
 [Route("[controller]")]
 public class VehicleProfileRetrieveController : Controller
 {
-    private readonly IGenericDAO _DAO;
-    private readonly IHashService _hashService;
-    private readonly ILogTarget _logTaret;
-    private readonly ILogService _logService;
-    private readonly IRetrieveVehiclesTarget _retrieveVehiclesTarget;
-    private readonly IRetrieveVehicleDetailsTarget _retrieveVehicleDetailsTarget;
-    private readonly IVehicleProfileDetailsRetrievalService _vpdRetrievalService;
-    private readonly IVehicleProfileRetrievalService _vpRetrievalService;
     private readonly IVehicleProfileRetrievalManager _retrievalManager;
+    private readonly ISecurityManager _securityManager;
 
-    public VehicleProfileRetrieveController()
+    public VehicleProfileRetrieveController(IVehicleProfileRetrievalManager retrievalManager, ISecurityManager securityManager)
     {
-        _hashService = new HashService();
-        _DAO = new SqlServerDAO();
-        _logTaret = new SqlDbLogTarget(_DAO);
-        _logService = new LogService(_logTaret, _hashService);
-        _retrieveVehicleDetailsTarget = new SqlDbVehicleTarget(_DAO);
-        _retrieveVehiclesTarget = new SqlDbVehicleTarget(_DAO);
-        _vpdRetrievalService = new VehicleProfileDetailsRetrievalService(_retrieveVehicleDetailsTarget, _logService);
-        _vpRetrievalService = new VehicleProfileRetrievalService(_retrieveVehiclesTarget, _logService);
-        _retrievalManager = new VehicleProfileRetrievalManager(_logService, _vpRetrievalService, _vpdRetrievalService);
+        _retrievalManager = retrievalManager;
+        _securityManager = securityManager;
     }
 
     [HttpPost]
-    [Route("/MyVehicleProfiles")]
-    public IActionResult Post([FromBody]UserPageModel requestData)
+    [Route("PostAuthStatus")]
+    public IActionResult PostAuthStatus()
     {
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+        {
+            { "canView", "vehicleProfile" }
+        };
+        bool hasPermission;
         try
         {
-            var result = _retrievalManager.GetVehicleProfiles(requestData.AccountUser, requestData.Page);
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("MyVehicleProfiles")]
+    public IActionResult Post([FromBody]int page)
+    {
+        IAccountUserModel user;
+        try
+        {
+            var temp = _securityManager.JwtToPrincipal().userIdentity;
+            if (!string.IsNullOrWhiteSpace(temp.userName))
+            {
+                user = new AccountUserModel(temp.userName)
+                {
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
+                    UserHash = temp.userHash,
+                    UserId = temp.UID
+                };
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfiles(user, page);
             if (result is not null)
             {
                 if (result.HasError)
@@ -65,12 +97,58 @@ public class VehicleProfileRetrieveController : Controller
     }
 
     [HttpPost]
-    [Route("/MyVehicleProfileDetails")]
-    public IActionResult Post([FromBody]VehicleAccountModel requestData)
+    [Route("MyVehicleProfileDetails")]
+    public IActionResult Post([FromBody]VehicleProfileModel vehicle)
     {
+        #region Check for permissions
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+        {
+            { "canViewVehicle", vehicle.VIN }
+        };
+        bool hasPermission;
         try
         {
-            var result = _retrievalManager.GetVehicleProfileDetails(requestData.VehicleProfile, requestData.AccountUser);
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        #endregion
+
+        #region Get User model
+        IAccountUserModel user;
+        try
+        {
+            var temp = _securityManager.JwtToPrincipal().userIdentity;
+            if (!string.IsNullOrWhiteSpace(temp.userName))
+            {
+                user = new AccountUserModel(temp.userName)
+                {
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
+                    UserHash = temp.userHash,
+                    UserId = temp.UID
+                };
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        #endregion
+
+        try
+        {
+            var result = _retrievalManager.GetVehicleProfileDetails(vehicle, user);
             if (result is not null)
             {
                 if (result.HasError)
@@ -98,17 +176,5 @@ public class VehicleProfileRetrieveController : Controller
             // Input values are wrong
             return BadRequest(ex.Message);
         }
-    }
-
-    public class UserPageModel
-    {
-        public AccountUserModel? AccountUser { get; set; }
-        public int Page { get; set; }
-    }
-
-    public class VehicleAccountModel
-    {
-        public VehicleProfileModel? VehicleProfile { get; set; }
-        public AccountUserModel? AccountUser { get; set; }
     }
 }

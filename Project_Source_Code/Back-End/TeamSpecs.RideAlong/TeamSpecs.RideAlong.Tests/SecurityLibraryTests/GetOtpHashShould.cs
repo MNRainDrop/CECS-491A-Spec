@@ -31,7 +31,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.SecurityLibraryTests
             var authService = new AuthService(authTarget, logger);
 
             //Creating Test object AuthUserModel for table User Account  
-            long realUID;
             var UID = 123;
             var username = "GetOtpHash_Test_Object";
             byte[] salt = BitConverter.GetBytes(012);

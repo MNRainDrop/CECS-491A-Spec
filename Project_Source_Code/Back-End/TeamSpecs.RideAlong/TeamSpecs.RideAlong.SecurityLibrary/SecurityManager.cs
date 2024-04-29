@@ -85,7 +85,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             using JsonDocument jsonDocument = JsonDocument.Parse(jsonPrincipal);
 
             AuthUserModel userIdentity;
-            Dictionary<string, string> claims;
+            ICollection<KeyValuePair<string, string>> claims;
             if (jsonDocument.RootElement.TryGetProperty("userIdentity", out JsonElement uidElement) && uidElement.ValueKind == JsonValueKind.Object)
             {
                 userIdentity = JsonSerializer.Deserialize<AuthUserModel>(uidElement.ToString())!;
@@ -94,9 +94,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             {
                 throw new Exception("User Identity Not present in Principal");
             }
-            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Object)
+            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Array)
             {
-                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsElement)!;
+                claims = JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(claimsElement)!;
             }
             else
             {
@@ -217,7 +217,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             using JsonDocument jsonDocument = JsonDocument.Parse(jsonPrincipal);
 
             AuthUserModel userIdentity;
-            Dictionary<string, string> claims;
+            ICollection<KeyValuePair<string, string>> claims;
             if (jsonDocument.RootElement.TryGetProperty("userIdentity", out JsonElement uidElement) && uidElement.ValueKind == JsonValueKind.Object)
             {
                 userIdentity = JsonSerializer.Deserialize<AuthUserModel>(uidElement.ToString())!;
@@ -226,9 +226,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             {
                 throw new Exception("User Identity Not present in Principal");
             }
-            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Object)
+            if (jsonDocument.RootElement.TryGetProperty("claims", out JsonElement claimsElement) && claimsElement.ValueKind == JsonValueKind.Array)
             {
-                claims = JsonSerializer.Deserialize<Dictionary<string, string>>(claimsElement)!;
+                claims = JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(claimsElement)!;
             }
             else
             {

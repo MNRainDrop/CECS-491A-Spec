@@ -3,6 +3,6 @@
     public interface IAppPrincipal
     {
         public IAuthUserModel userIdentity { get; set; }
-        public IDictionary<string, string> claims { get; set; }
+        public ICollection<KeyValuePair<string, string>> claims { get; set; }
     }
 }

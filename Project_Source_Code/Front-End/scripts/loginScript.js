@@ -23,7 +23,7 @@ function submitUsername() {
     // Check if username is not empty
     if (username) {
         if (isValidEmailAddress(username)) {
-            // Calls Web API controller -- login --> change when moved to Ride Along
+            // Calls Web API controller
             fetch("http://localhost:8080/Auth/startLogin", {
                 method: "POST",
                 body: JSON.stringify(username),
@@ -37,12 +37,16 @@ function submitUsername() {
                     showOTPView();
                     // Trying to attach original username input into text box
                     usernameInput.value = username;
+                    return response.text();
                 }
                 else {
                     // If response is not OK, display to user process failed
                     alert("Authentication failed!");
                     console.error("Error:", response.statusText);
                 }
+            })
+                .then(function (data) {
+                alert(data);
             })
                 .catch(function (error) {
                 alert("Something went wrong!");

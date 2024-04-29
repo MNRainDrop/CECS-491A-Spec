@@ -1,0 +1,67 @@
+sequenceDiagram
+Note Left of u: User clicks on new service log button when on Vehicle Profile detailed view (See VP - 5)
+u->>+az: CheckToken() 
+    Note over u,az: *Temporary method signature*<br>Browser checks for<br>authorized access to the page.<br>See authorization success case
+az-->>-u: Return valid check
+
+u->>+scr: Authorization validated. 
+    Note over u,scr: Event Listener executes code in<br>Script.js file calling a fetch request to<br>SerivceLogController to retrieve Service Logs
+
+
+scr->>+e: GetDetailsServiceLog( ServiceLogIDidentifier: Int) : IActionResult
+    Note over scr,e: Invoked when user accesses Vehicle Profile detail view
+
+    e->>+vpm: CallRetrieveDetailsServiceLogs( ServiceLogIDidentifier: Int): IResponse
+        Note over e,vpm: Entry point calls upon manager<br>to attempt to retrieve service log
+
+        vpm->>+vps: RetrieveServiceLog( ServiceLogIDidentifier: Int): IResponse
+            Note over vpm,vps: ServiceLogManager calls upon<br>ServiceLogService.RetrieveServiceLog to retrieve the first iteration of<br> Service Logs
+
+            vps->>vps: Validate Parameters
+
+            # Send to data store
+            vps->>+dg: GenerateRetrieveServiceLogsSql( ServiceLogIDidentifier: Int): IResponse
+                Note over vps,dg: ServiceLogSerivice.CreateServiceLog calls upon SqlDbServiceLogTarget to generate<br>the sql statement and parameters<br> based on the identifier passed
+
+                dg->>+da: ExecuteReadSQL() : SqlDataReader
+                    Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                    da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                        Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+                        
+                        ds->>ds: SELECT All Service log items in datastore<br>FROM ServiceLog WHERE ServiceLogID = @ServiceLogIDidentifier;
+
+                        ds->>ds: Service Log(s) is successfully retireved<br>from the Data Store
+
+                    ds-->>-da: Database returns query results
+
+                    da->>da: Check for thrown errors
+
+                    da->>da: Create new IResponse object
+                        Note over da: HasError = false<br>ErrorMessage = null<br>ReturnValue = new list containing returned query results
+
+                da-->>-dg: IResponse object returned
+
+                dg->>dg: Check for errors in returned IResponse object
+
+            dg-->>-vps: IResponse object returned
+
+            # Log successful service log creation
+            vps-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                Note over vps,ll: Retrieve Service Log service calls upon LogService to log<br>successful creation of service log.<br>See logging success case
+
+        vps-->>-vpm: IResponse object returned
+
+        vpm->>vpm: Check for errors in returned IResponse object
+
+        vpm->>vpm: Check for violation of business rules
+
+    vpm-->>-e: IResponse object returned
+
+    e->>e: Check for errors in returned IResponse object
+
+    e->>e: Convert objects stored in IResponse.returnValues to<br> JSON object
+
+    e-->>-scr: return successful request (OK request) to script.js with JSON objecct
+
+scr-->>-u: Inject html with success and JSON object data
