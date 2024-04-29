@@ -44,7 +44,7 @@ public class VehicleProfileRetrieveController : Controller
 
     [HttpPost]
     [Route("MyVehicleProfiles")]
-    public IActionResult Post([FromBody]int page)
+    public IActionResult Post([FromBody] int page)
     {
         IAccountUserModel user;
         try
@@ -93,12 +93,12 @@ public class VehicleProfileRetrieveController : Controller
         {
             return BadRequest(ex.Message);
         }
-        
+
     }
 
     [HttpPost]
     [Route("MyVehicleProfileDetails")]
-    public IActionResult Post([FromBody]VehicleProfileModel vehicle)
+    public IActionResult Post([FromBody] VehicleProfileModel vehicle)
     {
         #region Check for permissions
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
