@@ -1,0 +1,72 @@
+.vehicles {
+    width: calc(17*20px);
+    border-style: solid;
+    border-color: #686A6C;
+    border-width: 1px;
+    padding: 5px;
+    margin: 0px 0px 10px 10px; /* top, right, bottom, left */
+    background-color: #FEFEFE;
+}
+
+.vehicles > ul {
+    list-style-type: none;
+}
+
+#vehicle-profile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+#vehicle-details {
+    display: none;
+    position: fixed;
+    inset: 0px;
+    max-width: 800px;
+    height: fit-content;
+    margin: auto;
+    border-style: solid;
+    border-color: #686A6C;
+    border-width: 1px;
+    background-color: white;
+}
+#vehicle-details > h1, h2, p {
+    padding: 10px;
+}
+#vehicle-details > ul {
+    list-style-type: none;
+    padding: 10px;
+}
+
+form {
+    margin: 10px;
+    display: justify;
+    justify-content: center;
+}
+
+form > input {
+    display: block;
+    max-width: 800px;
+    min-width: 200px;
+    padding: 2px;
+    margin: 5px;
+    box-sizing: content-box;
+}
+
+#create-vehicle-button {
+    margin: 0px 0px 10px 10px; /* top, right, bottom, left */
+    font-size: 15px;
+}
+
+#vehicle-details-buttons {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin: 10px; /* top, right, bottom, left */
+}
+
+#vehicle-details-buttons > input {
+    min-width: 100px;
+    width: auto;
+    margin: 5px;
+}

@@ -50,6 +50,7 @@ function submitUsername()
                         showOTPView();
                         // Trying to attach original username input into text box
                         usernameInput.value = username;
+                        return response.text();
                     }
                     else
                     {
@@ -57,6 +58,9 @@ function submitUsername()
                         alert("Authentication failed!")
                         console.error("Error:", response.statusText);
                     }
+                })
+                .then(data => {
+                    alert(data)
                 })
                 .catch(error =>
                 {

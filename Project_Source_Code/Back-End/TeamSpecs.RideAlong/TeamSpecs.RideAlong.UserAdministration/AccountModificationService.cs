@@ -43,8 +43,8 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             if(response.HasError)
             {
-                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
                 response.ErrorMessage = "Could not modify the user profile";
+                _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
             }
 
             _logService.CreateLogAsync("Info", "Server", "UserProfile successfully modified", userHash);

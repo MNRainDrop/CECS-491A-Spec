@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers
+namespace VehiclesMarketplaceEntryPoint.Controllers
 {
     [ApiController]
     [Route("[controller]")]

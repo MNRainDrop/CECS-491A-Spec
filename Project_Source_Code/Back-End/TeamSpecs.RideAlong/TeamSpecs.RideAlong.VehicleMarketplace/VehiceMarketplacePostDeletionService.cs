@@ -11,9 +11,9 @@ using TeamSpecs.RideAlong.DataAccess;
 namespace TeamSpecs.RideAlong.VehicleMarketplace;
 public class VehiceMarketplacePostDeletionService : IVehiceMarketplacePostDeletionService
 {
-    private SqlDbMarketplaceTarget _target;
+    private IMarketplaceTarget _target;
 
-    public VehiceMarketplacePostDeletionService(SqlDbMarketplaceTarget target)
+    public VehiceMarketplacePostDeletionService(IMarketplaceTarget target)
     {
         _target = target;
     }

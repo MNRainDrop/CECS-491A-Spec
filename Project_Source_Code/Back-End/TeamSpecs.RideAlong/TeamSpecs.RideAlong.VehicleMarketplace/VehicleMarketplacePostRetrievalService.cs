@@ -3,13 +3,13 @@ using TeamSpecs.RideAlong.Services;
 
 namespace TeamSpecs.RideAlong.VehicleMarketplace
 {
-    internal class VehicleMarketplacePostRetrievalService : IVehiceMarketplacePostRetrievalService
+    public class VehicleMarketplacePostRetrievalService : IVehiceMarketplacePostRetrievalService
     {
-        private SqlDbMarketplaceTarget _target;
+        private IMarketplaceTarget _target;
 
-        public VehicleMarketplacePostRetrievalService(SqlDbMarketplaceTarget target)
+        public VehicleMarketplacePostRetrievalService(IMarketplaceTarget target)
         {
-            target = _target;
+            _target = target;
         }
 
         public IResponse RetrieveAllPublicPost()

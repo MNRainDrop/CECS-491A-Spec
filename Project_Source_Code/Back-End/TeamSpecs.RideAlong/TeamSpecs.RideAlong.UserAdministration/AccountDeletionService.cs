@@ -31,8 +31,12 @@ public class AccountDeletionService : IAccountDeletionService
         {
             response.ErrorMessage = "Could not Delete account";
         }
+        else
+        {
+            response.ErrorMessage = "Successful";
+        }
 
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Account Deletion", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Account Deletion", response.ErrorMessage, userAccount.UserHash);
 
 
         return response;

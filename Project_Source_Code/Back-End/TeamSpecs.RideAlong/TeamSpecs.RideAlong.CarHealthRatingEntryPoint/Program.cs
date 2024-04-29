@@ -1,7 +1,6 @@
 using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.CarHealthRatingLibrary;
-using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
@@ -44,8 +43,6 @@ if (app.Environment.IsDevelopment())
 app.useCorsPreflight();
 
 app.useIDValidator();
-
-////
 
 app.useCorsMiddleware();
 

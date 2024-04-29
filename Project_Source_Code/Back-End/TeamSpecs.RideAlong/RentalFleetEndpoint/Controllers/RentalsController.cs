@@ -38,8 +38,10 @@ namespace TeamSpecs.RideAlong.RentalFleetEndpoint.Controllers
         [Route("GetAuthStatus")]
         public IActionResult GetAuthStatus()
         {
-            Dictionary<string, string> requiredClaims = new Dictionary<string, string>();
-            requiredClaims.Add("canView", "rental");
+            Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+            {
+                { "canView", "rental" }
+            };
             bool hasPermission;
             try
             {

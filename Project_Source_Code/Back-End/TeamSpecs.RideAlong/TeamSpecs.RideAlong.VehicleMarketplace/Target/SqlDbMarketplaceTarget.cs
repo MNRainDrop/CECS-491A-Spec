@@ -157,7 +157,7 @@ namespace TeamSpecs.RideAlong.Services
             #region Sql setup
             var commandSql = "Select * ";
             var fromSql = "From VehicleProfile ";
-            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN";
+            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN ";
             var whereSql = "WHERE MarketplaceStatus.ViewStatus = 1";
             #endregion
 
@@ -251,6 +251,7 @@ namespace TeamSpecs.RideAlong.Services
                 foreach (var item in daoValue)
                 {
                     response.ReturnValue.Add(new VehicleProfileModel((string)item[0], (long)item[1], (string)item[2], item[3].ToString(), item[4].ToString(), (int)item[5]));
+                    
                 }
                 response.HasError = false;
             }

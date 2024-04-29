@@ -1,4 +1,4 @@
-namespace TeamSpecs.RideAlong.VehicleProfileWebService
+namespace VehiclesMarketplaceEntryPoint
 {
     public class WeatherForecast
     {

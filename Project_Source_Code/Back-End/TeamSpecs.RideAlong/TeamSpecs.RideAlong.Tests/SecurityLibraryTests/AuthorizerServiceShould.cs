@@ -17,12 +17,12 @@ public class AuthorizeUserShould
         //Arrange
         var dao = new SqlServerDAO();
         var logTarget = new SqlDbLogTarget(dao);
-        var actualResult = false;
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
         var authRequest = new AuthNRequest("UserName", "OTP");
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
+        
         //Setting up AppPrincipal object 
         IDictionary<string, string> Claims = new Dictionary<string, string>();
         Claims.Add("canLogin", "true");
@@ -39,11 +39,11 @@ public class AuthorizeUserShould
 
         //Act
         timer.Start();
-        actualResult = authService.Authorize(principal, RClaims);
+        var actualResult = authService.Authorize(principal, RClaims);
         timer.Stop();
 
         //Assert
-        Assert.True(actualResult == true);
+        Assert.True(actualResult);
     }
 
     [Fact]

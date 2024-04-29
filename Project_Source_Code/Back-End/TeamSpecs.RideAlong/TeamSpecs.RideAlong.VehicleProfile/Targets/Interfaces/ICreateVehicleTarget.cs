@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public interface ICreateVehicleTarget
 {
-    IResponse createVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails);
+    IResponse CreateVehicleProfileSql(IVehicleProfileModel vehicleProfile, IVehicleDetailsModel vehicleDetails);
 }
