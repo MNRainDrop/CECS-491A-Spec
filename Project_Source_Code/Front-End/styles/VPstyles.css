@@ -8,6 +8,10 @@
     background-color: #FEFEFE;
 }
 
+.vehicles > ul {
+    list-style-type: none;
+}
+
 #vehicle-profile {
     display: flex;
     flex-wrap: wrap;
@@ -29,6 +33,11 @@
 #vehicle-details > h1, h2 {
     padding: 10px;
 }
+#vehicle-details > ul {
+    list-style-type: none;
+    padding: 10px;
+}
+
 form {
     margin: 10px;
     display: justify;

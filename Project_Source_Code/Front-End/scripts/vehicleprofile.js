@@ -1,4 +1,13 @@
 function createVehicleProfileView() {
+    var dynamicContent = document.querySelector(".dynamic-content");
+    while (dynamicContent.lastElementChild) {
+        dynamicContent.removeChild(dynamicContent.lastElementChild);
+    }
+
+    var vehicleProfile = document.createElement('div');
+    vehicleProfile.id = 'vehicle-profile';
+
+    dynamicContent.appendChild(vehicleProfile);
     // this should be in config file
     const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
 
@@ -120,12 +129,12 @@ function getVehicleDetails(id) {
                 var buttons = document.createElement('div');
                 buttons.id = 'vehicle-details-buttons';
                 content.appendChild(buttons);
+                content.style.display = "block";
                 generateModifyButton(buttons)
                 generateDeleteButton(buttons)
                 generateViewServiceLogButton(buttons)
                 generateUploadToMarketplaceButton(buttons)
                 generateDonationButton(buttons)
-                content.style.display = "block";
 
                 document.addEventListener('click', (event) => {
                     if (!content.contains(event.target)) {
@@ -333,7 +342,7 @@ function generateModifyButton(content) {
     button.type = 'button';
     button.value = 'Modify Vehicle';
 
-    button.addEventListener('click', generateModifyView());
+    button.addEventListener('click', generateModifyView);
     content.appendChild(button);
 }
 

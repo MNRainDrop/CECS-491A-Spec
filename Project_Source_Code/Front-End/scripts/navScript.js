@@ -67,17 +67,7 @@ function generateVehicleProfileView()
 {
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
-        if (response.status == 204) {
-            var dynamicContent = document.querySelector(".dynamic-content");
-            while (dynamicContent.lastElementChild) {
-                dynamicContent.removeChild(dynamicContent.lastElementChild);
-            }
-
-            var vehicleProfile = document.createElement('div');
-            vehicleProfile.id = 'vehicle-profile';
-
-            dynamicContent.appendChild(vehicleProfile);
-            
+        if (response.status == 204) {          
             // replace the parameter inside changeCSS() to the path of the css file you need
             changeCSS("styles/VPstyles.css")
             pages(createVehicleProfileView);
