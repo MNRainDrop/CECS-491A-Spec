@@ -68,17 +68,10 @@ function generateVehicleProfileView()
     fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
-            var dynamicContent = document.querySelector(".dynamic-content");
-            dynamicContent.innerHTML = "";
-            
-            dynamicContent.innerHTML = `<div id='vehicle-profile-creation-button'></div>`
-            dynamicContent.innerHTML += `<div id='vehicle-profile'></div>`
-            dynamicContent.innerHTML += `<nav id='pages'></nav>`
-            dynamicContent.innerHTML += '<div id="vehicle-details"></div>'
             // replace the parameter inside changeCSS() to the path of the css file you need
             changeCSS("styles/VPstyles.css")
-            pages(createVehicleProfileView);
             createVehicleProfileView();
+            
         }
         else {
             alert("Permission to view denied");

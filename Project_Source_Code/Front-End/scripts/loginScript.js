@@ -37,12 +37,16 @@ function submitUsername() {
                     showOTPView();
                     // Trying to attach original username input into text box
                     usernameInput.value = username;
+                    return response.text();
                 }
                 else {
                     // If response is not OK, display to user process failed
                     alert("Authentication failed!");
                     console.error("Error:", response.statusText);
                 }
+            })
+                .then(function (data) {
+                alert(data);
             })
                 .catch(function (error) {
                 alert("Something went wrong!");
