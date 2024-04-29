@@ -4,7 +4,7 @@
     border-color: #686A6C;
     border-width: 1px;
     padding: 5px;
-    margin: 0px 10px 10px 0px; /* top, right, bottom, left */
+    margin: 0px 0px 10px 10px; /* top, right, bottom, left */
     background-color: #FEFEFE;
 }
 
@@ -30,7 +30,7 @@
     border-width: 1px;
     background-color: white;
 }
-#vehicle-details > h1, h2 {
+#vehicle-details > h1, h2, p {
     padding: 10px;
 }
 #vehicle-details > ul {
@@ -53,8 +53,8 @@ form > input {
     box-sizing: content-box;
 }
 
-input {
-    margin: 0px 0px 10px 0px; /* top, right, bottom, left */
+#create-vehicle-button {
+    margin: 0px 0px 10px 10px; /* top, right, bottom, left */
     font-size: 15px;
 }
 
