@@ -76,18 +76,16 @@ body {
   
 .navbar .nav-container li {
     list-style: none;
-}
-  
-.navbar .nav-container a {
     text-decoration: none;
     color: #0e2431;
     font-weight: 500;
     font-size: 1.2rem;
     padding: 0.7rem;
 }
-  
-.navbar .nav-container a:hover{
+
+.navbar .nav-container li:hover{
     font-weight: bolder;
+    cursor: pointer;
 }
   
 .nav-container {
@@ -283,11 +281,6 @@ body {
 	padding-top: 156px;
 }
 
-.login__field {
-	padding: 20px 0px;	
-	position: relative;	
-}
-
 .login__icon {
 	position: absolute;
 	top: 30px;
@@ -295,11 +288,12 @@ body {
 }
 
 .login__input {
+    position: relative;
 	border: none;
 	border-bottom: 2px solid #D1D1D4;
 	background: none;
 	padding: 10px;
-	padding-left: 24px;
+	padding-left: 10px;
 	font-weight: 700;
 	width: 75%;
 	transition: .2s;
