@@ -12,7 +12,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
         private readonly ISqlDbServiceLogTarget _serviceLogTarget;
         private readonly ILogService _logService;
 
-        ServiceLogService(ILogService logService, ISqlDbServiceLogTarget serviceLogTarget) 
+        public ServiceLogService(ILogService logService, ISqlDbServiceLogTarget serviceLogTarget) 
         {
             _logService = logService;
             _serviceLogTarget = serviceLogTarget;
