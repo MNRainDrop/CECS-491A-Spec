@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.LogEP_HostAddress = http://localhost:5287
+
+GET {{TeamSpecs.RideAlong.LogEP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

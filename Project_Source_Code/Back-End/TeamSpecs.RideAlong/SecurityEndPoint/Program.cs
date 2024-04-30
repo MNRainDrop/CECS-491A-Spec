@@ -41,7 +41,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
-app.useCorsPreflight();
+app.UseCorsPreflight();
 
 // Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
 //app.useIDValidator();
@@ -49,7 +49,7 @@ app.UseHttpsRedirection();
 
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point
-app.useCorsMiddleware();
+app.UseCorsMiddleware();
 
 app.MapControllers();
 app.Run();

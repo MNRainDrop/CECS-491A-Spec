@@ -28,7 +28,7 @@ namespace TeamSpecs.RideAlong.Middleware
     }
     public static class CorsPreflightExtensions
     {
-        public static IApplicationBuilder useCorsPreflight(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseCorsPreflight(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<CorsPreflight>();
         }

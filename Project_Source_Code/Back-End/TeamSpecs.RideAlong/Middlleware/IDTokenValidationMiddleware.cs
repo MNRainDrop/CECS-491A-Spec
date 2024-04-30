@@ -57,7 +57,7 @@ namespace TeamSpecs.RideAlong.Middleware
     }
     public static class IDTokenValidationMiddlewareExtensions
     {
-        public static IApplicationBuilder useIDValidator(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseIDValidator(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<IDTokenValidationMiddleware>();
         }
