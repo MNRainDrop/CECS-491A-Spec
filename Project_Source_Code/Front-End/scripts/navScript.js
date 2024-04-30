@@ -108,12 +108,8 @@ function logOut() {
     sessionStorage.removeItem('AccessToken');
     sessionStorage.removeItem('RefreshToken');
     // Give user confirmation they've logged out
-    var dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = "\n    <div id=\"logout-view\">\n        Logged Out!!!\n    </div>\n    ";
-    // Lets the view show for 5 seconds, then reloads the page
-    setTimeout(function () {
-        location.reload();
-    }, 5000);
+    alert("You have been Logged Out!");
+    location.reload();
 }
 
 function refreshUserTokens() {
