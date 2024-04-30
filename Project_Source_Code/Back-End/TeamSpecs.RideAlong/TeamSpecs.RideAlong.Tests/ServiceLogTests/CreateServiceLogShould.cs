@@ -27,7 +27,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
         private static readonly ISqlDbServiceLogTarget sqlTarget = new SqlDbServiceLogServiceTarget(dao);
         private static readonly IServiceLogService serviceLogService = new ServiceLogService(logService, sqlTarget);
 
-        public static TheoryData<IServiceLogModel> Case2 =
+        public static TheoryData<IServiceLogModel> ValidServiceLogs =
             new()
             {
                 {new ServiceLogModel("Maintenance", "Oil", new DateTime(2016, 3, 1), "Recieved Oil change", 100000, "SlVin101") },
@@ -41,6 +41,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
                 {new ServiceLogModel("Maintenance", "Oil", new DateTime(2022, 3, 1), "Recieved Oil change", 160000, "SlVin101") },
                 {new ServiceLogModel("Damage Report", "Car Door", new DateTime(2023, 4, 10), "T - boned by other car", 170000, "SlVin101")}
             };
+
 
         [Fact]
         public void ServiceLogCreation_OneUserValidServiceLogEntryParametersPassed_OneServiceLogEntryWrittenToSqlDB_Pass()
@@ -152,7 +153,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
         }
 
         [Theory]
-        [MemberData(nameof(Case2))]
+        [MemberData(nameof(ValidServiceLogs))]
         public void SerivceLogCreation_MultipleServiceLogInserted_OneUserValid10ServiceLogEntriesPassed_OneServiceLogsWrittenToSqlDB_Pass(IServiceLogModel serviceLog)
         {
             #region Arrange
@@ -260,7 +261,43 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
         }
 
         [Fact]
-        public void ServiceLogCreation_OneUser_InvalidServiceLogCategoryPassed_ServiceLogWrittenToSqlDB_Fail()
+        public void ServiceLogCreation_InvalidServiceLogCategoryPassed_ServiceLogWrittenToSqlDB_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_PartAttributeOverVarCharLimit_ServiceLogWrittenToSqlDb_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_DateCreatedBeforeEarliestDateAllowed_ServiceLogWrittenToSqlDb_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_DateCreatedInFuture_ServiceLogWrittenToSqlDb_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_DescriptionAttributeOverVarCharLimit_ServiceLogWrittenToSqlDb_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_MileageLessThan0_ServiceLogWrittenToSqlDb_Fail()
+        {
+
+        }
+
+        [Fact]
+        public void ServiceLogCreation_MileageGreaterThan_999_999_ServiceLogWrittenToSqlDb_Fail()
         {
 
         }
