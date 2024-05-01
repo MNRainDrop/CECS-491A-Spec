@@ -2,6 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
     //const vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
+    
+    // Event listener for the nav bar to leave if you click anywhere
+    const content = document.getElementsByClassName('checkbox')[0];
+
+    document.addEventListener('click', (event) => {
+        if (!content.contains(event.target)) {
+            content.checked = false;
+        }
+    })
+
     var logOutNav = document.getElementById("log-out");
     logOutNav.addEventListener("click", logOut);
 
@@ -108,12 +118,8 @@ function logOut() {
     sessionStorage.removeItem('AccessToken');
     sessionStorage.removeItem('RefreshToken');
     // Give user confirmation they've logged out
-    var dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = "\n    <div id=\"logout-view\">\n        Logged Out!!!\n    </div>\n    ";
-    // Lets the view show for 5 seconds, then reloads the page
-    setTimeout(function () {
-        location.reload();
-    }, 5000);
+    alert("You have been Logged Out!");
+    location.reload();
 }
 
 function refreshUserTokens() {
