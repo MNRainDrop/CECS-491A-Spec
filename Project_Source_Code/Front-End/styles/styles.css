@@ -86,8 +86,8 @@ nav:not(.hidden) {
     display: flex;
     flex-direction: column;
     opacity: 1; /* Set the desired opacity value */
-    background-color: #4C489D;
-    box-shadow: inset -10vw 0px 10vw 0px #5C5696;
+    background-color: #b491cb;
+    box-shadow: inset -1vw 0px 10vw 0px #5C5696;
     animation: menu-back-animation 0.5s forwards ease-in-out;
 }
 /*Custom animation to get the tab to slide out from the side*/
@@ -176,7 +176,7 @@ nav:not(.hidden) {
     justify-content: center;
     align-items: center;
     gap: 5px;
-    background-color: #6A679E;
+    background-color: #725a7a;
     color: white;
     cursor: default;
     max-height: 40px;
