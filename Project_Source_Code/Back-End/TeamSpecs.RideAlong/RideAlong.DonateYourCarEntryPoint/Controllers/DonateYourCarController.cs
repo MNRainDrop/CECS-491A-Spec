@@ -63,11 +63,12 @@ namespace TeamSpecs.RideAlong.DonateYourCarEntryPoint.Controllers
             {
                 return BadRequest();
             }
-            else if (response.HasError == false && response.ReturnValue.Count == 4)
+            else if (response.HasError == false)
             {
                 var JsonCharity = JsonSerializer.Serialize(response.ReturnValue);
 
                 return Ok(JsonCharity);
+                // return Ok(response.ReturnValue);
             }
             else
             {

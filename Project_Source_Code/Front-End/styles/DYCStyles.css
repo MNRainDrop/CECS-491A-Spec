@@ -1,0 +1,13 @@
+.DYCcontainer {
+    display: flex; /* Use flexbox layout */
+  }
+
+.charity-listings {
+    border: 1px solid #ccc; /* Border style */
+    padding: 20px; /* Padding inside the box */
+    margin: 20px; /* Margin outside the box */
+    background-color: #f9f9f9; /* Background color */
+    width: 80%; /* Set the width of the box to 80% of the page width */
+    height: auto; /* Let the height adjust automatically based on the content */
+    cursor: pointer; /* Change cursor to pointer to indicate clickable */
+}
