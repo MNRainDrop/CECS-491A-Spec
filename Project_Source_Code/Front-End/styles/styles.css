@@ -83,27 +83,37 @@ body {
 }
   
 .menu-items {
-    position: absolute;
-    box-shadow: inset -10vw 0px 10vw 0px #5C5696;
-    height: calc(90vh);
-    width: 35vw;
+    position: fixed;
+    height: 100vh;
+    width: 400px;
+    left: 0px;
+    top: 0px;
     display: flex;
     flex-direction: column;
-    margin-top: -8px;
-    padding-top: 10vh;
     opacity: 1; /* Set the desired opacity value */
     background-color: #4C489D;
-    animation: menu-back-animation 0.75s forwards ease-in-out;
+    box-shadow: inset -10vw 0px 10vw 0px #5C5696;
+    animation: menu-back-animation 0.5s forwards ease-in-out;
 }
 /*Custom animation to get the tab to slide out from the side*/
 @keyframes menu-back-animation {
     from {
-        left: -5vw;
+        left: 0px;
     }
     to {
-        left: -40vw;
+        left: -400px;
         display: none;
     }
+}
+
+#home-view {
+    margin-top: 8vh;
+    font-size: 2rem;
+    font-weight: 650;
+}
+
+#home-view:hover {
+    font-weight: 800;
 }
 
 .menu-items > li {
@@ -112,8 +122,7 @@ body {
     font-weight: 500;
     text-align: center;
     color: #0e2431;
-    padding: 0.7rem;
-    margin-bottom: 1.2rem;
+    line-height: 75px;
 }
   
 .logo {
@@ -122,30 +131,22 @@ body {
     right: 5%;
     font-size: 1.2rem;
     color: #0e2431;
-    animation: logo-back-animation 0.75s forwards ease-in-out;
     z-index: 5;
+    animation: fadeIn 0.5s forwards;
 }
-/*Custom animation to get the logo to slide from the left side to the right*/
-@keyframes logo-back-animation {
-    from {
-        right: 80%;
-    }
-    to {
-        right: 5%;
-    }
-}
+
   
 .menu-button input[type="checkbox"]:checked ~ .menu-items {
-    animation: menu-forwards-animation 0.75s forwards ease-in-out;
+    animation: menu-forwards-animation 0.5s forwards ease-in-out;
 }
 /*Custom animation to get the tab to slide back into the side*/
 @keyframes menu-forwards-animation {
     from {
-        display: none;
-        left: -40vw;
+        display: flex;
+        left: -400px;
     }
     to {
-        left: -5vw;
+        left: 0px;
     }
 }
   
@@ -160,19 +161,17 @@ body {
 .menu-button input[type="checkbox"]:checked ~ .hamburger-lines .line3 {
     transform: rotate(-45deg) scaleX(1.25);
 }
-  
+
 .menu-button input[type="checkbox"]:checked ~ .logo {
-    animation: logo-forwards-animation 0.75s forwards ease-in-out;
-    z-index: 5;
+    animation: fadeOut 0.5s forwards;
 }
-/*Custom animation to get the logo to slide into the left*/
-@keyframes logo-forwards-animation {
-    from {
-        right: 5%;
-    }
-    to {
-        right: 80%;
-    }
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes fadeOut{
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 /*End of nav */
 
