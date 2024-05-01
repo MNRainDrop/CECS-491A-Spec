@@ -28,22 +28,26 @@
         dynamicContent.appendChild(vehicleProfile);
     
         pages(createVehicleProfileView);
-        // this should be in config file
         const webServiceUrl = vehicleProfileURL + '/VehicleProfileRetrieve/MyVehicleProfiles';
     
         var popup = document.createElement('div');
         popup.id = 'vehicle-details';
     
         document.getElementsByClassName('dynamic-content')[0].appendChild(popup);
-        // Insert Vehicle Creation Button Here
-        // Make new function
+        
         generateCreateButton()
     
         fetchWithTokens(webServiceUrl, 'POST', document.getElementById("current-page").innerText)
             .then(response => {
+                if (response.status == 403) {
+                    throw "You are unauthorized";
+                }
                 if (!response.ok) {
-                    console.log('error');
-                    return;
+                    throw "Could not process request";
+                }
+                if (response.status == 202)
+                {
+                    throw "There are no details available for your vehicle";
                 }
                 else {
                     return response.json();
@@ -82,7 +86,8 @@
                 }
             })
             .catch(error => {
-                console.log(error);
+                decrementPages();
+                alert(error)
             });
     }
     window.createVehicleProfileView = createVehicleProfileView;
@@ -171,7 +176,6 @@
                 }
             })
             .catch( error => {
-                console.log(error);
                 throw error;
             })
     }
@@ -219,8 +223,13 @@
         getMMYButton.value = 'Get Make Model Year';
         getMMYButton.addEventListener('click', async () => {
             var vinInput = document.getElementById('vin');
-            var data = await retrieveMMYFromAPI(vinInput.value);
-            fillInVehicleForm(data);
+            try {
+                var data = await retrieveMMYFromAPI(vinInput.value);
+                fillInVehicleForm(data);
+            } catch (error) {
+                alert(error);
+            }
+            
         });
         
         form.insertBefore(getMMYButton, form.children[1]);
@@ -260,6 +269,10 @@
         };
         return await fetch(webServiceUrl, options)
             .then(response => {
+                if (!response.ok)
+                {
+                    throw "Could not retrieve from NHTSA API"
+                }
                 return response.json()
             })
             .then(data => {
@@ -272,7 +285,7 @@
                 return vehicle;
             })
             .catch(error => {
-                console.log(error);
+                throw error;
             })
     }
 
@@ -280,10 +293,15 @@
         const webServiceUrl = vehicleProfileURL + '/VehicleProfileCUD/CreateVehicleProfile';
         fetchWithTokens(webServiceUrl, 'POST', vehicle)
             .then(response => {
+                if (response.status == 403) {
+                    throw "You are unauthorized";
+                }
                 if (!response.ok) {
-                    console.log(response.statusText);
-                    console.log('error');
-                    return;
+                    throw "Could not process request";
+                }
+                if (response.status == 202)
+                {
+                    throw "Could not create vehicle";
                 }
                 else {
                     return response.json();
@@ -293,7 +311,7 @@
                 generateVehicleProfileView()
             })
             .catch(error => {
-                console.log(error);
+                alert(error)
             })
     }
     //#endregion
@@ -380,24 +398,26 @@
     //#endregion
     
     //#region Modify Vehicle
-    function postModifyVehicleProfileRequest(vehicle) {
+    async function postModifyVehicleProfileRequest(vehicle) {
         const webServiceUrl = vehicleProfileURL + '/VehicleProfileCUD/ModifyVehicleProfile';
-        fetchWithTokens(webServiceUrl, 'POST', vehicle)
+        return await fetchWithTokens(webServiceUrl, 'POST', vehicle)
             .then(response => {
-                if (!response.ok) {
-                    console.log(response.statusText);
-                    console.log('error');
-                    return;
+                if (response.status == 403) {
+                    throw `You do not have permission to edit vehicle: ${vehicle.vin}.`;
+                }
+                else if (response.status == 400) {
+                    throw `Insufficient details provided.`
+                }
+                else if (response.status == 404) {
+                    throw `Could not modify vehicle`;
                 }
                 else {
+                    sessionStorage.setItem(vehicle.vin, JSON.stringify(vehicle));
                     return response.json();
                 }
             })
-            .then( () => {
-                generateVehicleProfileView()
-            })
             .catch(error => {
-                console.log(error);
+                throw error;
             })
     }
     
@@ -442,9 +462,16 @@
                 vehicleProfile: vehicle,
                 vehicleDetails: details
             };
-            postModifyVehicleProfileRequest(data);
-    
-    
+            try {
+                postModifyVehicleProfileRequest(data);
+            }
+            catch (error) {
+                alert(error);
+                
+            }
+            finally {
+                generateVehicleProfileView();
+            }
         })
     }
     //#endregion
