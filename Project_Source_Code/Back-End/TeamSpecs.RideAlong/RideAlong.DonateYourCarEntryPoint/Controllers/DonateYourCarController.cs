@@ -5,7 +5,7 @@ using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 
-namespace RideAlong.DonateYourCarEntryPoint.Controllers
+namespace TeamSpecs.RideAlong.DonateYourCarEntryPoint.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -44,7 +44,7 @@ namespace RideAlong.DonateYourCarEntryPoint.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("RetrieveCharities")]
         public IActionResult GetCharities()
         {

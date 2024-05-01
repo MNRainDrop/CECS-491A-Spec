@@ -19,6 +19,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
@@ -26,10 +28,11 @@ builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
-
+builder.Services.AddScoped<ISqlDbCharityTarget, SqlDbCharityTarget>();
+builder.Services.AddScoped<IDonateYourCarManager, DonateYourCarManager>();
 builder.Services.AddScoped<ICharityRetrievalService, CharityRetrievalService>();
 
-builder.Services.AddScoped<IDonateYourCarManager, DonateYourCarManager>();
+
 
 var app = builder.Build();
 

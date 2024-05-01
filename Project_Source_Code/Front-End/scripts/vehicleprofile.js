@@ -390,8 +390,9 @@ function generateDonationButton(content) {
     button.type = 'button';
     button.value = 'Donate Vehicle';
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click',  () => {
         console.log("clicked donate vehicle button")
     });
     content.appendChild(button);
 }
+
