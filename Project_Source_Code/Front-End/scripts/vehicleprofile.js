@@ -1,3 +1,5 @@
+var CONFIG = require('./configs/dev.config.json');
+
 function createVehicleProfileView() {
     var dynamicContent = document.querySelector(".dynamic-content");
     while (dynamicContent.lastElementChild) {
@@ -11,7 +13,7 @@ function createVehicleProfileView() {
 
     pages(createVehicleProfileView);
     // this should be in config file
-    const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfiles';
+    const webServiceUrl = CONFIG["ip"] + ':' + CONFIG["ip"]["vehicleProfile"] + '/VehicleProfileRetrieve/MyVehicleProfiles';
 
     var popup = document.createElement('div');
     popup.id = 'vehicle-details';
@@ -123,7 +125,7 @@ async function getVehicleDetails(id) {
 
 async function getVehicleDetailsFromAPI(id) {
     // this should be in config file
-    const webServiceUrl = 'http://localhost:8727/VehicleProfileRetrieve/MyVehicleProfileDetails';
+    const webServiceUrl = CONFIG["ip"] + ':' + CONFIG["ip"]["vehicleProfile"] + '/VehicleProfileRetrieve/MyVehicleProfileDetails';
 
     const car = JSON.parse(sessionStorage.getItem(id));
     return await fetchWithTokens(webServiceUrl, 'POST', car)
@@ -324,7 +326,7 @@ function fillInForm(formData)
 }
 
 function postCreateVehicleProfileRequest(vehicle) {
-    const webServiceUrl = 'http://localhost:8727/VehicleProfileCUD/CreateVehicleProfile';
+    const webServiceUrl = CONFIG["ip"] + ':' + CONFIG["ip"]["vehicleProfile"] + '/VehicleProfileCUD/CreateVehicleProfile';
     fetchWithTokens(webServiceUrl, 'POST', vehicle)
         .then(response => {
             if (!response.ok) {
@@ -345,7 +347,7 @@ function postCreateVehicleProfileRequest(vehicle) {
 }
 
 function postModifyVehicleProfileRequest(vehicle) {
-    const webServiceUrl = 'http://localhost:8727/VehicleProfileCUD/ModifyVehicleProfile';
+    const webServiceUrl = CONFIG["ip"] + ':' + CONFIG["ip"]["vehicleProfile"] + '/VehicleProfileCUD/ModifyVehicleProfile';
     fetchWithTokens(webServiceUrl, 'POST', vehicle)
         .then(response => {
             if (!response.ok) {
