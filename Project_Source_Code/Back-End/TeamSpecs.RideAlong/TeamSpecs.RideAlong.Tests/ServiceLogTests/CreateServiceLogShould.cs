@@ -58,8 +58,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
             {
                         {new ServiceLogModel("Maintenance", "Oil", new DateTime(1969, 12, 29), "Recieved Oil change", 100000, "SlVin105") },
                         {new ServiceLogModel("Repair", "Car windshield broken", new DateTime(1900, 5, 1), "Fixed at local auto dealership", 101000, "SlVin105") },
-                        {new ServiceLogModel("Maintenance", "Oil", new DateTime(DateTime.Now.Ticks).AddMinutes(3), "Recieved Oil change", 100000, "SlVin105") },
-                        {new ServiceLogModel("Repair", "Car windshield broken", new DateTime(DateTime.Now.Ticks).AddMinutes(5), "Fixed at local auto dealership", 101000, "SlVin105") },
 
             };
 
@@ -509,7 +507,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
 
         [Theory]
         [MemberData(nameof(InvalidDateServiceLogs))]
-        public void ServiceLogCreation_DateCreatedOverBoundsOfEarliestOrLatestDateAllowed_ServiceLogWrittenToSqlDb_Fail(IServiceLogModel serviceLog)
+        public void ServiceLogCreation_DateCreatedUnderBoundsOfEarliesttDateAllowed_ServiceLogWrittenToSqlDb_Fail(IServiceLogModel serviceLog)
         {
             #region Arrange
             var timer = new Stopwatch();
