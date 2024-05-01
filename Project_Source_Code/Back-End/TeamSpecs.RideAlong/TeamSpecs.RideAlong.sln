@@ -105,7 +105,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntryPoints", "EntryPoints", "{7A22D9A7-165F-4580-808F-3F1536D90851}"
 EndProject
 Global

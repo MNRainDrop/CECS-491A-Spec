@@ -20,7 +20,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
 
         private readonly IGenericDAO _dao;
 
-        SqlDbServiceLogServiceTarget(IGenericDAO dao)
+        public SqlDbServiceLogServiceTarget(IGenericDAO dao)
         {
             _dao = dao;
         }
