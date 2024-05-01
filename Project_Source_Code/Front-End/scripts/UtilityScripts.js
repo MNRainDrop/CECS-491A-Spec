@@ -30,7 +30,7 @@ function fetchWithTokens(url, method, body) {
 
 function changeCSS(file) {
     var head = document.getElementsByTagName('head')[0];
-    if (head.lastChild.id !== 'cssLink')
+    while (head.lastChild.id != 'cssLink')
     {
         head.removeChild(head.lastChild);
     }
@@ -91,5 +91,4 @@ function pages(functionCall) {
     pages.appendChild(next);
 
     dynamicContent.appendChild(pages);
-    //functionCall();
 };
