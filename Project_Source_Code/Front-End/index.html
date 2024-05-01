@@ -5,25 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ride Along</title>
     <link id="cssLink" rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/loginStyles.css">
 </head>
 <!--Body: Contains all content we will be displaying to users
     - Nav class: navigation bar -> will attempt to keep hidden until user enters correct information
     - Div dynamic content: Where our new pages/views will be loaded into based on resposnes from mircoservices
-    -->
+-->
 <body>
-    <div>
-        <!--Add Naviation functions with Event Listeners to navigation obj. Id inside JS files -->
-        <nav class="hidden" id="navigation">
-            <div class="navbar">
-              <div class="container nav-container">
-                    <input class="checkbox" type="checkbox" name="" id="" />
-                    <div class="hamburger-lines">
-                        <span class="line line1"></span>
-                        <span class="line line2"></span>
-                        <span class="line line3"></span>
-                    </div>
+    <!--Add Naviation functions with Event Listeners to navigation obj. Id inside JS files -->
+    <nav class="hidden" id="navigation">
+        <div class="nav-container">
+            <div class="menu-button">
+                <input class="checkbox" type="checkbox" name="" id="" />
+                <div class="hamburger-lines">
+                  <span class="line line1"></span>
+                  <span class="line line2"></span>
+                  <span class="line line3"></span>
+                </div>  
                 <div class="logo">
-                  <h1>RideAlong</h1>
+                    <h1>RideAlong</h1>
                 </div>
                 <div class="menu-items">
                     <li id="vehicle-profile-view">Vehicle Profile</li>
@@ -34,27 +34,26 @@
                     <li id="refresh-permissions">Refresh Your Permissions</li>
                     <li id="log-out">Log Out</li>
                 </div>
-              </div>
             </div>
-          </nav>
-    </div>
+        </div>
+    </nav>
     <div class="dynamic-content">
-        <div class="logincontainer1">
-            <div class="login-container">
-                <div class="screen">
-                    <div class="screen__content">
-                        <form class="login">
-                            <input type="text" id="username-input" class="login__input" placeholder="User name / Email">
-                            <input type="button" class="button login__submit" id="submit-username" value="Submit"></input>				
-                        </form>
-                    </div>
-                    <div class="screen__background">
-                        <span class="screen__background__shape screen__background__shape4"></span>
-                        <span class="screen__background__shape screen__background__shape3"></span>		
-                        <span class="screen__background__shape screen__background__shape2"></span>
-                        <span class="screen__background__shape screen__background__shape1"></span>
-                    </div>		
-                </div>
+        
+        <div class="login-container">
+            <div class="messages">
+                <h1>RideAlong</h1>
+            </div>
+            <form class="login-form">
+                <input type="email" id="text-input" class="login-input" placeholder="User name / Email">
+                <input type="button" id="login-button" class="button" value="Login">
+                <input type="button" id="registration-button" class="button" value="Register Account">
+                <input type="button" id="recover-button" class="button" value="Recover Account">
+            </form>
+            <div class="login-background">
+                <span class="login-background-shape" id="shape4"></span>
+                <span class="login-background-shape" id="shape3"></span>		
+                <span class="login-background-shape" id="shape2"></span>
+                <span class="login-background-shape" id="shape1"></span>
             </div>
         </div>
     </div>

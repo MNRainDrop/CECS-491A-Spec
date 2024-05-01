@@ -2,6 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
     //const vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
+    
+    // Event listener for the nav bar to leave if you click anywhere
+    const content = document.getElementsByClassName('checkbox')[0];
+
+    document.addEventListener('click', (event) => {
+        if (!content.contains(event.target)) {
+            content.checked = false;
+        }
+    })
+
     var logOutNav = document.getElementById("log-out");
     logOutNav.addEventListener("click", logOut);
 
