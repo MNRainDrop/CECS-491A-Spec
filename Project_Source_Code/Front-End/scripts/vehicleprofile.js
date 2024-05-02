@@ -445,15 +445,22 @@ function generateViewServiceLogButton(content) {
 }
 
 function generateDonationButton(content) {
+    var vehicleElement = document.getElementById("vehicle");
+    var vehicleText = vehicleElement.textContent.trim();
+    var makeModelYear = vehicleText.split(" ");
+    var make = makeModelYear[0];
+    var model = makeModelYear[1];
+    var year = makeModelYear[2];
     var button = document.createElement('input');
     button.type = 'button';
     button.value = 'Donate Vehicle';
 
-    button.addEventListener('click', createDonateYourCarView);
+    button.addEventListener('click', createDonateYourCarView(make, model, year));
     content.appendChild(button);
 }
 
-function extractData(jsonData) {
+
+function extractData(jsonData,make, model, year) {
     //var data = JSON.parse(jsonData);
     var dynamicContent = document.querySelector(".dynamic-content");
     //var temp = "http://localhost:3000/";
@@ -465,7 +472,9 @@ function extractData(jsonData) {
         var link = data.Link;
         
         // Create HTML content with the extracted values
-        html += "<a href='" + link + "' target='_blank'>";
+        //html += "<a href='" + link + "' target='_blank'>";
+        //html += "<a href='#' onclick='handleCharityClick(\"" + link + "\")'>"; // Call handleCharityClick function
+        html += "<a href='#' onclick='handleCharityClick(\"" + link + "\", \"" + make + "\", \"" + model + "\", \"" + year + "\")'>";
         html += "<div class=charity-listings>";
         html += '<h2> Charity:' + charity+'</h2>';
         html += '<p>description: ' + description + '</p>';
@@ -477,7 +486,7 @@ function extractData(jsonData) {
     dynamicContent.innerHTML = html;
    }
 
-function createDonateYourCarView(){
+function createDonateYourCarView(make, model, year){
     var permissionGranted;
     fetchWithTokens('http://localhost:5212/DonateYourCar/GetAuthStatus', 'POST','')
         .then(function (response) {
@@ -494,7 +503,7 @@ function createDonateYourCarView(){
                         // Check if data is an array or object
                         if (Array.isArray(data) && data.length > 0) {
                             
-                            extractData(data);
+                            extractData(data,make, model, year);
                         } 
                     })
                     .catch(function (error) {
@@ -522,6 +531,14 @@ function createDonateYourCarView(){
         permissionGranted = false;
         alert(error);
     })
+}
 
+function handleCharityClick(link, make, model, year) {
+// Generate the dynamic link with the extracted values
+var dynamicLink = link + "?make=" + encodeURIComponent(make) +
+"&model=" + encodeURIComponent(model) +
+"&year=" + encodeURIComponent(year);
 
+// Open the dynamic link in a new tab
+window.open(dynamicLink, '_blank');
 }
