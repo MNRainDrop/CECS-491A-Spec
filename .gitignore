@@ -398,9 +398,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Testing Environment Testing
+# Testing Environment files
 RideAlong-config.*.txt
 RideAlong-config.*.json
 RideAlong-config.*.xml
 Project_Source_Code/Back-End/TeamSpecs.RideAlong/RideAlongConfiguration.json
 *.bat
+*.config.json

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary;
@@ -15,7 +16,8 @@ public class AuthorizeUserShould
     public void AuthService_Authorize_RequiredClaimsPassedIn_ReturnTrue_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -50,7 +52,8 @@ public class AuthorizeUserShould
     public void AuthService_Authorize_InavlidClaimsPassedIn_ReturnFalse_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var actualResult = false;
         var hashService = new HashService();
@@ -85,7 +88,8 @@ public class AuthorizeUserShould
     public void AuthService_Authorize_MissingClaimsPassedIn_ReturnFalse_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var actualResult = false;
         var hashService = new HashService();

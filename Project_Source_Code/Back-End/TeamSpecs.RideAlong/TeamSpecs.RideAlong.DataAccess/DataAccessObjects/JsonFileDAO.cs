@@ -5,12 +5,9 @@ namespace TeamSpecs.RideAlong.DataAccess
 {
     public class JsonFileDAO : IGenericDAO
     {
-
-#pragma warning disable IDE0052 // Remove unread private members
         private readonly string _currentFile;
-        private string _relativePath;
+        private readonly string _relativePath;
         private readonly string _newfile;
-#pragma warning restore IDE0052 // Remove unread private members
         public JsonFileDAO()
         {
             //Default get relative path to PepperService folder

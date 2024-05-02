@@ -3,9 +3,7 @@ using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -19,7 +17,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
 
     public class CreateServiceLogShould
     {
-        private static readonly IGenericDAO dao = new SqlServerDAO();
+        private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+        private static readonly IGenericDAO dao = new SqlServerDAO(configService);
         private static readonly IHashService hashService = new HashService();
         private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
         private static readonly ILogService logService = new LogService(logTarget, hashService);

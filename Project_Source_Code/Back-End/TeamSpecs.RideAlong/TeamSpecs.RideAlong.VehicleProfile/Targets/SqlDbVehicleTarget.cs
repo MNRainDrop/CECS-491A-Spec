@@ -23,7 +23,6 @@ public class SqlDbVehicleTarget : ICRUDVehicleTarget
         var orderBySql = "ORDER BY DateCreated ";
         var offsetSql = $"OFFSET {(page - 1) * numOfResults} ROWS ";
         var fetchSql = $"FETCH NEXT {numOfResults} ROWS ONLY;";
-
         #endregion
 
         var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();

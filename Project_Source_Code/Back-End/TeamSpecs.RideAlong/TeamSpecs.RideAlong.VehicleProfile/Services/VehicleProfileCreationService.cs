@@ -1,18 +1,28 @@
 ﻿namespace TeamSpecs.RideAlong.VehicleProfile;
 
-using System.Linq;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.ConfigService;
 
 public class VehicleProfileCreationService : IVehicleProfileCreationService
 {
     private readonly ICRUDVehicleTarget _crudVehiclesTarget;
     private readonly ILogService _logService;
+    private readonly IClaimService _claimService;
+    private readonly IConfigServiceJson _config;
 
-    public VehicleProfileCreationService(ILogService logService, ICRUDVehicleTarget crudVehiclesTarget)
+    public VehicleProfileCreationService(
+        ILogService logService,
+        ICRUDVehicleTarget crudVehiclesTarget,
+        IClaimService claimService,
+        IConfigServiceJson configService
+    )
     {
         _logService = logService;
         _crudVehiclesTarget = crudVehiclesTarget;
+        _claimService = claimService;
+        _config = configService;
     }
     public IResponse CreateVehicleProfile(string vin, string licensePlate, string? make, string? model, int year, string? color, string? description, IAccountUserModel userAccount)
     {
@@ -158,18 +168,37 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         else
         {
-            // Update Claims
-
-            // Add claims here once user administration claim modification is complete
+            // Add claims
             var claims = new List<KeyValuePair<string, string>>()
             {
                 new KeyValuePair<string, string>("canViewVehicle", vehicle.VIN),
                 new KeyValuePair<string, string>("canModifyVehicle", vehicle.VIN),
                 new KeyValuePair<string, string>("canDeleteVehicle", vehicle.VIN),
-                new KeyValuePair<string, string>("ownsVehicle", "true")
             };
 
-            // add claims
+            _claimService.CreateUserClaim(userAccount, claims);
+
+            // Update owning vehicle claim
+            var oldClaim = new KeyValuePair<string, string>("ownsVehicle", "false");
+            var newClaim = new KeyValuePair<string, string>("ownsVehicle", "true");
+            
+            _claimService.ModifyUserClaim(userAccount, oldClaim, newClaim);
+
+            // Updating can create vehicle claim
+            // getGetVehicleCount(userAccount) (helper function)
+            // if vehicle count > max owned vehicles -1 (from config file)
+            // Add this when helper function is ready
+
+            /*
+            var vehicleCount = _crudVehiclesTarget.GetVehicleCount(userAccount);
+            if (vehicleCount > MAXOWNEDVEHICLES - 1)
+            {
+                oldClaim = new KeyValuePair<string, string>("canCreateVehicle", "true");
+                newClaim = new KeyValuePair<string, string>("canCreateVehicle", "false");
+
+                _claimService.ModifyUserClaim(userAccount, oldClaim, newClaim);
+            }
+            */
 
             response.ErrorMessage = "Successful retrieval of vehicle profile.";
         }

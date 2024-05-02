@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.InventoryManagement;
 using TeamSpecs.RideAlong.LoggingLibrary;
@@ -11,7 +12,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.InventoryManagementTests;
 
 public class VendorVehicleRetrievalShould
 {
-    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+    private static readonly IGenericDAO dao = new SqlServerDAO(configService);
     private static readonly HashService hash = new HashService();
     private static readonly ILogTarget logt = new SqlDbLogTarget(dao);
     private static readonly ILogService log = new LogService(logt, hash);

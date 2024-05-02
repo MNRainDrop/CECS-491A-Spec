@@ -28,6 +28,10 @@ function fetchWithTokens(url, method, body) {
     
 };
 
+async function fetchConfig(filePath) {
+    return await fetch(filePath)
+}
+
 function changeCSS(file) {
     var head = document.getElementsByTagName('head')[0];
     while (head.lastChild.id != 'cssLink')

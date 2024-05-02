@@ -9,6 +9,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.CarNewsCenter;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.CarNewsCenterTests
 {
@@ -19,7 +20,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarNewsCenterTests
         {
             //Arrange 
             var timer = new Stopwatch();
-            var _dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var _dao = new SqlServerDAO(configService);
             var _target = new SqlCarNewsCenterTarget(_dao);
             var hashService = new HashService();
             var logTarget = new SqlDbLogTarget(_dao);
