@@ -10,13 +10,16 @@ public class SqlServerDAO : IGenericDAO
 
     public SqlServerDAO()
     {
-        var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-#pragma warning disable CS8604 // Possible null reference argument.
+        string dir = System.Reflection.Assembly.GetExecutingAssembly().Location;
+        var directory = Path.GetDirectoryName(dir);
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            throw new Exception(nameof(directory));
+        }
         var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
         var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
         var section = configuration.GetSection("ConnectionStrings");
         _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
-#pragma warning restore CS8604 // Possible null reference argument.
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
