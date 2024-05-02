@@ -363,7 +363,7 @@ function postModifyVehicleProfileRequest(vehicle) {
         .catch(error => {
             console.log(error);
         })
-};
+}
 
 function generateModifyButton(content) {
     var button = document.createElement('input');
