@@ -59,7 +59,7 @@ namespace TeamSpecs.RideAlong.DonateYourCarEntryPoint.Controllers
             response = _donateYourCarManager.retrieveCharities(user);
 
 #pragma warning disable CS8602
-            if (response.HasError == true)
+            if (response.HasError == true && response.ReturnValue.Count >= 1)
             {
                 return BadRequest();
             }
