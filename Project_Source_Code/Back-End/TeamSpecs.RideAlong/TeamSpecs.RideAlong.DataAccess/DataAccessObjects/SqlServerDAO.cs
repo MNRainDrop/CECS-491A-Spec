@@ -14,12 +14,29 @@ public class SqlServerDAO : IGenericDAO
         var directory = Path.GetDirectoryName(dir);
         if (string.IsNullOrWhiteSpace(directory))
         {
-            throw new Exception(nameof(directory));
+            throw new ArgumentNullException(nameof(directory));
         }
-        var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
-        var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-        var section = configuration.GetSection("ConnectionStrings");
-        _connStrings = new ConnectionStrings(section["readOnly"], section["writeOnly"], section["admin"]);
+        else
+        {
+            var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
+            var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
+            var section = configuration.GetSection("ConnectionStrings");
+            if (section is null)
+            {
+                throw new ArgumentNullException(nameof(section));
+            }
+            else
+            {
+                var readOnly = section["readOnly"];
+                var writeOnly = section["writeOnly"];
+                var admin = section["writeOnly"];
+                if (string.IsNullOrWhiteSpace(readOnly) || string.IsNullOrWhiteSpace(writeOnly) || string.IsNullOrWhiteSpace(admin))
+                {
+                    throw new ArgumentNullException("Connection string missing");
+                }
+                _connStrings = new ConnectionStrings(readOnly, writeOnly, admin);
+            }
+        }
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)

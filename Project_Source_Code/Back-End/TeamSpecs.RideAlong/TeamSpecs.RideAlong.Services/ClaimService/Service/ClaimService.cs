@@ -27,7 +27,7 @@ public class ClaimService : IClaimService
         }
         #endregion
 
-
+        throw new NotImplementedException();
 
 
     }
@@ -44,6 +44,8 @@ public class ClaimService : IClaimService
             throw new ArgumentNullException(nameof(user.UserHash));
         }
         #endregion
+
+        throw new NotImplementedException();
     }
 
     public IResponse DeleteUserClaim(IAccountUserModel user, string claim)
@@ -62,6 +64,8 @@ public class ClaimService : IClaimService
             throw new ArgumentNullException(nameof(claim));
         }
         #endregion
+
+        throw new NotImplementedException();
     }
 
     public IResponse ModifyUserClaim(IAccountUserModel user, ICollection<KeyValuePair<string, string>> claims)
@@ -80,5 +84,7 @@ public class ClaimService : IClaimService
             throw new ArgumentNullException(nameof(claims));
         }
         #endregion
+
+        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using Microsoft.Data.SqlClient;
+using System.Security.Claims;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 
@@ -17,33 +18,150 @@ public class ClaimTarget : IClaimTarget
          * VALUES (user.uid, (SELECT CaimID WHERE Claim = claim), scope)
          */
         #region Default sql setup
-        var defaultCommandSql = "INSERT ";
-        var defaultIntoSql = "INTO UserClaim (";
-        var defaultValuesSql = "VALUES (";
+        var defaultSql = "INSERT INTO UserClaim (UID, ClaimID, ClaimScope) VALUES (@UID, (SELECT ClaimID FROM Claim WHERE Claim = @CLAIM), @SCOPE)";
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
         #endregion
 
-
-
-        foreach(var claim in claims)
+        try
         {
-            var commandSql = defaultCommandSql;
-            var intoSql = defaultIntoSql;
-            var valuesSql = defaultValuesSql;
+            if (claims is not null)
+            {
+                foreach (var claim in claims)
+                {
+                    // create new hash set of SqlParameters
+                    var parameters = new HashSet<SqlParameter>()
+                    {
+                        new SqlParameter("@UID", user.UserId),
+                        new SqlParameter("@CLAIM", claim.Key),
+                        new SqlParameter("@SCOPE", claim.Value)
+                    };
 
-            intoSql +=
+                    sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(defaultSql, parameters));
+                }
+            }
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate SQL statement to create user claim. ";
+            return response;
         }
 
-        
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not write user claim to database. ";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
+
     }
 
     public IResponse DeleteAllUserClaimsSQL(IAccountUserModel user)
     {
-        throw new NotImplementedException();
+        /* DELETE FROM UserClaim WHERE UID = user.id
+         */
+        #region Default sql setup
+        var defaultSql = "DELETE FROM UserClaim WHERE UID = @UID";
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+        #endregion
+
+        try
+        {
+            var parameters = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UID", user.UserId),
+            };
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(defaultSql, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate SQL statement to create user claim. ";
+            return response;
+        }
+
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not write user claim to database. ";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
     }
 
-    public IResponse DeleteUserClaimSQL(IAccountUserModel user, string claim)
+    public IResponse DeleteUserClaimSQL(IAccountUserModel user, string claim, string? scope)
     {
-        throw new NotImplementedException();
+        /* DELETE FROM UserClaim WHERE UID = user.id AND Claim = claim AND Scope = scope
+         */
+        #region Default sql setup
+        var defaultSql = "DELETE FROM UserClaim WHERE UID = @UID AND ClaimID = (SELECT ClaimID FROM CLAIM WHERE Claim = @CLAIM) ";
+        var scopeSql = "AND ClaimScope = @SCOPE";
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+        #endregion
+
+        try
+        {
+            var parameters = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UID", user.UserId),
+                new SqlParameter("@CLAIM", claim)
+            };
+            if (!string.IsNullOrEmpty(scope))
+            {
+                defaultSql += scopeSql;
+                parameters.Add(new SqlParameter("@SCOPE", scope));
+            }
+            
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(defaultSql, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate SQL statement to create user claim. ";
+            return response;
+        }
+
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not write user claim to database. ";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
     }
 
     public IResponse ModifyUserClaimSql(IAccountUserModel user, ICollection<KeyValuePair<string, string>> claims)
