@@ -107,7 +107,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarLibrary", "TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj", "{1227EA0F-F6D9-4812-9050-BF6DC563188C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\TeamSpecs.RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntryPoints", "EntryPoints", "{7A22D9A7-165F-4580-808F-3F1536D90851}"
 EndProject
