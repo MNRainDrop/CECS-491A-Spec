@@ -84,5 +84,4 @@
         // Open the dynamic link in a new tab
         window.open(dynamicLink, '_blank');
     }
-  
-  })(window);
+})(window);

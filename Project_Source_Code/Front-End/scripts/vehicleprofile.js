@@ -529,7 +529,9 @@
     button.type = 'button';
     button.value = 'Donate Vehicle';
 
-    button.addEventListener('click', createDonateYourCarView(make, model, year));
+    button.addEventListener('click', () => {
+        createDonateYourCarView(make, model, year)
+    });
     content.appendChild(button);
     }
     //#endregion

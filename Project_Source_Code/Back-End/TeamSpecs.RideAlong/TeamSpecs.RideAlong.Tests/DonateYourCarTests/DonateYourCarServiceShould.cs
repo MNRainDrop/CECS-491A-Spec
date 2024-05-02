@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.DonateYourCarLibrary;
 using TeamSpecs.RideAlong.LoggingLibrary;
@@ -19,7 +20,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.DonateYourCarTests
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            var config = new ConfigServiceJson();
+            var dao = new SqlServerDAO(config);
             var charityTarget = new SqlDbCharityTarget(dao);
 
             var hashService = new HashService();

@@ -1,3 +1,4 @@
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.DonateYourCarLibrary;
 using TeamSpecs.RideAlong.DonateYourCarLibrary.Interfaces;
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();

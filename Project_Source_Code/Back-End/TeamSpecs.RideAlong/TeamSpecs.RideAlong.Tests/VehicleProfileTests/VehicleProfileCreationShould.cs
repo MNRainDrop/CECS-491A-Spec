@@ -12,8 +12,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileCreationShould
 {
-    private static readonly IConfigServiceJson configServiceJson = new ConfigServiceJson();
-    private static readonly IGenericDAO dao = new SqlServerDAO(configServiceJson);
+    private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+    private static readonly IGenericDAO dao = new SqlServerDAO(configService);
     private static readonly IClaimTarget claimTarget = new ClaimTarget(dao);
     private static readonly IClaimService claimService = new ClaimService(claimTarget);
     private static readonly ICRUDVehicleTarget createVehicleTarget = new SqlDbVehicleTarget(dao);
@@ -24,7 +24,7 @@ public class VehicleProfileCreationShould
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
     private static readonly ILogService logService = new LogService(logTarget, hashService);
 
-    private static readonly IVehicleProfileCreationService creationService = new VehicleProfileCreationService(logService, createVehicleTarget, claimService);
+    private static readonly IVehicleProfileCreationService creationService = new VehicleProfileCreationService(logService, createVehicleTarget, claimService, configService);
 
     [Fact]
     public void VehicleProfileCreation_CreateVehicleProfileInDatabase_ValidParametersPassedIn_OneVehicleProfileAndVehicleDetailsWritten_Pass()
