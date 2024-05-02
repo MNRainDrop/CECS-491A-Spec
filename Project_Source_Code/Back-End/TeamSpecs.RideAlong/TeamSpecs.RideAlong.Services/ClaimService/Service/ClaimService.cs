@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.Services;
 public class ClaimService : IClaimService
@@ -27,9 +26,9 @@ public class ClaimService : IClaimService
         }
         #endregion
 
-        throw new NotImplementedException();
-
-
+        #region Call Service and Return Response
+        return _claimTarget.CreateClaimSQL(user, claims);
+        #endregion
     }
 
     public IResponse DeleteAllUserClaims(IAccountUserModel user)
@@ -45,10 +44,12 @@ public class ClaimService : IClaimService
         }
         #endregion
 
-        throw new NotImplementedException();
+        #region Call Service and Return Response
+        return _claimTarget.DeleteAllUserClaimsSQL(user);
+        #endregion
     }
 
-    public IResponse DeleteUserClaim(IAccountUserModel user, string claim)
+    public IResponse DeleteUserClaim(IAccountUserModel user, string claim, string? scope = null)
     {
         #region Validate Arguments
         if (user is null)
@@ -65,10 +66,12 @@ public class ClaimService : IClaimService
         }
         #endregion
 
-        throw new NotImplementedException();
+        #region Call Service and Return Response
+        return _claimTarget.DeleteUserClaimSQL(user, claim, scope);
+        #endregion
     }
 
-    public IResponse ModifyUserClaim(IAccountUserModel user, ICollection<KeyValuePair<string, string>> claims)
+    public IResponse ModifyUserClaim(IAccountUserModel user, KeyValuePair<string, string> currClaim, KeyValuePair<string, string> newClaim)
     {
         #region Validate Arguments
         if (user is null)
@@ -79,12 +82,22 @@ public class ClaimService : IClaimService
         {
             throw new ArgumentNullException(nameof(user.UserHash));
         }
-        if (claims is null)
+        if (!newClaim.Key.Equals(currClaim.Key))
         {
-            throw new ArgumentNullException(nameof(claims));
+            throw new InvalidDataException(nameof(newClaim.Key));
+        }
+        if (newClaim.Value is null)
+        {
+            throw new ArgumentNullException(nameof(newClaim.Value));
+        }
+        if (newClaim.Value.Equals(currClaim.Value) && newClaim.Key.Equals(currClaim.Key))
+        {
+            throw new Exception($"Duplicate claim: {newClaim.Key}, {newClaim.Value}");
         }
         #endregion
 
-        throw new NotImplementedException();
+        #region Call Service and Return Response
+        return _claimTarget.ModifyUserClaimSql(user, currClaim, newClaim);
+        #endregion
     }
 }

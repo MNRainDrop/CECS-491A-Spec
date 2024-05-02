@@ -89,7 +89,7 @@ public class ClaimTarget : IClaimTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not generate SQL statement to create user claim. ";
+            response.ErrorMessage = "Could not generate SQL statement to delete all user claims. ";
             return response;
         }
 
@@ -104,7 +104,7 @@ public class ClaimTarget : IClaimTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not write user claim to database. ";
+            response.ErrorMessage = "Could not delete all user claims in database. ";
             return response;
         }
 
@@ -141,7 +141,7 @@ public class ClaimTarget : IClaimTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not generate SQL statement to create user claim. ";
+            response.ErrorMessage = "Could not generate SQL statement to delete user claim. ";
             return response;
         }
 
@@ -156,7 +156,7 @@ public class ClaimTarget : IClaimTarget
         catch
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not write user claim to database. ";
+            response.ErrorMessage = "Could not delete user claim in database. ";
             return response;
         }
 
@@ -164,8 +164,54 @@ public class ClaimTarget : IClaimTarget
         return response;
     }
 
-    public IResponse ModifyUserClaimSql(IAccountUserModel user, ICollection<KeyValuePair<string, string>> claims)
+    public IResponse ModifyUserClaimSql(IAccountUserModel user, KeyValuePair<string, string> currClaim, KeyValuePair<string, string> newClaim)
     {
-        throw new NotImplementedException();
+        /* UPDATE UserClaim
+         * SET (ClaimScope = newclaim.value)
+         * WHERE UID = user.id AND ClaimID = (SELECT ClaimID FROM Claim WHERE Claim = newClaim.key) AND ClaimScope = currClaim.value
+         */
+        #region Default sql setup
+        var defaultSql = "UPDATE UserClaim SET ClaimScope = @NEWSCOPE WHERE UID = @UID AND ClaimID = (SELECT ClaimID FROM Claim WHERE Claim = @CLAIM) AND ClaimScope = @CURRSCOPE";
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+        #endregion
+
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UID", user.UserId),
+                new SqlParameter("@CLAIM", newClaim.Key),
+                new SqlParameter("@NEWSCOPE", newClaim.Value),
+                new SqlParameter("@CURRSCOPE", currClaim.Value)
+            };
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(defaultSql, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate SQL statement to modify user claim. ";
+            return response;
+        }
+
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue
+            };
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not modify user claim in database. ";
+            return response;
+        }
+
+        response.HasError = false;
+        return response;
     }
 }

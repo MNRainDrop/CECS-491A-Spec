@@ -1,5 +1,6 @@
 ﻿namespace TeamSpecs.RideAlong.TestingLibrary;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -13,7 +14,9 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
+        var logService = new LogService(new SqlDbLogTarget(dao), new HashService());
 
         // Expected values
         var expectedHasError = false;
@@ -40,12 +43,14 @@ public class LoggingLibraryShould
     }
 
     [Fact]
-    public async void Async_LL_Log_CreateAndStoreOneLog_LogWillBeStoredToDataStore_Pass()
+    public async Task Async_LL_Log_CreateAndStoreOneLog_LogWillBeStoredToDataStore_Pass()
     {
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
+        var logService = new LogService(new SqlDbLogTarget(dao), new HashService());
 
 
         // Expected values
@@ -77,7 +82,9 @@ public class LoggingLibraryShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
+        var logService = new LogService(new SqlDbLogTarget(dao), new HashService());
         var responseList = new List<IResponse>();
 
         // Expected values
@@ -135,7 +142,9 @@ public class LoggingLibraryShould
         // Arrange
         var timer = new Stopwatch();
         IResponse response;
-        var logService = new LogService(new SqlDbLogTarget(new SqlServerDAO()), new HashService());
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
+        var logService = new LogService(new SqlDbLogTarget(dao), new HashService());
 
         // Expected values
         var expectedHasError = false;

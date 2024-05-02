@@ -17,6 +17,7 @@
 
     //#region Vehicle Profile View
     function createVehicleProfileView() {
+        refreshUserTokens();
         var dynamicContent = document.querySelector(".dynamic-content");
         while (dynamicContent.lastElementChild) {
             dynamicContent.removeChild(dynamicContent.lastElementChild);
@@ -470,6 +471,7 @@
                 
             }
             finally {
+                refreshUserTokens();
                 generateVehicleProfileView();
             }
         })

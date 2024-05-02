@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
-    <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,47 +1,23 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model.ConfigModels;
+using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.ConfigService.ConfigModels;
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO
 {
-    ConnectionStrings _connStrings;
+    private readonly ConnectionStrings _connStrings;
+    private readonly IConfigServiceJson _config;
 
-    public SqlServerDAO()
+    public SqlServerDAO(IConfigServiceJson config)
     {
-        string dir = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        var directory = Path.GetDirectoryName(dir);
-        if (string.IsNullOrWhiteSpace(directory))
-        {
-            throw new ArgumentNullException(nameof(directory));
-        }
-        else
-        {
-            var configPath = Path.Combine(directory, "..", "..", "..", "..", "RideAlongConfiguration.json");
-            var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-            var section = configuration.GetSection("ConnectionStrings");
-            if (section is null)
-            {
-                throw new ArgumentNullException(nameof(section));
-            }
-            else
-            {
-                var readOnly = section["readOnly"];
-                var writeOnly = section["writeOnly"];
-                var admin = section["writeOnly"];
-                if (string.IsNullOrWhiteSpace(readOnly) || string.IsNullOrWhiteSpace(writeOnly) || string.IsNullOrWhiteSpace(admin))
-                {
-                    throw new ArgumentNullException("Connection string missing");
-                }
-                _connStrings = new ConnectionStrings(readOnly, writeOnly, admin);
-            }
-        }
+        _config = config;
+        _connStrings = config.GetConfig().CONNECTION_STRINGS;
     }
 
     public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
-        string _connString = _connStrings.writeOnly;
+        string _connString = _connStrings.WRITEONLY;
 
         var rowsAffected = 0;
 
@@ -84,7 +60,7 @@ public class SqlServerDAO : IGenericDAO
 
     public IResponse ExecuteReadOnly(SqlCommand sql)
     {
-        string _connString = _connStrings.readOnly;
+        string _connString = _connStrings.READONLY;
 
         var response = new Response()
         {
@@ -135,7 +111,7 @@ public class SqlServerDAO : IGenericDAO
     public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
     {
 
-        string _connString = _connStrings.readOnly;
+        string _connString = _connStrings.READONLY;
 
         var returnList = new List<object[]>();
 
