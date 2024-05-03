@@ -19,6 +19,13 @@
     function createVehicleProfileView() {
         refreshUserTokens();
         var dynamicContent = document.querySelector(".dynamic-content");
+        var currPage;
+        try {
+            currPage = parseInt(document.getElementById('current-page').innerText);
+        }
+        catch {
+            currPage = 1;
+        }
         while (dynamicContent.lastElementChild) {
             dynamicContent.removeChild(dynamicContent.lastElementChild);
         }
@@ -29,6 +36,7 @@
         dynamicContent.appendChild(vehicleProfile);
     
         pages(createVehicleProfileView);
+        document.getElementById('current-page').innerText = currPage;
         const webServiceUrl = vehicleProfileURL + '/VehicleProfileRetrieve/MyVehicleProfiles';
     
         var popup = document.createElement('div');
@@ -38,7 +46,7 @@
         
         generateCreateButton()
     
-        fetchWithTokens(webServiceUrl, 'POST', document.getElementById("current-page").innerText)
+        fetchWithTokens(webServiceUrl, 'POST', currPage)
             .then(response => {
                 if (response.status == 403) {
                     throw "You are unauthorized";
@@ -58,6 +66,7 @@
                 if (data.length == 0 && parseInt(document.getElementById('current-page').innerText) != 1)
                 {
                     decrementPages();
+                    createVehicleProfileView();
                     return;
                 }
                 var content = document.getElementById('vehicle-profile');
@@ -478,16 +487,95 @@
     }
     //#endregion
 
-    //#region  Delete Vehicle    
+    //#region Delete Vehicle    
     function generateDeleteButton(content) {
         var button = document.createElement('input');
         button.type = 'button';
         button.value = 'Delete Vehicle';
     
-        button.addEventListener('click', () => {
-            console.log("clicked delete vehicle button")
+        button.addEventListener('click', (event) => {
+            event.stopImmediatePropagation();
+            generateDeleteView();
         });
         content.appendChild(button);
+    }
+
+    function generateDeleteView() {
+        // Get vin before deleting elements
+        const vin = document.getElementsByClassName('vin')[0].innerText;
+
+        // Delete elements in the deatils box
+        var vehicleDetails = document.getElementById("vehicle-details");
+        while (vehicleDetails.lastChild) {
+            vehicleDetails.removeChild(vehicleDetails.lastChild);
+        }
+
+        // Create new elements
+        var message = document.createElement('h1');
+        message.id = 'message';
+        message.innerText = "Are you sure you want to delete your vehicle?";
+
+        var submit = document.createElement('input');
+        submit.type = 'button';
+        submit.id = 'submit';
+        submit.value = 'Confim';
+        
+        var cancel = document.createElement('input');
+        cancel.type = 'button';
+        cancel.id = 'cancel';
+        cancel.value = 'Cancel';
+
+        var vehicleDetailsButton = document.createElement('div');
+        vehicleDetailsButton.id = 'vehicle-details-buttons';
+
+        vehicleDetailsButton.appendChild(cancel);
+        vehicleDetailsButton.appendChild(submit);
+        vehicleDetails.appendChild(message);
+        vehicleDetails.appendChild(vehicleDetailsButton);
+
+        // Add event listeners to the buttons
+        submit.addEventListener('click', async () => {
+            try {
+                var vehicle = JSON.parse(sessionStorage.getItem(vin));
+                await postDeleteVehicleProfile(vehicle);
+                alert('Vehicle successfully deleted');
+                generateVehicleProfileView();
+            }
+            catch (error) {
+                alert(error);
+            }
+        });
+        cancel.addEventListener('click', (event) => {
+            var content = document.getElementById('vehicle-details');
+            if (content.contains(event.target)) {
+                content.innerHTML = '';
+                content.style.display = "none";
+            }
+        });
+    }
+
+    async function postDeleteVehicleProfile(vehicle)
+    {
+        const webServiceUrl = vehicleProfileURL + '/VehicleProfileCUD/DeleteVehicleProfile';
+        return await fetchWithTokens(webServiceUrl, 'POST', vehicle)
+            .then(response => {
+                if (response.status == 403) {
+                    throw `You do not have permission to delete vehicle: ${vehicle.vin}.`;
+                }
+                else if (response.status == 400) {
+                    throw `Insufficient details provided.`
+                }
+                else if (response.status == 404) {
+                    throw `Could not delete vehicle`;
+                }
+                else {
+                    sessionStorage.removeItem(vehicle.vin);
+                    return response.json();
+                }
+            })
+            .catch(error => {
+                throw error;
+            })
     }
     //#region 
 
@@ -525,19 +613,20 @@
     //#region Donations
     function generateDonationButton(content) {
         var vehicleElement = document.getElementById("vehicle");
-    var vehicleText = vehicleElement.textContent.trim();
-    var makeModelYear = vehicleText.split(" ");
-    var make = makeModelYear[0];
-    var model = makeModelYear[1];
-    var year = makeModelYear[2];
-    var button = document.createElement('input');
-    button.type = 'button';
-    button.value = 'Donate Vehicle';
+        var vehicleText = vehicleElement.textContent.trim();
+        var makeModelYear = vehicleText.split(" ");
+        var make = makeModelYear[0];
+        var model = makeModelYear[1];
+        var year = makeModelYear[2];
+        var button = document.createElement('input');
+        button.type = 'button';
+        button.value = 'Donate Vehicle';
 
-    button.addEventListener('click', () => {
-        createDonateYourCarView(make, model, year)
-    });
-    content.appendChild(button);
+        button.addEventListener('click', (event) => {
+            event.stopImmediatePropagation();
+            createDonateYourCarView(make, model, year)
+        });
+        content.appendChild(button);
     }
     //#endregion
 })(window);

@@ -161,7 +161,7 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
 
-        #region Error Check
+        #region Error Check and Update Claims
         if (response.HasError)
         {
             response.ErrorMessage = "Could not create vehicle. " + response.ErrorMessage;
