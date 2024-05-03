@@ -19,7 +19,9 @@ public class VehicleProfileDeletionShould
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
     private static readonly ILogService logService = new LogService(logTarget, hashService);
 
-    private static readonly IVehicleProfileDeletionService deletionService = new VehicleProfileDeletionService(vehicleTarget, logService);
+    private static readonly IClaimTarget claimTarget = new ClaimTarget(dao);
+    private static readonly IClaimService claimService = new ClaimService(claimTarget);
+    private static readonly IVehicleProfileDeletionService deletionService = new VehicleProfileDeletionService(vehicleTarget, logService, claimService);
 
     [Fact]
     public void VehicleProfileDeletion_DeleteVehicleProfileInDatabase_ValidParametersPassedIn_OneVehicleProfileAndOneVehicleDetailsDeleted_Pass()
