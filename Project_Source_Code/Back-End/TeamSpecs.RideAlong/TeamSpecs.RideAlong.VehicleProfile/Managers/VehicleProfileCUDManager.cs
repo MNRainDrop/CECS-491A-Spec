@@ -137,8 +137,8 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         var vehicleCount = _vpCount.GetVehicleCount(account);
         if (vehicleCount.ReturnValue is not null)
         {
-            var value = vehicleCount.ReturnValue.First<object>() as int[];
-            if (value != null && value[0] >= _maxOwnedCars - 1)
+            var value = vehicleCount.ReturnValue.First<object>() as object[];
+            if (value != null && (int)value[0] >= _maxOwnedCars - 1)
             {
                 var oldClaim = new KeyValuePair<string, string>("canCreateVehicle", "true");
                 var newClaim = new KeyValuePair<string, string>("canCreateVehicle", "false");
@@ -340,6 +340,20 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         {
             response.ErrorMessage += ex.Message;
             response.HasError = true;
+        }
+
+        // Updating can create vehicle claim
+        var vehicleCount = _vpCount.GetVehicleCount(account);
+        if (vehicleCount.ReturnValue is not null)
+        {
+            var value = vehicleCount.ReturnValue.First<object>() as object[];
+            if (value != null && (int)value[0] <= _maxOwnedCars - 1)
+            {
+                var oldClaim = new KeyValuePair<string, string>("canCreateVehicle", "false");
+                var newClaim = new KeyValuePair<string, string>("canCreateVehicle", "true");
+
+                _claimService.ModifyUserClaim(account, oldClaim, newClaim);
+            }
         }
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)

@@ -1,5 +1,6 @@
 ﻿using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
@@ -7,10 +8,12 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
 {
     private readonly ICRUDVehicleTarget _deleteVehicleTarget;
     private readonly ILogService _logService;
-    public VehicleProfileDeletionService(ICRUDVehicleTarget deleteVehicleTarget, ILogService logService)
+    private readonly IClaimService _claimService;
+    public VehicleProfileDeletionService(ICRUDVehicleTarget deleteVehicleTarget, ILogService logService, IClaimService claimService)
     {
         _deleteVehicleTarget = deleteVehicleTarget;
         _logService = logService;
+        _claimService = claimService;
     }
 
     public IResponse DeleteVehicleProfile(IVehicleProfileModel vehicle, IAccountUserModel userAccount)
@@ -48,19 +51,23 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
 
         var response = _deleteVehicleTarget.DeleteVehicleProfileSql(vehicle, userAccount);
 
-        #region Update Claims
-        // add claims here once user administration claim modification is complete
-        #endregion
-
-        #region Log to database
+        #region Error Check and Update Claims
         if (response.HasError)
         {
             response.ErrorMessage = "Could not delete vehicle. " + response.ErrorMessage;
         }
         else
         {
+            // Remove claims
+            _claimService.DeleteUserClaim(userAccount, "canViewVehicle", vehicle.VIN);
+            _claimService.DeleteUserClaim(userAccount, "canModifyVehicle", vehicle.VIN);
+            _claimService.DeleteUserClaim(userAccount, "canDeleteVehicle", vehicle.VIN);
+
             response.ErrorMessage = "Successful deletion of vehicle profile.";
         }
+        #endregion
+
+        #region Log to database
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
         #endregion
 
