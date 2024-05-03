@@ -218,11 +218,3 @@ body {
 #pages > p {
     font-weight: bold;
 }
-
-/* Fixees mobile scrolling issue*/
-html, body {
-	width: auto!important;
-	overflow-x: hidden!important;
-	height: auto!important;
-	overflow-y: hidden!important;
-}
