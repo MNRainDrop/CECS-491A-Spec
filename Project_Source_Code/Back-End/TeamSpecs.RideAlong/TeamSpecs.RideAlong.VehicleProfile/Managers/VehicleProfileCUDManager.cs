@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
@@ -10,13 +12,30 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
     private readonly IVehicleProfileCreationService _vpCreate;
     private readonly IVehicleProfileModificationService _vpModify;
     private readonly IVehicleProfileDeletionService _vpDelete;
+    private readonly IGetVehicleCountTarget _vpCount;
+    private readonly IConfigServiceJson _config;
+    private readonly IClaimService _claimService;
 
-    public VehicleProfileCUDManager(ILogService logService, IVehicleProfileCreationService vpCreate, IVehicleProfileModificationService vpModify, IVehicleProfileDeletionService vpDelete)
+    private readonly int _maxOwnedCars;
+
+    public VehicleProfileCUDManager(
+        ILogService logService,
+        IVehicleProfileCreationService vpCreate,
+        IVehicleProfileModificationService vpModify,
+        IVehicleProfileDeletionService vpDelete,
+        IGetVehicleCountTarget vpCount,
+        IConfigServiceJson configService,
+        IClaimService claimService)
     {
         _logService = logService;
         _vpCreate = vpCreate;
         _vpModify = vpModify;
         _vpDelete = vpDelete;
+        _vpCount = vpCount;
+        _config = configService;
+        _claimService = claimService;
+
+        _maxOwnedCars = _config.GetConfig().VEHICLE_PROFILE_MANAGER.MAXOWNEDCARS;
     }
 
     public IResponse CreateVehicleProfile(IVehicleProfileModel vehicle, IVehicleDetailsModel vehicleDetails, IAccountUserModel account)
@@ -112,6 +131,20 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         if (timer.Elapsed.TotalSeconds > 10)
         {
             _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Creation Service. " + response.ErrorMessage, account.UserHash);
+        }
+
+        // Updating can create vehicle claim
+        var vehicleCount = _vpCount.GetVehicleCount(account);
+        if (vehicleCount.ReturnValue is not null)
+        {
+            var value = vehicleCount.ReturnValue.First<object>() as int[];
+            if (value != null && value[0] >= _maxOwnedCars - 1)
+            {
+                var oldClaim = new KeyValuePair<string, string>("canCreateVehicle", "true");
+                var newClaim = new KeyValuePair<string, string>("canCreateVehicle", "false");
+
+                _claimService.ModifyUserClaim(account, oldClaim, newClaim);
+            }
         }
         #endregion
 

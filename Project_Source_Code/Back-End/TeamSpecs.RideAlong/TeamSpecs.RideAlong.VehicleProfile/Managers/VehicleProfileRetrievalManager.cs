@@ -25,7 +25,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         _vpdRetrieve = vpdRetrievalService;
         _config = configServiceJson;
 
-        _numOfResults = _config.GetConfig().RETURN_RESULTS.VEHICLEPROFILE;
+        _numOfResults = _config.GetConfig().VEHICLE_PROFILE_MANAGER.MAXOWNEDCARS;
     }
     public IResponse GetVehicleProfileDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount)
     {

@@ -35,6 +35,7 @@ builder.Services.AddScoped<ICRUDVehicleTarget, SqlDbVehicleTarget>();
 builder.Services.AddScoped<IVehicleProfileRetrievalService, VehicleProfileRetrievalService>();
 builder.Services.AddScoped<IVehicleProfileDetailsRetrievalService, VehicleProfileDetailsRetrievalService>();
 
+builder.Services.AddScoped<IGetVehicleCountTarget, SqlDbVehicleTarget>();
 builder.Services.AddScoped<IVehicleProfileCreationService, VehicleProfileCreationService>();
 builder.Services.AddScoped<IVehicleProfileModificationService, VehicleProfileModificationService>();
 builder.Services.AddScoped<IVehicleProfileDeletionService, VehicleProfileDeletionService>();

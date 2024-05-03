@@ -63,7 +63,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5BC5D755-BED8-4932-8B85-256320D97C0E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		RideAlongConfiguration.json = RideAlongConfiguration.json
+		RideAlong.config.json = RideAlong.config.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.InventoryManagement", "InventoryManagement\TeamSpecs.RideAlong.InventoryManagement.csproj", "{CFEF364E-E28F-4638-B7B8-0860FFE193F5}"

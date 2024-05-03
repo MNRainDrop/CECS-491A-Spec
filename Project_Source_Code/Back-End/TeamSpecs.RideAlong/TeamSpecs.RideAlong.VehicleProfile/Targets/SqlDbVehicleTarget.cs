@@ -1,10 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using MailKit.Search;
+using Microsoft.Data.SqlClient;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
-public class SqlDbVehicleTarget : ICRUDVehicleTarget
+public class SqlDbVehicleTarget : ICRUDVehicleTarget, IGetVehicleCountTarget
 {
     private readonly IGenericDAO _dao;
 
@@ -644,6 +645,51 @@ public class SqlDbVehicleTarget : ICRUDVehicleTarget
         }
 
         response.HasError = false;
+        return response;
+    }
+
+    public IResponse GetVehicleCount(IAccountUserModel userAccount)
+    {
+        #region Default sql setup
+        var sqlString = "SELECT COUNT(*) FROM VehicleProfile WHERE Owner_UID = @UID";
+        #endregion
+
+        var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+        var response = new Response();
+
+        try
+        {
+            // create new hash set of SqlParameters
+            var parameters = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UID", userAccount.UserId)
+            };
+
+            sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate Vehicle count Sql. ";
+            return response;
+        }
+
+        // DAO Executes the command
+        try
+        {
+            var daoValue = _dao.ExecuteReadOnly(sqlCommands);
+            response.ReturnValue = new List<object>()
+            {
+                daoValue.First<object[]>()
+            };
+
+            response.HasError = false;
+        }
+        catch (Exception ex)
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Vehicle Profile Retrieval execution failed. " + ex;
+        }
         return response;
     }
 }

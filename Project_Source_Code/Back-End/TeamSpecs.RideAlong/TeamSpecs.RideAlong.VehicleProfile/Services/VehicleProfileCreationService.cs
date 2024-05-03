@@ -184,22 +184,6 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
             
             _claimService.ModifyUserClaim(userAccount, oldClaim, newClaim);
 
-            // Updating can create vehicle claim
-            // getGetVehicleCount(userAccount) (helper function)
-            // if vehicle count > max owned vehicles -1 (from config file)
-            // Add this when helper function is ready
-
-            /*
-            var vehicleCount = _crudVehiclesTarget.GetVehicleCount(userAccount);
-            if (vehicleCount > MAXOWNEDVEHICLES - 1)
-            {
-                oldClaim = new KeyValuePair<string, string>("canCreateVehicle", "true");
-                newClaim = new KeyValuePair<string, string>("canCreateVehicle", "false");
-
-                _claimService.ModifyUserClaim(userAccount, oldClaim, newClaim);
-            }
-            */
-
             response.ErrorMessage = "Successful retrieval of vehicle profile.";
         }
         #endregion
