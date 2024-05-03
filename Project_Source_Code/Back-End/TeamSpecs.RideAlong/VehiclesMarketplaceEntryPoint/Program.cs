@@ -15,8 +15,8 @@ var app = builder.Build();
 //CORS STUFF
 //PREFLIGHT CONDITION HERE 
 
-//app.useIDValidator();
-app.useCorsPreflight();
+//app.UseIDValidator();
+app.UseCorsPreflight();
 
 
 //MIDDLEWARE RIGHT HERE
@@ -43,16 +43,16 @@ app.MapControllers();
 
 app.Run();*/
 
-using TeamSpecs.RideAlong.DataAccess;
-using TeamSpecs.RideAlong.VehicleMarketplace;
-using TeamSpecs.RideAlong.Middleware;
-using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
-using TeamSpecs.RideAlong.SecurityLibrary;
-using TeamSpecs.RideAlong.VehicleMarketplace.Managers;
 using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Middleware;
+using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.VehicleMarketplace;
+using TeamSpecs.RideAlong.VehicleMarketplace.Managers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,13 +93,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.useCorsPreflight();
+app.UseCorsPreflight();
 
-app.useIDValidator();
+app.UseIDValidator();
 
-////
-
-app.useCorsMiddleware();
+app.UseCorsMiddleware();
 
 app.MapControllers();
 

@@ -44,9 +44,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCorsPreflight();
 
-app.useIDValidator();
+app.UseIDValidator();
 
-app.useCorsMiddleware();
+app.UseCorsMiddleware();
 
 app.MapControllers();
 

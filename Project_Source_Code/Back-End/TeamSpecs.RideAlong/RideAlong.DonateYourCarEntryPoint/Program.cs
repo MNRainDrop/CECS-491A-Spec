@@ -45,11 +45,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.useCorsPreflight();
+app.UseCorsPreflight();
 
-app.useIDValidator();
+app.UseIDValidator();
 
-app.useCorsMiddleware();
+app.UseCorsMiddleware();
 
 app.MapControllers();
 
