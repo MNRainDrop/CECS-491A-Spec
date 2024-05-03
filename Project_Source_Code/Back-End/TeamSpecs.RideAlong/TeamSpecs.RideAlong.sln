@@ -63,7 +63,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5BC5D755-BED8-4932-8B85-256320D97C0E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		RideAlongConfiguration.json = RideAlongConfiguration.json
+		RideAlong.config.json = RideAlong.config.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.InventoryManagement", "InventoryManagement\TeamSpecs.RideAlong.InventoryManagement.csproj", "{CFEF364E-E28F-4638-B7B8-0860FFE193F5}"
@@ -105,9 +105,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 		{CB286656-126F-4F55-B64E-291AD8194279} = {CB286656-126F-4F55-B64E-291AD8194279}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarLibrary", "TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj", "{1227EA0F-F6D9-4812-9050-BF6DC563188C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\TeamSpecs.RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntryPoints", "EntryPoints", "{7A22D9A7-165F-4580-808F-3F1536D90851}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConfigService", "ConfigService\TeamSpecs.RideAlong.ConfigService.csproj", "{94C5A058-723E-412F-9C38-5299E181A4FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{A810CAD1-59D9-476B-84DB-75DBED542972}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -199,10 +205,22 @@ Global
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F04A6E6D-E871-474F-AFCD-C8B25121EFD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1227EA0F-F6D9-4812-9050-BF6DC563188C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C5A058-723E-412F-9C38-5299E181A4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C5A058-723E-412F-9C38-5299E181A4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C5A058-723E-412F-9C38-5299E181A4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C5A058-723E-412F-9C38-5299E181A4FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A810CAD1-59D9-476B-84DB-75DBED542972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A810CAD1-59D9-476B-84DB-75DBED542972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A810CAD1-59D9-476B-84DB-75DBED542972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A810CAD1-59D9-476B-84DB-75DBED542972}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -214,6 +232,7 @@ Global
 		{F2B9F5A9-8DE1-4BAD-854A-251CB1605449} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{34B65107-F7A7-4BB4-9C51-9A035C9BF0D5} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{8C150363-9864-4010-BC51-0645AA00047D} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}

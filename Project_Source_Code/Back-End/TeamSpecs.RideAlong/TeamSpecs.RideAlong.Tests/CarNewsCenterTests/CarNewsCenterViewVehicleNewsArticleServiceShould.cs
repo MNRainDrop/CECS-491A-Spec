@@ -11,20 +11,22 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.CarNewsCenter;
 using TeamSpecs.RideAlong.VehicleProfile;
+using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class CarNewsCenterViewVehicleNewsArticleServiceShould
     {
         [Fact]
-        public async void CarNewsCenterViewVehicleNewsArticleServiceShould_GetNewsForAllVehicles_ValidUserAccountPassedIn_OneVehicleProfileRetrieved_Pass()
+        public async Task CarNewsCenterViewVehicleNewsArticleServiceShould_GetNewsForAllVehicles_ValidUserAccountPassedIn_OneVehicleProfileRetrieved_Pass()
         {
             #region Arrange
             var timer = new Stopwatch();
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var vehicleTarget = new SqlCarNewsCenterTarget(dao);
 
             var hashService = new HashService();
@@ -117,14 +119,15 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         }
 
         [Fact]
-        public async void CarNewsCenterViewVehicleNewsArticleServiceShould_GetNewsForAllVehicles_ValidUserAccountPassedIn_ThreeVehicleProfilesRetrieved_Pass()
+        public async Task CarNewsCenterViewVehicleNewsArticleServiceShould_GetNewsForAllVehicles_ValidUserAccountPassedIn_ThreeVehicleProfilesRetrieved_Pass()
         {
             #region Arrange
             var timer = new Stopwatch();
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var vehicleTarget = new SqlCarNewsCenterTarget(dao);
 
             var hashService = new HashService();

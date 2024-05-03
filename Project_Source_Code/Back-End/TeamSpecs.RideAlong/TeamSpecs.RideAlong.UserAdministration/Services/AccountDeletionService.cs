@@ -1,7 +1,7 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.LoggingLibrary;
 
-namespace TeamSpecs.RideAlong.UserAdministration;
+namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
 public class AccountDeletionService : IAccountDeletionService
 {

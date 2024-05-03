@@ -137,7 +137,6 @@ function refreshUserTokens() {
         try {
             sessionStorage.setItem('IDToken', data.idToken);
             sessionStorage.setItem('AccessToken', data.accessToken);
-            alert("Your session has been refreshed!!!!");
         }
         catch (_a) { }
         ;

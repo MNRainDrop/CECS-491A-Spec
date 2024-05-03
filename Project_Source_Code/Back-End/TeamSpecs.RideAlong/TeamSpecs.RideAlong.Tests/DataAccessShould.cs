@@ -3,6 +3,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 #pragma warning disable
 public class DataAccessShould
@@ -29,7 +30,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             $"VALUES ('TestUsername', 123456, '{GenerateRandomHash()}')";
@@ -56,7 +58,8 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_SqlCommandWithNoContextPassedIn_WriteToDatabase_Fail()
     {
         // Arrange=
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var sql = "";
 
 
@@ -82,7 +85,8 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_InsertToInvalidTableSqlCommandPassedIn_WriteToDatabase_Fail()
     {
         // Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var sql = "INSERT INTO dbo.NotImplementedTable (something)" +
             "VALUES ('This should not work')";
 
@@ -109,7 +113,8 @@ public class DataAccessShould
     public void DAO_ExecuteWriteOnly_InsertSqlCommandWithVariableLimitExceededPassedIn_WriteToDatabase_Fail()
     {
         // Arrange        
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             "VALUES ('username should fail it has more than 50 characters', 2147483648, 'this user hash is expected to fail it has more than 64 characters')";
 
@@ -136,7 +141,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = "INSERT INTO UserAccount (UserName, Salt, UserHash)" +
             "VALUES (null, null, null)";
@@ -167,7 +173,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = new SqlCommand("SELECT UID, UserName, Salt, UserHash FROM UserAccount WHERE UID = 1;");
 
@@ -202,7 +209,8 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = new SqlCommand("SELECT  UID, UserName, Salt, UserHash FROM UserAccount WHERE UserName LIKE '%Haha Funny Number lololol';");
 
@@ -236,7 +244,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         string hash = GenerateRandomHash();
 
         var sql = new SqlCommand("SELECT UserName, UserHash FROM UserAccount WHERE UserName LIKE '%TestUsername%' and UserHash LIKE '%TestUserHash%';");
@@ -273,7 +282,8 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
 
         var sql = new SqlCommand("INSERT INTO UserAccount (UserName, Salt, UserHash) " + $"VALUES ('test_user@gmail.com', 123456, '{GenerateRandomHash()}')");
@@ -302,7 +312,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = "UPDATE UserAccount " +
             "SET UserHash = 'This is an update test'" +
@@ -343,7 +354,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = new SqlCommand("UPDATE UserAccount " +
             "SET UserHash = 'This is a test for updating'");
@@ -374,7 +386,8 @@ public class DataAccessShould
         // Arrange
         var timer = new Stopwatch();
 
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql2 = "INSERT INTO UserAccount (UserName, Salt, UserHash) VALUES ('dummyUsername', 123456, 'dummyUserHash')";
         var sql = "DELETE FROM UserAccount WHERE UserName = 'dummyUsername'";
@@ -404,7 +417,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         var sql = "DELETE FROM UserAccount " +
             "WHERE UID = null";
@@ -433,7 +447,8 @@ public class DataAccessShould
     {
         // Arrange
         var timer = new Stopwatch();
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
 
         // Expected values
         var minimumExpectedReturnValue = 0;

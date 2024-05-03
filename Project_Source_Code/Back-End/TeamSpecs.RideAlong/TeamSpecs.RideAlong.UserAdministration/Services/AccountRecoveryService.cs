@@ -2,7 +2,7 @@
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
 
-namespace TeamSpecs.RideAlong.UserAdministration
+namespace TeamSpecs.RideAlong.UserAdministration.Services
 {
     public class AccountRecoveryService
     {
@@ -37,11 +37,11 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             response = _userTarget.EnableUserAccountSql(userName);
 
-            if(response.HasError) 
+            if (response.HasError)
             {
                 response.ErrorMessage = "User Account was unable to be enabled ";
                 _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
-                
+
             }
             _logService.CreateLogAsync("Info", "Server", "EnableUserAccount Successful", userHash);
             return response;
@@ -57,7 +57,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
             var userHash = _hashService.hashUser(userName, 0);
 
             #region Validiating Arguements
-            if (String.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 _logService.CreateLogAsync("Error", "Data", $"{nameof(userName)} must be valid", userHash);
                 throw new ArgumentException($"{nameof(userName)} must be valid");

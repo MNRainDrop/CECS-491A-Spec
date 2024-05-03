@@ -11,6 +11,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.Services;
 using Microsoft.Data.SqlClient;
+using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.SecurityLibraryTests
 {
@@ -21,7 +22,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.SecurityLibraryTests
         {
             #region Arrange 
             //Arrange
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var logTarget = new SqlDbLogTarget(dao);
             var actualResult = false;
             var hashService = new HashService();

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.VehicleProfile;
 
@@ -9,15 +10,22 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
     private readonly ILogService _logService;
     private readonly IVehicleProfileRetrievalService _vpRetrieve;
     private readonly IVehicleProfileDetailsRetrievalService _vpdRetrieve;
+    private readonly IConfigServiceJson _config;
 
-    private readonly int numOfResults;
-    
-    public VehicleProfileRetrievalManager(ILogService logService, IVehicleProfileRetrievalService vpRetrievalService, IVehicleProfileDetailsRetrievalService vpdRetrievalService)
+    private readonly int _numOfResults;
+
+    public VehicleProfileRetrievalManager(
+        ILogService logService,
+        IVehicleProfileRetrievalService vpRetrievalService,
+        IVehicleProfileDetailsRetrievalService vpdRetrievalService,
+        IConfigServiceJson configServiceJson)
     {
         _logService = logService;
         _vpRetrieve = vpRetrievalService;
         _vpdRetrieve = vpdRetrievalService;
-        numOfResults = 10;
+        _config = configServiceJson;
+
+        _numOfResults = _config.GetConfig().VEHICLE_PROFILE_MANAGER.MAXOWNEDCARS;
     }
     public IResponse GetVehicleProfileDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount)
     {
@@ -69,11 +77,13 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
         {
-            _logService.CreateLogAsync("Warning", "Server", response.ErrorMessage + "Retrieving Vehicle Profiles took longer than 3 seconds, but less than 10.", userAccount.UserHash);
+            _logService.CreateLogAsync("Warning", "Server", response.ErrorMessage +
+                "Retrieving Vehicle Profiles took longer than 3 seconds, but less than 10.", userAccount.UserHash);
         }
         if (timer.Elapsed.TotalSeconds > 10)
         {
-            _logService.CreateLogAsync("Error", "Server", response.ErrorMessage + "Server Timeout on Vehicle Profile Retrieval Service", userAccount.UserHash);
+            _logService.CreateLogAsync("Error", "Server", response.ErrorMessage +
+                "Server Timeout on Vehicle Profile Retrieval Service", userAccount.UserHash);
         }
         #endregion
 
@@ -110,7 +120,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         var timer = new Stopwatch();
 
         timer.Start();
-        var response = _vpRetrieve.RetrieveVehicleProfilesForUser(userAccount, numOfResults, page);
+        var response = _vpRetrieve.RetrieveVehicleProfilesForUser(userAccount, _numOfResults, page);
         timer.Stop();
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)

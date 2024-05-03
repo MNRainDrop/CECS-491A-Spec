@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 
@@ -14,7 +14,8 @@ public class MailkKitServiceShould
         //Arrange 
         var timer = new Stopwatch();
         IResponse response;
-        MailKitService mailkit = new MailKitService();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        MailKitService mailkit = new MailKitService(configService);
         string addr = "baker123dy@gmail.com";
         string title = "Mail test";
         string body = "Hello World!";
@@ -36,7 +37,8 @@ public class MailkKitServiceShould
         //Arrange 
         var timer = new Stopwatch();
         IResponse response;
-        MailKitService mailkit = new MailKitService();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        MailKitService mailkit = new MailKitService(configService);
         string addr = "";
         string title = "Mail test";
         string body = "Hello World!";

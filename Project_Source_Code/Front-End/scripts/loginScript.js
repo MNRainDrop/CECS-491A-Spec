@@ -1,3 +1,4 @@
+'use strict;'
 // Validators
 var isValidEmailAddress = function (email) {
     var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -15,6 +16,25 @@ document.addEventListener("DOMContentLoaded", function () {
     var createAccountButton = document.getElementById("registration-button");
     createAccountButton.addEventListener("click", createAccount);
 });
+
+
+(async function() {
+    //#region Initial Setup
+    var webURL = "";
+    var CONFIG = (await fetchConfig('./configs/RideAlong.config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw "Could not read config file";
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error(error);
+        }));
+    webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["security"]
+    window.webURL = webURL;
+}) (window);
+
 // Implementation
 function submitUsername() {
     var textInput = document.getElementById("text-input");
@@ -23,7 +43,7 @@ function submitUsername() {
     if (username) {
         if (isValidEmailAddress(username)) {
             // Calls Web API controller
-            fetch("http://localhost:8080/Auth/startLogin", {
+            fetch(webURL + "/Auth/startLogin", {
                 method: "POST",
                 body: JSON.stringify(username),
                 headers: {
@@ -71,7 +91,7 @@ function submitOTP() {
         if (isValidOTP(otp) && isValidEmailAddress(username)) {
             var fetchResponse = false; // Assuming Fail response by default
             // Make fetch request to back - end
-            fetch("http://localhost:8080/Auth/tryAuthentication", {
+            fetch(webURL + "/Auth/tryAuthentication", {
                 method: "POST",
                 body: JSON.stringify({ username: username, otp: otp }),
                 headers: {
@@ -127,7 +147,7 @@ function showOTPView() {
 
     // Create a paragraph element to tell user what to do next
     var message = document.createElement('h2');
-    message.textContent = `An OTP has been sent to your email address. Please enter the OTP`
+    message.innerHTML = `An OTP has been sent to your email address.<br>Please enter the OTP`
     document.querySelector(".messages").appendChild(message);
 
     // Change contents of input text field

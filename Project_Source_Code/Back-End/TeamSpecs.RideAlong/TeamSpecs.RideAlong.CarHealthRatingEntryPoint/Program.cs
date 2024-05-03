@@ -7,6 +7,7 @@ using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.ConfigService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO>();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
