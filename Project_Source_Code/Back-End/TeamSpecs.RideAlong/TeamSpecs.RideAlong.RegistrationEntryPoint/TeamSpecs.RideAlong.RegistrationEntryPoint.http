@@ -1,4 +1,4 @@
-@TeamSpecs.RideAlong.RegistrationEntryPoint_HostAddress = http://localhost:5080
+@TeamSpecs.RideAlong.RegistrationEntryPoint_HostAddress = http://localhost:5107
 
 GET {{TeamSpecs.RideAlong.RegistrationEntryPoint_HostAddress}}/weatherforecast/
 Accept: application/json
