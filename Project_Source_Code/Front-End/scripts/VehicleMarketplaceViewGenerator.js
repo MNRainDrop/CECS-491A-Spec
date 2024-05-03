@@ -61,3 +61,36 @@ function displayMarketplace() {
     }); 
 }
 
+
+function uploadToMakarketplace(VIN,description){
+    fetchWithTokens('http://localhost:5104/VehicleMarketplace/VehicleMarketplacePostCreation', 'POST','')
+    .then(function (response) {
+        if (response.status == 200) { 
+            response.json()
+            .then(function(data) {
+                // Check if data is an array or object
+                if (Array.isArray(data) && data.length > 0) {
+                    //alert("VP's retrieved");
+                    exrtactData(data);
+                } 
+            })
+            .catch(function (error) {
+                alert("Error parsing JSON: " + error);
+            });
+        } 
+        else {
+            // Handle response as string
+            response.text()
+            .then(function(text) {
+                alert(text); // Alert the string response
+                var dynamicContent = document.querySelector(".dynamic-content");
+                dynamicContent.innerHTML = text;
+            })
+            .catch(function (error) {
+                alert("Error reading response text: " + error);
+            });
+        }
+    }); 
+
+}
+

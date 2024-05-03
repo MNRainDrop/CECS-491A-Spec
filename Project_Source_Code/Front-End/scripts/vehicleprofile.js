@@ -496,6 +496,11 @@
         var button = document.createElement('input');
         button.type = 'button';
         button.value = 'Upload To Marketplace';
+        var vehicleText = vehicleElement.textContent.trim();
+        var makeModelYear = vehicleText.split(" ");
+        var make = makeModelYear[0];
+        var model = makeModelYear[1];
+        var year = makeModelYear[2];        
     
         button.addEventListener('click', () => {
             console.log("clicked marketplace vehicle button")
