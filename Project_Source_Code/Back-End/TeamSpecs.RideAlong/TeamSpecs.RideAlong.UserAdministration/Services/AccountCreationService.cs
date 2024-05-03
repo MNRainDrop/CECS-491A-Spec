@@ -31,12 +31,12 @@ public class AccountCreationService : IAccountCreationService
         }
         #endregion
 
-        IResponse response;
+        IResponse response = new Response();
         var userAccount = new AccountUserModel(userName);
         //var userProfile = new ProfileUserModel(dateOfBirth);
         IDictionary<int, string> userClaims;
 
-
+        /*
         // Create User Hash
         var userPepper = _pepperService.RetrievePepper("AccountCreation");
         //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
@@ -49,7 +49,7 @@ public class AccountCreationService : IAccountCreationService
         userAccount.Salt = salt;
 
         // Generate user default claims
-        var userClaims = GenerateDefaultClaims();
+        //var userClaims = GenerateDefaultClaims();
 
         // Write user to data store
         //response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
@@ -68,7 +68,7 @@ public class AccountCreationService : IAccountCreationService
             response.ErrorMessage = "Successful";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
-
+        */
 
         // Return Response
         return response;
