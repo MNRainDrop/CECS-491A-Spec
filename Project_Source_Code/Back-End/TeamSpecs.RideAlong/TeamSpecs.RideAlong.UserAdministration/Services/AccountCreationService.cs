@@ -1,6 +1,6 @@
-﻿using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.LoggingLibrary;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
@@ -62,7 +62,9 @@ public class AccountCreationService : IAccountCreationService
         IResponse response = new Response();
         var userAccount = new AccountUserModel(userName);
         //var userProfile = new ProfileUserModel(dateOfBirth);
+#pragma warning disable CS0168 // Variable is declared but never used
         IDictionary<int, string> userClaims;
+#pragma warning restore CS0168 // Variable is declared but never used
 
         /*
         // Create User Hash

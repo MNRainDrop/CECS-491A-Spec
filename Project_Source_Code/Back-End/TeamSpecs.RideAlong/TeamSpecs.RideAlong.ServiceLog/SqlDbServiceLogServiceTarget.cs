@@ -1,12 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Model.PaginationModel;
@@ -89,9 +81,11 @@ namespace TeamSpecs.RideAlong.ServiceLog
             var tableSql = "ServiceLog ";
             var rowsSql = "(";
             var valuesSql = "VALUES (";
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
             string query = "" +
                 "UPDATE ServiceLog" +
                 "SET Thing = thing";
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
             var response = new Response() { ReturnValue = new List<object>() };
             #endregion
@@ -173,7 +167,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
                 response.HasError = true;
                 response.ErrorMessage = "Service Log Deletion Sql generation failed";
                 return response;
-            
+
             }
 
             response.HasError = false;
@@ -256,7 +250,7 @@ namespace TeamSpecs.RideAlong.ServiceLog
 
         #endregion
 
-        public IResponse GenerateCreateServiceLogSql (IServiceLogModel serviceLog)
+        public IResponse GenerateCreateServiceLogSql(IServiceLogModel serviceLog)
         {
             #region Variables
             IResponse response = new Response();

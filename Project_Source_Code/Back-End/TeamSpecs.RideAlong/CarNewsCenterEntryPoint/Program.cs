@@ -14,8 +14,9 @@ var app = builder.Build();
 
 //CORS STUFF
 //PREFLIGHT CONDITION HERE 
-app.useIDValidator();
-app.useCorsPreflight();
+app.UseIDValidator();
+app.UseCorsPreflight();
+app.UseCorsMiddleware();
 
 
 //MIDDLEWARE RIGHT HERE

@@ -1,13 +1,13 @@
-using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
-using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.CarHealthRatingLibrary;
-using TeamSpecs.RideAlong.Middleware;
-using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
-using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
 using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Middleware;
+using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.useCorsPreflight();
+app.UseCorsPreflight();
 
 app.useIDValidator();
 
