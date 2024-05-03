@@ -52,6 +52,8 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
 
         }
 
+        
+
 
         [HttpGet]
         [Route("GetVehicleMarketplace")]
@@ -82,6 +84,68 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
                 return BadRequest();
             }
 
+        }
+
+
+        [HttpPost]
+        [Route("VehicleMarketplacePostCreation")]
+        public IActionResult VehicleMarketplacePostCreation([FromBody] RequestData requestData)
+        {
+            IResponse response;
+            /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
+#pragma warning disable CS8604 // Possible null reference argument.
+            IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
+#pragma warning restore CS8604 // Possible null reference argument.
+            user.UserId = principal.userIdentity.UID;
+            user.UserHash = principal.userIdentity.userHash;*/
+            try
+            {
+                response = _manager.CreateVehicleProfilePost(requestData.vehicleProfile.VIN, 1, requestData.vehicleProfile.Make, 1);
+                if (response is not null)
+                {
+                    if (response.HasError)
+                    {
+                        return BadRequest(response.ErrorMessage);
+                    }
+                    else
+                    {
+                        return Ok(response.ReturnValue);
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
+
+        public class RequestData
+        {
+            public required JavaScriptVehicle vehicleProfile { get; set; }
+            public required JavaScriptDetails vehicleDetails { get; set; }
+
+        }
+        public class JavaScriptVehicle
+        {
+            public required string VIN { get; set; }
+            public required string LicensePlate { get; set; }
+            public required string Make { get; set; }
+            public required string Model { get; set; }
+            public required int Year { get; set; }
+        }
+
+        public class JavaScriptDetails
+        {
+            public required string VIN { get; set; }
+            public required string Color { get; set; }
+            public required string Description { get; set; }
         }
     }
 }
