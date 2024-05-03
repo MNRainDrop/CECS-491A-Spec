@@ -115,6 +115,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConfigS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{A810CAD1-59D9-476B-84DB-75DBED542972}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.RegistrationEntryPoint", "TeamSpecs.RideAlong.RegistrationEntryPoint\TeamSpecs.RideAlong.RegistrationEntryPoint.csproj", "{FF5B731A-CB8A-4739-8B81-A0C3C468C938}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -221,6 +223,10 @@ Global
 		{A810CAD1-59D9-476B-84DB-75DBED542972}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A810CAD1-59D9-476B-84DB-75DBED542972}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A810CAD1-59D9-476B-84DB-75DBED542972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,6 +239,7 @@ Global
 		{34B65107-F7A7-4BB4-9C51-9A035C9BF0D5} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{8C150363-9864-4010-BC51-0645AA00047D} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}
