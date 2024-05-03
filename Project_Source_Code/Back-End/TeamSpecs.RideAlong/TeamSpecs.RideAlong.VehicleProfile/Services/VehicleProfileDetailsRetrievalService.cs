@@ -5,16 +5,16 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetrievalService
 {
-    private readonly IRetrieveVehicleDetailsTarget _vehicleDetailsTarget;
+    private readonly ICRUDVehicleTarget _vehicleDetailsTarget;
     private readonly ILogService _logService;
 
-    public VehicleProfileDetailsRetrievalService(IRetrieveVehicleDetailsTarget vehicleDetailsTarget, ILogService log)
+    public VehicleProfileDetailsRetrievalService(ICRUDVehicleTarget vehicleDetailsTarget, ILogService log)
     {
         _vehicleDetailsTarget = vehicleDetailsTarget;
         _logService = log;
     }
 
-    public IResponse retrieveVehicleDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount)
+    public IResponse RetrieveVehicleDetails(IVehicleProfileModel vehicleProfile, IAccountUserModel userAccount)
     {
         #region Check Parameters
         if (vehicleProfile is null)
@@ -24,6 +24,10 @@ public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetri
         if (string.IsNullOrWhiteSpace(vehicleProfile.VIN))
         {
             throw new ArgumentNullException(nameof(vehicleProfile.VIN));
+        }
+        if (vehicleProfile.VIN.Length > 17)
+        {
+            throw new ArgumentOutOfRangeException(nameof(vehicleProfile.VIN));
         }
         if (userAccount is null)
         {
@@ -39,7 +43,7 @@ public class VehicleProfileDetailsRetrievalService : IVehicleProfileDetailsRetri
         {
             new KeyValuePair<string, string>("VIN", vehicleProfile.VIN)
         };
-        var response = _vehicleDetailsTarget.readVehicleProfileDetailsSql(search);
+        var response = _vehicleDetailsTarget.ReadVehicleProfileDetailsSql(search);
 
         #region Log the action to the database
         if (response.HasError)

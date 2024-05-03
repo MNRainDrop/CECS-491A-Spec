@@ -157,7 +157,7 @@ namespace TeamSpecs.RideAlong.Services
             #region Sql setup
             var commandSql = "Select * ";
             var fromSql = "From VehicleProfile ";
-            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN";
+            var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN ";
             var whereSql = "WHERE MarketplaceStatus.ViewStatus = 1";
             #endregion
 
@@ -186,7 +186,7 @@ namespace TeamSpecs.RideAlong.Services
 
                 foreach (var item in daoValue)
                 {
-                    response.ReturnValue.Add(new VehicleProfileModel((string)item[0], (long)item[1], (string)item[2], item[3].ToString(), item[4].ToString(), (int)item[5]));
+                    response.ReturnValue.Add(new VehicleProfileModel((string)item[0], (long)item[1], (string)item[2], (string)item[3], (string)item[4], (int)item[5]));
                 }
                 response.HasError = false;
             }
@@ -250,7 +250,8 @@ namespace TeamSpecs.RideAlong.Services
 
                 foreach (var item in daoValue)
                 {
-                    response.ReturnValue.Add(new VehicleProfileModel((string)item[0], (long)item[1], (string)item[2], item[3].ToString(), item[4].ToString(), (int)item[5]));
+                    response.ReturnValue.Add(new VehicleProfileModel((string)item[0], (long)item[1], (string)item[2], (string)item[3], (string)item[4], (int)item[5]));
+                    
                 }
                 response.HasError = false;
             }
@@ -263,7 +264,7 @@ namespace TeamSpecs.RideAlong.Services
         }
 
         //This method is for sedning buy request VPM-6
-        public IResponse VehicleMarketplaceSendRequestService(IRequest buyRequest)
+        public IResponse VehicleMarketplaceSendRequestService(INotification buyRequest)
         {
 
             #region Validate Arguments
@@ -294,7 +295,7 @@ namespace TeamSpecs.RideAlong.Services
             {
                 new SqlParameter("@UID",buyRequest.UID),
                 new SqlParameter("@VIN", buyRequest.VIN),
-                new SqlParameter("@Notification", buyRequest.message),
+                //new SqlParameter("@Notification", buyRequest.message),
             };
 
             //Combine into SQL command 

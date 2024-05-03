@@ -1,23 +1,23 @@
 // Note, doing the import function breaks the files functionality. I am unsure why this is the case, but I have not found a solution
-import { fetchWithTokens, incrementPages } from "./UtilityScripts";
-// function fetchWithTokens(url: string, method: string, body: any) {  
-//     // Fetch the tokens from session storage
-//     const idToken = sessionStorage.getItem('IDToken');
-//     const accessToken = sessionStorage.getItem('AccessToken');
-//     const refreshToken = sessionStorage.getItem('RefreshToken');
-//     // Create the headers object with the tokens
-//     const headers : HeadersInit = {
-//         'Authorization': `Bearer ${idToken}` ?? '',
-//         'X-Access-Token': accessToken ?? '',
-//         'X-Refresh-Token': refreshToken ?? '',
-//         'Content-Type': 'application/json' // Set the Content-Type header for the request body
-//     };
-//     return fetch(url, {
-//         method: method,
-//         headers: headers,
-//         body: JSON.stringify(body)
-//     });
-// };
+//import { fetchWithTokens } from "./FetchWithTokens";
+function fetchWithTokens(url: string, method: string, body: any) {  
+    // Fetch the tokens from session storage
+    const idToken = sessionStorage.getItem('IDToken');
+    const accessToken = sessionStorage.getItem('AccessToken');
+    const refreshToken = sessionStorage.getItem('RefreshToken');
+    // Create the headers object with the tokens
+    const headers : HeadersInit = {
+        'Authorization': `Bearer ${idToken}` ?? '',
+        'X-Access-Token': accessToken ?? '',
+        'X-Refresh-Token': refreshToken ?? '',
+        'Content-Type': 'application/json' // Set the Content-Type header for the request body
+    };
+    return fetch(url, {
+        method: method,
+        headers: headers,
+        body: JSON.stringify(body)
+    });
+};
 
 document.addEventListener("DOMContentLoaded", () => {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");

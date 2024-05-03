@@ -11,22 +11,24 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
 {
     public class VehicleMarketplaceSendBuyRequest : IVehiceMarketplaceSendBuyRequestService
     {
-        private SqlDbMarketplaceTarget _target;
+        private IMarketplaceTarget _target;
 
-        public VehicleMarketplaceSendBuyRequest(SqlDbMarketplaceTarget target)
+        public VehicleMarketplaceSendBuyRequest(IMarketplaceTarget target)
         {
-            target = _target;
+            _target = target;
         }
 
         public IResponse SendBuyRequest(long uid, string vin, int price)
         {
+            /*
             IResponse response;
             //Poppulate message to pass to target 
             string message = uid + " want to buy " + vin + " for " + price;
-            Request request = new Request(uid, vin, price, message);
+            Notification request = new Notification(uid, vin, price, message);
             response = _target.VehicleMarketplaceSendRequestService(request);
 
-            return response;
+            return response;*/
+            throw new NotImplementedException();
         }
     }
 }

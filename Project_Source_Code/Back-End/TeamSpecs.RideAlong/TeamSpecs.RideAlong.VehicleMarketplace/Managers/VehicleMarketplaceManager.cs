@@ -12,13 +12,15 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
     {
         private IVehiceMarketplacePostCreationService _postCreationService;
         private IVehiceMarketplacePostDeletionService _postDeletionService;
+        private IVehiceMarketplacePostRetrievalService _vehiceMarketplacePostRetrievalService;
 
 
         //Constructor 
-        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService)
+        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService, IVehiceMarketplacePostRetrievalService vehiceMarketplacePostRetrievalService)
         {
             _postCreationService = postCreationService;
             _postDeletionService = postDeletionService;
+            _vehiceMarketplacePostRetrievalService = vehiceMarketplacePostRetrievalService;
         }
 
         //Checking business rules and calling Post Creation service 
@@ -43,9 +45,9 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
         //Checking business rules and calling Post Retrieveal service 
         public IResponse RetrieveAllPublicPost()
         {
-            /* VehicleMarketplacePostRetrievalService retrievalService = new VehicleMarketplacePostRetrievalService(); 
-             retrievalService.RetrieveAllPublicPost();   */
-            throw new NotImplementedException();
+            IResponse response;
+            response = _vehiceMarketplacePostRetrievalService.RetrieveAllPublicPost();
+            return response;
 
         }
 

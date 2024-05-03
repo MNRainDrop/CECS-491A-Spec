@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.VehicleProfile;
@@ -10,20 +9,42 @@ namespace TeamSpecs.RideAlong.VehicleProfileWebService.Controllers;
 [Route("[controller]")]
 public class VehicleProfileRetrieveController : Controller
 {
-    private readonly ILogService _logService;
     private readonly IVehicleProfileRetrievalManager _retrievalManager;
     private readonly ISecurityManager _securityManager;
 
-    public VehicleProfileRetrieveController(ILogService logService, IVehicleProfileRetrievalManager retrievalManager, ISecurityManager securityManager)
+    public VehicleProfileRetrieveController(IVehicleProfileRetrievalManager retrievalManager, ISecurityManager securityManager)
     {
-        _logService = logService;
         _retrievalManager = retrievalManager;
         _securityManager = securityManager;
     }
 
     [HttpPost]
-    [Route("/MyVehicleProfiles")]
-    public IActionResult Post([FromBody]int page)
+    [Route("PostAuthStatus")]
+    public IActionResult PostAuthStatus()
+    {
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+        {
+            { "canView", "vehicleProfile" }
+        };
+        bool hasPermission;
+        try
+        {
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("MyVehicleProfiles")]
+    public IActionResult Post([FromBody] int page)
     {
         IAccountUserModel user;
         try
@@ -33,7 +54,7 @@ public class VehicleProfileRetrieveController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };
@@ -72,13 +93,34 @@ public class VehicleProfileRetrieveController : Controller
         {
             return BadRequest(ex.Message);
         }
-        
+
     }
 
     [HttpPost]
-    [Route("/MyVehicleProfileDetails")]
-    public IActionResult Post([FromBody]IVehicleProfileModel vehicle)
+    [Route("MyVehicleProfileDetails")]
+    public IActionResult Post([FromBody] VehicleProfileModel vehicle)
     {
+        #region Check for permissions
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
+        {
+            { "canViewVehicle", vehicle.VIN }
+        };
+        bool hasPermission;
+        try
+        {
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        #endregion
+
+        #region Get User model
         IAccountUserModel user;
         try
         {
@@ -87,7 +129,7 @@ public class VehicleProfileRetrieveController : Controller
             {
                 user = new AccountUserModel(temp.userName)
                 {
-                    Salt = BitConverter.ToInt64(temp.salt, 0),
+                    Salt = BitConverter.ToUInt32(temp.salt, 0),
                     UserHash = temp.userHash,
                     UserId = temp.UID
                 };
@@ -102,6 +144,7 @@ public class VehicleProfileRetrieveController : Controller
         {
             return BadRequest(ex.Message);
         }
+        #endregion
 
         try
         {
@@ -133,11 +176,5 @@ public class VehicleProfileRetrieveController : Controller
             // Input values are wrong
             return BadRequest(ex.Message);
         }
-    }
-
-    public class UserPageModel
-    {
-        public AccountUserModel? AccountUser { get; set; }
-        public int Page { get; set; }
     }
 }

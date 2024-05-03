@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.incrementPages = exports.fetchWithTokens = void 0;
 function fetchWithTokens(url, method, body) {
     var _a;
     // Fetch the tokens from session storage
@@ -14,22 +11,51 @@ function fetchWithTokens(url, method, body) {
         'X-Refresh-Token': refreshToken !== null && refreshToken !== void 0 ? refreshToken : '',
         'Content-Type': 'application/json' // Set the Content-Type header for the request body
     };
-    return fetch(url, {
-        method: method,
-        headers: headers,
-        body: JSON.stringify(body)
-    });
+    if (method === 'GET')
+    {
+        return fetch(url, {
+            method: method,
+            headers: headers
+        });
+    }
+    else {
+        return fetch(url, {
+            method: method,
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+    }
+    
+};
+
+async function fetchConfig(filePath) {
+    return await fetch(filePath)
 }
-exports.fetchWithTokens = fetchWithTokens;
-;
+
+function changeCSS(file) {
+    var head = document.getElementsByTagName('head')[0];
+    while (head.lastChild.id != 'cssLink')
+    {
+        head.removeChild(head.lastChild);
+    }
+    if (file != null)
+    {
+        var style = document.createElement('link');
+        style.href = file;
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    }
+};
+
 // 
 function incrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content.innerText);
     value += 1;
     content.innerHTML = String(value);
-}
-exports.incrementPages = incrementPages;
+};
+
 function decrementPages() {
     var content = document.getElementById('current-page');
     var value = parseInt(content.innerText);
@@ -38,20 +64,35 @@ function decrementPages() {
         value = 1;
     }
     content.innerHTML = String(value);
-}
-function pages() {
-    var content = document.getElementById('pages');
-    content.innerHTML = "\n        <li id='back'><</li>\n        <p id='current-page'>1</p>\n        <li id='next'>></li>\n    ";
-    var next = document.getElementById('next');
-    var back = document.getElementById('back');
+};
+
+function pages(functionCall) {
+    var dynamicContent = document.getElementsByClassName('dynamic-content')[0];
+    var pages = document.createElement('nav');
+    pages.id = 'pages';
+    
+    var back = document.createElement('li');
+    back.id = 'back';
+    back.innerText = '<';
+    var currentPage = document.createElement('p');
+    currentPage.id = 'current-page';
+    currentPage.innerText = '1';
+    var next = document.createElement('li');
+    next.id = 'next';
+    next.innerText = '>';
+
     next.addEventListener('click', function () {
         incrementPages();
-        // this is not extensible
-        //getVehicles();
+        functionCall()
     });
     back.addEventListener('click', function () {
         decrementPages();
-        // this is not extensible
-        //getVehicles();
+        functionCall()
     });
-}
+
+    pages.appendChild(back);
+    pages.appendChild(currentPage);
+    pages.appendChild(next);
+
+    dynamicContent.appendChild(pages);
+};

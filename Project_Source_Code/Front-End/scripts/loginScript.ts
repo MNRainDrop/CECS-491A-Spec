@@ -33,7 +33,7 @@ function submitUsername()
     {
         if (isValidEmailAddress(username))
         {
-            // Calls Web API controller -- login --> change when moved to Ride Along
+            // Calls Web API controller
             fetch("http://localhost:8080/Auth/startLogin",
                 {
                 method: "POST",
@@ -50,6 +50,7 @@ function submitUsername()
                         showOTPView();
                         // Trying to attach original username input into text box
                         usernameInput.value = username;
+                        return response.text();
                     }
                     else
                     {
@@ -57,6 +58,9 @@ function submitUsername()
                         alert("Authentication failed!")
                         console.error("Error:", response.statusText);
                     }
+                })
+                .then(data => {
+                    alert(data)
                 })
                 .catch(error =>
                 {

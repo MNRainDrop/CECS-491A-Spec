@@ -1,0 +1,99 @@
+sequenceDiagram
+participant u as Browser
+participant scr as carHealthRatingScript.js
+participant e as CarHealthRatingEntryPoint<br>(Entry Point)
+participant az as AuthN/AuthZ<br>(Manager Point)
+participant chrm as CarHealthRatingManager<br>(Manager Layer)
+participant chrs as CarHealthRatingService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbCarHealthRatingTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+u ->>+ scr: User clicks on a Vehicle Profile from the select element
+    Note over u,scr: See Sucess case for CHR-RetrieveVehicleProfiles
+
+    scr->>scr: Event listener "CarHealthRatingGiveRank" <br>is invoked by clicking on submit button
+    scr->>scr: function "giveRank" invoked by<br> event listener<br> creating AJAX call to entry point
+
+        scr->>+e: PostCalculateCarHealthRating( string: VIN): IActionResult
+            Note over scr,e: Invoked by function <br> giveRank creating<br>AJAX call to CHR entry point
+
+            e->>+az: IsAuthorize( Dictionary <string, string>: requiredClaims): IResponse
+            Note over e,az: CarHealthRatingEntryPoint calls SecurityManager.isAuthorized to<br>verify user is able to access CHR rank<br> by passing claims requried to access
+            
+            az-->>-e: User is authorized to access the CHR View 
+            Note over az,e: see Security LLD for successful user authorized case
+
+                e->>+chrm: CallCalculateCarHealthRating( string: VIN): IResponse
+                    Note over e,chrm: CarHealthRatingEntryPoint calls upon<br>CarHealthRatingManager.CallCalculateHealthRating
+
+                    chrm->>chrm: Validiate parameters 
+
+                    chrm->>chrm: Begin timer for Non Functional Requirement logging purposes
+
+                        chrm->>+chrs: CalculateCarHealthRating( string: VIN): IResponse
+                            Note over chrm,chrs: CarHealthRatingManager calls upon<br> CarHealthRatingService.ValidVehicleProfilesRetrievalService
+
+                            chrs->>chrs: Validiate parameters
+
+                                chrs->>+dg: + GenerateCalculateCarHealthRatingSql( string: VIN): IResponse
+                                    Note over chrs,dg: CarHealthRatingService calls upon<br> SqlDbCarHealthRatingTarget to retrieve VP's.
+
+                                    dg->>dg: Convert search parameters into SQL statement
+
+                                        dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+                                            Note over dg,da: SqlServerUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                                                da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                                                    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+
+                                                        ds->>ds: SELECT * FROM ServiceLog WHERE VIN = @VINNumber AND Category = 'Maintenance' ORDER BY Date;
+
+                                                        ds->>ds: Service Log(s) is successfully retireved<br>from the Data Store
+
+                                                ds-->>-da: Database returns query results
+
+                                                da->>da: Check for thrown errors
+
+                                                da->>da: Create new IResponse object
+                                                    Note over da: HasError = false<br>ErrorMessage = null
+
+                                        da-->>-dg: IResponse object returned
+
+                                    dg->>dg: Check for errors in returned IResponse object
+
+                                dg-->>-chrs: IResponse object returned
+
+                            chrs->>chrs: Check for errors in IResponseObject
+
+                                # Log successful vehicle profile retrieval
+                                chrs-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                                    Note over vps,ll: CarHealthRatingService calls upon LogService to log<br>successful retrieval of vehicle profiles.<br>See logging success case
+
+                            # checking for minimum service logs present
+                            chrs->>chrs: Check to see if 10 objects are present        
+
+                            chrs->>chrs: Extract value from IResponse.Return value and cast it into a list of IServiceLog objects
+
+                            chrs->>chrs: Iterate through past 10 most recent Service Log Objects and add points according to points table
+
+                            chrs->>chrs: Convert to JSON String <br> Return IResponse with Car Health Ranking object
+
+                        chrs-->>-chrm: IResponse object returned
+                    
+                    chrm->>chrm: IResponse object returned
+
+                    chrm->>chrm: Check for errors in returned IResponse object
+
+                    chrm->>chrm: Check for any violations of business rules
+
+                chrm-->>-e: IResponse object returned
+
+            e->>e: Check for errors in returned IResponse object
+
+        e-->>-scr: Return OK ActionResult with CHR object
+        
+    scr->>scr: function giveRank dynmically injects<br> CHR object into innerHTML 
+
+scr-->>-u: User recieves new view 

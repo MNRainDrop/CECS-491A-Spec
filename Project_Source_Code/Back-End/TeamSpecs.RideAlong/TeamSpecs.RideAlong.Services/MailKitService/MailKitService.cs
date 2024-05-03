@@ -1,10 +1,8 @@
 ﻿using MimeKit;
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using TeamSpecs.RideAlong.Model;
-using System.Runtime.InteropServices;
-using Microsoft.Extensions.Configuration;
-using TeamSpecs.RideAlong.Model.ConfigModels;
+using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.ConfigService.ConfigModels;
 
 namespace TeamSpecs.RideAlong.Services
 {
@@ -12,15 +10,14 @@ namespace TeamSpecs.RideAlong.Services
     {
         private readonly string _username;
         private readonly string _password;
-        public MailKitService()
-        {
-            var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var configPath = Path.Combine(directory!, "..", "..", "..", "..", "RideAlongConfiguration.json");
-            var configuration = new ConfigurationBuilder().AddJsonFile(configPath, optional: false, reloadOnChange: true).Build();
-            var section = configuration.GetSection("EmailServiceLogin");
-            _username = section["username"]!;
-            _password = section["password"]!;
 
+        private readonly IConfigServiceJson _config;
+        public MailKitService(IConfigServiceJson config)
+        {
+            _config = config;
+
+            _username = _config.GetConfig().EMAIL_SERVICE_LOGIN.EMAIL;
+            _password = _config.GetConfig().EMAIL_SERVICE_LOGIN.PASSWORD;
         }
         public IResponse SendEmail(string emailaddrs, string title, string body)
         {

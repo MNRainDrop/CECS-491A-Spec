@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.CarHealthRatingEntryPoint_HostAddress = http://localhost:5281
+
+GET {{TeamSpecs.RideAlong.CarHealthRatingEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

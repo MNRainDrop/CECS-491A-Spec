@@ -5,20 +5,24 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
 {
-    private readonly IRetrieveVehiclesTarget _vehicleTarget;
+    private readonly ICRUDVehicleTarget _vehicleTarget;
     private readonly ILogService _logService;
-    public VehicleProfileRetrievalService(IRetrieveVehiclesTarget sqlDbVehicleTarget, ILogService logService)
+    public VehicleProfileRetrievalService(ICRUDVehicleTarget sqlDbVehicleTarget, ILogService logService)
     {
         _vehicleTarget = sqlDbVehicleTarget;
         _logService = logService;
     }
 
-    public IResponse retrieveVehicleProfilesForUser(IAccountUserModel userAccount, int numOfResults, int page)
+    public IResponse RetrieveVehicleProfilesForUser(IAccountUserModel userAccount, int numOfResults, int page)
     {
         #region Validate Parameters
         if (userAccount is null)
         {
             throw new ArgumentNullException(nameof(userAccount));
+        }
+        if (string.IsNullOrEmpty(userAccount.UserName))
+        {
+            throw new ArgumentNullException(nameof(userAccount.UserName));
         }
         if (string.IsNullOrWhiteSpace(userAccount.UserHash))
         {
@@ -30,16 +34,16 @@ public class VehicleProfileRetrievalService : IVehicleProfileRetrievalService
         {
             new KeyValuePair<string, long>("Owner_UID", userAccount.UserId)
         };
-        var response = _vehicleTarget.readVehicleProfileSql(search, numOfResults, page);
+        var response = _vehicleTarget.ReadVehicleProfileSql(search, numOfResults, page);
 
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not retrieve vehicles." + response.ErrorMessage;
+            response.ErrorMessage = "Could not retrieve vehicles. " + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful retrieval of vehicle profile.";
+            response.ErrorMessage = "Successful retrieval of vehicle profile. ";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
         #endregion

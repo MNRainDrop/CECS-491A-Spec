@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.DataAccess;
@@ -13,9 +12,9 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace;
 
 public class VehiceMarketplacePostCreationService: IVehiceMarketplacePostCreationService
 {
-    private SqlDbMarketplaceTarget _target;
+    private IMarketplaceTarget _target;
 
-    public VehiceMarketplacePostCreationService(SqlDbMarketplaceTarget target)
+    public VehiceMarketplacePostCreationService(IMarketplaceTarget target)
     {
         _target = target;
     }

@@ -3,11 +3,9 @@ using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using Microsoft.Extensions.DependencyInjection;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
+using TeamSpecs.RideAlong.ConfigService;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -20,6 +18,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
 builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
@@ -45,7 +44,7 @@ app.UseCorsPreflight();
 
 // Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
 //app.useIDValidator();
-app.UseHttpsRedirection();
+////
 
 
 // This is the last middleware, as we want to make sure it is not going to be overwritten at any point
