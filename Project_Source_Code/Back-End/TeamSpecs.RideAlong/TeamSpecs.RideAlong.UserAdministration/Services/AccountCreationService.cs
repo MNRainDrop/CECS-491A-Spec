@@ -2,7 +2,7 @@
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 
-namespace TeamSpecs.RideAlong.UserAdministration;
+namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
 /// <summary>
 /// Service that allows system to create users
@@ -13,7 +13,7 @@ public class AccountCreationService : IAccountCreationService
     private readonly IPepperService _pepperService;
     private readonly IHashService _hashService;
     private readonly ILogService _logService;
-    
+
     public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService)
     {
         _userTarget = userTarget;
@@ -21,10 +21,10 @@ public class AccountCreationService : IAccountCreationService
         _hashService = hashService;
         _logService = logService;
     }
-    public IResponse CreateValidUserAccount(string userName)
+    public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
     {
         #region Validate arguments
-        if(string.IsNullOrWhiteSpace(userName))
+        if (string.IsNullOrWhiteSpace(userName))
         {
             _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
             throw new ArgumentException($"{nameof(userName)} must be valid");
@@ -33,17 +33,17 @@ public class AccountCreationService : IAccountCreationService
 
         IResponse response;
         var userAccount = new AccountUserModel(userName);
+        //var userProfile = new ProfileUserModel(dateOfBirth);
+        IDictionary<int, string> userClaims;
 
 
         // Create User Hash
-
-        // Once the IPepperService and IHashService is finished, use these line of code
-        //var userPepper = _pepperService.RetrievePepper("CreateAccount");
+        var userPepper = _pepperService.RetrievePepper("AccountCreation");
         //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
 
         // Use these lines of code while IPepperService and IHashService is not complete
         userAccount.UserHash = userName;
-        
+
         // Create Salt
         var salt = RandomService.GenerateUnsignedInt();
         userAccount.Salt = salt;
@@ -52,7 +52,7 @@ public class AccountCreationService : IAccountCreationService
         var userClaims = GenerateDefaultClaims();
 
         // Write user to data store
-        response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
+        //response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
 
         // Validate Response
         if (response.HasError)
@@ -68,7 +68,7 @@ public class AccountCreationService : IAccountCreationService
             response.ErrorMessage = "Successful";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
-        
+
 
         // Return Response
         return response;
@@ -81,7 +81,7 @@ public class AccountCreationService : IAccountCreationService
             { 1, "True" },
             { 2, "True" }
         };
-        
+
         return claims;
     }
 

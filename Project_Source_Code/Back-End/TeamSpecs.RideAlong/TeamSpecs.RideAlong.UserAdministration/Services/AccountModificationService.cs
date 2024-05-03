@@ -2,7 +2,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 
-namespace TeamSpecs.RideAlong.UserAdministration
+namespace TeamSpecs.RideAlong.UserAdministration.Services
 {
     public class AccountModificationService
     {
@@ -19,18 +19,18 @@ namespace TeamSpecs.RideAlong.UserAdministration
             _pepper = pepperService;
 
         }
-        public IResponse ModifyUserProfile(string userName,DateTime dateOfBirth, string secondaryEmail) 
+        public IResponse ModifyUserProfile(string userName, DateTime dateOfBirth, string secondaryEmail)
         {
             IResponse response = new Response();
-            var userHash = _hashService.hashUser(userName, (int) _pepper.RetrievePepper("Account Creation"));
+            var userHash = _hashService.hashUser(userName, (int)_pepper.RetrievePepper("Account Creation"));
 
             #region Validiating Arguements
-            if (String.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 _logService.CreateLogAsync("Error", "Data", $"{nameof(userName)} must be valid", userHash);
                 throw new ArgumentException($"{nameof(userName)} must be valid");
             }
-            if (String.IsNullOrWhiteSpace(secondaryEmail))
+            if (string.IsNullOrWhiteSpace(secondaryEmail))
             {
                 _logService.CreateLogAsync("Error", "Data", $"{nameof(secondaryEmail)} must be valid", userHash);
                 throw new ArgumentException($"{nameof(secondaryEmail)} must be valid");
@@ -41,7 +41,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             response = _userTarget.ModifyUserProfileSql(userName, profile);
 
-            if(response.HasError)
+            if (response.HasError)
             {
                 response.ErrorMessage = "Could not modify the user profile";
                 _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, userHash);
