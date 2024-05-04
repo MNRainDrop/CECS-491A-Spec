@@ -16,6 +16,22 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             _accountCreationService = accountCreationService;
         }
 
+        public IResponse VerifyEmail(string email)
+        {
+            IResponse response = new Response();
+
+            // validiate email string
+
+            // IF PASS -- call isNotTakenEmailInDB --> modify isNotTaken to see if ok
+            IsNotTakenUserNameInDatabase(email);
+
+            // IF IResponse = good --> no errors
+
+            // IF IResponse = bad --> User exists in DB or SQL/ DB error
+
+            return response;
+        }
+
         // Rename to verifying account details
         // No longer creates account in DB due to needing confirm account first
         public IResponse RegisterUser(string username, DateTime dateOfBirth, string accountType)

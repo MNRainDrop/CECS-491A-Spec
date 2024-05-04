@@ -22,11 +22,13 @@ public class AccountCreationService : IAccountCreationService
         _logService = logService;
     }
 
-    public IResponse VerifyValidUserRegistered()
+    public IResponse IsUserRegistered(string email)
     {
         IResponse response = new Response();
 
-        // Check inputs again
+        // Check inputs again e.g ehitespace blah
+
+        // send email to Sql Target
 
         // Create OTP 
 
