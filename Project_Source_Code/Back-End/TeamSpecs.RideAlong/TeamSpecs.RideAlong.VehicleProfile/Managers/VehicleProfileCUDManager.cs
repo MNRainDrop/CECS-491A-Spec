@@ -126,11 +126,11 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
         {
-            _logService.CreateLogAsync("Warning", "Server", "Creating Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Warning", "Business", "Creating Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
         }
         if (timer.Elapsed.TotalSeconds > 10)
         {
-            _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Creation Service. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Error", "Business", "Server Timeout on Vehicle Profile Creation Service. " + response.ErrorMessage, account.UserHash);
         }
 
         // Updating can create vehicle claim
@@ -157,7 +157,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         {
             response.ErrorMessage = "Successful retrieval of vehicle profile details. " + response.ErrorMessage;
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, account.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, account.UserHash);
         #endregion
         return response;
     }
@@ -268,7 +268,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         {
             response.ErrorMessage = "Successful modification of vehicle profile and details. " + response.ErrorMessage;
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, account.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, account.UserHash);
         #endregion
         return response;
     }
@@ -358,11 +358,11 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
 
         if (timer.Elapsed.TotalSeconds > 3 && timer.Elapsed.TotalSeconds <= 10)
         {
-            _logService.CreateLogAsync("Warning", "Server", "Deleting Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Warning", "Business", "Deleting Vehicle Profile took longer than 3 seconds, but less than 10. " + response.ErrorMessage, account.UserHash);
         }
         if (timer.Elapsed.TotalSeconds > 10)
         {
-            _logService.CreateLogAsync("Error", "Server", "Server Timeout on Vehicle Profile Deletion Service. " + response.ErrorMessage, account.UserHash);
+            _logService.CreateLogAsync("Error", "Business", "Server Timeout on Vehicle Profile Deletion Service. " + response.ErrorMessage, account.UserHash);
         }
         #endregion
 
@@ -375,7 +375,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         {
             response.ErrorMessage = "Successful deletion vehicle profile. " + response.ErrorMessage;
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, account.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, account.UserHash);
         #endregion
         return response;
     }

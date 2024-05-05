@@ -96,7 +96,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         {
             response.ErrorMessage = "Successful retrieval of vehicle profile details.";
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, userAccount.UserHash);
         #endregion
         return response;
     }
@@ -142,7 +142,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         {
             response.ErrorMessage = "Successful retrieval of vehicle profile details.";
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, userAccount.UserHash);
         #endregion
 
         return response;
