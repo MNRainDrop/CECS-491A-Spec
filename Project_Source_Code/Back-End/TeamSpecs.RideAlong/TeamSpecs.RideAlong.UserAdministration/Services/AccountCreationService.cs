@@ -17,33 +17,37 @@ public class AccountCreationService : IAccountCreationService
     private readonly IHashService _hashService;
     private readonly ILogService _logService;
     private readonly IRandomService _randomService;
+    private readonly IMailKitService _mailKitService;
     private readonly int __otpLength;
 
-    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService, IRandomService randomService)
+    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService, IRandomService randomService, IMailKitService mailKitService)
     {
         _userTarget = userTarget;
         _pepperService = pepperService;
         _hashService = hashService;
         _logService = logService;
         _randomService = randomService;
+        _mailKitService = mailKitService;
         __otpLength = 10;
     }
 
     public IResponse verifyUser(string email)
     {
         IResponse response = new Response();
+        var userPepper = _pepperService.RetrievePepper("AccountCreation");
+        var userHash = _hashService.hashUser(email, (int)userPepper);
 
         response = _userTarget.CheckDbForEmail(email);
 
         if (response.HasError && response.ErrorMessage == "User exists in the Database")
         {
-            _logService.CreateLogAsync("Info", "Debug", response.ErrorMessage, null);
+            _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
             return response;
         }
         else if(response.HasError)
         {
-            _logService.CreateLogAsync("Info", "Debug", response.ErrorMessage, null);
-            response.ErrorMessage += " : CheckDbForExisitngEmail Failed.";
+            _logService.CreateLogAsync("Info", "Data Store","AccountCreationFailure: " + response.ErrorMessage, userHash);
+            response.ErrorMessage += " : CheckDbForExisitngEmail target Failed.";
             return response;
         }
 
@@ -52,14 +56,15 @@ public class AccountCreationService : IAccountCreationService
         string otp;
         string otpHash;
         string emailBody;
-        var userPepper = _pepperService.RetrievePepper("AccountCreation");
+        
         var salt = _randomService.GenerateUnsignedInt();
         byte[] saltBytes = BitConverter.GetBytes(salt);
+
         #endregion
 
         #region Generate User Hash 
-        userAccount.UserHash = _hashService.hashUser(email, (int)userPepper);
-        userAccount.Salt = salt;
+        userAccount.UserHash = userHash;
+        userAccount.Salt = salt; 
         #endregion
 
         #region Generate OTP & OTP Hash 
@@ -69,6 +74,27 @@ public class AccountCreationService : IAccountCreationService
 
         #region Send Email
 
+        emailBody = $@"
+        Subject: Your Registration Confirmation OTP
+
+        Dear {email},
+
+        Thank you for choosing to register with [Your Company/Platform Name]!
+
+        To complete your registration and ensure the security of your account, we require you to verify your email address. Below is your One-Time Password (OTP):
+
+        OTP: {otp}
+
+        Please enter this OTP on the registration page to confirm your email address and finalize your registration process. This OTP is valid for 2 hours, so please ensure you complete the verification process promptly.
+
+        If you didn't request this OTP or if you have any concerns about your account security, please contact our support team immediately!
+
+        Thank you for choosing RideAlong. We look forward to serving you!
+        
+        Best regards,
+        RideAlong Team";
+
+        _mailKitService.SendEmail(email , "RideAlong Registration Confirmation", emailBody);
 
 
         #endregion

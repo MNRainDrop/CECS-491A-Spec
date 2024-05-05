@@ -11,8 +11,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
     {
         public IResponse CheckDbForEmail(string email);
 
-        public IResponse CreateUserConfirmation();
+        public IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp);
 
-        public IResponse UpdateUserConfirmation();
+        public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp);
     }
 }

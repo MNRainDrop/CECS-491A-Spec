@@ -112,7 +112,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         return response;
     }
 
-    public IResponse CreateUserConfirmation()
+    public IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
         IResponse response = new Response();
 
@@ -121,7 +121,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         return response;
     }
 
-    public IResponse UpdateUserConfirmation()
+    public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
         IResponse response = new Response();
 
