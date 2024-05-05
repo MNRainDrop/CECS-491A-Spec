@@ -40,8 +40,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseIDValidator();
 app.UseCorsPreflight();
+app.UseIDValidator();
 app.UseCorsMiddleware();
 //app.UseHttpsRedirection();
 
