@@ -10,5 +10,9 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
     public interface ISqlDbUserCreationTarget
     {
         public IResponse CheckDbForEmail(string email);
+
+        public IResponse CreateUserConfirmation();
+
+        public IResponse UpdateUserConfirmation();
     }
 }

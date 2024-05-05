@@ -1,6 +1,9 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
+using static System.Net.WebRequestMethods;
+using System.Collections.Generic;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
@@ -9,17 +12,111 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services;
 /// </summary>
 public class AccountCreationService : IAccountCreationService
 {
-    private readonly IUserTarget _userTarget;
+    private readonly ISqlDbUserCreationTarget _userTarget;
     private readonly IPepperService _pepperService;
     private readonly IHashService _hashService;
     private readonly ILogService _logService;
+    private readonly IRandomService _randomService;
+    private readonly int __otpLength;
 
-    public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService)
+    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService, IRandomService randomService)
     {
         _userTarget = userTarget;
         _pepperService = pepperService;
         _hashService = hashService;
         _logService = logService;
+        _randomService = randomService;
+        __otpLength = 10;
+    }
+
+    public IResponse verifyUser(string email)
+    {
+        IResponse response = new Response();
+
+        response = _userTarget.CheckDbForEmail(email);
+
+        if (response.HasError && response.ErrorMessage == "User exists in the Database")
+        {
+            _logService.CreateLogAsync("Info", "Debug", response.ErrorMessage, null);
+            return response;
+        }
+        else if(response.HasError)
+        {
+            _logService.CreateLogAsync("Info", "Debug", response.ErrorMessage, null);
+            response.ErrorMessage += " : CheckDbForExisitngEmail Failed.";
+            return response;
+        }
+
+        #region Intializing variables and objects
+        IAccountUserModel userAccount = new AccountUserModel(email);
+        string otp;
+        string otpHash;
+        string emailBody;
+        var userPepper = _pepperService.RetrievePepper("AccountCreation");
+        var salt = _randomService.GenerateUnsignedInt();
+        byte[] saltBytes = BitConverter.GetBytes(salt);
+        #endregion
+
+        #region Generate User Hash 
+        userAccount.UserHash = _hashService.hashUser(email, (int)userPepper);
+        userAccount.Salt = salt;
+        #endregion
+
+        #region Generate OTP & OTP Hash 
+        otp = _randomService.GenerateRandomString(__otpLength);
+        otpHash = _hashService.hashUser(otp, BitConverter.ToInt32(saltBytes));
+        #endregion
+
+        #region Send Email
+
+
+
+        #endregion
+
+
+
+        if (response.ErrorMessage == "User tables must be updated")
+        {
+            response.ErrorMessage = "";
+
+            _userTarget.UpdateUserConfirmation();
+        }
+
+        // Check if this is how SQL would return no obj. --> No user exists
+        if(response.ReturnValue == null)
+        {
+            // Gen OTP
+
+            
+            //string hashedUserAttempt = hasher.hashUser(otp, BitConverter.ToInt32(model.salt));
+
+            
+            // Create User Hash
+            //var userPepper = _pepperService.RetrievePepper("AccountCreation");
+            //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
+
+
+            // Create Salt
+            //var salt = RandomService.GenerateUnsignedInt();
+            //userAccount.Salt = salt;
+
+            // HASH OTP
+
+            // HASH email
+
+            // 
+
+            // response = _usertarget.
+        }
+        // If DB finds existing user
+        else
+        {
+            response.HasError = true;
+            response.ErrorMessage = "User exists in Database";
+            return response;
+        }
+
+        return response;
     }
 
     public IResponse IsUserRegistered(string email)
@@ -45,13 +142,11 @@ public class AccountCreationService : IAccountCreationService
          * UserAccount, UserProfile Models
          */
 
-        return response;
+            return response;
     }
 
     public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
     {
-
-        // should recieve OTP, timestamp, UserAccount, UserProfile details
 
         #region Validate arguments
         if (string.IsNullOrWhiteSpace(userName))
