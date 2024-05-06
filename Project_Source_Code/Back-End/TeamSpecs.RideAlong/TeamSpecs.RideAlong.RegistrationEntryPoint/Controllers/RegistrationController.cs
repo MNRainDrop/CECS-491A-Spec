@@ -25,11 +25,9 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
             _securityManager = securityManager;
         }
 
-
-        // GET: api/<RegistrationController>
-        [HttpGet]
-        [Route("GetVerify")]
-        public IActionResult GetVerifyUsername(string email) 
+        [HttpPost]
+        [Route("PostVerify")]
+        public IActionResult PostVerifyUsername(string email) 
         {
             IResponse response = new Response();
 
@@ -46,6 +44,23 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
             // If returns OK --> user updated in Db
             return Ok("User confirmation created successfully!");
+        }
+
+        [HttpPost]
+        [Route("PostCreateUser")]
+        public IActionResult PostAccountCreation(IProfileUserModel profile, string email, string otp)
+        {
+            IResponse response = new Response();
+
+            //response = _accountCreationManager.RegisterUser(email)
+
+            if(response.HasError)
+            {
+                // Change to suit what it fialed on
+                return BadRequest(response.ErrorMessage);
+            }
+
+            return Ok("Account created successfully.\nWelcome to RideAlong!"); 
         }
 
     }
