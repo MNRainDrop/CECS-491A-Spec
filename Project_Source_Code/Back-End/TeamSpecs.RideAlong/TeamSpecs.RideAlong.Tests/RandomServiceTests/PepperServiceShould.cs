@@ -2,7 +2,6 @@
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
-#pragma warning disable
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class PepperServiceShould
@@ -18,7 +17,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var dao = new JsonFileDAO();
             uint result;
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
             string key = "Test Key2";
             //aray of 10 keys to be passed in for generate
             string[] test_key = {"Test Key1", "Test Key2" , "Test Key3" , "Test Key4" , 
@@ -57,7 +57,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
             string key = "Test Key";
             uint value = 0000000000;
 
@@ -83,7 +84,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
             string key = "Test Key5";
             uint value = 1161839200;
             //aray of 10 keys to be passed in for retrieving 
@@ -135,4 +137,3 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
     }
 }
-#pragma warning restore
