@@ -29,10 +29,19 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         try
         {
             #region Check if user is fully registered Sql Generation 
-            //query = "SELECT UA.*, UP.*\r\nFROM UserAccount AS UA\r\nJOIN UserProfile AS UP ON UA.UID = UP.UID\r\nWHERE UA.UserName = @UserName;";
-            query = "SELECT * FROM UserAccount WHERE UserName = @UserName";
+            query = @"
+                SELECT 'UserAccount' AS Source, UserName AS UserName
+                FROM UserAccount
+                WHERE UserName =  + @UserName
+
+
+                UNION
+    
+                SELECT 'UserProfile' AS Source, AltUserName AS UserName
+                FROM UserProfile
+                WHERE AltUserName = @UserName;";
             cmd.CommandText = query;
-            cmd.Parameters.Add(email);
+            cmd.Parameters.AddWithValue("@UserName", email); ;
             #endregion
         }
         catch

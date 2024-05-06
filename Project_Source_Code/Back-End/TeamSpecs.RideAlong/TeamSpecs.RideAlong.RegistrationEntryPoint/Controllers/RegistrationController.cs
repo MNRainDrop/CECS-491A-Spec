@@ -48,15 +48,16 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
         [HttpPost]
         [Route("PostCreateUser")]
-        public IActionResult PostAccountCreation(IProfileUserModel profile, string email, string otp)
+        public IActionResult PostAccountCreation(DateTime dateOfBirth, string altEmail, string email, string otp, string acccountType)
         {
             IResponse response = new Response();
+            IProfileUserModel profile = new ProfileUserModel(dateOfBirth, altEmail);
 
             //response = _accountCreationManager.RegisterUser(email)
 
             if(response.HasError)
             {
-                // Change to suit what it fialed on
+                // Change to suit what it failled on
                 return BadRequest(response.ErrorMessage);
             }
 

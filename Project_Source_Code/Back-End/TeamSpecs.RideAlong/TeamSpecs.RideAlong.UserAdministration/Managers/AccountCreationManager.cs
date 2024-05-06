@@ -48,7 +48,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
         // Rename to verifying account details
         // No longer creates account in DB due to needing confirm account first
-        public IResponse RegisterUser(string username, DateTime dateOfBirth, string accountType)
+        public IResponse RegisterUser(IProfileUserModel profile, string email, string otp, string accountType)
         {
             IResponse response = new Response();
 
@@ -56,26 +56,33 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             /* The following is needed to be checked
              * Username is a email --> aaa@something.com
              * DOB --> after 1/1/1970
-             * Need to add address
              * Account Type must be valid account type
              */
 
             #region Business Rules
             // Check if email is valid
 
-            // Check if date of birth is valid
-            if (!IsValidDateOfBirth(dateOfBirth))
+            #region Validiate emails
+            if (!IsValidEmail(email))
             {
-                //Log
+                response.ErrorMessage = "User entered invalid email. Email altered in payload.";
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
+                return response;
+            }
+            if(!IsValidDateOfBirth(profile.DateOfBirth))
+            {
+                response.ErrorMessage = "User entered invalid date of birth";
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
                 return response;
             }
 
-            // Check if account type is valid
-            if (!IsValidAccountType(accountType))
-            {
-                //Log
-                return response;
-            }
+            #endregion
+
+            // Check if date of birth is valid
+
+
 
             // Call account creation service
             //response = _accountCreationService.CreateValidUserAccount(username, dateOfBirth, accountType);
@@ -99,7 +106,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         }
 
 
-        public bool IsValidDateOfBirth(DateTime dateOfBirth)
+        private bool IsValidDateOfBirth(DateTime dateOfBirth)
         {
             // Get the current date
             DateTime currentDate = DateTime.Today;
@@ -114,8 +121,15 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             return dateOfBirth >= maxDateOfBirth && dateOfBirth <= minDateOfBirth;
         }
 
+        private bool IsValidAltEmail(string email)
+        {
+            IResponse altEmailResponse = new Response();
 
-        public bool IsValidAccountType(string accountType)
+            //altEmailResponse = _accountCreationService.
+
+            return true;
+        }
+        private bool IsValidAccountType(string accountType)
         {
             return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User";
         }
