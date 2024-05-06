@@ -12,6 +12,9 @@ using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 using TeamSpecs.RideAlong.UserAdministration.Services;
+using System.Diagnostics;
+using TeamSpecs.RideAlong.Model;
+using Microsoft.Data.SqlClient;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.AccountCreationTests
 {
@@ -31,6 +34,59 @@ namespace TeamSpecs.RideAlong.TestingLibrary.AccountCreationTests
         private static readonly ISqlDbUserCreationTarget sqlTarget = new SqlDbUserCreationTarget(dao);
         private static readonly IAccountCreationService accountCreationService = new AccountCreationService
             (sqlTarget, pepperService, hashService, logService, randomService, mailKitService);
+
+        [Fact]
+        public void VerifyUser_UnknownUserPassedIn_CreateUser_Pass()
+        {
+            #region Arrange
+            var timer = new Stopwatch();
+            var userName = "jmichael272@yahoo.com";
+            IResponse response;
+            #endregion
+
+            #region Act
+            timer.Start();
+            response = accountCreationService.verifyUser(userName);
+            timer.Stop();
+
+            Thread.Sleep(1000); // Waiting for Log Async Task to finish
+
+            #region Clean Up DB
+            // Delete from Log table using UserName
+            var undoLogInsert = $"DELETE FROM Log WHERE UserHash IN (SELECT UserHash FROM UserAccount WHERE UserName = @UserName)";
+            var logParams = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UserName", userName)
+            };
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoLogInsert, logParams)
+            });
+
+            // Delete from OTP table using UserName
+            var undoOtpInsert = $"DELETE FROM OTP WHERE UID IN (SELECT UID FROM UserAccount WHERE UserName = @UserName)";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoOtpInsert, logParams)
+            });
+
+            // Delete from UserAccount table using UserName
+            var undoUserAccountInsert = $"DELETE FROM UserAccount WHERE UserName = @UserName";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            {
+                KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoUserAccountInsert, logParams)
+            });
+            #endregion
+
+            #endregion
+
+            #region Assert
+            Assert.True(timer.Elapsed.TotalSeconds <= 3);
+            Assert.NotNull(response);
+            Assert.True(!response.HasError);
+            Assert.True(response.ReturnValue != null && response.ReturnValue.Contains(2));
+            #endregion
+        }
 
 
     }

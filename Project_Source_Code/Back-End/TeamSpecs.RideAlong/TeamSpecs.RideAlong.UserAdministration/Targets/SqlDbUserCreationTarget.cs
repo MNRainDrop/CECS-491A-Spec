@@ -115,11 +115,80 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
     public IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
         IResponse response = new Response();
+        DateTime currentUtcTime = DateTime.UtcNow;
+        ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
+        #region Try/Catch creating UserAccount/OTP Sql Generation 
 
+        try
+        {
+            #region Create UserAccount Sql Generation
 
+            // Insert into UserAccount
+            string insertUserAccountSql = "INSERT INTO UserAccount (UserName, Salt, UserHash) VALUES (@UserName, @Salt, @UserHash)";
+            var userAccountParams = new HashSet<SqlParameter>()
+        {
+            new SqlParameter("@UserName", userAccount.UserName),
+            new SqlParameter("@Salt", userAccount.Salt),
+            new SqlParameter("@UserHash", userAccount.UserHash),
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(insertUserAccountSql, userAccountParams));
+
+            #endregion
+
+            #region Create OTP Sql Generation
+
+            // Insert into OTP
+            string insertOtpSql = "INSERT INTO OTP (UID, PassHash, attempts, firstFailedLogin) " +
+                "VALUES ((SELECT UID FROM UserAccount WHERE UserName = @UserName), @PassHash, @Attempts, @FirstFailedLogin)";
+            var otpParams = new HashSet<SqlParameter>()
+        {
+            new SqlParameter("@UserName", userAccount.UserName),
+            new SqlParameter("@PassHash", otp),
+            new SqlParameter("@Attempts", 0),
+            new SqlParameter("@FirstFailedLogin", currentUtcTime)
+        };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(insertOtpSql, otpParams));
+
+            #endregion
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate create user confirmation tables.";
+            return response;
+        }
+
+        #endregion
+
+        #region Try/Catch executing create UserAccount/OTP Sql 
+
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            if (daoValue != 0)
+            {
+                response.ReturnValue = new List<object>();
+                response.ReturnValue.Add(daoValue);
+            }
+            else
+            {
+                throw new Exception("Rows not inserted");
+            }
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not execute create user confirmation tables.";
+            return response;
+        }
+
+        #endregion
+
+        response.HasError = false;
         return response;
     }
+
 
     public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
