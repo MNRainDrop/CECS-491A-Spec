@@ -12,10 +12,9 @@ namespace ScrapYourCarLibrary.Interfaces
         IResponse RemoveParts(ICarPart part);
         // Listings
         IResponse SetListing(IListing listing);
-        IResponse GetUserListings(long uid);
         IResponse GetPartListing(ICarPart part);
         IResponse AmendListing(IListing updatingListing);
-        IResponse RemoveListing(IListing listing);
+        IResponse RemoveListing(ICarPart part);
 
     }
 }

@@ -1,11 +1,16 @@
-﻿using TeamSpecs.RideAlong.DataAccess;
+﻿using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.DataAccess.DataAccessObjects;
 
 namespace TeamSpecs.RideAlong.TestingLibrary;
 public class ScrapYourCarShould
 {
     public ScrapYourCarShould()
     {
-        IGenericDAO _dao = new SqlServerDAO();
+
+        IGenericDAO _dao = new SqlServerDAO(new ConfigServiceJson());
+        IGenericDAO _failDao = new FailDao();
+
     }
     ~ScrapYourCarShould()
     {

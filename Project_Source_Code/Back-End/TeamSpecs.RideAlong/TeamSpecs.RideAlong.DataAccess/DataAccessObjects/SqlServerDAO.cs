@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
-using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.ConfigService.ConfigModels;
+using TeamSpecs.RideAlong.Model;
 namespace TeamSpecs.RideAlong.DataAccess;
 
 public class SqlServerDAO : IGenericDAO

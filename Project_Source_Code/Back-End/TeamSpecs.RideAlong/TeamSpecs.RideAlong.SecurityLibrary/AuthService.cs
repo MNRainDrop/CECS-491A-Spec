@@ -45,7 +45,7 @@ public class AuthService : IAuthService
         {
             if (response.ErrorMessage is null)
             {
-                response.ErrorMessage = "Unknown Layer occurred at target layer or below";
+                response.ErrorMessage = "Unknown error occurred at target layer or below";
             }
             _logService.CreateLogAsync("Error", "Data", response.ErrorMessage, model.userHash);
         }

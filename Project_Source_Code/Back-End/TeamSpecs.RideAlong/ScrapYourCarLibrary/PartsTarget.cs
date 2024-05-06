@@ -10,7 +10,7 @@ using TeamSpecs.RideAlong.Model;
 namespace ScrapYourCarLibrary
 {
     public class PartsTarget : IPartsTarget
-    {    
+    {
         private IGenericDAO _dao;
         private ILogService _logger;
         public PartsTarget(IGenericDAO dao, ILogService logger)
@@ -19,6 +19,92 @@ namespace ScrapYourCarLibrary
             _logger = logger;
         }
 
+        #region Utility Functions
+        private static void MapValues(object obj, object[] values)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            var properties = obj.GetType().GetProperties();
+
+            for (int i = 0; i < Math.Min(properties.Length, values.Length); i++)
+            {
+                PropertyInfo property = properties[i];
+                object value = values[i];
+
+                // Check if property is writable and value is compatible
+                if (property.CanWrite && (value == null || property.PropertyType.IsAssignableFrom(value.GetType())))
+                {
+                    property.SetValue(obj, value);
+                }
+                else
+                {
+                    throw new ArgumentException($"Value at index {i} is not assignable to property '{property.Name}'.");
+                }
+            }
+        }
+        private static HashSet<SqlParameter> CreateSqlParameters(object obj)
+        {
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+
+            if (obj == null)
+                return parameters;
+
+            Type objectType = obj.GetType();
+
+            if (IsPrimitiveType(objectType))
+            {
+                // Create a single parameter for primitive types
+                parameters.Add(CreateParameter("@value", GetSqlType(objectType), obj));
+            }
+            else
+            {
+                var properties = objectType.GetProperties();
+
+                foreach (var property in properties)
+                {
+                    try
+                    {
+                        string paramName = "@" + property.Name;
+
+                        SqlDbType sqlType = GetSqlType(property.PropertyType);
+
+                        SqlParameter parameter = new SqlParameter(paramName, sqlType);
+                        if (property.GetValue(obj) is not null)
+                        {
+                            parameter.Value = property.GetValue(obj);
+                        }
+                        else
+                        {
+                            parameter.Value = DBNull.Value;
+                        }
+                        parameters.Add(parameter);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                }
+            }
+            return parameters;
+        }
+        private static bool IsPrimitiveType(Type type)
+        {
+            return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime);
+        }
+        private static SqlParameter CreateParameter(string paramName, SqlDbType sqlType, object? value)
+        {
+            SqlParameter parameter = new SqlParameter(paramName, sqlType);
+            if (value is null)
+            {
+                value = DBNull.Value;
+            }
+            parameter.Value = value;
+            return parameter;
+        }
         private static SqlDbType GetSqlType(Type type)
         {
             if (type == typeof(string))
@@ -29,6 +115,10 @@ namespace ScrapYourCarLibrary
             {
                 return SqlDbType.BigInt;
             }
+            else if (type == typeof(float))
+            {
+                return SqlDbType.Float;
+            }
             else if (type == typeof(DateTime))
             {
                 return SqlDbType.DateTime;
@@ -38,27 +128,22 @@ namespace ScrapYourCarLibrary
                 throw new ArgumentException("Unsupported data type for SQL parameter.");
             }
         }
-        private static HashSet<SqlParameter> CreateSqlParameters(object obj)
+
+        /// <summary>
+        /// Usage: parameters = RemoveSqlParameter(parameters, "@paramNameToRemove");
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="paramName"></param>
+        /// <returns></returns>
+        private static HashSet<SqlParameter> RemoveSqlParameter(HashSet<SqlParameter> parameters, string paramName)
         {
-            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
-
-            var properties = obj.GetType().GetProperties();
-
-            foreach (var property in properties)
+            var parameterToRemove = parameters.FirstOrDefault(p => p.ParameterName == paramName);
+            if (parameterToRemove != null)
             {
-                string paramName = "@" + property.Name;
-                SqlDbType sqlType = GetSqlType(property.PropertyType);
-
-                SqlParameter parameter = new SqlParameter(paramName, sqlType);
-                parameter.Value = property.GetValue(obj);
-
-                parameters.Add(parameter);
+                parameters.Remove(parameterToRemove);
             }
             return parameters;
         }
-
-
-
 
         /// <summary>
         /// Utility function used to avoid repeated code
@@ -71,7 +156,7 @@ namespace ScrapYourCarLibrary
         {
             IResponse errorResponse = new Response();
             errorResponse.HasError = true;
-            errorResponse.ErrorMessage = "Error retrieving parts data: " + ex.Message;
+            errorResponse.ErrorMessage = ex.Message;
             _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
             return errorResponse;
         }
@@ -93,33 +178,16 @@ namespace ScrapYourCarLibrary
             }
             return successResponse;
         }
+        #endregion
 
-        private static List<string> GetMemberVariableNames(object obj)
-        {
-            List<string> memberVariableNames = new List<string>();
-
-            Type type = obj.GetType();
-            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-            foreach (FieldInfo field in fields)
-            {
-                memberVariableNames.Add(field.Name);
-            }
-
-            return memberVariableNames;
-        }
-        private HashSet<SqlParameter> createParameters(List<string> preParams)
-        {
-            
-        }
-
+        #region Implementation
         public IResponse SetCarPart(ICarPart part)
         {
             // Create sql command list object
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create sql command text
-            string commandText = "INSERT INTO CarParts (ownerUID, partName, partNumber, make, model, year, associatedVin)" +
+            string commandText = "INSERT INTO CarParts (ownerUID, partName, partNumber, make, model, year, associatedVin) " +
                 "VALUES (@uid, @name, @number, @make, @model, @year, @associatedVin)";
 
             // Create Parameters
@@ -161,7 +229,7 @@ namespace ScrapYourCarLibrary
             {
                 // Attempt SQL Execution
                 int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
-                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                if (rowsAffected == 0) { throw new Exception("No rows affected"); }
                 return createSuccessResponse(null);
             }
             catch (Exception ex)
@@ -176,23 +244,28 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "";
+            string commandText = "UPDATE YourTable " +
+                "SET price = @price, description = @description " +
+                "WHERE partUID = @partUID;";
 
             // Create Parameters
-            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            HashSet<SqlParameter> parameters = CreateSqlParameters(updatingListing);
 
-            var Param = new SqlParameter();
-            Param.Value = updatingListing.part.partUID;
-            parameters.Add(Param);
-            
+            // Add Part UID Parameter
+            var partUIDParam = new SqlParameter("@partUID", SqlDbType.BigInt);
+            partUIDParam.Value = updatingListing.part.partUID;
+            parameters.Add(partUIDParam);
+
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+
+            sqlCommandList.Add(sqlStatement);
 
             try
             {
                 // Attempt SQL Execution
                 int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
-                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                if (rowsAffected == 0) { throw new Exception("No rows affected"); }
                 return createSuccessResponse(null);
             }
             catch (Exception ex)
@@ -200,50 +273,214 @@ namespace ScrapYourCarLibrary
                 return createErrorResponse(ex);
             }
         }
-
-        public IResponse GetMatchingParts(List<ICarPart> part)
+        /// <summary>
+        /// Used to get parts that match the parts passed in
+        /// Primarily for internal use, to get partUID
+        /// </summary>
+        /// <param name="parts"></param>
+        /// <returns> IResponse with list of matching parts </returns>
+        public IResponse GetMatchingParts(List<ICarPart> parts)
         {
-            throw new NotImplementedException();
+            // Create SQL command list
+            List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+
+            foreach (var part in parts)
+            {
+                // Create SQL command text
+                string commandText = "SELECT partUID, ownerUID, partName, partNumber, make, model, year, associatedVin " +
+                    "FROM Parts " +
+                    "WHERE partName = @partName AND ownerUID = @ownerUID;";
+
+                // Create Parameters
+                HashSet<SqlParameter> parameters = CreateSqlParameters(part);
+
+                // Make Necessary Tweaks
+                parameters = RemoveSqlParameter(parameters, "@partUID");
+
+                // Create Key Value pairs with sql and parameters
+                KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+                sqlCommandList.Add(sqlStatement);
+            }
+
+            try
+            {
+                // Attempt SQL Execution
+                List<object[]> rowsReturned = _dao.ExecuteReadOnly(sqlCommandList);
+
+                // Create return value object
+                List<object> returnValue = new List<object>();
+
+                // Loop through rows
+                foreach (object[] row in rowsReturned)
+                {
+
+                    // Map values from row into return object
+                    ICarPart returnedPart = new CarPart();
+                    MapValues(returnedPart, row);
+
+                    // Add to return value object
+                    returnValue.Add(returnedPart);
+                }
+                if (returnValue.Count == 0)
+                {
+                    throw new Exception("No Rows Returned");
+                }
+                // Return success with return value object in place of null
+                return createSuccessResponse(returnValue);
+            }
+            catch (Exception ex)
+            {
+                // Return Error if we cannot execute sql successfullly
+                return createErrorResponse(ex);
+            }
         }
 
         public IResponse GetPartListing(ICarPart part)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IResponse GetUserListings(long uid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IResponse GetUserParts(long uid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IResponse RemoveListing(IListing listing)
         {
             // Create SQL command list
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "";
+            string commandText = "SELECT price, desription " +
+                "FROM Listings " +
+                "WHERE partUID = @partUID";
 
             // Create Parameters
-            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
-
-            var Param = new SqlParameter();
-            Param.Value = listing.part.partUID;
-            parameters.Add(Param);
+            long? partUID;
+            #region Validate existence of partUID
+            try
+            {
+                if (part.partUID is not null)
+                {
+                    partUID = part.partUID;
+                }
+                else
+                {
+                    throw new Exception("partUID is null");
+                }
+            }
+            catch (Exception ex)
+            {
+                return createErrorResponse(ex);
+            }
+            #endregion
+            HashSet<SqlParameter> parameters = CreateSqlParameters(partUID);
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+            sqlCommandList.Add(sqlStatement);
+            try
+            {
+                // Attempt SQL Execution
+                List<object[]> rowsReturned = _dao.ExecuteReadOnly(sqlCommandList);
+
+                // Create return value object
+                IListing? returnedListing = null;
+
+                // Loop through rows
+                foreach (object[] row in rowsReturned)
+                {
+                    if (row[0] is not null && row[1] is not null)
+                    {
+                        returnedListing = new Listing(part, (float)row[0], (string)row[1]);
+                    }
+                }
+                // Return success with return value object in place of null
+                if (returnedListing is null)
+                {
+                    throw new Exception("No Rows Returned");
+                }
+                return createSuccessResponse(returnedListing);
+            }
+            catch (Exception ex)
+            {
+                // Return Error if we cannot execute sql successfullly
+                return createErrorResponse(ex);
+            }
+        }
+
+        /// <summary>
+        /// Used to get all the users car parts. Can be used in conjunction with GetPartListing to get all the user's listings
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns>IResponse with list of Parts</returns>
+        public IResponse GetUserParts(long uid)
+        {
+            // Create SQL command list
+            List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+
+            // Create SQL command text
+            string commandText = "SELECT partUID, ownerUID, partName, partNumber, make, model, year, associatedVin " +
+                    "FROM Parts " +
+                    "WHERE ownerUID = @uid;";
+
+            // Create Parameters
+            HashSet<SqlParameter> parameters = CreateSqlParameters(uid);
+
+            // Create Key Value pairs with sql and parameters
+            KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+            sqlCommandList.Add(sqlStatement);
+
+            try
+            {
+                // Attempt SQL Execution
+                List<object[]> rowsReturned = _dao.ExecuteReadOnly(sqlCommandList);
+
+                // Create return value object
+                List<object> returnValue = new List<object>();
+
+                // Loop through rows
+                foreach (object[] row in rowsReturned)
+                {
+                    // Map values from row into return object
+                    ICarPart returnedPart = new CarPart();
+                    MapValues(returnedPart, row);
+
+                    // Add to return value object
+                    returnValue.Add(returnedPart);
+                }
+
+                // Return success with return value object in place of null
+                if (returnValue.Count == 0)
+                {
+                    throw new Exception("No Rows Returned");
+                }
+                return createSuccessResponse(returnValue);
+            }
+            catch (Exception ex)
+            {
+                // Return Error if we cannot execute sql successfullly
+                return createErrorResponse(ex);
+            }
+        }
+
+        /// <summary>
+        /// Deletes the listing for the part that is passed in
+        /// </summary>
+        /// <param name="part"></param>
+        /// <returns>IResponse with outcome</returns>
+        public IResponse RemoveListing(ICarPart part)
+        {
+            // Create SQL command list
+            List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+
+            // Create SQL command text
+            string commandText = "DELETE FROM Listings " +
+                "WHERE partUID = @partUID";
+
+            // Create Parameters
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            parameters.Add(CreateParameter("@partUID", SqlDbType.BigInt, part.partUID!));
+
+            // Create Key Value pairs with sql and parameters
+            KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+            sqlCommandList.Add(sqlStatement);
 
             try
             {
                 // Attempt SQL Execution
                 int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
-                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                if (rowsAffected == 0) { throw new Exception("No rows affected"); }
                 return createSuccessResponse(null);
             }
             catch (Exception ex)
@@ -258,23 +495,22 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "";
+            string commandText = "DELETE FROM Parts " +
+                "WHERE partUID = @partUID";
 
             // Create Parameters
             HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
-
-            var Param = new SqlParameter();
-            Param.Value = part.partUID;
-            parameters.Add(Param);
+            parameters.Add(CreateParameter("@partUID", SqlDbType.BigInt, part.partUID!));
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+            sqlCommandList.Add(sqlStatement);
 
             try
             {
                 // Attempt SQL Execution
                 int rowsAffected = _dao.ExecuteWriteOnly(sqlCommandList);
-                if (rowsAffected == 0) { throw new Exception("SQLDB error, no rows affected"); }
+                if (rowsAffected == 0) { throw new Exception("No rows affected"); }
                 return createSuccessResponse(null);
             }
             catch (Exception ex)
@@ -289,18 +525,17 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "";
+            string commandText = "INSERT INTO Listings (partUID, price, description) " +
+                "VALUES (@partUID, @price, @description)";
 
             // Create Parameters
             HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
-
-            var Param = new SqlParameter();
-            Param.Value = listing.part.partUID;
-            parameters.Add(Param);
+            parameters.Add(CreateParameter("@partUID", SqlDbType.BigInt, listing.part.partUID!));
+            parameters.Add(CreateParameter("@price", SqlDbType.Float, listing.price));
+            parameters.Add(CreateParameter("@description", SqlDbType.VarChar, listing.description));
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
-
             try
             {
                 // Attempt SQL Execution
@@ -313,5 +548,6 @@ namespace ScrapYourCarLibrary
                 return createErrorResponse(ex);
             }
         }
+        #endregion
     }
 }

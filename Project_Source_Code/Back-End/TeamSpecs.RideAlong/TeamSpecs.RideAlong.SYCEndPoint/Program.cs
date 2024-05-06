@@ -3,6 +3,7 @@ using ScrapYourCarLibrary.Interfaces;
 using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.ScrapYourCarLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
@@ -45,7 +46,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
+// Middleware Goes here
+app.UseCorsPreflight();
+app.UseIDValidator();
+app.UseCorsMiddleware();
 
 app.MapControllers();
 

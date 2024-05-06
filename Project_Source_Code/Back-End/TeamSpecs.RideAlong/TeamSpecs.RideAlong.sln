@@ -121,6 +121,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Registr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ScrapYourCarLibrary", "ScrapYourCarLibrary\TeamSpecs.RideAlong.ScrapYourCarLibrary.csproj", "{9541F1EE-A4FE-480A-896D-9FE998387D58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.SYCEndPoint", "TeamSpecs.RideAlong.SYCEndPoint\TeamSpecs.RideAlong.SYCEndPoint.csproj", "{3ED95294-AC6F-4563-ABD4-4C22184B5285}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +241,10 @@ Global
 		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3ED95294-AC6F-4563-ABD4-4C22184B5285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ED95294-AC6F-4563-ABD4-4C22184B5285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3ED95294-AC6F-4563-ABD4-4C22184B5285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3ED95294-AC6F-4563-ABD4-4C22184B5285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -253,6 +259,7 @@ Global
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{8C150363-9864-4010-BC51-0645AA00047D} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{FF5B731A-CB8A-4739-8B81-A0C3C468C938} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{3ED95294-AC6F-4563-ABD4-4C22184B5285} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}
