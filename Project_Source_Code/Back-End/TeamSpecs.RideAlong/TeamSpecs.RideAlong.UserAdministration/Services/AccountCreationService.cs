@@ -137,6 +137,8 @@ public class AccountCreationService : IAccountCreationService
         IResponse response = new Response();
 
         response = _userTarget.CheckDbForEmail(email);
+
+        return response;
     }
 
     public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)

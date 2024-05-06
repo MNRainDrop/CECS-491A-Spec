@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -125,7 +126,13 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         {
             IResponse altEmailResponse = new Response();
 
-            //altEmailResponse = _accountCreationService.
+            altEmailResponse = _accountCreationService.verifyAltUser(email);
+
+            if (altEmailResponse.HasError)
+            {
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + altEmailResponse.ErrorMessage, null);
+                return false;
+            }
 
             return true;
         }
