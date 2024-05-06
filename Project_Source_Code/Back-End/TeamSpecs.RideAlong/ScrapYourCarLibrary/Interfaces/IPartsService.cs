@@ -8,7 +8,7 @@ namespace ScrapYourCarLibrary.Interfaces
         // Parts
         IResponse CreateParts(List<ICarPart> parts);
         IResponse GetUserParts(long uid);
-        IResponse GetMatchingParts(ICarPart part);
+        IResponse GetMatchingParts(List<ICarPart> parts);
         IResponse RemoveParts(List<ICarPart> parts);
         // Listings
         IResponse AddListingToPart(IListing listing);

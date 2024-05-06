@@ -9,11 +9,11 @@ using TeamSpecs.RideAlong.Model;
 
 namespace ScrapYourCarLibrary
 {
-    public class PartsTarget : IPartsTarget
+    public class SqlPartsTarget : IPartsTarget
     {
         private IGenericDAO _dao;
         private ILogService _logger;
-        public PartsTarget(IGenericDAO dao, ILogService logger)
+        public SqlPartsTarget(IGenericDAO dao, ILogService logger)
         {
             _dao = dao;
             _logger = logger;
@@ -107,15 +107,19 @@ namespace ScrapYourCarLibrary
         }
         private static SqlDbType GetSqlType(Type type)
         {
-            if (type == typeof(string))
+            if (type == typeof(string) || type == typeof(string))
             {
                 return SqlDbType.VarChar;
             }
-            else if (type == typeof(long))
+            else if (type == typeof(long) || type == typeof(long?))
             {
                 return SqlDbType.BigInt;
             }
-            else if (type == typeof(float))
+            else if (type == typeof(int) || type == typeof(int?))
+            {
+                return SqlDbType.Int;
+            }
+            else if (type == typeof(float) || type == typeof(float?))
             {
                 return SqlDbType.Float;
             }
@@ -187,44 +191,17 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create sql command text
-            string commandText = "INSERT INTO CarParts (ownerUID, partName, partNumber, make, model, year, associatedVin) " +
-                "VALUES (@uid, @name, @number, @make, @model, @year, @associatedVin)";
+            string commandText = "INSERT INTO Parts (ownerUID, partName, partNumber, make, model, year, associatedVin) " +
+                "VALUES (@ownerUID, @partName, @partNumber, @make, @model, @year, @associatedVin)";
 
             // Create Parameters
-            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            HashSet<SqlParameter> parameters = CreateSqlParameters(part);
 
-            var ownerUIDParam = new SqlParameter();
-            ownerUIDParam.Value = part.ownerUID;
-
-            parameters.Add(ownerUIDParam);
-
-            var partNameParam = new SqlParameter();
-            partNameParam.Value = part.partName;
-            parameters.Add(partNameParam);
-
-            var partNumberParam = new SqlParameter();
-            partNumberParam.Value = part.partNumber;
-            parameters.Add(partNumberParam);
-
-            var makeParam = new SqlParameter();
-            makeParam.Value = part.make;
-            parameters.Add(makeParam);
-
-            var modelParam = new SqlParameter();
-            modelParam.Value = part.model;
-            parameters.Add(modelParam);
-
-            var yearParam = new SqlParameter();
-            yearParam.Value = part.year;
-            parameters.Add(yearParam);
-
-            var associatedVinParam = new SqlParameter();
-            associatedVinParam.Value = part.associatedVin;
-            parameters.Add(associatedVinParam);
+            parameters = RemoveSqlParameter(parameters, "@partUID");
 
             //Create Key value pair with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
-
+            sqlCommandList.Add(sqlStatement);
             try
             {
                 // Attempt SQL Execution
@@ -244,7 +221,7 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "UPDATE YourTable " +
+            string commandText = "UPDATE Listings " +
                 "SET price = @price, description = @description " +
                 "WHERE partUID = @partUID;";
 
@@ -341,7 +318,7 @@ namespace ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "SELECT price, desription " +
+            string commandText = "SELECT price, description " +
                 "FROM Listings " +
                 "WHERE partUID = @partUID";
 
@@ -364,7 +341,8 @@ namespace ScrapYourCarLibrary
                 return createErrorResponse(ex);
             }
             #endregion
-            HashSet<SqlParameter> parameters = CreateSqlParameters(partUID);
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            parameters.Add(CreateParameter("@partUID", SqlDbType.BigInt, partUID));
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
@@ -382,7 +360,7 @@ namespace ScrapYourCarLibrary
                 {
                     if (row[0] is not null && row[1] is not null)
                     {
-                        returnedListing = new Listing(part, (float)row[0], (string)row[1]);
+                        returnedListing = new Listing(part, (float)(double)row[0], (string)row[1]);
                     }
                 }
                 // Return success with return value object in place of null
@@ -415,7 +393,8 @@ namespace ScrapYourCarLibrary
                     "WHERE ownerUID = @uid;";
 
             // Create Parameters
-            HashSet<SqlParameter> parameters = CreateSqlParameters(uid);
+            HashSet<SqlParameter> parameters = new HashSet<SqlParameter>();
+            parameters.Add(CreateParameter("@uid", SqlDbType.BigInt, uid));
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
@@ -536,6 +515,7 @@ namespace ScrapYourCarLibrary
 
             // Create Key Value pairs with sql and parameters
             KeyValuePair<string, HashSet<SqlParameter>?> sqlStatement = new KeyValuePair<string, HashSet<SqlParameter>?>(commandText, parameters);
+            sqlCommandList.Add(sqlStatement);
             try
             {
                 // Attempt SQL Execution

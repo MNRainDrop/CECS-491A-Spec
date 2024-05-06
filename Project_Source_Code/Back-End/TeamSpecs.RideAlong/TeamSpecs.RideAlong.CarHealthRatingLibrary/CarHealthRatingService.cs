@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.X509;
-using System.ComponentModel.DataAnnotations;
-using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
+﻿using TeamSpecs.RideAlong.CarHealthRatingLibrary.Interfaces;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Model.ServiceLogModel;
@@ -18,7 +16,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
         public const Int32 NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE = 7000;
     }
 
-    public class CarHealthRatingService: ICarHealthRatingService
+    public class CarHealthRatingService : ICarHealthRatingService
     {
         private readonly ISqlDbCarHealthRatingTarget _target;
         private readonly ILogService _logService;
@@ -42,7 +40,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             {
                 throw new ArgumentNullException(nameof(userAccount.UserHash));
             }
-            if(userAccount.UserId < 0) 
+            if (userAccount.UserId < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(userAccount.UserId));
             }
@@ -56,11 +54,11 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             if (response.HasError == true)
             {
 #pragma warning disable CS8604 // Possible null reference argument.
-                _logService.CreateLogAsync( "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+                _logService.CreateLogAsync("Info", "Server", response.ErrorMessage, userAccount.UserHash);
 #pragma warning restore CS8604 // Possible null reference argument.
                 return response;
             }
-            else if(response.HasError == false && response.ReturnValue.Count == 0)
+            else if (response.HasError == false && response.ReturnValue.Count == 0)
             {
                 _logService.CreateLogAsync("Info", "Server", "Successful retrieval of no Vehicle Profiles", userAccount.UserHash);
                 return response;
@@ -102,14 +100,14 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
 
             var totalPoints = 0;
             var iterator = 0;
-            IServiceLogModel tempServiceLogModel = new ServiceLogModel();
+            IServiceLogModel tempServiceLogModel = new ServiceLogModel("part", "category", DateTime.Now, "Description", 2000, "VinNumber");// Addingn Gibberish Delete this probably
             List<string> category = new List<string>();
             List<int> pointsEarned = new List<int>();
             #endregion
 
             response = _target.ReadServiceLogs(vin);
 
-            if(response.HasError == true)
+            if (response.HasError == true)
             {
                 return response;
             }
@@ -178,41 +176,41 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
 
                 // Add most recent Service Log to give score based on their most recent mileage
                 #region Checking for Lists with 1 Service Log
-                if (fluidServiceLogs.Count == 1 )
+                if (fluidServiceLogs.Count == 1)
                 {
                     fluidServiceLogs.Add(tempServiceLogModel);
                 }
-                else if(mechanicallyWearingServiceLogs.Count == 1)
+                else if (mechanicallyWearingServiceLogs.Count == 1)
                 {
                     mechanicallyWearingServiceLogs.Add(tempServiceLogModel);
                 }
-                else if(nonMechanicalServiceLogs.Count == 1)
+                else if (nonMechanicalServiceLogs.Count == 1)
                 {
                     nonMechanicalServiceLogs.Add(tempServiceLogModel);
                 }
                 #endregion
 
                 #region Calculating CHR Rank
-                for (int i = 0; i < fluidServiceLogs.Count - 1; i++) 
+                for (int i = 0; i < fluidServiceLogs.Count - 1; i++)
                 {
                     var totalMileage = fluidServiceLogs[i].Mileage - fluidServiceLogs[i + 1].Mileage;
 
                     totalPoints += 6;
 
                     category.Add("Fluid");
-                    
-                    if( totalMileage < (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
+
+                    if (totalMileage < (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
                     {
                         // assign max points
                         pointsEarned.Add(6);
                     }
-                    else if(totalMileage >= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)) 
+                    else if (totalMileage >= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10))
                         && totalMileage <= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
                     {
                         // assign 5 points
                         pointsEarned.Add(5);
                     }
-                    else if(totalMileage > (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .50)))
+                    else if (totalMileage > (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .50)))
                     {
                         pointsEarned.Add(1);
                     }
@@ -289,6 +287,6 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
-       
+
     }
 }

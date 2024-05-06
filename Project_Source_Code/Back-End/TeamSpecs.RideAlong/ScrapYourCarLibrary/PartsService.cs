@@ -75,18 +75,26 @@ namespace ScrapYourCarLibrary
                     getUserPartsResponse.ErrorMessage = "Unknown error occurred at target layer or below";
                 }
             }
+            else
+            {
+                getUserPartsResponse.ReturnValue = (List<object>)getUserPartsResponse.ReturnValue!.First();
+            }
             return getUserPartsResponse;
         }
 
-        public IResponse GetMatchingParts(ICarPart part)
+        public IResponse GetMatchingParts(List<ICarPart> parts)
         {
-            IResponse response = _target.GetMatchingParts(new List<ICarPart>() { part });
+            IResponse response = _target.GetMatchingParts(parts);
             if (response.HasError)
             {
                 if (response.ErrorMessage is null)
                 {
                     response.ErrorMessage = "Unknown error occurred at target layer or below";
                 }
+            }
+            else
+            {
+                response.ReturnValue = (List<object>)response.ReturnValue!.First();
             }
             return response;
         }
@@ -95,8 +103,8 @@ namespace ScrapYourCarLibrary
         {
             IResponse response = new Response();
             response.HasError = false;
-
             response.ReturnValue = new List<object>();
+
             foreach (var part in parts)
             {
                 IResponse partsFromDBResponse = _target.GetMatchingParts(new List<ICarPart> { part });
@@ -121,7 +129,7 @@ namespace ScrapYourCarLibrary
                     }
                 }
 
-                ICarPart partToDelete = (ICarPart)partsFromDBResponse.ReturnValue!.First();
+                ICarPart partToDelete = (ICarPart)((IList<object>)partsFromDBResponse.ReturnValue!.First()).First();
 
                 IResponse targetResponse = _target.RemoveParts(partToDelete);
                 if (targetResponse.HasError)
@@ -138,7 +146,7 @@ namespace ScrapYourCarLibrary
         {
 
             ICarPart part = listing.part;
-            IResponse validatePartResponse = _target.GetMatchingParts(new List<ICarPart>() { part });
+            IResponse validatePartResponse = GetMatchingParts(new List<ICarPart> { part });
             if (validatePartResponse.HasError || validatePartResponse.ReturnValue is null || validatePartResponse.ReturnValue.Count != 1)
             {
                 validatePartResponse.HasError = true;
@@ -167,12 +175,14 @@ namespace ScrapYourCarLibrary
         /// Will Return all the listings for parts that have listings
         /// will ignore parts that have no listings
         /// It is possible no listings will be returned, if none of the parts passed in have listings
+        /// You Must pass in validated part objects
         /// </summary>
         /// <param name="parts"></param>
         /// <returns>List of listings</returns>
         public IResponse RetrievePartListings(List<ICarPart> parts)
         {
             IResponse response = new Response();
+            response.HasError = false;
             response.ReturnValue = new List<object>();
             foreach (ICarPart part in parts)
             {
@@ -197,7 +207,6 @@ namespace ScrapYourCarLibrary
 
                 response.ReturnValue.Add(getPartListing.ReturnValue!.First());
             }
-            response.HasError = false;
             return response;
         }
         /// <summary>
@@ -220,7 +229,13 @@ namespace ScrapYourCarLibrary
                 return getUserPartsResponse;
             }
 
-            response = RetrievePartListings((List<ICarPart>)getUserPartsResponse.ReturnValue!);
+            List<object> sadList = (List<object>)getUserPartsResponse.ReturnValue!.First();
+            List<ICarPart> partsList = new List<ICarPart>();
+            foreach (object item in sadList)
+            {
+                partsList.Add((CarPart)(item));
+            }
+            response = RetrievePartListings(partsList);
             if (response.HasError == true)
             {
                 if (response.ErrorMessage is null)
@@ -238,6 +253,21 @@ namespace ScrapYourCarLibrary
             response.ReturnValue = new List<object>();
             foreach (IListing listing in listings)
             {
+                #region Validate PartUID
+                if (listing.part.partUID is null)
+                {
+                    var validatePart = GetMatchingParts(new List<ICarPart> { listing.part });
+                    if (validatePart.HasError == true)
+                    {
+                        response.HasError = true;
+                        response.ErrorMessage += "Part could not be found: " + validatePart.ErrorMessage;
+                        response.ReturnValue.Add(listing);
+                        continue;
+                    }
+                    listing.part = (ICarPart)validatePart.ReturnValue!.First();
+                }
+                #endregion
+
                 IListing validListing;
                 #region validate listing exists
                 var validateListing = _target.GetPartListing(listing.part);
@@ -268,6 +298,7 @@ namespace ScrapYourCarLibrary
         public IResponse UpdateListing(IListing listing)
         {
             IResponse response = new Response();
+            response.HasError = false;
 
             IListing validListing;
             #region validate listing exists
@@ -278,6 +309,8 @@ namespace ScrapYourCarLibrary
                 return response;
             }
             validListing = (IListing)validateListing.ReturnValue!.First();
+            validListing.price = listing.price;
+            validListing.description = listing.description;
             #endregion
 
             #region try update

@@ -29,11 +29,11 @@ builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
-builder.Services.AddScoped<IBuyTarget, BuyTarget>();
+builder.Services.AddScoped<IBuyTarget, SqlBuyTarget>();
 builder.Services.AddScoped<IBuyRequestService, BuyRequestService>();
-builder.Services.AddScoped<IPartsTarget, PartsTarget>();
+builder.Services.AddScoped<IPartsTarget, SqlPartsTarget>();
 builder.Services.AddScoped<IPartsService, PartsService>();
-builder.Services.AddScoped<IListingSearchTarget, ListingSearchTarget>();
+builder.Services.AddScoped<IListingSearchTarget, SqlListingSearchTarget>();
 builder.Services.AddScoped<IListingSearchService, ListingSearchService>();
 builder.Services.AddScoped<IScrapYourCarManager, ScrapYourCarManager>();
 

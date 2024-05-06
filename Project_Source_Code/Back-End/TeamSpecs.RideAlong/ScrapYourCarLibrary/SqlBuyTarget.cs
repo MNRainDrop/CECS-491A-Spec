@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using ScrapYourCarLibrary.Interfaces;
+﻿using ScrapYourCarLibrary.Interfaces;
 using ScrapYourCarLibrary.Models;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
@@ -7,11 +6,11 @@ using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
 {
-    public class ListingSearchTarget : IListingSearchTarget
+    public class SqlBuyTarget : IBuyTarget
     {
         private IGenericDAO _dao;
         private ILogService _logger;
-        public ListingSearchTarget(IGenericDAO dao, ILogService logger)
+        public SqlBuyTarget(IGenericDAO dao, ILogService logger)
         {
             _dao = dao;
             _logger = logger;
@@ -31,7 +30,32 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
             _logger.CreateLogAsync("Error", "Data Store", errorResponse.ErrorMessage, null);
             return errorResponse;
         }
-        public IResponse GetListingsBySearch(ISearchParameters searchBy)
+        public IResponse GetMatchingBuyRequest(IBuyRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse GetSentBuyRequests(long uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse GetToMeBuyRequests(long uid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse RemoveBuyRequest(IBuyRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse SetBuyRequest(IBuyRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IResponse UpdateBuyRequest(IBuyRequest updatedRequest)
         {
             throw new NotImplementedException();
         }

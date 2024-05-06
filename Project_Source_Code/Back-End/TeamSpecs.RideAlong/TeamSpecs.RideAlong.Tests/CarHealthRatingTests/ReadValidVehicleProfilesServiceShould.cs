@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.CarHealthRatingLibrary;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.CarHealthRatingLibrary;
-using TeamSpecs.RideAlong.VehicleProfile;
-using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 {
@@ -77,19 +71,19 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Act   
-                timer.Start();
-                response = retrievalService.ValidVehicleProfileRetrievalService(user);
-                timer.Stop();
-            
-                Thread.Sleep(1000); // Waiting for Log Task to finish
+            timer.Start();
+            response = retrievalService.ValidVehicleProfileRetrievalService(user);
+            timer.Stop();
 
-                var undoLogInsert = $"DELETE FROM Log WHERE UserHash = '{user.UserHash}'";
-                dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            Thread.Sleep(1000); // Waiting for Log Task to finish
+
+            var undoLogInsert = $"DELETE FROM Log WHERE UserHash = '{user.UserHash}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoLogInsert, null)
             });
-                var undoInsert = $"DELETE FROM UserAccount WHERE UserName = '{user.UserName}'";
-                dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
+            var undoInsert = $"DELETE FROM UserAccount WHERE UserName = '{user.UserName}'";
+            dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoInsert, null)
             });
@@ -182,7 +176,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoLogInsert, null)
             });
 
-            var undoVehicleInsert = $"DELETE FROM VehicleProfile WHERE VIN = '{ vehicle.VIN}'";
+            var undoVehicleInsert = $"DELETE FROM VehicleProfile WHERE VIN = '{vehicle.VIN}'";
             dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
             {
                 KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoVehicleInsert, null)
@@ -225,10 +219,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             long realUID;
 
             // Create Test Objects
-            var user = new AccountUserModel("testCarHealthRatingUser3") 
+            var user = new AccountUserModel("testCarHealthRatingUser3")
             {
-                Salt = 1, 
-                UserHash = "newTestUserHash3", 
+                Salt = 1,
+                UserHash = "newTestUserHash3",
             };
 
             // Create 10 vehicle profiles
