@@ -132,6 +132,13 @@ public class AccountCreationService : IAccountCreationService
         return response;
     }
 
+    public IResponse verifyAltUser(string email)
+    {
+        IResponse response = new Response();
+
+        response = _userTarget.CheckDbForEmail(email);
+    }
+
     public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
     {
 

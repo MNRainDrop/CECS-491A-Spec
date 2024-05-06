@@ -73,16 +73,28 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         }
         #endregion
 
+        // If user exists as AltUserName
+        if (response.ReturnValue.Any(r => ((DataRow)r)["Source"].ToString() == "UserProfile"))
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Email exists as alt. UserName";
+            return response;
+        }
+
         query = "";
         cmd = new SqlCommand();
 
         #region User has registered before OR account exists
         try
         {
-            #region Check if user Sql Generation 
-            query = "SELECT UA.*, UP.*\r\nFROM UserAccount AS UA\r\nJOIN UserProfile AS UP ON UA.UID = UP.UID\r\nWHERE UA.UserName = @UserName;";
+            #region Check if user is fully registered Sql Generation 
+            query = @"
+                SELECT 'UserAccount' AS Source, UA.UserName AS UserName
+                FROM UserAccount AS UA
+                JOIN UserProfile AS UP ON UA.UID = UP.UID
+                WHERE UA.UserName = @UserName;";
             cmd.CommandText = query;
-            cmd.Parameters.Add(email);
+            cmd.Parameters.AddWithValue("@UserName", email); // Assuming email corresponds to username
             #endregion
         }
         catch
