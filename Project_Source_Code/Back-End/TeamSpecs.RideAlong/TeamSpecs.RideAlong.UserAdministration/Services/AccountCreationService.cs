@@ -20,7 +20,8 @@ public class AccountCreationService : IAccountCreationService
     private readonly IMailKitService _mailKitService;
     private readonly int __otpLength;
 
-    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService, IRandomService randomService, IMailKitService mailKitService)
+    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, 
+        IHashService hashService, ILogService logService, IRandomService randomService, IMailKitService mailKitService)
     {
         _userTarget = userTarget;
         _pepperService = pepperService;
@@ -62,7 +63,7 @@ public class AccountCreationService : IAccountCreationService
 
         #endregion
 
-        #region Generate User Hash 
+        #region Set User Hash 
         userAccount.UserHash = userHash;
         userAccount.Salt = salt; 
         #endregion
@@ -99,76 +100,36 @@ public class AccountCreationService : IAccountCreationService
 
         #endregion
 
-
-
+        #region Update User Table
         if (response.ErrorMessage == "User tables must be updated")
         {
             response.ErrorMessage = "";
-
-            _userTarget.UpdateUserConfirmation();
-        }
-
-        // Check if this is how SQL would return no obj. --> No user exists
-        if(response.ReturnValue == null)
-        {
-            // Gen OTP
-
             
-            //string hashedUserAttempt = hasher.hashUser(otp, BitConverter.ToInt32(model.salt));
+            response = _userTarget.UpdateUserConfirmation(userAccount, otpHash);
 
-            
-            // Create User Hash
-            //var userPepper = _pepperService.RetrievePepper("AccountCreation");
-            //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
-
-
-            // Create Salt
-            //var salt = RandomService.GenerateUnsignedInt();
-            //userAccount.Salt = salt;
-
-            // HASH OTP
-
-            // HASH email
-
-            // 
-
-            // response = _usertarget.
+            if(response.HasError)
+            {
+                _logService.CreateLogAsync("Info", "Data Store", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+                return response;
+            }
+            else
+            {
+                _logService.CreateLogAsync("Info", "Business", 
+                    "AccountCreationSuccess: User sucessfully updated confirmation tables", userHash);
+                return response;
+            }
         }
-        // If DB finds existing user
-        else
+        #endregion
+
+        response = _userTarget.CreateUserConfirmation(userAccount, otpHash);
+
+        if (response.HasError)
         {
-            response.HasError = true;
-            response.ErrorMessage = "User exists in Database";
+            _logService.CreateLogAsync("Info", "Data Store", "AccountCreationFailure: " + response.ErrorMessage, userHash);
             return response;
         }
 
         return response;
-    }
-
-    public IResponse IsUserRegistered(string email)
-    {
-        IResponse response = new Response();
-
-        // Check inputs again e.g ehitespace blah
-        
-        // send email to Sql Target
-
-        // Create OTP 
-
-        // Hash OTP
-
-        // Timestamp of when OTP created 
-
-        // store OTP, timestamp, UserModel, UserProfile in return value
-
-        // Need to return the following:
-        /*
-         * Hashed OTP in Payload
-         * Timestamp when OTP created in Payload
-         * UserAccount, UserProfile Models
-         */
-
-            return response;
     }
 
     public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)

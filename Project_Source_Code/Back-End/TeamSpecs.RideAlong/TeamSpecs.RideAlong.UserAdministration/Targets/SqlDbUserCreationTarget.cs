@@ -124,7 +124,71 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
     public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
         IResponse response = new Response();
+        DateTime currentUtcTime = DateTime.UtcNow;
+        ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands
+        = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
+        #region Try/Catch updating UserAccount/OTP Sql Generation 
+
+        try
+        {
+            #region Update UserAccount Sql Generation 
+
+            // Update UserAccount
+            string updateUserAccountSql = "UPDATE UserAccount SET UserHash = @UserHash, Salt = @Salt WHERE UserName = @UserName";
+            var userAccountParams = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UserName", userAccount.UserName),
+                new SqlParameter("@Salt", userAccount.Salt),
+                new SqlParameter("@UserHash", userAccount.UserHash),
+            };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(updateUserAccountSql, userAccountParams));
+
+            string updateOtpSql = "UPDATE OTP SET PassHash = @PassHash, attempts = @Attempts, firstFailedLogin = @FirstFailedLogin " +
+                "WHERE UID IN (SELECT UID FROM UserAccount WHERE UserName = @UserName)";
+            var otpParams = new HashSet<SqlParameter>()
+            {
+                new SqlParameter("@UserName", userAccount.UserName),
+                new SqlParameter("@PassHash", otp),
+                new SqlParameter("@Attempts", 0),
+                new SqlParameter("@FirstFailedLogin", currentUtcTime)
+            };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(updateOtpSql, otpParams));
+        #endregion       
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate update user confirmation tables.";
+            return response;
+        }
+
+        #endregion
+
+        #region Try/Catch executing update UserAccount/ OTP Sql 
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            if (daoValue != 0)
+            {
+                response.ReturnValue = new List<object>();
+                response.ReturnValue.Add(daoValue);
+            }
+            else
+            {
+                throw new Exception("Rows not updated");
+            }
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not execute update user confirmation tables.";
+            return response;
+
+        }
+        #endregion
+
+        response.HasError = false;
         return response;
     }
 }
