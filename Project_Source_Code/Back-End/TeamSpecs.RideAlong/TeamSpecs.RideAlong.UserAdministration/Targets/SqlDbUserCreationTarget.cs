@@ -32,7 +32,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
             query = @"
                 SELECT 'UserAccount' AS Source, UserName AS UserName
                 FROM UserAccount
-                WHERE UserName =  + @UserName
+                WHERE UserName = @UserName
 
 
                 UNION
