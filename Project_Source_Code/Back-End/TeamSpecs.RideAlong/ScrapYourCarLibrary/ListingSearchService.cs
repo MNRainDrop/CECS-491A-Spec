@@ -11,9 +11,25 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
         {
             _target = target;
         }
+        private IResponse createErrorResponse(Exception ex)
+        {
+            IResponse errorResponse = new Response();
+            errorResponse.HasError = true;
+            errorResponse.ErrorMessage = "Error retrieving search: " + ex.Message;
+            return errorResponse;
+        }
         public IResponse RetrieveListingsBySearch(ISearchParameters searchBy)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _target.GetListingsBySearch(searchBy);
+            }
+            catch (Exception ex)
+            {
+                return createErrorResponse(ex);
+            }
+
+
         }
     }
 }

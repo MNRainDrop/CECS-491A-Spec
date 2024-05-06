@@ -177,11 +177,11 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
             {
                 string propName = property.Name;
                 var propValue = property.GetValue(searchBy);
-                if (propName != "page")
+                if (propName == "page")
                 {
                     page = Convert.ToInt32(propValue);
                 }
-                else if (propName != "pageSize")
+                else if (propName == "pageSize")
                 {
                     pageSize = Convert.ToInt32(propValue);
                     page = page * pageSize;
@@ -196,7 +196,7 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
                     {
                         whereSql += "AND ";
                     }
-                    whereSql += $"p.{propName} LIKE '%@{propName}%' ";
+                    whereSql += $"LOWER({propName}) LIKE '%@{propName}%' ";
                 }
                 else
                 {
@@ -214,9 +214,9 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
             List<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommandList = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
             // Create SQL command text
-            string commandText = "SELECT p.partUID, p.ownerUID, p.partName, p.partNumber, p.make, p.model, p.year, p.associatedVin, l.price, l.description" +
-                "FROM Parts p" +
-                "INNER JOIN Listings l ON p.partUID = l.partUID ";
+            string commandText = "SELECT parts.partUID, ownerUID, partName, partNumber, make, model, year, associatedVin, l.price, l.description " +
+                "FROM Parts as parts " +
+                "INNER JOIN Listings as l ON parts.partUID = l.partUID ";
 
             // Validator
             ISearchParameterValidator validator = searchBuilder(searchBy);

@@ -50,7 +50,7 @@ public class ScrapYourCarShould
         testUserHash = "SYCTestUserHash";
 
         // This is a set of sql designed to pre prep the database for accurate testing 
-        var testSql = $"DECLARE @UserName VARCHAR(50);\r\nSET @UserName = '{testUser}';\r\nDECLARE @UserHash VARCHAR(64);\r\nSET @UserHash = '{testUserHash}';\r\nDECLARE @UserID BIGINT;\r\n\r\nINSERT INTO UserAccount (UserName, Salt, UserHash)\r\nVALUES (@UserName, 123456, @UserHash);\r\n\r\nSELECT @UserID = UID FROM UserAccount WHERE UserName = @UserName;\r\n\r\nDECLARE @partUID1 BIGINT;\r\nDECLARE @partUID2 BIGINT;\r\nDECLARE @partUID3 BIGINT;\r\nDECLARE @partUID4 BIGINT;\r\nDECLARE @partUID5 BIGINT;\r\nDECLARE @partUID6 BIGINT;\r\nDECLARE @partUID7 BIGINT;\r\nDECLARE @partUID8 BIGINT;\r\nDECLARE @partUID9 BIGINT;\r\nDECLARE @partUID10 BIGINT;\r\nDECLARE @partUID11 BIGINT;\r\nDECLARE @partUID12 BIGINT;\r\nDECLARE @partUID13 BIGINT;\r\nDECLARE @partUID14 BIGINT;\r\nDECLARE @partUID15 BIGINT;\r\nDECLARE @partUID16 BIGINT;\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName1', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID1 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName1';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID1, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName2', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID2 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName2';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID2, 20.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName3', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID3 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName3';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID3, 40.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName4', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID4 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName4';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID4, 40.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName5', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID5 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName5';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID5, 60.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName6', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID6 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName6';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID6, 60.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName7', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID7 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName7';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID7, 80.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName8', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID8 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName8';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID8, 80.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName9', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID9 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName9';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID9, 100.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName10', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID10 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName10';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID10, 100.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName11', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID11 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName11';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID11, 120.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName12', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID12 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName12';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID12, 120.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName13', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID13 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName13';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID13, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName14', '123456', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID14 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName14';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID14, 20.0, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName15', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID15 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName15';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID15, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName16', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID16 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName16';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID16, 20.0, 'Land Of Setting Moon');";
+        var testSql = $"DECLARE @UserName VARCHAR(50);\r\nSET @UserName = '{testUser}';\r\nDECLARE @UserHash VARCHAR(64);\r\nSET @UserHash = '{testUserHash}';\r\nDECLARE @UserID BIGINT;\r\n\r\nINSERT INTO UserAccount (UserName, Salt, UserHash)\r\nVALUES (@UserName, 123456, @UserHash);\r\n\r\nSELECT @UserID = UID FROM UserAccount WHERE UserName = @UserName;\r\n\r\nDECLARE @partUID1 BIGINT;\r\nDECLARE @partUID2 BIGINT;\r\nDECLARE @partUID3 BIGINT;\r\nDECLARE @partUID4 BIGINT;\r\nDECLARE @partUID5 BIGINT;\r\nDECLARE @partUID6 BIGINT;\r\nDECLARE @partUID7 BIGINT;\r\nDECLARE @partUID8 BIGINT;\r\nDECLARE @partUID9 BIGINT;\r\nDECLARE @partUID10 BIGINT;\r\nDECLARE @partUID11 BIGINT;\r\nDECLARE @partUID12 BIGINT;\r\nDECLARE @partUID13 BIGINT;\r\nDECLARE @partUID14 BIGINT;\r\nDECLARE @partUID15 BIGINT;\r\nDECLARE @partUID16 BIGINT;\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName1', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID1 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName1';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID1, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName2', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName3', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID3 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName3';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID3, 40.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName4', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID4 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName4';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID4, 40.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName5', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID5 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName5';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID5, 60.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName6', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID6 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName6';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID6, 60.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName7', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID7 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName7';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID7, 80.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName8', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID8 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName8';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID8, 80.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName9', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID9 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName9';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID9, 100.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName10', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID10 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName10';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID10, 100.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName11', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID11 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName11';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID11, 120.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName12', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID12 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName12';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID12, 120.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName13', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID13 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName13';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID13, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName14', '123456', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID14 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName14';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID14, 20.0, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName15', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID15 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName15';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID15, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName16', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID16 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName16';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID16, 20.0, 'Land Of Setting Moon');";
         _dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(testSql, null) });
 
         var getUIDSql = $"SELECT UID FROM UserAccount WHERE UserName = '{testUser}';";
@@ -106,7 +106,7 @@ public class ScrapYourCarShould
         // Expected values
         bool expectedHasError = false;
         string? expectedErrorMessage = null;
-        int expectedReturnValueCount = 5;
+        int expectedReturnValueCount = 16;
         #endregion
 
 
@@ -134,7 +134,7 @@ public class ScrapYourCarShould
         part1.partName = "PartName1";
         ICarPart part2 = new CarPart();
         part2.ownerUID = testUserUID;
-        part2.partName = "DeleteMe1";
+        part2.partName = "PartName2";
 
 
         var timer = new Stopwatch();
@@ -168,7 +168,7 @@ public class ScrapYourCarShould
         #region Arrange        
         ICarPart part = new CarPart();
         part.ownerUID = testUserUID;
-        part.partName = "DeleteMe2";
+        part.partName = "PartName2";
         List<ICarPart> partList = new List<ICarPart> { part };
 
         var timer = new Stopwatch();
@@ -269,7 +269,7 @@ public class ScrapYourCarShould
         // Expected values
         bool expectedHasError = false;
         string? expectedErrorMessage = null;
-        int expectedReturValue = 3;
+        int expectedReturValue = 15;
         #endregion
 
 
@@ -298,7 +298,7 @@ public class ScrapYourCarShould
         part1.ownerUID = testUserUID;
         part2.ownerUID = testUserUID;
         part1.partName = "PartName1";
-        part2.partName = "WrongName1";
+        part2.partName = "PartName3";
         List<object> partsList = (List<object>)_pService.GetMatchingParts(new List<ICarPart>() { part1, part2 }).ReturnValue!;
         part1 = (ICarPart)partsList.ElementAt(0);
         part2 = (ICarPart)partsList.ElementAt(1);
@@ -335,7 +335,7 @@ public class ScrapYourCarShould
         #region Arrange
         ICarPart part = new CarPart();
         part.ownerUID = testUserUID;
-        part.partName = "WrongName1";
+        part.partName = "PartName15";
         part = (ICarPart)_pService.GetMatchingParts(new List<ICarPart>() { part }).ReturnValue!.First();
 
         // GetListing
@@ -377,7 +377,7 @@ public class ScrapYourCarShould
         #region Arrange
         ICarPart part = new CarPart();
         part.ownerUID = testUserUID;
-        part.partName = "WrongName1";
+        part.partName = "PartName16";
         var validatedPart = (ICarPart)_pService.GetMatchingParts(new List<ICarPart>() { part }).ReturnValue!.First();
 
         // GetListing
@@ -415,7 +415,28 @@ public class ScrapYourCarShould
     [Fact]
     public void SearchServiceShould_GetCorrectValuesAndOrder_Pass()
     {
+        #region Arrange
+        ISearchParameters searchBy = new SearchParameters(0, 15, make: "honda");
+        IResponse response;
+        var timer = new Stopwatch();
+        bool expectedHasError = false;
+        string? expectedErrorMessage = null;
+        int expectedResultCount = 7;
+        #endregion
 
+        #region Act
+        timer.Start();
+        response = _sService.RetrieveListingsBySearch(searchBy);
+        timer.Start();
+        Dispose();
+        #endregion
+
+        #region Assert
+        Assert.Equal(expectedHasError, response.HasError);
+        Assert.Equal(expectedErrorMessage, response.ErrorMessage);
+        Assert.Equal(expectedResultCount, response.ReturnValue!.Count());
+        Assert.True(timer.Elapsed.TotalSeconds <= 3);
+        #endregion
     }
     [Fact]
     public void SearchServiceShould_PaginateProperly_Pass()
