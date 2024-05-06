@@ -44,42 +44,49 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         // Vehicle Profile
         if (vehicle is null)
         {
-            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. ", account.UserHash);
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null Vehicle Profile Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle));
         }
         if (string.IsNullOrWhiteSpace(vehicle.VIN))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null VIN Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle.VIN));
         }
         if (vehicle.VIN.Length > 17)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Invalid VIN Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicle.VIN));
         }
         if (string.IsNullOrWhiteSpace(vehicle.LicensePlate))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null License Plate Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle.LicensePlate));
         }
         if (vehicle.LicensePlate.Length > 8)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Invalid Vehicle Profile Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicle.LicensePlate));
         }
         if (string.IsNullOrEmpty(vehicle.Make))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null Make Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle.Make));
         }
         if (string.IsNullOrEmpty(vehicle.Model))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null Model Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle.Model));
         }
         if (vehicle.Year < 1990)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null Year Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicle.Year));
         }
@@ -87,19 +94,23 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         // Vehicle Details
         if (vehicleDetails is null)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             throw new ArgumentNullException(nameof(vehicleDetails));
         }
         if (string.IsNullOrEmpty(vehicleDetails.VIN))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             vehicleDetails.VIN = vehicle.VIN;
         }
         if (vehicleDetails.Color.Length > 50)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Invalid Color Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicleDetails.Color));
         }
         if (vehicleDetails.Description.Length > 500)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Invalid Description Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentOutOfRangeException(nameof(vehicleDetails.Description));
         }
@@ -107,21 +118,24 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         // User Account
         if (account is null)
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", null);
             _logService.CreateLogAsync("Debug", "Data", "Null User Account Passed Into Vehicle Profile CUD Manager", null);
             throw new ArgumentNullException(nameof(account));
         }
         if (string.IsNullOrWhiteSpace(account.UserName))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null User Name Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(account.UserName));
         }
         if (string.IsNullOrWhiteSpace(account.UserHash))
         {
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null User Hash Passed Into Vehicle Profile CUD Manager", null);
             throw new ArgumentNullException(nameof(account.UserHash));
         }
         #endregion
-        _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} attempted to create vehicle.", account.UserHash);
+        _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} attempted to create vehicle. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
 
         #region Call Services
         IResponse response = new Response();
