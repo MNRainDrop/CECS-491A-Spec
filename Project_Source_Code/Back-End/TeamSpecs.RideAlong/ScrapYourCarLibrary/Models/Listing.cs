@@ -8,8 +8,8 @@
             this.price = price;
             this.description = description;
         }
-        ICarPart part { get; set; }
-        float price { get; set; }
-        string? description { get; set; }
+        public ICarPart part { get; set; }
+        public float price { get; set; }
+        public string? description { get; set; }
     }
 }

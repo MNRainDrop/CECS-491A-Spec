@@ -119,6 +119,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RegistrationEntryPoint", "TeamSpecs.RideAlong.RegistrationEntryPoint\TeamSpecs.RideAlong.RegistrationEntryPoint.csproj", "{FF5B731A-CB8A-4739-8B81-A0C3C468C938}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ScrapYourCarLibrary", "ScrapYourCarLibrary\TeamSpecs.RideAlong.ScrapYourCarLibrary.csproj", "{9541F1EE-A4FE-480A-896D-9FE998387D58}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -233,6 +235,10 @@ Global
 		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF5B731A-CB8A-4739-8B81-A0C3C468C938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9541F1EE-A4FE-480A-896D-9FE998387D58}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

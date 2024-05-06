@@ -9,9 +9,9 @@
             this.model = model;
             this.year = year;
         }
-        string? name { get; set; }
-        string? make { get; set; }
-        string? model { get; set; }
-        int? year { get; set; }
+        public string? name { get; set; }
+        public string? make { get; set; }
+        public string? model { get; set; }
+        public int? year { get; set; }
     }
 }
