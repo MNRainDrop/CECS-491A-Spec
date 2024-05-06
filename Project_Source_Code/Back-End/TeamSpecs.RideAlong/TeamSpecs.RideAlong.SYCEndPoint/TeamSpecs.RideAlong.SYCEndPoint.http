@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.SYCEndPoint_HostAddress = http://localhost:5258
+
+GET {{TeamSpecs.RideAlong.SYCEndPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
