@@ -22,13 +22,14 @@ namespace TeamSpecs.RideAlong.TestingLibrary.AccountCreationTests
     {
         private static readonly IConfigServiceJson configService = new ConfigServiceJson();
         private static readonly IGenericDAO dao = new SqlServerDAO(configService);
+        private static readonly JsonFileDAO dao2 = new JsonFileDAO();
         private static readonly IHashService hashService = new HashService();
         private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
         private static readonly ILogService logService = new LogService(logTarget, hashService);
         private static readonly IRandomService randomService = new RandomService();
         private static readonly IMailKitService mailKitService = new MailKitService(configService);
 
-        private static readonly IPepperTarget pepperTarget = new FilePepperTarget(dao);
+        private static readonly IPepperTarget pepperTarget = new FilePepperTarget(dao2);
         private static readonly IPepperService pepperService = new PepperService(pepperTarget, randomService);
 
         private static readonly ISqlDbUserCreationTarget sqlTarget = new SqlDbUserCreationTarget(dao);
