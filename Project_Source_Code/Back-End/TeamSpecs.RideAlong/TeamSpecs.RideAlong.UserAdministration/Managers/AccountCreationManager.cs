@@ -66,7 +66,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             #region Validiate emails
             if (!IsValidEmail(email))
             {
-                response.ErrorMessage = "User entered invalid email. Email altered in payload.";
+                response.ErrorMessage = "User entered invalid email.";
                 _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
                 response.HasError = true;
                 return response;
@@ -75,6 +75,12 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             {
                 response.ErrorMessage = "User entered invalid date of birth";
                 _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
+                return response;
+            }
+            if(!IsValidAltEmail(profile.AlternateUserName))
+            {
+                response.ErrorMessage = "User entered invalid alt. username";
                 response.HasError = true;
                 return response;
             }
@@ -106,7 +112,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
         }
 
-
         private bool IsValidDateOfBirth(DateTime dateOfBirth)
         {
             // Get the current date
@@ -136,6 +141,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
             return true;
         }
+
         private bool IsValidAccountType(string accountType)
         {
             return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User";
