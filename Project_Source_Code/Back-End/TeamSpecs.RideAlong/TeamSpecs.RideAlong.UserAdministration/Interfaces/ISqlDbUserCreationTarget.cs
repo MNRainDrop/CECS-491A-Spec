@@ -14,5 +14,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
         public IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp);
 
         public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp);
+
+        public IResponse CreateDefaultUser();
+
+        public IResponse CreateVendorUser();
+
+        public IResponse CreateFleetUser();
     }
 }

@@ -210,7 +210,6 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         return response;
     }
 
-
     public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp)
     {
         IResponse response = new Response();
@@ -279,6 +278,27 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         #endregion
 
         response.HasError = false;
+        return response;
+    }
+
+    public IResponse CreateDefaultUser()
+    {
+        var response = new Response();
+
+        return response;
+    }
+
+    public IResponse CreateVendorUser()
+    {
+        var response = new Response();
+
+        return response;
+    }
+
+    public IResponse CreateFleetUser()
+    {
+        var response = new Response();
+
         return response;
     }
 }
