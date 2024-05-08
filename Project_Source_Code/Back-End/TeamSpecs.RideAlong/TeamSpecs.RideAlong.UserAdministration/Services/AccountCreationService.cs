@@ -35,7 +35,7 @@ public class AccountCreationService : IAccountCreationService
     public IResponse verifyUser(string email)
     {
         IResponse response = new Response();
-        var userPepper = _pepperService.RetrievePepper("AccountCreation");
+        var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
         var userHash = _hashService.hashUser(email, (int)userPepper);
 
         response = _userTarget.CheckDbForEmail(email);
