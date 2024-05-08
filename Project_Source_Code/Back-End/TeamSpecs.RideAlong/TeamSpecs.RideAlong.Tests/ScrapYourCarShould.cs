@@ -33,6 +33,7 @@ public class ScrapYourCarShould
     #endregion
     public ScrapYourCarShould()
     {
+        Dispose();
         _hasher = new HashService();
         _dao = new SqlServerDAO(new ConfigServiceJson());
         _failDao = new FailDao();
@@ -50,7 +51,98 @@ public class ScrapYourCarShould
         testUserHash = "SYCTestUserHash";
 
         // This is a set of sql designed to pre prep the database for accurate testing 
-        var testSql = $"DECLARE @UserName VARCHAR(50);\r\nSET @UserName = '{testUser}';\r\nDECLARE @UserHash VARCHAR(64);\r\nSET @UserHash = '{testUserHash}';\r\nDECLARE @UserID BIGINT;\r\n\r\nINSERT INTO UserAccount (UserName, Salt, UserHash)\r\nVALUES (@UserName, 123456, @UserHash);\r\n\r\nSELECT @UserID = UID FROM UserAccount WHERE UserName = @UserName;\r\n\r\nDECLARE @partUID1 BIGINT;\r\nDECLARE @partUID2 BIGINT;\r\nDECLARE @partUID3 BIGINT;\r\nDECLARE @partUID4 BIGINT;\r\nDECLARE @partUID5 BIGINT;\r\nDECLARE @partUID6 BIGINT;\r\nDECLARE @partUID7 BIGINT;\r\nDECLARE @partUID8 BIGINT;\r\nDECLARE @partUID9 BIGINT;\r\nDECLARE @partUID10 BIGINT;\r\nDECLARE @partUID11 BIGINT;\r\nDECLARE @partUID12 BIGINT;\r\nDECLARE @partUID13 BIGINT;\r\nDECLARE @partUID14 BIGINT;\r\nDECLARE @partUID15 BIGINT;\r\nDECLARE @partUID16 BIGINT;\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName1', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID1 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName1';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID1, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName2', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName3', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID3 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName3';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID3, 40.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName4', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID4 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName4';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID4, 40.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName5', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID5 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName5';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID5, 60.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName6', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID6 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName6';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID6, 60.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName7', '123456', 'Honda', 'Civic', 2020, 'associatedVin');\r\nSELECT @partUID7 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName7';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID7, 80.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName8', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID8 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName8';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID8, 80.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName9', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID9 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName9';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID9, 100.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName10', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID10 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName10';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID10, 100.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName11', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID11 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName11';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID11, 120.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName12', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID12 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName12';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID12, 120.5, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName13', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID13 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName13';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID13, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName14', '123456', 'Toyota', 'Corolla', 2018, 'associatedVin');\r\nSELECT @partUID14 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName14';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID14, 20.0, 'Land Of Setting Moon');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName15', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');\r\nSELECT @partUID15 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName15';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID15, 20.0, 'Land Of Rising Sun');\r\n\r\nINSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName16', '123456', 'Honda', 'Civic', 2018, 'associatedVin');\r\nSELECT @partUID16 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName16';\r\nINSERT INTO Listings (partUID, price, description) VALUES (@partUID16, 20.0, 'Land Of Setting Moon');";
+        #region Sql Statement
+        var testSql =
+            $"DECLARE @UserName VARCHAR(50);" +
+$"SET @UserName = 'SYCTestUser';" +
+$"DECLARE @UserHash VARCHAR(64);" +
+$"SET @UserHash = 'SYCTestUserHash';" +
+$"DECLARE @UserID BIGINT;" +
+
+$"INSERT INTO UserAccount (UserName, Salt, UserHash)" +
+$"VALUES (@UserName, 123456, @UserHash);" +
+
+$"SELECT @UserID = UID FROM UserAccount WHERE UserName = @UserName;" +
+
+$"DECLARE @partUID1 BIGINT;" +
+$"DECLARE @partUID2 BIGINT;" +
+$"DECLARE @partUID3 BIGINT;" +
+$"DECLARE @partUID4 BIGINT;" +
+$"DECLARE @partUID5 BIGINT;" +
+$"DECLARE @partUID6 BIGINT;" +
+$"DECLARE @partUID7 BIGINT;" +
+$"DECLARE @partUID8 BIGINT;" +
+$"DECLARE @partUID9 BIGINT;" +
+$"DECLARE @partUID10 BIGINT;" +
+$"DECLARE @partUID11 BIGINT;" +
+$"DECLARE @partUID12 BIGINT;" +
+$"DECLARE @partUID13 BIGINT;" +
+$"DECLARE @partUID14 BIGINT;" +
+$"DECLARE @partUID15 BIGINT;" +
+$"DECLARE @partUID16 BIGINT;" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName1', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');" +
+$"SELECT @partUID1 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName1';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID1, 20.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName2', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName3', 'abcdefg', 'Honda', 'Civic', 2020, 'associatedVin');" +
+$"SELECT @partUID3 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName3';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID3, 40.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName4', 'abcdefg', 'Honda', 'Civic', 2018, 'associatedVin');" +
+$"SELECT @partUID4 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName4';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID4, 40.5, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName5', '123456', 'Honda', 'Civic', 2020, 'associatedVin');" +
+$"SELECT @partUID5 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName5';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID5, 60.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName6', '123456', 'Honda', 'Civic', 2018, 'associatedVin');" +
+$"SELECT @partUID6 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName6';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID6, 60.5, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName7', '123456', 'Honda', 'Civic', 2020, 'associatedVin');" +
+$"SELECT @partUID7 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName7';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID7, 80.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName8', '123456', 'Honda', 'Civic', 2018, 'associatedVin');" +
+$"SELECT @partUID8 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName8';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID8, 80.5, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName9', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');" +
+$"SELECT @partUID9 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName9';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID9, 100.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName10', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');" +
+$"SELECT @partUID10 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName10';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID10, 100.5, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName11', 'abcdefg', 'Toyota', 'Corolla', 2020, 'associatedVin');" +
+$"SELECT @partUID11 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName11';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID11, 120.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName12', 'abcdefg', 'Toyota', 'Corolla', 2018, 'associatedVin');" +
+$"SELECT @partUID12 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName12';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID12, 120.5, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName13', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');" +
+$"SELECT @partUID13 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName13';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID13, 20.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName14', '123456', 'Toyota', 'Corolla', 2018, 'associatedVin');" +
+$"SELECT @partUID14 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName14';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID14, 20.0, 'Land Of Setting Moon');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName15', '123456', 'Toyota', 'Corolla', 2020, 'associatedVin');" +
+$"SELECT @partUID15 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName15';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID15, 20.0, 'Land Of Rising Sun');" +
+
+$"INSERT INTO Parts(ownerUID, partName, partNumber, make, model, year, associatedVin) VALUES (@UserID, 'PartName16', '123456', 'Honda', 'Civic', 2018, 'associatedVin');" +
+$"SELECT @partUID16 = partUID FROM Parts WHERE ownerUID = @UserID AND partName = 'PartName16';" +
+$"INSERT INTO Listings (partUID, price, description) VALUES (@partUID16, 20.0, 'Land Of Setting Moon');";
+        #endregion
         _dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(testSql, null) });
 
         var getUIDSql = $"SELECT UID FROM UserAccount WHERE UserName = '{testUser}';";
@@ -60,7 +152,14 @@ public class ScrapYourCarShould
     private void Dispose()
     {
         var undoTestSql = $"DELETE FROM UserAccount WHERE UserName = '{testUser}';";
-        _dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoTestSql, null) });
+        try
+        {
+            _dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>() { KeyValuePair.Create<string, HashSet<SqlParameter>?>(undoTestSql, null) });
+        } catch (Exception ex)
+        {
+
+        }
+        
     }
     // Parts
     [Fact]
@@ -197,6 +296,7 @@ public class ScrapYourCarShould
     [Fact]
     public void PartsServiceShould_ReturnErrorWhenNoDatabase_Fail()
     {
+        #region Arrange
         IPartsTarget badTarget = new SqlPartsTarget(new FailDao(), _logger);
         IPartsService badService = new PartsService(badTarget);
         var timer = new Stopwatch();
@@ -205,6 +305,7 @@ public class ScrapYourCarShould
         // Expected values
         bool expectedHasError = true;
         string? expectedErrorMessage = "Format of the initialization string does not conform to specification starting at index 0.";
+        #endregion
 
         #region Act
         timer.Start();
