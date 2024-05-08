@@ -27,8 +27,8 @@ namespace TeamSpecs.RideAlong.Services
             try
             {
                 //From Address    
-                string FromAddress = "huynjoon2002@gmail.com";
-                string FromAdressTitle = "My Name";
+                string FromAddress = _username;
+                string FromAdressTitle = "RideAlong Notification";
                 //To Address    
                 //string ToAddress = emailaddrs;
                 string ToAddress = emailaddrs;
@@ -60,8 +60,8 @@ namespace TeamSpecs.RideAlong.Services
                 {
                     client.Connect(SmtpServer, SmtpPortNumber, false);
                     client.Authenticate(
-                        "huynjoon2002@gmail.com",
-                        "longvi230502"
+                        _username,
+                        _password
                         );
                     client.Send(mimeMessage);
                     //Console.WriteLine("The mail has been sent successfully !!");

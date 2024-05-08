@@ -129,7 +129,9 @@
                 generateDeleteButton(buttons)
                 generateViewServiceLogButton(buttons)
                 generateUploadToMarketplaceButton(buttons)
+                generateDeleteFromMarketplaceButton(buttons)
                 generateDonationButton(buttons)
+                
     
                 document.addEventListener('click', (event) => {
                     if (!content.contains(event.target)) {
@@ -563,7 +565,7 @@
                     throw `You do not have permission to delete vehicle: ${vehicle.vin}.`;
                 }
                 else if (response.status == 400) {
-                    throw `Insufficient details provided.`
+                    throw `Insufficient details provided.`;
                 }
                 else if (response.status == 404) {
                     throw `Could not delete vehicle`;
@@ -579,19 +581,45 @@
     }
     //#region 
 
+    //#region Delete from Marketplace Button 
+    function generateDeleteFromMarketplaceButton(content) {
+        var button = document.createElement('input');
+        button.type = 'button';
+        button.value = 'Delete From Marketplace';
+        var vehicleElement = document.getElementById("vehicle");
+        var vehicleDetail = document.getElementById("vehicle-detail-list");
+        var list = vehicleDetail.getElementsByTagName("li");
+        var vehicleText = vehicleElement.textContent.trim();
+        var makeModelYear = vehicleText.split(" ");
+        var make = makeModelYear[0];
+        var model = makeModelYear[1];
+        var VIN = list[2].textContent;
+          
+        button.addEventListener('click', (event) => {
+            event.stopImmediatePropagation();
+            deleteFromMarketplace(VIN,model)
+        });
+        content.appendChild(button);
+    }
+    //#endregion 
+
     //#region Upload to Marketplace Button
     function generateUploadToMarketplaceButton(content) {
         var button = document.createElement('input');
         button.type = 'button';
         button.value = 'Upload To Marketplace';
+        var vehicleElement = document.getElementById("vehicle");
+        var vehicleDetail = document.getElementById("vehicle-detail-list");
+        var list = vehicleDetail.getElementsByTagName("li");
         var vehicleText = vehicleElement.textContent.trim();
         var makeModelYear = vehicleText.split(" ");
         var make = makeModelYear[0];
         var model = makeModelYear[1];
-        var year = makeModelYear[2];        
-    
-        button.addEventListener('click', () => {
-            console.log("clicked marketplace vehicle button")
+        var VIN = list[2].textContent;
+          
+        button.addEventListener('click', (event) => {
+            event.stopImmediatePropagation();
+            uploadToMarketplace(VIN,model)
         });
         content.appendChild(button);
     }

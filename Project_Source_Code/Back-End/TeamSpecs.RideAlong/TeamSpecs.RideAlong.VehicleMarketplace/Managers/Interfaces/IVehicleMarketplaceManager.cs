@@ -11,5 +11,7 @@ public interface IVehicleMarketplaceManager
     IResponse RetrieveAllPublicPost();
     IResponse SendBuyRequest(long uid, string vin, int price);
 
+    IResponse RetrieveDetailVehicleProfile(string VIN);
+
 
 }

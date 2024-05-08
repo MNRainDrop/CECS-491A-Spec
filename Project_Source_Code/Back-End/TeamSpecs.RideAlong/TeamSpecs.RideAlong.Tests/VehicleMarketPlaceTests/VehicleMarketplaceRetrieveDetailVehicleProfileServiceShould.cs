@@ -1,18 +1,22 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleMarketplace;
-using TeamSpecs.RideAlong.VehicleMarketplace.Managers;
 
-namespace TeamSpecs.RideAlong.TestingLibrary
+namespace TeamSpecs.RideAlong.TestingLibrary.VehicleMarketPlaceTests
 {
-    public class VehicleMarketPlacePostCreationServiceShould
+    public class VehicleMarketplaceRetrieveDetailVehicleProfileServiceShould
     {
 
         [Fact]
-        public void VehicleMarketPlacePostCreationServiceShould_CreateVehicleProfile_RequiredParametersPassedIn_ReturnValue_Pass()
+        public void VehicleMarketplaceRetrieveDetailVehicleProfileServiceShould_RetrieveAllPublicPost_RequiredParametersPassedIn_ReturnValue_Pass()
         {
             //Arrange 
             var timer = new Stopwatch();
@@ -23,18 +27,17 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
 
             //Parameters 
-            string VIN = "testVin2";
-            int view = 1;
+            string VIN = "VIN5";
+            /*int view = 1;
             string description = "This is test case 1";
-            int status = 1;
+            int status = 1;*/
 
             //Service 
-            VehiceMarketplacePostCreationService Create = new VehiceMarketplacePostCreationService(_target);
-            
+            VehicleMarketplaceRetrieveDetailVehicleProfileService View = new VehicleMarketplaceRetrieveDetailVehicleProfileService(_target);
 
             //Act 
             timer.Start();
-            response = Create.CreateVehicleProfilePost(VIN, view, description, status);
+            response = View.RetrieveDetailVehicleProfile(VIN);
             timer.Stop();
 
 
@@ -45,6 +48,5 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
 
         }
-
     }
 }

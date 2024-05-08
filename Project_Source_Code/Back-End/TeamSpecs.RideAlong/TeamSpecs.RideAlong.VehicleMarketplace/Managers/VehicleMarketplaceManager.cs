@@ -13,14 +13,18 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
         private IVehiceMarketplacePostCreationService _postCreationService;
         private IVehiceMarketplacePostDeletionService _postDeletionService;
         private IVehiceMarketplacePostRetrievalService _vehiceMarketplacePostRetrievalService;
+        private IVehicleMarketplaceRetrieveDetailVehicleProfileService _vehicleMarketplaceRetrieveDetailVehicleProfileService;
+        private IVehiceMarketplaceSendBuyRequestService _vehiceMarketplaceSendBuyRequestService;
 
 
         //Constructor 
-        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService, IVehiceMarketplacePostRetrievalService vehiceMarketplacePostRetrievalService)
+        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService, IVehiceMarketplacePostRetrievalService vehiceMarketplacePostRetrievalService, IVehicleMarketplaceRetrieveDetailVehicleProfileService vehicleMarketplaceRetrieveDetail, IVehiceMarketplaceSendBuyRequestService vehiceMarketplaceSendBuyRequestService)
         {
             _postCreationService = postCreationService;
             _postDeletionService = postDeletionService;
             _vehiceMarketplacePostRetrievalService = vehiceMarketplacePostRetrievalService;
+            _vehicleMarketplaceRetrieveDetailVehicleProfileService = vehicleMarketplaceRetrieveDetail;
+            _vehiceMarketplaceSendBuyRequestService = vehiceMarketplaceSendBuyRequestService;
         }
 
         //Checking business rules and calling Post Creation service 
@@ -51,12 +55,19 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
 
         }
 
+        public IResponse RetrieveDetailVehicleProfile(string VIN) 
+        {
+            IResponse response;
+            response = _vehicleMarketplaceRetrieveDetailVehicleProfileService.RetrieveDetailVehicleProfile(VIN);
+            return response;
+        }
+
         //Checking business rules and calling SendBuyRequest service 
         public IResponse SendBuyRequest(long uid, string vin, int price)
         {
-            /*VehicleMarketplaceSendBuyRequest sendBuyRequestService = new VehicleMarketplaceSendBuyRequest();
-            sendBuyRequestService.SendBuyRequest();*/
-            throw new NotImplementedException();
+            IResponse response;
+            response = _vehiceMarketplaceSendBuyRequestService.SendBuyRequest(vin,price);
+            return response ;
         }
     }
 }

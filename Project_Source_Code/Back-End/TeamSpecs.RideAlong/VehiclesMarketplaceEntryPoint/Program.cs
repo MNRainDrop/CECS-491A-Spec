@@ -79,6 +79,9 @@ builder.Services.AddScoped<IMarketplaceTarget, SqlDbMarketplaceTarget>();
 builder.Services.AddScoped<IVehiceMarketplacePostCreationService, VehiceMarketplacePostCreationService>();
 builder.Services.AddScoped<IVehiceMarketplacePostDeletionService, VehiceMarketplacePostDeletionService>();
 builder.Services.AddScoped<IVehiceMarketplacePostRetrievalService, VehicleMarketplacePostRetrievalService>();
+builder.Services.AddScoped<IVehicleMarketplaceRetrieveDetailVehicleProfileService, VehicleMarketplaceRetrieveDetailVehicleProfileService>();
+builder.Services.AddScoped<IMailKitService, MailKitService>();
+builder.Services.AddScoped<IVehiceMarketplaceSendBuyRequestService, VehiceMarketplaceSendBuyRequestService>();
 builder.Services.AddScoped<IVehicleMarketplaceManager, VehicleMarketplaceManager>();
 
 

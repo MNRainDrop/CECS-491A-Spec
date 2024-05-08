@@ -1,5 +1,4 @@
-﻿using System;
-using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.VehicleMarketplace;
 public interface IVehiceMarketplacePostCreationService
