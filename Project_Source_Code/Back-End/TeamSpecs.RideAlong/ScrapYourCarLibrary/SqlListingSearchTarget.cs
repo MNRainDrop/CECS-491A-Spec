@@ -196,7 +196,7 @@ namespace TeamSpecs.RideAlong.ScrapYourCarLibrary
                     {
                         whereSql += "AND ";
                     }
-                    whereSql += $"LOWER({propName}) LIKE '%@{propName}%' ";
+                    whereSql += "LOWER("+propName+") LIKE '%@"+propName+"%' ";
                 }
                 else
                 {

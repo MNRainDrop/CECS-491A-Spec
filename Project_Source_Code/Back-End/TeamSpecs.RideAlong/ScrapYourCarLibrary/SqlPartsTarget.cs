@@ -58,7 +58,8 @@ namespace ScrapYourCarLibrary
             if (IsPrimitiveType(objectType))
             {
                 // Create a single parameter for primitive types
-                parameters.Add(CreateParameter("@value", GetSqlType(objectType), obj));
+                
+                parameters.Add(CreateParameter($"@{nameof(obj)}", GetSqlType(objectType), obj));
             }
             else
             {
