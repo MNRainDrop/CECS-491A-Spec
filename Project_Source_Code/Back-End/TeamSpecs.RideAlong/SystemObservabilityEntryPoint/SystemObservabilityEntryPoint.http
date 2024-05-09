@@ -1,0 +1,6 @@
+@SystemObservabilityEntryPoint_HostAddress = http://localhost:5259
+
+GET {{SystemObservabilityEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

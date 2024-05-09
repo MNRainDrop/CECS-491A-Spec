@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.SystemObservability;
 
-public class SystemObservabilityTarget : ISystemObservabilityTarget
+public class SqlDbSystemObservabilityTarget : ISystemObservabilityTarget
 {
     public IResponse GetAccountCreationAttemptsSql(int dateRange)
     {
@@ -49,6 +48,14 @@ public class SystemObservabilityTarget : ISystemObservabilityTarget
         //Sql will look something like this
         //select* from log
         //where LogContext like '%vehicle creation.%'
+        throw new NotImplementedException();
+    }
+
+    public IResponse GetLogsSql(int dateRange)
+    {
+        //sql will look something like this
+        // select * from log
+        // where dateCreated > DATEADD(m, dateRange, GETUTCDATE())
         throw new NotImplementedException();
     }
 }

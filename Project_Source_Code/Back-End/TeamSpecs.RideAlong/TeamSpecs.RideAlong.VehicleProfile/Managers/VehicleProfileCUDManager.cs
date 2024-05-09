@@ -44,7 +44,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         // Vehicle Profile
         if (vehicle is null)
         {
-            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", account.UserHash);
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. Null Null Null", account.UserHash);
             _logService.CreateLogAsync("Debug", "Data", "Null Vehicle Profile Passed Into Vehicle Profile CUD Manager", account.UserHash);
             throw new ArgumentNullException(nameof(vehicle));
         }
@@ -118,7 +118,7 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         // User Account
         if (account is null)
         {
-            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", null);
+            _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: Null unsuccessful vehicle creation. {vehicle.Make} {vehicle.Model} {vehicle.Year}", null);
             _logService.CreateLogAsync("Debug", "Data", "Null User Account Passed Into Vehicle Profile CUD Manager", null);
             throw new ArgumentNullException(nameof(account));
         }

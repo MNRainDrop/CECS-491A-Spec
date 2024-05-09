@@ -6,6 +6,7 @@ public interface ISystemObservabilityTarget:
     IGetLongestVisitedViewsTarget,
     IGetMostVisitedViewsTarget,
     IGetVehicleCreationAttemptsTarget,
-    IGetMostRegisteredVehiclesTarget
+    IGetMostRegisteredVehiclesTarget,
+    IGetLogsTarget
 {
 }
