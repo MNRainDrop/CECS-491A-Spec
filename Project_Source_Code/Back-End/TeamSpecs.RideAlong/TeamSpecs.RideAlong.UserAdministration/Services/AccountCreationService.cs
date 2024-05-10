@@ -21,8 +21,36 @@ public class AccountCreationService : IAccountCreationService
         _hashService = hashService;
         _logService = logService;
     }
+
+    public IResponse VerifyValidUserRegistered()
+    {
+        IResponse response = new Response();
+
+        // Check inputs again
+
+        // Create OTP 
+
+        // Hash OTP
+
+        // Timestamp of when OTP created 
+
+        // store OTP, timestamp, UserModel, UserProfile in return value
+
+        // Need to return the following:
+        /*
+         * Hashed OTP in Payload
+         * Timestamp when OTP created in Payload
+         * UserAccount, UserProfile Models
+         */
+
+        return response;
+    }
+
     public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
     {
+
+        // should recieve OTP, timestamp, UserAccount, UserProfile details
+
         #region Validate arguments
         if (string.IsNullOrWhiteSpace(userName))
         {

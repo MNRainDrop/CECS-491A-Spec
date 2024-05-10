@@ -16,10 +16,19 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             _accountCreationService = accountCreationService;
         }
 
-
+        // Rename to verifying account details
+        // No longer creates account in DB due to needing confirm account first
         public IResponse RegisterUser(string username, DateTime dateOfBirth, string accountType)
         {
             IResponse response = new Response();
+
+            // Check business rules in BRD 
+            /* The following is needed to be checked
+             * Username is a email --> aaa@something.com
+             * DOB --> after 1/1/1970
+             * Need to add address
+             * Account Type must be valid account type
+             */
 
             #region Business Rules
             // Check if email is valid
@@ -50,6 +59,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
+            // Call account creation service
             //response = _accountCreationService.CreateValidUserAccount(username, dateOfBirth, accountType);
 
             return response;
