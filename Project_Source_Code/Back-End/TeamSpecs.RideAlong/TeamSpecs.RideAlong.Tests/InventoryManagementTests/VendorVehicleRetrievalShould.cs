@@ -13,14 +13,14 @@ namespace TeamSpecs.RideAlong.TestingLibrary.InventoryManagementTests;
 public class VendorVehicleRetrievalShould
 {
     private static readonly IConfigServiceJson configService = new ConfigServiceJson();
-    private static readonly IGenericDAO dao = new SqlServerDAO(configService);
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
     private static readonly HashService hash = new HashService();
     private static readonly ILogTarget logt = new SqlDbLogTarget(dao);
     private static readonly ILogService log = new LogService(logt, hash);
     private static readonly IRetrieveVendorVehicleTarget veh = new SqlDbVendorVehicleTarget(dao);
     private static readonly IRetrieveVendorVehicleService service = new RetrieveVendorVehicleService(veh, log);
 
-    private long writeUserToDB(IGenericDAO dao, IAccountUserModel user)
+    private long writeUserToDB(ISqlServerDAO dao, IAccountUserModel user)
     {
         var accountSql = $"INSERT INTO UserAccount (UserName, Userhash, Salt) VALUES ('{user.UserName}', '{user.UserHash}', {user.Salt})";
         dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()
@@ -49,7 +49,7 @@ public class VendorVehicleRetrievalShould
         };
     }
 
-    private void writeVehicleToDB(IGenericDAO dao, IVendorVehicleModel vehicle)
+    private void writeVehicleToDB(ISqlServerDAO dao, IVendorVehicleModel vehicle)
     {
         var vehicleprofilesql = $"INSERT INTO VehicleProfile (VIN, Owner_UID, LicensePlate, Make, Model, Year) VALUES ('{vehicle.VIN}', {vehicle.Owner_UID}, '{vehicle.LicensePlate}', '{vehicle.Make}', '{vehicle.Model}', {vehicle.Year})";
         var vehicledetailssql = $"INSERT INTO VehicleDetails (VIN, Color, Description) VALUES ('{vehicle.VIN}', '{vehicle.Color}', '')";
@@ -77,7 +77,7 @@ public class VendorVehicleRetrievalShould
         };
     }
 
-    private void deleteFromDB(IGenericDAO dao, IAccountUserModel user)
+    private void deleteFromDB(ISqlServerDAO dao, IAccountUserModel user)
     {
         var undoInsert = $"DELETE FROM UserAccount WHERE UserHash = '{user.UserHash}'";
         dao.ExecuteWriteOnly(new List<KeyValuePair<string, HashSet<SqlParameter>?>>()

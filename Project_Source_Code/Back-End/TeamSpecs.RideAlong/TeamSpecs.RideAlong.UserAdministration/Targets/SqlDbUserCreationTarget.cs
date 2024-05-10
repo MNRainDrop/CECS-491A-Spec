@@ -4,15 +4,16 @@ using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Security.Claims;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
+using System.Linq;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
 
-    public SqlDbUserCreationTarget(IGenericDAO dao)
+    public SqlDbUserCreationTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }
@@ -29,6 +30,9 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         try
         {
             #region Check if user is fully registered Sql Generation 
+
+            // If user exists on either UserAccount or UserProfile, the table name will be listed and number 1 [UserAccount, 1]
+
             query = @"
                 SELECT 'UserAccount' AS Source, UserName AS UserName
                 FROM UserAccount
@@ -66,7 +70,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         #endregion
 
         #region If user does not exist in DB
-        if (response.ReturnValue == null)
+        if (response.ReturnValue.Count == 0) 
         {
             response.HasError = false;
             return response;
@@ -150,7 +154,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
             var userAccountParams = new HashSet<SqlParameter>()
         {
             new SqlParameter("@UserName", userAccount.UserName),
-            new SqlParameter("@Salt", userAccount.Salt),
+            new SqlParameter("@Salt", (int)userAccount.Salt),
             new SqlParameter("@UserHash", userAccount.UserHash),
         };
             sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(insertUserAccountSql, userAccountParams));
@@ -166,7 +170,8 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         {
             new SqlParameter("@UserName", userAccount.UserName),
             new SqlParameter("@PassHash", otp),
-            new SqlParameter("@Attempts", 0),
+            // Need to specify DB type, or else entering 0 will be intialized to null --> see stack overflow link at bottom
+            new SqlParameter("@Attempts", (object) 0),
             new SqlParameter("@FirstFailedLogin", currentUtcTime)
         };
             sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(insertOtpSql, otpParams));
@@ -303,6 +308,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
     }
 }
 
+// https://stackoverflow.com/questions/45027609/cant-insert-0-values-using-a-parameterized-query
 
 /*
  * -- Table: UserAccount

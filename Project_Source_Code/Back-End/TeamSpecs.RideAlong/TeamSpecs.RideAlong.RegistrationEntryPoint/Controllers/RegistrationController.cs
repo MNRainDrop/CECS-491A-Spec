@@ -27,7 +27,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
         [HttpPost]
         [Route("PostVerify")]
-        public IActionResult PostVerifyUsername(string email) 
+        public IActionResult PostVerifyUsername([FromBody]string email) 
         {
             IResponse response = new Response();
 
@@ -41,6 +41,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
                 return BadRequest(response.ErrorMessage);
             }
 
+            // Should add 500 response for db fail
 
             // If returns OK --> user updated in Db
             return Ok("User confirmation created successfully!");

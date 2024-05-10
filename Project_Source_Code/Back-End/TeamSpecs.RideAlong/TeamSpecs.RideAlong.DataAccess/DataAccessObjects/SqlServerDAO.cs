@@ -4,7 +4,7 @@ using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.ConfigService.ConfigModels;
 namespace TeamSpecs.RideAlong.DataAccess;
 
-public class SqlServerDAO : IGenericDAO
+public class SqlServerDAO : ISqlServerDAO
 {
     private readonly ConnectionStrings _connStrings;
     private readonly IConfigServiceJson _config;
@@ -159,15 +159,5 @@ public class SqlServerDAO : IGenericDAO
             return returnList;
         }
     }
-    public IResponse ExecuteReadOnly()
-    {
-        throw new NotImplementedException();
-    }
-
-    public IResponse ExecuteWriteOnly(string value)
-    {
-        throw new NotImplementedException();
-    }
-
 
 }

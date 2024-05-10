@@ -13,7 +13,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileCreationShould
 {
     private static readonly IConfigServiceJson configService = new ConfigServiceJson();
-    private static readonly IGenericDAO dao = new SqlServerDAO(configService);
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
     private static readonly IClaimTarget claimTarget = new ClaimTarget(dao);
     private static readonly IClaimService claimService = new ClaimService(claimTarget);
     private static readonly ICRUDVehicleTarget createVehicleTarget = new SqlDbVehicleTarget(dao);

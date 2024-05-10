@@ -9,9 +9,9 @@ namespace TeamSpecs.RideAlong.DonateYourCarLibrary;
 public class SqlDbCharityTarget : ISqlDbCharityTarget
 {
 
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
-    public SqlDbCharityTarget(IGenericDAO dao)
+    public SqlDbCharityTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

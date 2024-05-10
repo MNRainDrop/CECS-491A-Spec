@@ -12,9 +12,9 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
 {
     public class SqlDbUserDeletionTarget : ISqlDbUserDeletionTarget
     {
-        private readonly IGenericDAO _dao;
+        private readonly ISqlServerDAO _dao;
 
-        public SqlDbUserDeletionTarget(IGenericDAO dao)
+        public SqlDbUserDeletionTarget(ISqlServerDAO dao)
         {
             _dao = dao;
         }

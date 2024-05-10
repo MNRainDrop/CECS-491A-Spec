@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -25,6 +26,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         public IResponse CallVerifyUser(string email)
         {
             IResponse response = new Response();
+            var timer = new Stopwatch();
 
             #region Validiate email 
             if (!IsValidEmail(email))
@@ -36,7 +38,14 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
+            timer.Start();
             response = _accountCreationService.verifyUser(email);
+            timer.Stop();
+            
+            if(timer.ElapsedMilliseconds > 3000)
+            {
+                _logService.CreateLog("Info", "Business", "AccountCreationFailure: " + "AccountCreationService: Exceeded 3 second time limit ", null);
+            }
 
             if (response.HasError)
             {

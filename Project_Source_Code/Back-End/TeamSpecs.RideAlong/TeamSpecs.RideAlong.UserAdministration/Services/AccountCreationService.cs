@@ -76,11 +76,10 @@ public class AccountCreationService : IAccountCreationService
         #region Send Email
 
         emailBody = $@"
-        Subject: Your Registration Confirmation OTP
 
         Dear {email},
 
-        Thank you for choosing to register with [Your Company/Platform Name]!
+        Thank you for choosing to register with RideAlong!
 
         To complete your registration and ensure the security of your account, we require you to verify your email address. Below is your One-Time Password (OTP):
 
