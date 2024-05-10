@@ -5,6 +5,9 @@ using System.Data;
 using System.Security.Claims;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Reflection;
+using System;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
@@ -77,13 +80,23 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         }
         #endregion
 
-        // If user exists as AltUserName
-        if (response.ReturnValue.Any(r => ((DataRow)r)["Source"].ToString() == "UserProfile"))
+
+        #region If user has same altUserName as email arguement
+        if (response.ReturnValue.ToList()[0] is object[] array)
         {
-            response.HasError = true;
-            response.ErrorMessage = "Email exists as alt. UserName";
-            return response;
+            var check = array[0].ToString() == "UserProfile";
+
+            // If user exists as AltUserName
+            if (check)
+            {
+
+                response.HasError = true;
+                response.ErrorMessage = "Email exists as alt. UserName";
+                return response;
+            }
         }
+        #endregion
+
 
         query = "";
         cmd = new SqlCommand();
