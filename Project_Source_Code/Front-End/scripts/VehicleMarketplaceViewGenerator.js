@@ -3,7 +3,8 @@ const generateViewButton = document.getElementById("vehicle-marketplace-view");
 
 function exrtactData(jsonData) {
     //var data = JSON.parse(jsonData);
-    var dynamicContent = document.querySelector(".dynamic-content");
+    //page generation 
+    var dynamicContent = document.getElementById('vehicle-marketplace');
     var html = "<div class=VPMcontainer>";
     jsonData.forEach(function(data) {
         // Access values from each object
@@ -140,13 +141,39 @@ async function fetchAPIMarktValue(vin){
 
 //#region display marketplace 
 function displayMarketplace() {
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetVehicleMarketplace', 'GET','')
+    var dynamicContent = document.querySelector(".dynamic-content");
+    var currPage;
+    try {
+        currPage = parseInt(document.getElementById('current-page').innerText);
+    }
+    catch {
+        currPage = 1;
+    }
+    while (dynamicContent.lastElementChild) {
+        dynamicContent.removeChild(dynamicContent.lastElementChild);
+    }
+
+    var VehicleMarketplace = document.createElement('div');
+    VehicleMarketplace.id = 'vehicle-marketplace';
+
+    dynamicContent.appendChild(VehicleMarketplace);
+
+    pages(displayMarketplace);
+    document.getElementById('current-page').innerText = currPage;
+        
+    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetVehicleMarketplace', 'POST',currPage)
     .then(function (response) {
         if (response.status == 200) { 
             response.json()
             .then(function(data) {
                 // Check if data is an array or object
-                if (Array.isArray(data) && data.length > 0) {
+                if (data.length == 0 && parseInt(document.getElementById('current-page').innerText) != 1)
+                    {
+                        decrementPages();
+                        displayMarketplace();
+                        return;
+                    }
+                else if (Array.isArray(data) && data.length > 0) {
                     //alert("VP's retrieved");
                     exrtactData(data);
                     var vehicles = document.getElementsByClassName('vehicle-listings');

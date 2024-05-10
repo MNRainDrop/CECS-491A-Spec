@@ -8,7 +8,7 @@ public interface IVehicleMarketplaceManager
 
     IResponse DeletePostFromMarketplace(string VIN);
 
-    IResponse RetrieveAllPublicPost();
+    IResponse RetrieveAllPublicPost(int page);
     IResponse SendBuyRequest(long uid, string vin, int price);
 
     IResponse RetrieveDetailVehicleProfile(string VIN);

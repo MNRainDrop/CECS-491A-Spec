@@ -208,13 +208,16 @@ namespace TeamSpecs.RideAlong.Services
         }
 
         //This method retrieve all public Vehicles (VPM-3)
-        public IResponse ReadAllPublicVehicleProfileSql()
+        public IResponse ReadAllPublicVehicleProfileSql(int numOfResults, int page)
         {
             #region Sql setup
             var commandSql = "Select * ";
             var fromSql = "From VehicleProfile ";
             var joinSql = "INNER JOIN MarketplaceStatus ON VehicleProfile.VIN = MarketplaceStatus.VIN ";
             var whereSql = "WHERE MarketplaceStatus.ViewStatus = 1";
+            var orderBySql = "ORDER BY DateCreated ";
+            var offsetSql = $"OFFSET {(page - 1) * numOfResults} ROWS ";
+            var fetchSql = $"FETCH NEXT {numOfResults} ROWS ONLY;";
             #endregion
 
             var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
@@ -224,7 +227,7 @@ namespace TeamSpecs.RideAlong.Services
             {
                 // create new hash set of SqlParameters
                 var parameters = new HashSet<SqlParameter>();
-                var sqlString = commandSql + fromSql + joinSql + whereSql;
+                var sqlString = commandSql + fromSql + joinSql + whereSql + orderBySql + offsetSql + fetchSql;
                 sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
             }
             catch

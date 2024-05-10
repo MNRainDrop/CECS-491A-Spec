@@ -18,6 +18,7 @@
     //#region Vehicle Profile View
     function createVehicleProfileView() {
         refreshUserTokens();
+        //PAGINATION
         var dynamicContent = document.querySelector(".dynamic-content");
         var currPage;
         try {
@@ -69,6 +70,7 @@
                     createVehicleProfileView();
                     return;
                 }
+            //PAGINATION
                 var content = document.getElementById('vehicle-profile');
                 content.innerHTML = '';
     

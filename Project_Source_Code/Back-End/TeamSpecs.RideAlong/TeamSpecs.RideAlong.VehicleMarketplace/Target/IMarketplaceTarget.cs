@@ -8,7 +8,7 @@ public interface IMarketplaceTarget
 
     IResponse DeleteVehicleFromMarketplace(string VIN);
 
-    IResponse ReadAllPublicVehicleProfileSql();
+    IResponse ReadAllPublicVehicleProfileSql(int numOfResults, int page);
 
     IResponse RetrieveDetailVehicleProfileSql(string VIN);
 

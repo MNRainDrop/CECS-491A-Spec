@@ -3,28 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
 {
     public class VehicleMarketplaceManager : IVehicleMarketplaceManager
     {
-        private IVehiceMarketplacePostCreationService _postCreationService;
-        private IVehiceMarketplacePostDeletionService _postDeletionService;
-        private IVehiceMarketplacePostRetrievalService _vehiceMarketplacePostRetrievalService;
-        private IVehicleMarketplaceRetrieveDetailVehicleProfileService _vehicleMarketplaceRetrieveDetailVehicleProfileService;
-        private IVehiceMarketplaceSendBuyRequestService _vehiceMarketplaceSendBuyRequestService;
+        private readonly IVehiceMarketplacePostCreationService _postCreationService;
+        private readonly IVehiceMarketplacePostDeletionService _postDeletionService;
+        private readonly IVehiceMarketplacePostRetrievalService _vehiceMarketplacePostRetrievalService;
+        private readonly IVehicleMarketplaceRetrieveDetailVehicleProfileService _vehicleMarketplaceRetrieveDetailVehicleProfileService;
+        private readonly IVehiceMarketplaceSendBuyRequestService _vehiceMarketplaceSendBuyRequestService;
+        private readonly IConfigServiceJson _config;
+        private readonly int _numOfResults;
 
 
         //Constructor 
-        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService, IVehiceMarketplacePostRetrievalService vehiceMarketplacePostRetrievalService, IVehicleMarketplaceRetrieveDetailVehicleProfileService vehicleMarketplaceRetrieveDetail, IVehiceMarketplaceSendBuyRequestService vehiceMarketplaceSendBuyRequestService)
+        public VehicleMarketplaceManager(IVehiceMarketplacePostCreationService postCreationService, IVehiceMarketplacePostDeletionService postDeletionService, IVehiceMarketplacePostRetrievalService vehiceMarketplacePostRetrievalService, IVehicleMarketplaceRetrieveDetailVehicleProfileService vehicleMarketplaceRetrieveDetail, IVehiceMarketplaceSendBuyRequestService vehiceMarketplaceSendBuyRequestService, IConfigServiceJson configServiceJson)
         {
             _postCreationService = postCreationService;
             _postDeletionService = postDeletionService;
             _vehiceMarketplacePostRetrievalService = vehiceMarketplacePostRetrievalService;
             _vehicleMarketplaceRetrieveDetailVehicleProfileService = vehicleMarketplaceRetrieveDetail;
             _vehiceMarketplaceSendBuyRequestService = vehiceMarketplaceSendBuyRequestService;
+            _config = configServiceJson;
+            _numOfResults = _config.GetConfig().VEHICLE_MARKETPLACE_MANAGER.NUMOFRESULTS;
         }
 
         //Checking business rules and calling Post Creation service 
@@ -47,10 +53,10 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace.Managers
         }
 
         //Checking business rules and calling Post Retrieveal service 
-        public IResponse RetrieveAllPublicPost()
+        public IResponse RetrieveAllPublicPost(int page)
         {
             IResponse response;
-            response = _vehiceMarketplacePostRetrievalService.RetrieveAllPublicPost();
+            response = _vehiceMarketplacePostRetrievalService.RetrieveAllPublicPost(_numOfResults,page);
             return response;
 
         }

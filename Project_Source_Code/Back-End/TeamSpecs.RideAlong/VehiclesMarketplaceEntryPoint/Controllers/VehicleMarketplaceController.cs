@@ -55,9 +55,9 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         
 
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetVehicleMarketplace")]
-        public IActionResult GetAllVehiclesFromMarketplace()
+        public IActionResult GetAllVehiclesFromMarketplace([FromBody]int page)
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
@@ -67,7 +67,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
 
-            response = _manager.RetrieveAllPublicPost();
+            response = _manager.RetrieveAllPublicPost(page);
 
             if (response.HasError == false)
             {

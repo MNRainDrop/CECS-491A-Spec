@@ -3,6 +3,6 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace;
 
 public interface IVehiceMarketplacePostRetrievalService
 {
-    IResponse RetrieveAllPublicPost();
+    IResponse RetrieveAllPublicPost(int numOfResults, int page);
 }
 
