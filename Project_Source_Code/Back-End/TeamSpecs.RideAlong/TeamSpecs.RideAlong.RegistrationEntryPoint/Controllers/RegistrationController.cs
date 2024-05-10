@@ -31,17 +31,19 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
         {
             IResponse response = new Response();
 
-            // Will not have security check
-
             response = _accountCreationManager.CallVerifyUser(email);
+
+            // Database/ sql generation failed
+            if(response.HasError && response.ErrorMessage.Contains("Could not"))
+            {
+                return StatusCode(500);
+            }
 
             // If returns bad --> user exists OR other issue
             if (response.HasError)
             {
                 return BadRequest(response.ErrorMessage);
             }
-
-            // Should add 500 response for db fail
 
             // If returns OK --> user updated in Db
             return Ok("User confirmation created successfully!");
@@ -54,7 +56,9 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
             IResponse response = new Response();
             IProfileUserModel profile = new ProfileUserModel(dateOfBirth, altEmail);
 
-            //response = _accountCreationManager.RegisterUser(email)
+            response = _accountCreationManager.RegisterUser(profile, email, otp, acccountType);
+
+            //if(response.HasError && ) --> if DB fails
 
             if(response.HasError)
             {

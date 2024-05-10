@@ -319,6 +319,13 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
 
         return response;
     }
+
+    public IResponse CreateAdminUser()
+    {
+        var response = new Response();
+
+        return response;
+    }
 }
 
 // https://stackoverflow.com/questions/45027609/cant-insert-0-values-using-a-parameterized-query

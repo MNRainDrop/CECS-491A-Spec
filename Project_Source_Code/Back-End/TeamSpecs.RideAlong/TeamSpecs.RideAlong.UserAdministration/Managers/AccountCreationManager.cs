@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
+using TeamSpecs.RideAlong.UserAdministration.Services;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Managers
 {
@@ -41,8 +42,9 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             timer.Start();
             response = _accountCreationService.verifyUser(email);
             timer.Stop();
-            
-            if(timer.ElapsedMilliseconds > 3000)
+
+            #region Log to Database 
+            if (timer.ElapsedMilliseconds > 3000)
             {
                 _logService.CreateLog("Info", "Business", "AccountCreationFailure: " + "AccountCreationService: Exceeded 3 second time limit ", null);
             }
@@ -52,15 +54,15 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
                 return response;
             }
+            #endregion
 
             return response;
         }
 
-        // Rename to verifying account details
-        // No longer creates account in DB due to needing confirm account first
         public IResponse RegisterUser(IProfileUserModel profile, string email, string otp, string accountType)
         {
             IResponse response = new Response();
+            var timer = new Stopwatch();
 
             // Check business rules in BRD 
             /* The following is needed to be checked
@@ -70,9 +72,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
              */
 
             #region Business Rules
-            // Check if email is valid
-
-            #region Validiate emails
             if (!IsValidEmail(email))
             {
                 response.ErrorMessage = "User entered invalid email.";
@@ -89,19 +88,45 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             if(!IsValidAltEmail(profile.AlternateUserName))
             {
-                response.ErrorMessage = "User entered invalid alt. username";
+                response.ErrorMessage = "User entered invalid Alt. username";
+                response.HasError = true;
+                return response;
+            }
+            if(!IsValidOneTimePassword(otp))
+            {
+                response.ErrorMessage = "User entered invalid OTP";
+                response.HasError = true;
+                return response;
+            }
+            if (!IsValidAccountType(accountType))
+            {
+                response.ErrorMessage = "User entered account type";
                 response.HasError = true;
                 return response;
             }
 
             #endregion
 
-            // Check if date of birth is valid
+            if(accountType == "Default User")
+            {
+                timer.Start();
+                //response = _accountCreationService.
+                timer.Stop();
+            }
+            else if(accountType == "Vendor")
+            {
+                timer.Start();
+                //response = _accountCreationService.
+                timer.Stop();
+            }
+            else
+            {
+                timer.Start();
+                //response = _accountCreationService.
+                timer.Stop();
+            }
 
 
-
-            // Call account creation service
-            //response = _accountCreationService.CreateValidUserAccount(username, dateOfBirth, accountType);
 
             return response;
         }
@@ -117,7 +142,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
             // Check if the email matches the pattern
             return Regex.IsMatch(email, pattern);
-            #endregion
 
         }
 
@@ -153,7 +177,19 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
         private bool IsValidAccountType(string accountType)
         {
-            return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User";
+            return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User" || accountType == "Admin";
+        }
+
+        private bool IsValidOneTimePassword(string otp)
+        {
+            if(otp == null)
+            {
+                return false;
+            }
+
+            string pattern = @"^[a-zA-Z0-9]{10}$";
+
+            return Regex.IsMatch(otp, pattern);
         }
     }
 }

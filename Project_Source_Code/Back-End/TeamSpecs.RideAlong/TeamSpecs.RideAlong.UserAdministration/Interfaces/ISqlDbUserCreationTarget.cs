@@ -20,5 +20,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
         public IResponse CreateVendorUser();
 
         public IResponse CreateFleetUser();
+
+        public IResponse CreateAdminUser();
     }
 }

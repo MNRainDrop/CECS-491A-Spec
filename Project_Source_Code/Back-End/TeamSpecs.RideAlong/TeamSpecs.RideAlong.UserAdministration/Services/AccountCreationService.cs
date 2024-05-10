@@ -94,8 +94,18 @@ public class AccountCreationService : IAccountCreationService
         Best regards,
         RideAlong Team";
 
-        _mailKitService.SendEmail(email , "RideAlong Registration Confirmation", emailBody);
-
+        #region Attempt to send email 
+        try
+        {
+            _mailKitService.SendEmail(email, "RideAlong Registration Confirmation", emailBody);
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = " Emailing service failed";
+            _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+        }
+        #endregion
 
         #endregion
 
