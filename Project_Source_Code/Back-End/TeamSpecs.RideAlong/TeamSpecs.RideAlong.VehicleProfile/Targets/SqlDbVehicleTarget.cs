@@ -562,11 +562,6 @@ public class SqlDbVehicleTarget : ICRUDVehicleTarget, IGetVehicleCountTarget
                         setSql += property.Name + "=@" + property.Name + ", ";
                         parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleProfile)));
                     }
-                    else if (property.Name == "LicensePlate")
-                    {
-                        setSql += property.Name + "=@" + property.Name + ", ";
-                        parameters.Add(new SqlParameter("@" + property.Name, property.GetValue(vehicleProfile)));
-                    }
                     else if (property.Name == "VIN")
                     {
                         whereSql += property.Name + "=@" + property.Name + " ";
