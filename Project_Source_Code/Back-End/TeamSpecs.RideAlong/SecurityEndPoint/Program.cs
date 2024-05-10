@@ -19,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
-builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<ISqlServerDAO, SqlServerDAO> ();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();

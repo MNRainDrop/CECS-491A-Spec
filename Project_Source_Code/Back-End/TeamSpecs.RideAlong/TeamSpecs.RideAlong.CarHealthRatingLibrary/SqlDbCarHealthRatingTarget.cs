@@ -9,8 +9,8 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary;
 
 public class SqlDBCarHealthRatingTarget: ISqlDbCarHealthRatingTarget
 {
-    private readonly IGenericDAO _dao;
-    public SqlDBCarHealthRatingTarget(IGenericDAO dao)
+    private readonly ISqlServerDAO _dao;
+    public SqlDBCarHealthRatingTarget(ISqlServerDAO dao)
     {  
         _dao = dao; 
     }

@@ -3,7 +3,7 @@ using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {
-    public class JsonFileDAO : IGenericDAO
+    public class JsonFileDAO : IJsonFileDAO
     {
         private readonly string _currentFile;
         private readonly string _relativePath;
@@ -64,20 +64,5 @@ namespace TeamSpecs.RideAlong.DataAccess
             return response;
         }
 
-        public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
-        {
-            throw new NotImplementedException();
-
-        }
-
-        public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IResponse ExecuteReadOnly(SqlCommand sqlCommand)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

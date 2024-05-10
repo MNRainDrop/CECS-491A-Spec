@@ -16,9 +16,9 @@ namespace TeamSpecs.RideAlong.RentalFleetLibrary
 {
     public class SqlServerRentalFleetTarget : IRentalFleetTarget
     {
-        IGenericDAO _dao;
+        ISqlServerDAO _dao;
         ILogService _logger;
-        public SqlServerRentalFleetTarget(IGenericDAO dao, ILogService logger)
+        public SqlServerRentalFleetTarget(ISqlServerDAO dao, ILogService logger)
         {
             _dao = dao;
             _logger = logger;

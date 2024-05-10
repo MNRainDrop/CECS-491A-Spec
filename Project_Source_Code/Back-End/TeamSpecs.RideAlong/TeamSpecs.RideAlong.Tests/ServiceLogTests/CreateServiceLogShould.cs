@@ -18,7 +18,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.ServiceLogTests
     public class CreateServiceLogShould
     {
         private static readonly IConfigServiceJson configService = new ConfigServiceJson();
-        private static readonly IGenericDAO dao = new SqlServerDAO(configService);
+        private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
         private static readonly IHashService hashService = new HashService();
         private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
         private static readonly ILogService logService = new LogService(logTarget, hashService);
