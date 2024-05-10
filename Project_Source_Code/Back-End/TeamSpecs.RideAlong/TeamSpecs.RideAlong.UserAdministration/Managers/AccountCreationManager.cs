@@ -1,24 +1,64 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Managers
 {
-    public class AccountCreationManager
+    public class AccountCreationManager : IAccountCreationManager
     {
-        private IAccountCreationService _accountCreationService;
+        private readonly IAccountCreationService _accountCreationService;
+        private readonly ILogService _logService;
 
-        public AccountCreationManager(IAccountCreationService accountCreationService)
+        public AccountCreationManager(IAccountCreationService accountCreationService, ILogService logService)
         {
             _accountCreationService = accountCreationService;
+            _logService = logService;
+        }
+
+        public IResponse CallVerifyUser(string email)
+        {
+            IResponse response = new Response();
+            var timer = new Stopwatch();
+
+            #region Validiate email 
+            if (!IsValidEmail(email))
+            {
+                response.ErrorMessage = "User entered invalid email";
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
+                return response;
+            }
+            #endregion
+
+            timer.Start();
+            response = _accountCreationService.verifyUser(email);
+            timer.Stop();
+            
+            if(timer.ElapsedMilliseconds > 3000)
+            {
+                _logService.CreateLog("Info", "Business", "AccountCreationFailure: " + "AccountCreationService: Exceeded 3 second time limit ", null);
+            }
+
+            if (response.HasError)
+            {
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                return response;
+            }
+
+            return response;
         }
 
         // Rename to verifying account details
         // No longer creates account in DB due to needing confirm account first
-        public IResponse RegisterUser(string username, DateTime dateOfBirth, string accountType)
+        public IResponse RegisterUser(IProfileUserModel profile, string email, string otp, string accountType)
         {
             IResponse response = new Response();
 
@@ -26,38 +66,39 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             /* The following is needed to be checked
              * Username is a email --> aaa@something.com
              * DOB --> after 1/1/1970
-             * Need to add address
              * Account Type must be valid account type
              */
 
             #region Business Rules
             // Check if email is valid
-            if (!IsValidUsername(username))
+
+            #region Validiate emails
+            if (!IsValidEmail(email))
             {
-                //Log
+                response.ErrorMessage = "User entered invalid email.";
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
                 return response;
             }
+            if(!IsValidDateOfBirth(profile.DateOfBirth))
+            {
+                response.ErrorMessage = "User entered invalid date of birth";
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, null);
+                response.HasError = true;
+                return response;
+            }
+            if(!IsValidAltEmail(profile.AlternateUserName))
+            {
+                response.ErrorMessage = "User entered invalid alt. username";
+                response.HasError = true;
+                return response;
+            }
+
+            #endregion
 
             // Check if date of birth is valid
-            if (!IsValidDateOfBirth(dateOfBirth))
-            {
-                //Log
-                return response;
-            }
 
-            // Check if account type is valid
-            if (!IsValidAccountType(accountType))
-            {
-                //Log
-                return response;
-            }
-            // Check if email exists in DB
-            if (!IsNotTakenUserNameInDatabase(username))
-            {
-                //Log
-                return response;
-            }
-            #endregion
+
 
             // Call account creation service
             //response = _accountCreationService.CreateValidUserAccount(username, dateOfBirth, accountType);
@@ -65,60 +106,22 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             return response;
         }
 
-        public bool IsNotTakenUserNameInDatabase(string username)
-        {
-            IResponse response = new Response();
-
-            //response = _accountCreationService.IsUserRegistered(username);
-
-            #region Validiate Response
-            if (response.HasError)
-            {
-                response.ErrorMessage = "Account exists";
-                return false;
-            }
-            else
-            {
-                response.HasError = false;
-                return true;
-            }
-            #endregion
-
-        }
-        public bool IsValidUsername(string email)
+        private bool IsValidEmail(string email)
         {
             // Minimum length check
             if (email.Length < 3)
                 return false;
 
-            #region Generated by ChatGPT checks for valid characters
-            // Splitting username into parts at '@' symbol
-            string[] parts = email.Split('@');
+            // Regular expression pattern for email validation
+            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
-            // Checking if there are exactly 2 parts separated by '@'
-            if (parts.Length != 2)
-                return false;
-
-            // Checking if the first part contains valid characters
-            foreach (char c in parts[0])
-            {
-                if (!(char.IsLetterOrDigit(c) || c == '-' || c == '.'))
-                    return false;
-            }
-
-            // Checking if the second part contains valid characters
-            foreach (char c in parts[1])
-            {
-                if (!(char.IsLetterOrDigit(c) || c == '-' || c == '.'))
-                    return false;
-            }
+            // Check if the email matches the pattern
+            return Regex.IsMatch(email, pattern);
             #endregion
 
-            return true;
         }
 
-
-        public bool IsValidDateOfBirth(DateTime dateOfBirth)
+        private bool IsValidDateOfBirth(DateTime dateOfBirth)
         {
             // Get the current date
             DateTime currentDate = DateTime.Today;
@@ -133,8 +136,22 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             return dateOfBirth >= maxDateOfBirth && dateOfBirth <= minDateOfBirth;
         }
 
+        private bool IsValidAltEmail(string email)
+        {
+            IResponse altEmailResponse = new Response();
 
-        public bool IsValidAccountType(string accountType)
+            altEmailResponse = _accountCreationService.verifyAltUser(email);
+
+            if (altEmailResponse.HasError)
+            {
+                _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + altEmailResponse.ErrorMessage, null);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsValidAccountType(string accountType)
         {
             return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User";
         }

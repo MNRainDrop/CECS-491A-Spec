@@ -2,7 +2,6 @@
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
-#pragma warning disable
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
     public class PepperServiceShould
@@ -18,10 +17,11 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var dao = new JsonFileDAO();
             uint result;
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
             string key = "Test Key2";
             //aray of 10 keys to be passed in for generate
-            string[] test_key = {"Test Key1", "Test Key2" , "Test Key3" , "Test Key4" , 
+            string[] test_key = {"RideAlongPepper", "Test Key2" , "Test Key3" , "Test Key4" , 
             "Test Key5" , "Test Key6" , "Test Key7" , "Test Key8" , "Test Key9" , "Test Key10" };
             List<uint> test_result = new List<uint>();
 
@@ -41,7 +41,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
                     flag = false; break;
                 }
             }
-            File.Delete(Path.Combine(docPath, "PepperOutput.json"));
+            //File.Delete(Path.Combine(docPath, "PepperOutput.json"));
             timer.Stop();
 
             //Assert 
@@ -57,9 +57,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
-            string key = "Test Key";
-            uint value = 0000000000;
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
+            string key = "AccountCreation";
+            uint value = 0102030405;
 
             //Act 
             timer.Start();
@@ -83,7 +84,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
-            PepperService PepperObject = new PepperService(_pepperTarget);
+            IRandomService randomService = new RandomService();
+            IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
             string key = "Test Key5";
             uint value = 1161839200;
             //aray of 10 keys to be passed in for retrieving 
@@ -135,4 +137,3 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
     }
 }
-#pragma warning restore

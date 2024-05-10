@@ -7,8 +7,8 @@ namespace TeamSpecs.RideAlong.Services;
 
 public class ClaimTarget : IClaimTarget
 {
-    private readonly IGenericDAO _dao;
-    public ClaimTarget(IGenericDAO dao)
+    private readonly ISqlServerDAO _dao;
+    public ClaimTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

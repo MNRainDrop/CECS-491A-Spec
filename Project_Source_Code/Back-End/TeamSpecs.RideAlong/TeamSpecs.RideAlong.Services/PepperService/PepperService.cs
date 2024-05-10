@@ -8,14 +8,16 @@ namespace TeamSpecs.RideAlong.Services;
 public class PepperService : IPepperService
 {
     private IPepperTarget _pepperTarget;
-    public PepperService(IPepperTarget Target) 
+    private IRandomService _randomService;
+    public PepperService(IPepperTarget Target, IRandomService randomService) 
     {
         _pepperTarget = Target; 
+        _randomService = randomService;
     }
 
     public uint GeneratePepper(string key)
     {
-        var pepperValue = RandomService.GenerateUnsignedInt();
+        var pepperValue = _randomService.GenerateUnsignedInt();
         KeyValuePair<string, uint> Pepper = PopulateKeyValue(key, pepperValue);
         SendingPepper(Pepper);
         return pepperValue;

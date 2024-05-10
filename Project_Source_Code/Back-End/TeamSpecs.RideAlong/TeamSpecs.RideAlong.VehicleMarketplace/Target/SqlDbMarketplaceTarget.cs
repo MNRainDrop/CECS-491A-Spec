@@ -14,9 +14,9 @@ namespace TeamSpecs.RideAlong.Services
     //This method generate SQL to adjust MarketplaceStatus table to upload (VPM-1)
     public class SqlDbMarketplaceTarget: IMarketplaceTarget
     {
-        private readonly IGenericDAO _dao;
+        private readonly ISqlServerDAO _dao;
 
-        public SqlDbMarketplaceTarget(IGenericDAO dao)
+        public SqlDbMarketplaceTarget(ISqlServerDAO dao)
         {
             _dao = dao;
         }

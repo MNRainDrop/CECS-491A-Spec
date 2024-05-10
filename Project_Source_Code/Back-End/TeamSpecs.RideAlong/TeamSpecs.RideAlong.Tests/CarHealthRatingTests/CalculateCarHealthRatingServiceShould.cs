@@ -596,7 +596,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Check results
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var resultObject in response.ReturnValue)
             {
                 if (resultObject is IList list)
@@ -618,7 +617,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
                     pointsCheck++;
                 }
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             #endregion
 
             #endregion
