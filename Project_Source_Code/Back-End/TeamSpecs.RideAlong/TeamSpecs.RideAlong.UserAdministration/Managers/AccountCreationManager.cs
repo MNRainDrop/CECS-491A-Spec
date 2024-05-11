@@ -284,17 +284,15 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         {
             IDictionary<string, string> claims = new Dictionary<string, string>()
         {
-            { "0", "True" },
-            { "1", "True" },
-            { "2", "True" },
-            { "3", "True" },
-            { "4", "True" },
-            { "5", "True" },
-            { "6", "True" },
-            { "7", "True" },
-            { "8", "True" },
-            { "9", "True" },
-            { "10", "True" }
+            { "canLogin", "True" },                                                                                                                     // 1
+            { "canRequestCarHealthRating", "True" },                                                                                                    // 2
+            { "canCreateVehicle", "True" },                                                                                                             // 3
+            { "canView", "Default" }, { "canView", "vehicleProfile" }, { "canView", "marketplace" }, { "canView", "serviceLog" },                       // 4
+            { "ownsVehicle", "True" },                                                                                                                  // 5
+            { "CanModifyServiceLog", "True" },                                                                                                          // 6
+            { "CanDeleteServiceLog", "True" },                                                                                                          // 7
+            { "CanCreateServiceLog", "True" },                                                                                                          // 8
+            { "canDeleteAccount", "True" }                                                                                                              // 9
         };
 
             // ^^^ above needs to be edited to correlate to actual permissions
