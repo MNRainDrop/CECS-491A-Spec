@@ -1,6 +1,5 @@
 ﻿namespace TeamSpecs.RideAlong.SystemObservability;
 
-public interface ISystemObservabilityManager
+public interface ISystemObservabilityManager: IGetAllKPIsManager, IGetAllLogsManager
 {
-
 }

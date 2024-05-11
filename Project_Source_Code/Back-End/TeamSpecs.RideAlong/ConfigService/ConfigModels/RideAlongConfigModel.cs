@@ -18,4 +18,7 @@ public sealed class RideAlongConfigModel
 
     [JsonPropertyName("InventoryManager")]
     public required InventoryManager INVENTORY_MANAGER { get; set; }
+
+    [JsonPropertyName("SystemObservability")]
+    public required SystemObservability SYSTEM_OBSERVABILITY { get; set; }
 }

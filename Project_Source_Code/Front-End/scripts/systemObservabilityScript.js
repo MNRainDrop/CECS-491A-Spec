@@ -1,25 +1,39 @@
 'use strict';
 (async function() {
     function generateUsageDashboardView(){
-        changeCSS('styles/SOstyles.css')
-        var dynamicContent = document.getElementsByClassName('dynamic-content')[0];
-        while (dynamicContent.lastElementChild) {
-            dynamicContent.removeChild(dynamicContent.lastElementChild);
-        }
-        var KPI = document.createElement('div');
-        KPI.id = 'kpi';
+        fetchWithTokens('http://localhost:8728/SystemObservability/PostAuthStatus', 'POST', '')
+            .then(function (response) {
+            if (response.status == 204) {
+                // replace the parameter inside changeCSS() to the path of the css file you need
+                changeCSS('styles/SOstyles.css')
+                var dynamicContent = document.getElementsByClassName('dynamic-content')[0];
+                while (dynamicContent.lastElementChild) {
+                    dynamicContent.removeChild(dynamicContent.lastElementChild);
+                }
+                var KPI = document.createElement('div');
+                KPI.id = 'kpi';
 
-        dynamicContent.appendChild(KPI);
-        
-        generateUsageDashboardDivs();
-        populateLoginDiv();
-        populateAccountCreationDiv();
-        populateLongestViews();
-        populateMostVisitedViews();
-        populateMostRegisteredVehicles();
-        populateVehicleCreationAttempts();
-        populateLogs();
+                dynamicContent.appendChild(KPI);
+                
+                generateUsageDashboardDivs();
+                populateAllKPIs();
+                
+                var refreshInterval = setInterval(populateAllKPIs, 60000);
 
+                var menuItems = document.querySelectorAll('.menu-item');
+                menuItems.forEach(function(element) {
+                    element.addEventListener('click', () => {
+                        clearInterval(refreshInterval)
+                        alert('removed interval')
+                    })
+                })
+            }
+            else {
+                alert("Permission to view denied");
+            }
+            }).catch(function (error) {
+                alert(error);
+            })
     }
     window.generateUsageDashboardView = generateUsageDashboardView
 
@@ -55,7 +69,7 @@
         dropDown.appendChild(twentyFourMonths);
 
         dropDown.onchange = function() {
-            populateAllKPIs(months)
+            populateAllKPIs()
         }
     }
 
@@ -102,105 +116,182 @@
     }
 
     function populateAllKPIs(months) {
-        
+        var dropDown = document.getElementById('time-frame');
+        var months = dropDown.options[dropDown.selectedIndex].id
+        fetchWithTokens('http://localhost:8728/SystemObservability/PostGetKPIs', 'POST', months)
+            .then(response => {
+                if (!response.ok) {
+                    throw "Could not process request";
+                }
+                else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                populateLoginDiv(data[0].value)
+                populateAccountCreationDiv(data[1].value)
+                populateLongestViews(data[2].value)
+                populateMostVisitedViews(data[3].value)
+                populateMostRegisteredVehicles(data[4].value)
+                populateVehicleCreationAttempts(data[5].value)
+            })
+            .catch(error => {
+                alert(error)
+            });
+        fetchWithTokens('http://localhost:8728/SystemObservability/PostGetLogs', 'POST', months)
+            .then(response => {
+                if (!response.ok) {
+                    throw "Could not process request";
+                }
+                else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                populateLogs(data)
+            })
+            .catch(error => {
+                alert(error)
+            });
     }
 
-    function populateLoginDiv() {
+    function populateLoginDiv(data) {
         var dynamicContent = document.getElementById('login-attempts')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
         var head = document.createElement('h1');
         head.innerText = 'Login Attempts';
-
-        dynamicContent.appendChild(head);
-    }
-
-    function populateAccountCreationDiv() {
-        var dynamicContent = document.getElementById('account-creation-attempts')
-        var head = document.createElement('h1');
-        head.innerText = 'Account Creation Attempts';
-
         var ul = document.createElement('ul');
 
-        // fetchWithTokens() 
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw 'Something went wrong trying to get this information'
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         if (data.length == 0) {
-        //             throw 'Something went wrong trying to get this information'
-        //         }
-        //         else {
-        //             data.forEach(element => {
-                        
-        //             });
-        //         }
-        //     })
-        //     .catch(error => {
-
-        //     })
-
-        // Test Data
-        for(let i = 0; i < 10; i++) {
+        for(var element of data) {
             var li = document.createElement('li');
-            li.innerText = 'Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ';
+            li.innerText = `${element.logTime}\t${element.logContext}`
             ul.appendChild(li);
-                
         }
 
         dynamicContent.appendChild(head);
         dynamicContent.appendChild(ul);
     }
 
-    function populateLongestViews() {
-        var dynamicContent = document.getElementById('longest-views')
+    function populateAccountCreationDiv(data) {
+        var dynamicContent = document.getElementById('account-creation-attempts')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
         var head = document.createElement('h1');
-        head.innerText = 'Longest Views';
-
-        dynamicContent.appendChild(head);
-    }
-
-    function  populateMostVisitedViews() {
-        var dynamicContent = document.getElementById('most-visited-views')
-        var head = document.createElement('h1');
-        head.innerText = 'Most Visited Views';
-
-        dynamicContent.appendChild(head);
-    }
-
-    function populateMostRegisteredVehicles() {
-        var dynamicContent = document.getElementById('most-registered-vehicles')
-        var head = document.createElement('h1');
-        head.innerText = 'Most Registered Vehicles';
-
-        dynamicContent.appendChild(head);
-    }
-
-    function populateVehicleCreationAttempts() {
-        var dynamicContent = document.getElementById('vehicle-creation-attempts')
-        var head = document.createElement('h1');
-        head.innerText = 'Vehicle Creation Attempts';
-
-        dynamicContent.appendChild(head);
-    }
-
-    function populateLogs() {
-        var dynamicContent = document.getElementById('logs')
-        var head = document.createElement('h1');
-        head.innerText = 'Logs';
-
-        dynamicContent.appendChild(head);
+        head.innerText = 'Account Creation Attempts';
 
         var ul = document.createElement('ul');
 
-        // Test Data
-        for(let i = 0; i < 10; i++) {
+        for(var element of data) {
             var li = document.createElement('li');
-            li.innerText = 'Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ';
+            li.innerText = `${element.logTime}\t${element.logContext} `
             ul.appendChild(li);
-                
         }
+
+        dynamicContent.appendChild(head);
+        dynamicContent.appendChild(ul);
+    }
+
+    function populateLongestViews(data) {
+        var dynamicContent = document.getElementById('longest-views')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
+        var head = document.createElement('h1');
+        head.innerText = 'Longest Views in seconds';
+
+        var ul = document.createElement('ul');
+
+        for(var element of data) {
+            var li = document.createElement('li');
+            li.innerText = `${element.timeInSeconds} seconds: ${element.feature}`
+            ul.appendChild(li);
+        }
+
+        dynamicContent.appendChild(head);
+        dynamicContent.appendChild(ul);
+    }
+
+    function  populateMostVisitedViews(data) {
+        var dynamicContent = document.getElementById('most-visited-views')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
+        var head = document.createElement('h1');
+        head.innerText = 'Most Visited Views';
+
+        var ul = document.createElement('ul');
+
+        for(var element of data) {
+            var li = document.createElement('li');
+            li.innerText = `${element.count} Views: ${element.featureName}`
+            ul.appendChild(li);
+        }
+
+        dynamicContent.appendChild(head);
+        dynamicContent.appendChild(ul);
+    }
+
+    function populateMostRegisteredVehicles(data) {
+        var dynamicContent = document.getElementById('most-registered-vehicles')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
+        var head = document.createElement('h1');
+        head.innerText = 'Most Registered Vehicles';
+
+        var ul = document.createElement('ul');
+
+        for(var element of data) {
+            var li = document.createElement('li');
+            li.innerText = `${element.count} Vehicles: ${element.make} ${element.model} ${element.year} `
+            ul.appendChild(li);
+        }
+
+        dynamicContent.appendChild(head);
+        dynamicContent.appendChild(ul);
+    }
+
+    function populateVehicleCreationAttempts(data) {
+        var dynamicContent = document.getElementById('vehicle-creation-attempts')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
+        var head = document.createElement('h1');
+        head.innerText = 'Vehicle Creation Attempts';
+
+        var ul = document.createElement('ul');
+
+        for(var element of data) {
+            var li = document.createElement('li');
+            li.innerText = `${element.logTime}\t${element.logContext} `
+            ul.appendChild(li);
+        }
+
+        dynamicContent.appendChild(head);
+        dynamicContent.appendChild(ul);
+    }
+
+    function populateLogs(data) {
+        console.log(data)
+        var dynamicContent = document.getElementById('logs')
+        while (dynamicContent.lastElementChild) {
+            dynamicContent.removeChild(dynamicContent.lastElementChild);
+        }
+        var head = document.createElement('h1');
+        head.innerText = 'Logs';
+
+        var ul = document.createElement('ul');
+
+        for(var element of data) {
+            var li = document.createElement('li');
+            li.innerText = `${element.logTime}\t${element.logLevel}\t${element.logCategory}\t${element.logContext} `
+            ul.appendChild(li);
+        }
+
+        dynamicContent.appendChild(head);
         dynamicContent.appendChild(ul);
     }
     

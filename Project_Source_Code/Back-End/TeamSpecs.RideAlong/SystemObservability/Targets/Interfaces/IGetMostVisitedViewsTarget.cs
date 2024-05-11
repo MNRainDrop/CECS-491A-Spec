@@ -4,6 +4,6 @@ namespace TeamSpecs.RideAlong.SystemObservability;
 
 public interface IGetMostVisitedViewsTarget
 {
-    IResponse GetMostVisitedViewsSql(int dateRange);
+    IResponse GetMostVisitedViewsSql(int numOfResults, int dateRange);
 }
 

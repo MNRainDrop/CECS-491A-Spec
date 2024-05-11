@@ -2,7 +2,7 @@
 
 namespace TeamSpecs.RideAlong.SystemObservability;
 
-public interface IGetLogsService
+public interface IGetAllKPIsManager
 {
-    IResponse GetAllLogs(int timeFrame);
+    IResponse GetALlKPIs(int dateRange);
 }

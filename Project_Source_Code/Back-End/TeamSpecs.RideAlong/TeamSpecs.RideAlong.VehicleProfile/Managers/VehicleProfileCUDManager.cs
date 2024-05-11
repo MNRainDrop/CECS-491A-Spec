@@ -180,11 +180,11 @@ public class VehicleProfileCUDManager : IVehicleProfileCUDManager
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = $"VehicleProfile: {account.UserName} unsuccessful vehicle creation. " + response.ErrorMessage;
+            response.ErrorMessage = $"VehicleProfile: {account.UserName} {vehicle.Make} {vehicle.Model} {vehicle.Year} unsuccessful vehicle creation.";
         }
         else
         {
-            response.ErrorMessage = $"VehicleProfile: {account.UserName} successful vehicle creation.";
+            response.ErrorMessage = $"VehicleProfile: {account.UserName} {vehicle.Make} {vehicle.Model} {vehicle.Year} successful vehicle creation.";
         }
         _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, account.UserHash);
         #endregion

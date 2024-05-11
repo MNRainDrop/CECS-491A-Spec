@@ -1,4 +1,4 @@
-﻿namespace TeamSpecs.RideAlong.Model;
+﻿namespace TeamSpecs.RideAlong.SystemObservability;
 
 public class VehicleMMYCount
 {

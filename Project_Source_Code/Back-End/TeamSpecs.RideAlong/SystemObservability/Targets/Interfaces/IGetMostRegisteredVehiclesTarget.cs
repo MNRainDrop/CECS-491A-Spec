@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.SystemObservability;
 
 public interface IGetMostRegisteredVehiclesTarget
 {
-    IResponse GetMostRegisteredVehiclesSql(int dateRange);
+    IResponse GetMostRegisteredVehiclesSql(int numOfResults, int dateRange);
 }
