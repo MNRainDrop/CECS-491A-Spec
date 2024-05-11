@@ -78,7 +78,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             #region Varaibles 
             IResponse response = new Response();
             var timer = new Stopwatch();
-            uint salt = 0;
             bool otpMatch = false;
             IAuthUserModel authUser = new AuthUserModel();
             IAccountUserModel modelUser = new AccountUserModel(email);
@@ -344,18 +343,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             // ^^^ above needs to be edited to correlate to actual permissions
 
             return claims;
-        }
-
-        private int getIntFromBitArray(BitArray bitArray)
-        {
-
-            if (bitArray.Length > 32)
-                throw new ArgumentException("Argument length shall be at most 32 bits.");
-
-            int[] array = new int[1];
-            bitArray.CopyTo(array, 0);
-            return array[0];
-
         }
     }
 }

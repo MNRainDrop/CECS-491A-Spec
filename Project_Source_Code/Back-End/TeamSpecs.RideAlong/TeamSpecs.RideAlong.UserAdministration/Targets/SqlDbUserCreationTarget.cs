@@ -359,27 +359,3 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
     }
 
 }
-
-// https://stackoverflow.com/questions/45027609/cant-insert-0-values-using-a-parameterized-query
-
-/*
- * -- Table: UserAccount
-CREATE TABLE UserAccount (
-    UID bigint  NOT NULL IDENTITY(0, 1),
-    UserName varchar(50)  NOT NULL,
-    Salt int  NOT NULL,
-    UserHash varchar(64)  NOT NULL,
-    CONSTRAINT UserHash UNIQUE (UserHash),
-    CONSTRAINT UserAccount_pk PRIMARY KEY  (UID)
-);
-
--- Table: OTP
-CREATE TABLE OTP (
-    UID bigint  NOT NULL,
-    PassHash varchar(64)  NOT NULL,
-    attempts int  NOT NULL,
-    firstFailedLogin datetime  NOT NULL,
-    CONSTRAINT OTP_pk PRIMARY KEY  (UID)
-);
- * 
- */
