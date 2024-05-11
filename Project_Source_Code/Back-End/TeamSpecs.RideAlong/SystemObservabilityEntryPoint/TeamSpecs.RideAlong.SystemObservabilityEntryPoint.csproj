@@ -10,4 +10,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
+    <ProjectReference Include="..\SystemObservability\TeamSpecs.RideAlong.SystemObservability.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

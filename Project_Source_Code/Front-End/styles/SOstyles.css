@@ -10,10 +10,11 @@ p {
 #kpi {
     display: flex;
     flex-wrap: wrap;
-    justify-content: left;
+    justify-content: center;
+    gap: 10px;
 }
 .kpi {
-    width: 50%;
+    width: calc(50% - 10px);
     min-width: 450px;
     padding: 10px 0px;
 }
@@ -35,6 +36,8 @@ ul li {
     width: fit-content;
     min-width: 100%;
     flex-grow: 1;
+    max-height: 2rem;
+    white-space: pre;
 }
 
 ul li:nth-child(odd) {

@@ -1,6 +1,5 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
 
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;

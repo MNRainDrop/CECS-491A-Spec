@@ -1,33 +1,102 @@
 using Microsoft.AspNetCore.Mvc;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SystemObservability;
 
-namespace SystemObservabilityEntryPoint.Controllers
+namespace SystemObservabilityEntryPoint.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class SystemObservabilityController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    private readonly ISystemObservabilityManager _systemObservabilityManager;
+    private readonly ISecurityManager _securityManager;
+
+    public SystemObservabilityController(ISystemObservabilityManager systemObservability, ISecurityManager security)
     {
-        private static readonly string[] Summaries = new[]
+        _systemObservabilityManager = systemObservability;
+        _securityManager = security;
+    }
+
+    [HttpPost]
+    [Route("PostAuthStatus")]
+    public IActionResult PostAuthStatus()
+    {
+        Dictionary<string, string> requiredClaims = new Dictionary<string, string>
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            { "canView", "usageDashboard" }
         };
-
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        bool hasPermission;
+        try
         {
-            _logger = logger;
+            hasPermission = _securityManager.isAuthorize(requiredClaims);
         }
-
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        catch (Exception ex)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return Unauthorized(ex.Message);
+        }
+        if (!hasPermission)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, "Insufficient Permissions");
+        }
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Route("PostGetLogs")]
+    public IActionResult PostGetLogs([FromBody] int dateRange)
+    {
+        try
+        {
+            var result = _systemObservabilityManager.GetAllLogs(dateRange);
+            if (result is not null)
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                if (result.HasError)
+                {
+                    return BadRequest(result.ErrorMessage);
+                }
+                else
+                {
+                    return Ok(result.ReturnValue);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost]
+    [Route("PostGetKPIs")]
+    public IActionResult PostGetKPIs([FromBody] int dateRange)
+    {
+        try
+        {
+            var result = _systemObservabilityManager.GetALlKPIs(dateRange);
+            if (result is not null)
+            {
+                if (result.HasError)
+                {
+                    return BadRequest(result.ErrorMessage);
+                }
+                else
+                {
+                    return Ok(result.ReturnValue);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
 }

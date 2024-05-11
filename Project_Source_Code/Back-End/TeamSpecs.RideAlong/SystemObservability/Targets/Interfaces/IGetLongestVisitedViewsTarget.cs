@@ -4,5 +4,5 @@ namespace TeamSpecs.RideAlong.SystemObservability;
 
 public interface IGetLongestVisitedViewsTarget
 {
-    IResponse GetLongestVisitedViewsSql(int dateRange);
+    IResponse GetLongestVisitedViewsSql(int numOfResults, int dateRange);
 }
