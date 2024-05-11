@@ -16,6 +16,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using Org.BouncyCastle.Crypto.Macs;
 using System.Data.SqlTypes;
 using TeamSpecs.RideAlong.Services;
+using System.Collections;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Managers
 {
@@ -124,29 +125,31 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             response = new Response();
             response = _authService.GetUserModel(email);
             
-            if (response.HasError || response.ReturnValue.Count != 0)
+            if (response.HasError || response.ReturnValue.Count == 0)
             {
                 response.HasError = true;
                 return response;
             }
-
-            if (response.ReturnValue.ToList()[0] is IAccountUserModel model)
+            // Need authUser/ modelUser to call ClaimService & AuthService
+            if (response.ReturnValue.ToList()[0] is IAuthUserModel model)
             {
-                authUser.UID = model.UserId;
+                authUser.UID = model.UID;
                 authUser.userName = email;
-                authUser.salt = BitConverter.GetBytes(model.Salt);
-                salt = model.Salt;
-                authUser.userHash = model.UserHash;
-                modelUser = model;
+                authUser.salt = model.salt;
+                authUser.userHash = model.userHash;
+                modelUser.UserId = model.UID;
+                modelUser.UserName = email;
+                modelUser.Salt = BitConverter.ToUInt32(authUser.salt);
+                modelUser.UserHash = model.userHash;
             }
 
             #endregion
 
             #region Converting OTP to hash/ Retrieving OtpHash in DB
             response = _authService.GetOtpHash(authUser);
-            var otpHash = _hashService.hashUser(otp, (int)salt);
+            var otpHash = _hashService.hashUser(otp, BitConverter.ToInt32(authUser.salt));
             
-            if (response.HasError || response.ReturnValue.Count != 0)
+            if (response.HasError || response.ReturnValue.Count == 0)
             {
                 response.HasError = true;
                 return response;
@@ -341,6 +344,18 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             // ^^^ above needs to be edited to correlate to actual permissions
 
             return claims;
+        }
+
+        private int getIntFromBitArray(BitArray bitArray)
+        {
+
+            if (bitArray.Length > 32)
+                throw new ArgumentException("Argument length shall be at most 32 bits.");
+
+            int[] array = new int[1];
+            bitArray.CopyTo(array, 0);
+            return array[0];
+
         }
     }
 }

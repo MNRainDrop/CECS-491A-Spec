@@ -2,7 +2,6 @@
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
-using static System.Net.WebRequestMethods;
 using System.Collections.Generic;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
@@ -150,7 +149,7 @@ public class AccountCreationService : IAccountCreationService
         return response;
     }
 
-    public IResponse CreateUserProfile(string userName, IProfileUserModel profile)
+    public IResponse createUserProfile(string userName, IProfileUserModel profile)
     {
 
         #region Validate arguments

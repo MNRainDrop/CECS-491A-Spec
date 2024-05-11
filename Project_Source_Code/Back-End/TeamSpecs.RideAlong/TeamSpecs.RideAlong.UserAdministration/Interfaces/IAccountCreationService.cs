@@ -7,5 +7,5 @@ public interface IAccountCreationService
 
     IResponse verifyAltUser(string email);
 
-    IResponse createUserProfile(string email, IProfileUserModel profile);
+    IResponse createUserProfile(string userName, IProfileUserModel profile);
 }
