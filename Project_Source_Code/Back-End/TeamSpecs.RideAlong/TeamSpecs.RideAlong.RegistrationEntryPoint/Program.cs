@@ -36,10 +36,13 @@ builder.Services.AddScoped<IRandomService, RandomService>();
 builder.Services.AddScoped<IMailKitService, MailKitService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IPepperTarget, FilePepperTarget>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
+builder.Services.AddScoped<IClaimTarget, ClaimTarget>();
 
 builder.Services.AddScoped<IAccountCreationManager, AccountCreationManager>();
 builder.Services.AddScoped<IAccountCreationService, AccountCreationService>();

@@ -9,16 +9,12 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
     public interface ISqlDbUserCreationTarget
     {
-        public IResponse CheckDbForEmail(string email);
+        IResponse CheckDbForEmail(string email);
 
-        public IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp);
+        IResponse CreateUserConfirmation(IAccountUserModel userAccount, string otp);
 
-        public IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp);
+        IResponse UpdateUserConfirmation(IAccountUserModel userAccount, string otp);
 
-        public IResponse CreateDefaultUser();
-
-        public IResponse CreateVendorUser();
-
-        public IResponse CreateFleetUser();
+        IResponse CreateUserProfile(string email, IProfileUserModel profile);
     }
 }

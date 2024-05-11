@@ -1,43 +1,41 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
 public class AccountDeletionService : IAccountDeletionService
 {
-    private readonly IUserTarget _userTarget;
+    private readonly ISqlDbUserDeletionTarget _sqlDbUserDeletion;
     private readonly ILogService _logService;
-    public AccountDeletionService(IUserTarget userTarget, ILogService logService)
+    public AccountDeletionService(ISqlDbUserDeletionTarget sqlDbUserDeletionTarget, ILogService logService)
     {
-        _userTarget = userTarget;
+        _sqlDbUserDeletion = sqlDbUserDeletionTarget;
         _logService = logService;
     }
-    public IResponse DeleteUserAccount(IAccountUserModel userAccount)
+    /// <summary>
+    /// Dissocaites all VP's with a account. Deletes any custom values
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public IResponse DeleteVehicles(IAccountUserModel model)
     {
-        #region Validate arguments
-        if (string.IsNullOrWhiteSpace(userAccount.UserName))
-        {
-            _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", userAccount.UserHash);
-            throw new ArgumentException($"{nameof(userAccount.UserName)} must be valid");
-        }
-        #endregion
+        IResponse response = new Response();
 
+        response = _sqlDbUserDeletion.DeleteVehicleProfiles(model.UserId);
 
+        return response;
+    }
+    /// <summary>
+    /// Deletes all tables associated with a user
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public IResponse DeleteUser(IAccountUserModel model)
+    {
+        IResponse response = new Response();
 
-        var response = _userTarget.DeleteUserAccountSql(userAccount.UserName);
-
-        // Validate Response
-        if (response.HasError)
-        {
-            response.ErrorMessage = "Could not Delete account";
-        }
-        else
-        {
-            response.ErrorMessage = "Successful";
-        }
-
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Account Deletion", response.ErrorMessage, userAccount.UserHash);
-
+        _sqlDbUserDeletion.DeleteUserAccount(model.UserId);
 
         return response;
     }
