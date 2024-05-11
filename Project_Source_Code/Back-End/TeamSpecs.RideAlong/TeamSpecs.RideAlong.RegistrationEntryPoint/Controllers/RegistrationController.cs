@@ -58,11 +58,15 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
             response = _accountCreationManager.RegisterUser(profile, email, otp, acccountType);
 
-            //if(response.HasError && ) --> if DB fails
-
-            if(response.HasError)
+            // If DB or sql generation fails
+            if (response.HasError && response.ErrorMessage.Contains("Could not"))
             {
-                // Change to suit what it failled on
+                return StatusCode(500);
+            }
+
+            // If returns bad --> user exists, business rule violation
+            if (response.HasError)
+            {
                 return BadRequest(response.ErrorMessage);
             }
 
