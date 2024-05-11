@@ -280,24 +280,26 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             return Regex.IsMatch(otp, pattern);
         }
 
-        private IDictionary<string, string> GenerateDefaultClaims()
+        private IList<Tuple<string, string>> GenerateDefaultClaims()
         {
-            IDictionary<string, string> claims = new Dictionary<string, string>()
-        {
-            { "canLogin", "True" },                                                                                                                     // 1
-            { "canRequestCarHealthRating", "True" },                                                                                                    // 2
-            { "canCreateVehicle", "True" },                                                                                                             // 3
-            { "canView", "Default" }, { "canView", "vehicleProfile" }, { "canView", "marketplace" }, { "canView", "serviceLog" },                       // 4
-            { "ownsVehicle", "True" },                                                                                                                  // 5
-            { "CanModifyServiceLog", "True" },                                                                                                          // 6
-            { "CanDeleteServiceLog", "True" },                                                                                                          // 7
-            { "CanCreateServiceLog", "True" },                                                                                                          // 8
-            { "canDeleteAccount", "True" }                                                                                                              // 9
-        };
-
+            var list = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("canLogin", "true"),
+                new Tuple<string, string>("canRequestCarHealthRating", "true"),
+                new Tuple<string, string>("canCreateVehicle", "true"),
+                new Tuple<string, string>("canView", "default"),
+                new Tuple<string, string>("canView", "vehicleProfile"),
+                new Tuple<string, string>("canView", "marketplace"),
+                new Tuple<string, string>("canView", "serviceLog"),
+                new Tuple<string, string>("ownsVehicle", "true"),
+                new Tuple<string, string>("CanModifyServiceLog", "true"),
+                new Tuple<string, string>("CanDeleteServiceLog", "true"),
+                new Tuple<string, string>("CanCreateServiceLog", "true"),
+                new Tuple<string, string>("canDeleteAccount", "true")
+            };
             // ^^^ above needs to be edited to correlate to actual permissions
 
-            return claims;
+            return list;
         }
 
         private IDictionary<string, string> GenerateVendorClaims()

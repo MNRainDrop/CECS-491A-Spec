@@ -310,7 +310,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         {
             string query = $@"
                 INSERT INTO UserProfile (UID, DateOfBirth, AltUserName, DateCreated)
-                VALUES (SELECT UID FROM UserAccount Where UserName = @UserName, @DateOfBirth, @AlternateUserName, @DateCreated)
+                VALUES ((SELECT UID FROM UserAccount Where UserName = @UserName), @DateOfBirth, @AlternateUserName, @DateCreated)
             ";
             var  profileParameters = new HashSet<SqlParameter>
             {
