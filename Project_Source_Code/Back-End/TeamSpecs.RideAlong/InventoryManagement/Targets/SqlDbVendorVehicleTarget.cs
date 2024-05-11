@@ -6,9 +6,9 @@ namespace TeamSpecs.RideAlong.InventoryManagement;
 
 public class SqlDbVendorVehicleTarget : IRetrieveVendorVehicleTarget, IModifyVendorVehicleTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
-    public SqlDbVendorVehicleTarget(IGenericDAO dao)
+    public SqlDbVendorVehicleTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

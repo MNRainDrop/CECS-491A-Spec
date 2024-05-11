@@ -7,9 +7,9 @@ namespace TeamSpecs.RideAlong.CarNewsCenter
 {
     public class SqlCarNewsCenterTarget : ICarNewsCenterTarget
     {
-        private readonly IGenericDAO _dao;
+        private readonly ISqlServerDAO _dao;
         
-        public SqlCarNewsCenterTarget(IGenericDAO dao)
+        public SqlCarNewsCenterTarget(ISqlServerDAO dao)
         {
             _dao = dao; 
         }
