@@ -2,7 +2,6 @@
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
-using static System.Net.WebRequestMethods;
 using System.Collections.Generic;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
@@ -94,8 +93,18 @@ public class AccountCreationService : IAccountCreationService
         Best regards,
         RideAlong Team";
 
-        _mailKitService.SendEmail(email , "RideAlong Registration Confirmation", emailBody);
-
+        #region Attempt to send email 
+        try
+        {
+            _mailKitService.SendEmail(email, "RideAlong Registration Confirmation", emailBody);
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = " Emailing service failed";
+            _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+        }
+        #endregion
 
         #endregion
 
@@ -140,7 +149,7 @@ public class AccountCreationService : IAccountCreationService
         return response;
     }
 
-    public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
+    public IResponse createUserProfile(string userName, IProfileUserModel profile)
     {
 
         #region Validate arguments
@@ -152,61 +161,20 @@ public class AccountCreationService : IAccountCreationService
         #endregion
 
         IResponse response = new Response();
-        var userAccount = new AccountUserModel(userName);
-        //var userProfile = new ProfileUserModel(dateOfBirth);
-        IDictionary<int, string> userClaims;
+        var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
+        var userHash = _hashService.hashUser(userName, (int)userPepper);
 
-        /*
-        // Create User Hash
-        var userPepper = _pepperService.RetrievePepper("AccountCreation");
-        //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
+        response = _userTarget.CreateUserProfile(userName, profile);
 
-        // Use these lines of code while IPepperService and IHashService is not complete
-        userAccount.UserHash = userName;
-
-        // Create Salt
-        var salt = RandomService.GenerateUnsignedInt();
-        userAccount.Salt = salt;
-
-        // Generate user default claims
-        //var userClaims = GenerateDefaultClaims();
-
-        // Write user to data store
-        //response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
-
-        // Validate Response
-        if (response.HasError)
+        if(response.HasError || response.ReturnValue.Count == 0)
         {
-            response.ErrorMessage = "Could not create account";
+            response.ErrorMessage = "Can't create create User Profile sql";
+            return response;
         }
-        else
-        {
-            response.HasError = false;
-        }
-        if (response.ErrorMessage == null)
-        {
-            response.ErrorMessage = "Successful";
-        }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
-        */
 
-        // Return Response
+
+        response.HasError = false;
         return response;
     }
 
-    private IDictionary<int, string> GenerateDefaultClaims()
-    {
-        IDictionary<int, string> claims = new Dictionary<int, string>()
-        {
-            { 1, "True" },
-            { 2, "True" }
-        };
-
-        return claims;
-    }
-
-    public int getDefaultClaimLength()
-    {
-        return GenerateDefaultClaims().Count;
-    }
 }
