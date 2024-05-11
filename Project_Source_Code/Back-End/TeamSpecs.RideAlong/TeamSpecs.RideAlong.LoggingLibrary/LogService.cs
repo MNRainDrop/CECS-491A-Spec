@@ -62,7 +62,7 @@ public class LogService : ILogService
         try
         {
             ctoken.ThrowIfCancellationRequested();
-            tcs.SetResult(_logTarget.WriteLog(log);
+            tcs.SetResult(_logTarget.WriteLog(log));
         }
         catch (Exception ex)
         {
