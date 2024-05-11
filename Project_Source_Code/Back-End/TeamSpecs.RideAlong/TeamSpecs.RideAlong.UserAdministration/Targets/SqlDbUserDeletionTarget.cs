@@ -38,3 +38,27 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
         }
     }
 }
+
+
+/*
+ * -- Delete records from BuyRequest where buyerUID matches the provided UID
+DELETE FROM BuyRequest WHERE buyerUID = @UID;
+
+-- Delete records from Parts where ownerUID matches the provided UID
+DELETE FROM Parts WHERE ownerUID = @UID;
+
+-- Delete records from Listings where partUID matches the provided UID
+DELETE FROM Listings WHERE partUID = @UID;
+
+-- Delete records from NotificationCenter where UID matches the provided UID
+DELETE FROM NotificationCenter WHERE UID = @UID;
+
+-- Delete records from UserDetails where UID matches the provided UID
+DELETE FROM UserDetails WHERE UID = @UID;
+
+-- Delete records from UserProfile where UID matches the provided UID
+DELETE FROM UserProfile WHERE UID = @UID;
+
+-- Delete records from OTP where UID matches the provided UID
+DELETE FROM OTP WHERE UID = @UID;
+*/
