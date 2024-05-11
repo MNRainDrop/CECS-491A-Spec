@@ -7,6 +7,7 @@ using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Managers
 {
@@ -27,8 +28,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         {
             IResponse response = new Response();
 
-            // Disoassociate VP's from UID -- Set FleetManagement, MarketpalceStatus, & VendingStatus to default 
-            //implement here
+            // Disoassociate VP's from UID -- Set FleetManagement, MarketpalceStatus, & VendingStatus to default values
+            response = _accountDeletionService.DeleteVehicles(model);
 
             // Delete all users claims
             _claimService.DeleteAllUserClaims(model);

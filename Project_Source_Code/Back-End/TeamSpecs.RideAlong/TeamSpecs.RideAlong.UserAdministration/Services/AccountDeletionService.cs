@@ -6,11 +6,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
 public class AccountDeletionService : IAccountDeletionService
 {
-    private readonly IUserTarget _userTarget;
+    private readonly ISqlDbUserDeletionTarget _sqlDbUserDeletion;
     private readonly ILogService _logService;
-    public AccountDeletionService(IUserTarget userTarget, ILogService logService)
+    public AccountDeletionService(ISqlDbUserDeletionTarget sqlDbUserDeletionTarget, ILogService logService)
     {
-        _userTarget = userTarget;
+        _sqlDbUserDeletion = sqlDbUserDeletionTarget;
         _logService = logService;
     }
     /// <summary>
@@ -22,7 +22,7 @@ public class AccountDeletionService : IAccountDeletionService
     {
         IResponse response = new Response();
 
-        // implement logic here
+        response = _sqlDbUserDeletion.DeleteVehicleProfiles(model.UserId);
 
         return response;
     }
@@ -35,7 +35,7 @@ public class AccountDeletionService : IAccountDeletionService
     {
         IResponse response = new Response();
 
-        // implement logic here
+        _sqlDbUserDeletion.DeleteUserAccount(model.UserId);
 
         return response;
     }
