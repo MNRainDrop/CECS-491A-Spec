@@ -39,8 +39,8 @@ namespace TeamSpecs.RideAlong.SystemObservabilityEntryPoint.Controllers
             catch (Exception ex)
             {
                 string remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress!.ToString();
-                _logger.CreateLogAsync("Warning", "", "", null);
-                return BadRequest("Could Not verify Identity");
+                _logger.CreateLogAsync("Warning", "", $"Unauthorized Logging attempt from IP: {remoteIpAddress}", null);
+                return Unauthorized("Could Not Get token from User");
             }
         }
     }

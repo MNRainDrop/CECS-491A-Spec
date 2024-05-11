@@ -42,16 +42,14 @@ public class LogService : ILogService
         return _logTarget.WriteLog(log);
     }
     /// <summary>
-    /// Valid Log Levels:       Info, Debug, Warning, Error
-    /// Valid Log Categories:   View, Business, Server, Data, DataStore
-    /// Valid Log Context:      Anything in BRD + Create and Leave for System Observability
+    /// Writes async Log to DB. Valid Log Levels: (Info, Debug, Warning, Error). Valid Categories: (View, Business, Server, Data, DataStore)
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="logCategory"></param>
     /// <param name="logContext"></param>
     /// <param name="userHash"></param>
-    /// <returns></returns>
-    public async Task<bool> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null, CancellationToken ctoken)
+    /// <returns>Task with a bool indicating success or failure</returns>
+    public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null, CancellationToken ctoken = default)
     {
         // Set up log details
         DateTime time = DateTime.UtcNow;
@@ -60,16 +58,17 @@ public class LogService : ILogService
         ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
 
         // Set up tcs
-        var tcs = new TaskCompletionSource<bool>();
+        var tcs = new TaskCompletionSource<IResponse>();
         try
         {
             ctoken.ThrowIfCancellationRequested();
-            IResponse logResponse = _logTarget.WriteLog(log);
-            tcs.SetResult(!logResponse.HasError);
+            tcs.SetResult(_logTarget.WriteLog(log);
         }
-        catch
+        catch (Exception ex)
         {
-            tcs.SetResult(false);
+            IResponse failResponse = new Response();
+            failResponse.ErrorMessage = ex.Message;
+            tcs.SetResult(failResponse);
         }
 
         await tcs.Task;
