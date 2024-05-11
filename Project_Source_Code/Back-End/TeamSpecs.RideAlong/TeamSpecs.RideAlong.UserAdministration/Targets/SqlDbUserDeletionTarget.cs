@@ -12,7 +12,7 @@ using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Targets
 {
-    public class SqlDbUserDeletionTarget : ISqlDbUserDeletionTarget, ISqlDbUserDeletionTarget
+    public class SqlDbUserDeletionTarget : ISqlDbUserDeletionTarget
     {
         private readonly ISqlServerDAO _dao;
 
