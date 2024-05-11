@@ -37,10 +37,19 @@ public class LogService : ILogService
         string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
         //changed to work with log object
-        ILog log = new Log(time , logLevel, logCategory, logContext, logHash, userHash);
+        ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
         return _logTarget.WriteLog(log);
     }
-
+    /// <summary>
+    /// Valid Log Levels:       Info, Debug, Warning, Error
+    /// Valid Log Categories:   View, Business, Server, Data, DataStore
+    /// Valid Log Context:      Anything in BRD + Create and Leave for System Observability
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="logCategory"></param>
+    /// <param name="logContext"></param>
+    /// <param name="userHash"></param>
+    /// <returns></returns>
     public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
     {
         DateTime time = DateTime.UtcNow;
