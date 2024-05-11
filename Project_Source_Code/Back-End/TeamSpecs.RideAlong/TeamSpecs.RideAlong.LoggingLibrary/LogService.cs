@@ -2,6 +2,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
@@ -50,12 +51,28 @@ public class LogService : ILogService
     /// <param name="logContext"></param>
     /// <param name="userHash"></param>
     /// <returns></returns>
-    public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
+    public async Task<bool> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null, CancellationToken ctoken)
     {
+        // Set up log details
         DateTime time = DateTime.UtcNow;
         string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
         ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
-        return await Task.Run(() => _logTarget.WriteLog(log));
+
+        // Set up tcs
+        var tcs = new TaskCompletionSource<bool>();
+        try
+        {
+            ctoken.ThrowIfCancellationRequested();
+            IResponse logResponse = _logTarget.WriteLog(log);
+            tcs.SetResult(!logResponse.HasError);
+        }
+        catch
+        {
+            tcs.SetResult(false);
+        }
+
+        await tcs.Task;
+        return tcs.Task.Result;
     }
 }
