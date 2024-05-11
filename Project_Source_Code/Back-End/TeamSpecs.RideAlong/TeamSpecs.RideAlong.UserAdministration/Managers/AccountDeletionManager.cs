@@ -30,17 +30,12 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             // Disoassociate VP's from UID -- Set FleetManagement, MarketpalceStatus, & VendingStatus to default 
             //implement here
 
-            // Delete BuyRequest, Parts, Listings, Notificaton Center
-            //implement here
-
-            // Delete UserDetails, UserProfile, OTP
-            //implement here
-
             // Delete all users claims
             _claimService.DeleteAllUserClaims(model);
 
-            // Delete UserAccount
+            // Delete BuyRequest, Parts, Listings, Notificaton Center, UserDetails, UserProfile, OTP, UserAccount
             //implement here
+
 
             return response;
         }

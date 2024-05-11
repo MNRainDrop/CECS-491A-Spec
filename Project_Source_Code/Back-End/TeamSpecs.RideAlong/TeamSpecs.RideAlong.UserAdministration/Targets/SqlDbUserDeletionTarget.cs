@@ -19,68 +19,46 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             _dao = dao;
         }
 
-        public IResponse DeleteUserAccountSql(string userName)
+        public IResponse DeleteVehicleProfiles(string userName)
         {
-            /*
-             * Revise SQL pullled from UserTarget --> needs to be reivsed
-             */
+            IResponse response = new Response();
 
+            //implement logic here
 
-            #region Validate arguments
-            if (string.IsNullOrEmpty(userName))
-            {
-                throw new ArgumentNullException(nameof(userName));
-            }
-            #endregion
+            return response;
+        }
 
-            #region Default sql setup
-            var commandSql = "DELETE FROM ";
-            var tableSql = "UserAccount ";
-            var whereSql = "WHERE UserName = @UserName";
-            #endregion
+        public IResponse DeleteUserAccount(string userName)
+        {
+            IResponse response = new Response();
 
-
-            var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-            var response = new Response();
-
-            // 
-            try
-            {
-                // create new hash set of SqlParameters
-                var parameters = new HashSet<SqlParameter>()
-            {
-                new SqlParameter("@UserName", userName)
-            };
-
-                var sqlString = commandSql + tableSql + whereSql;
-
-                sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Could not generate sql to delete user";
-                return response;
-            }
-
-            // DAO Executes the command
-            try
-            {
-                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
-                response.ReturnValue = new List<object>()
-            {
-                (object) daoValue
-            };
-                response.HasError = false;
-            }
-            catch
-            {
-                response.HasError = true;
-                response.ErrorMessage = "Account Deletion execution failed";
-                return response;
-            }
+            //implement logic here
 
             return response;
         }
     }
 }
+
+
+/*
+ * -- Delete records from BuyRequest where buyerUID matches the provided UID
+DELETE FROM BuyRequest WHERE buyerUID = @UID;
+
+-- Delete records from Parts where ownerUID matches the provided UID
+DELETE FROM Parts WHERE ownerUID = @UID;
+
+-- Delete records from Listings where partUID matches the provided UID
+DELETE FROM Listings WHERE partUID = @UID;
+
+-- Delete records from NotificationCenter where UID matches the provided UID
+DELETE FROM NotificationCenter WHERE UID = @UID;
+
+-- Delete records from UserDetails where UID matches the provided UID
+DELETE FROM UserDetails WHERE UID = @UID;
+
+-- Delete records from UserProfile where UID matches the provided UID
+DELETE FROM UserProfile WHERE UID = @UID;
+
+-- Delete records from OTP where UID matches the provided UID
+DELETE FROM OTP WHERE UID = @UID;
+*/
