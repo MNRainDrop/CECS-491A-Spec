@@ -7,9 +7,9 @@ namespace TeamSpecs.RideAlong.VehicleProfile;
 
 public class SqlDbVehicleTarget : ICRUDVehicleTarget, IGetVehicleCountTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
-    public SqlDbVehicleTarget(IGenericDAO dao)
+    public SqlDbVehicleTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

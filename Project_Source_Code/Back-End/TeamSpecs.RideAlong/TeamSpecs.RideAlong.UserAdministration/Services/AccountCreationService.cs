@@ -1,6 +1,8 @@
 ﻿using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
+using System.Collections.Generic;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services;
 
@@ -9,47 +11,146 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services;
 /// </summary>
 public class AccountCreationService : IAccountCreationService
 {
-    private readonly IUserTarget _userTarget;
+    private readonly ISqlDbUserCreationTarget _userTarget;
     private readonly IPepperService _pepperService;
     private readonly IHashService _hashService;
     private readonly ILogService _logService;
+    private readonly IRandomService _randomService;
+    private readonly IMailKitService _mailKitService;
+    private readonly int __otpLength;
 
-    public AccountCreationService(IUserTarget userTarget, IPepperService pepperService, IHashService hashService, ILogService logService)
+    public AccountCreationService(ISqlDbUserCreationTarget userTarget, IPepperService pepperService, 
+        IHashService hashService, ILogService logService, IRandomService randomService, IMailKitService mailKitService)
     {
         _userTarget = userTarget;
         _pepperService = pepperService;
         _hashService = hashService;
         _logService = logService;
+        _randomService = randomService;
+        _mailKitService = mailKitService;
+        __otpLength = 10;
     }
 
-    public IResponse VerifyValidUserRegistered()
+    public IResponse verifyUser(string email)
     {
         IResponse response = new Response();
+        var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
+        var userHash = _hashService.hashUser(email, (int)userPepper);
 
-        // Check inputs again
+        response = _userTarget.CheckDbForEmail(email);
 
-        // Create OTP 
+        if (response.HasError && response.ErrorMessage == "User exists in the Database")
+        {
+            _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+            return response;
+        }
+        else if(response.HasError)
+        {
+            _logService.CreateLogAsync("Info", "Data Store","AccountCreationFailure: " + response.ErrorMessage, userHash);
+            response.ErrorMessage += " : CheckDbForExisitngEmail target Failed.";
+            return response;
+        }
 
-        // Hash OTP
+        #region Intializing variables and objects
+        IAccountUserModel userAccount = new AccountUserModel(email);
+        string otp;
+        string otpHash;
+        string emailBody;
+        
+        var salt = _randomService.GenerateUnsignedInt();
+        byte[] saltBytes = BitConverter.GetBytes(salt);
 
-        // Timestamp of when OTP created 
+        #endregion
 
-        // store OTP, timestamp, UserModel, UserProfile in return value
+        #region Set User Hash 
+        userAccount.UserHash = userHash;
+        userAccount.Salt = salt; 
+        #endregion
 
-        // Need to return the following:
-        /*
-         * Hashed OTP in Payload
-         * Timestamp when OTP created in Payload
-         * UserAccount, UserProfile Models
-         */
+        #region Generate OTP & OTP Hash 
+        otp = _randomService.GenerateRandomString(__otpLength);
+        otpHash = _hashService.hashUser(otp, BitConverter.ToInt32(saltBytes));
+        #endregion
+
+        #region Send Email
+
+        emailBody = $@"
+
+        Dear {email},
+
+        Thank you for choosing to register with RideAlong!
+
+        To complete your registration and ensure the security of your account, we require you to verify your email address. Below is your One-Time Password (OTP):
+
+        OTP: {otp}
+
+        Please enter this OTP on the registration page to confirm your email address and finalize your registration process. This OTP is valid for 2 hours, so please ensure you complete the verification process promptly.
+
+        If you didn't request this OTP or if you have any concerns about your account security, please contact our support team immediately!
+
+        Thank you for choosing RideAlong. We look forward to serving you!
+        
+        Best regards,
+        RideAlong Team";
+
+        #region Attempt to send email 
+        try
+        {
+            _mailKitService.SendEmail(email, "RideAlong Registration Confirmation", emailBody);
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = " Emailing service failed";
+            _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+        }
+        #endregion
+
+        #endregion
+
+        #region Update User Table
+        if (response.ErrorMessage == "User tables must be updated")
+        {
+            response.ErrorMessage = "";
+            
+            response = _userTarget.UpdateUserConfirmation(userAccount, otpHash);
+
+            if(response.HasError)
+            {
+                _logService.CreateLogAsync("Info", "Data Store", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+                return response;
+            }
+            else
+            {
+                _logService.CreateLogAsync("Info", "Business", 
+                    "AccountCreationSuccess: User sucessfully updated confirmation tables", userHash);
+                return response;
+            }
+        }
+        #endregion
+
+        response = _userTarget.CreateUserConfirmation(userAccount, otpHash);
+
+        if (response.HasError)
+        {
+            _logService.CreateLogAsync("Info", "Data Store", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+            return response;
+        }
 
         return response;
     }
 
-    public IResponse CreateValidUserAccount(string userName, DateTime dateOfBirth, string accountType)
+    public IResponse verifyAltUser(string email)
     {
+        IResponse response = new Response();
 
-        // should recieve OTP, timestamp, UserAccount, UserProfile details
+        response = _userTarget.CheckDbForEmail(email);
+
+        return response;
+    }
+
+    public IResponse createUserProfile(string userName, IProfileUserModel profile)
+    {
 
         #region Validate arguments
         if (string.IsNullOrWhiteSpace(userName))
@@ -60,61 +161,20 @@ public class AccountCreationService : IAccountCreationService
         #endregion
 
         IResponse response = new Response();
-        var userAccount = new AccountUserModel(userName);
-        //var userProfile = new ProfileUserModel(dateOfBirth);
-        IDictionary<int, string> userClaims;
+        var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
+        var userHash = _hashService.hashUser(userName, (int)userPepper);
 
-        /*
-        // Create User Hash
-        var userPepper = _pepperService.RetrievePepper("AccountCreation");
-        //userAccount.UserHash = _hashService.hashUser(userName, userPepper);
+        response = _userTarget.CreateUserProfile(userName, profile);
 
-        // Use these lines of code while IPepperService and IHashService is not complete
-        userAccount.UserHash = userName;
-
-        // Create Salt
-        var salt = RandomService.GenerateUnsignedInt();
-        userAccount.Salt = salt;
-
-        // Generate user default claims
-        //var userClaims = GenerateDefaultClaims();
-
-        // Write user to data store
-        //response = _userTarget.CreateUserAccountSql(userAccount, userClaims);
-
-        // Validate Response
-        if (response.HasError)
+        if(response.HasError || response.ReturnValue.Count == 0)
         {
-            response.ErrorMessage = "Could not create account";
+            response.ErrorMessage = "Can't create create User Profile sql";
+            return response;
         }
-        else
-        {
-            response.HasError = false;
-        }
-        if (response.ErrorMessage == null)
-        {
-            response.ErrorMessage = "Successful";
-        }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.HasError ? response.ErrorMessage : "Successful", userAccount.UserHash);
-        */
 
-        // Return Response
+
+        response.HasError = false;
         return response;
     }
 
-    private IDictionary<int, string> GenerateDefaultClaims()
-    {
-        IDictionary<int, string> claims = new Dictionary<int, string>()
-        {
-            { 1, "True" },
-            { 2, "True" }
-        };
-
-        return claims;
-    }
-
-    public int getDefaultClaimLength()
-    {
-        return GenerateDefaultClaims().Count;
-    }
 }

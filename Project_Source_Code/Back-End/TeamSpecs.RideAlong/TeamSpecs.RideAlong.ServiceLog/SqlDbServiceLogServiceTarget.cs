@@ -18,9 +18,9 @@ namespace TeamSpecs.RideAlong.ServiceLog
     public class SqlDbServiceLogServiceTarget : ISqlDbServiceLogTarget
     {
 
-        private readonly IGenericDAO _dao;
+        private readonly ISqlServerDAO _dao;
 
-        public SqlDbServiceLogServiceTarget(IGenericDAO dao)
+        public SqlDbServiceLogServiceTarget(ISqlServerDAO dao)
         {
             _dao = dao;
         }

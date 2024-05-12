@@ -4,14 +4,14 @@ namespace TeamSpecs.RideAlong.Services;
 
 public class RandomService : IRandomService
 {
-    public static uint GenerateUnsignedInt()
+    public  uint GenerateUnsignedInt()
     {
         uint randUint = BitConverter.ToUInt32(RandomNumberGenerator.GetBytes(32));
 
         return randUint;
     }
 
-    public static int GenerateSignedInt()
+    public  int GenerateSignedInt()
     {
         return RandomNumberGenerator.GetInt32(Int32.MaxValue);
     }

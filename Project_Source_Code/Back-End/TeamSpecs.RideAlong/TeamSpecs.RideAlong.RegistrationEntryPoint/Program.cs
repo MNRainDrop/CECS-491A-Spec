@@ -1,3 +1,17 @@
+using TeamSpecs.RideAlong.ConfigService;
+using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
+using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.SecurityLibrary.Targets;
+using TeamSpecs.RideAlong.SecurityLibrary;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.UserAdministration.Services;
+using TeamSpecs.RideAlong.UserAdministration;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
+using TeamSpecs.RideAlong.UserAdministration.Managers;
+using TeamSpecs.RideAlong.Middleware;
+using Microsoft.AspNetCore.Components.Forms;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +20,35 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHttpContextAccessor();
+
+
+builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
+builder.Services.AddScoped<IJsonFileDAO, JsonFileDAO>();
+builder.Services.AddScoped<ISqlServerDAO, SqlServerDAO>();
+
+builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+
+builder.Services.AddScoped<IPepperService, PepperService>();
+builder.Services.AddScoped<IHashService, HashService>();
+builder.Services.AddScoped<IRandomService, RandomService>();
+builder.Services.AddScoped<IMailKitService, MailKitService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<IPepperTarget, FilePepperTarget>();
+builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
+builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
+builder.Services.AddScoped<IClaimTarget, ClaimTarget>();
+
+builder.Services.AddScoped<IAccountCreationManager, AccountCreationManager>();
+builder.Services.AddScoped<IAccountCreationService, AccountCreationService>();
+builder.Services.AddScoped<ISqlDbUserCreationTarget, SqlDbUserCreationTarget>();
+
+
 
 var app = builder.Build();
 
@@ -16,9 +59,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// This is the first middleware, as we want it to exit as early as possible if we are handling a CORS Preflight
+app.useCorsPreflight();
 
-app.UseAuthorization();
+// Token validation is not necessary here, since if we are trying to log in, that means the user does not have tokens yet
+//app.useIDValidator();
+
+
+
+// This is the last middleware, as we want to make sure it is not going to be overwritten at any point
+app.useCorsMiddleware();
 
 app.MapControllers();
 

@@ -12,7 +12,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 public class VehicleProfileDeletionShould
 {
     private static readonly IConfigServiceJson configService = new ConfigServiceJson();
-    private static readonly IGenericDAO dao = new SqlServerDAO(configService);
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
     private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();

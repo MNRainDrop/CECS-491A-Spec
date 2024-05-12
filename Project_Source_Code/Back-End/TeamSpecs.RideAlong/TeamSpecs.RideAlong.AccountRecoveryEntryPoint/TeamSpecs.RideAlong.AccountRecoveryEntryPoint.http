@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.AccountRecoveryEntryPoint_HostAddress = http://localhost:5169
+
+GET {{TeamSpecs.RideAlong.AccountRecoveryEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

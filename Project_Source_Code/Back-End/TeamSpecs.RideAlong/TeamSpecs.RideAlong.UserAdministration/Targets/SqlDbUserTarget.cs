@@ -7,10 +7,10 @@ namespace TeamSpecs.RideAlong.UserAdministration;
 
 public class SqlDbUserTarget : IUserTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
 
-    public SqlDbUserTarget(IGenericDAO dao)
+    public SqlDbUserTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }

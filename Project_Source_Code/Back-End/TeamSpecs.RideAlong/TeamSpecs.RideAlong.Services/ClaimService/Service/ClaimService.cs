@@ -31,6 +31,28 @@ public class ClaimService : IClaimService
         #endregion
     }
 
+    public IResponse CreateUserClaim(IAccountUserModel user, IList<Tuple<string, string>> claims)
+    {
+        #region Validate Arguments
+        if (user is null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+        if (string.IsNullOrWhiteSpace(user.UserHash))
+        {
+            throw new ArgumentNullException(nameof(user.UserHash));
+        }
+        if (claims is null)
+        {
+            throw new ArgumentNullException(nameof(claims));
+        }
+        #endregion
+
+        #region Call Service and Return Response
+        return _claimTarget.CreateClaimSQL(user, claims);
+        #endregion
+    }
+
     public IResponse DeleteAllUserClaims(IAccountUserModel user)
     {
         #region Validate Arguments

@@ -10,4 +10,14 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ConfigService\TeamSpecs.RideAlong.ConfigService.csproj" />
+    <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.UserAdministration\TeamSpecs.RideAlong.UserAdministration.csproj" />
+  </ItemGroup>
+
 </Project>
