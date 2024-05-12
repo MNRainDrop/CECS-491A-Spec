@@ -134,7 +134,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
             }
             #endregion
-        
+
+            #region Upload new OTP 
+
+            #endregion
+
             response.HasError = false;
             return response;
         }
