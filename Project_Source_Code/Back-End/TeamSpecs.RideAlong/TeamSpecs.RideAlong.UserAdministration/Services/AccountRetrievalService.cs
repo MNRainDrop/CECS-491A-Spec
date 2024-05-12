@@ -4,8 +4,11 @@ using Azure;
 using TeamSpecs.RideAlong.Services;
 using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Drawing;
-using System.Drawing.Printing;
+using TeamSpecs.RideAlong.DataAccess;
+using MimeKit;
+using System.Text.Json;
+using TeamSpecs.RideAlong.ConfigService.ConfigModels;
+
 
 namespace TeamSpecs.RideAlong.UserAdministration
 {
@@ -13,12 +16,14 @@ namespace TeamSpecs.RideAlong.UserAdministration
     {
         private SqlDbUserRetrievalTarget _target;
         private readonly IMailKitService _mailKitService;
+        private JsonFileDAO _JsonFileDao;
 
 
-        public AccountRetrievalService(SqlDbUserRetrievalTarget target, IMailKitService mailKitService)
+        public AccountRetrievalService(SqlDbUserRetrievalTarget target, IMailKitService mailKitService, JsonFileDAO JsonFileDao)
         {
             _target = target;
             _mailKitService = mailKitService;
+            _JsonFileDao = JsonFileDao;
         }
 
         public IResponse RetrieveAccount(long uid)
@@ -35,6 +40,13 @@ namespace TeamSpecs.RideAlong.UserAdministration
                     var email = temp.UserName;
                     var phone = temp.PhoneNumber;
                     var addr = temp.Address;
+                    MimeMessage message = new MimeMessage();
+
+                    message.Body = new TextPart("plain")
+                    {
+                        Text = "Notification for Account Retrieval !"
+                    };
+
                     var emailBody = $@"
                     Subject: Account Information Request
 
@@ -46,9 +58,19 @@ namespace TeamSpecs.RideAlong.UserAdministration
         
                     Best regards,
                     RideAlong Team";
-                    response = _mailKitService.SendEmail(email, "RideAlong Registration Confirmation", emailBody);
+
+                    //Writing to file
+                    var currentDir = AppDomain.CurrentDomain.BaseDirectory;
+                    string filePath = Path.Combine(currentDir, @"..\..\..\..\Report.txt");
+                    using (StreamWriter outputFile = new StreamWriter(filePath, false))
+                    {
+                        outputFile.WriteLine(emailBody);
+                    }
+
+
+                    response = _mailKitService.SendEmailwithAttachments(email, "RideAlong Registration Confirmation", emailBody, filePath);
                 }
-             
+
             }
 
 

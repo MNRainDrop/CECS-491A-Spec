@@ -44,6 +44,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var timer = new Stopwatch();
             ConfigServiceJson configService = new ConfigServiceJson();
             var dao = new SqlServerDAO(configService);
+            var Jsondao = new JsonFileDAO();
             var _target = new SqlDbUserRetrievalTarget(dao);
             var _mailKitService = new MailKitService(configService);
 
@@ -60,7 +61,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
 
             //Service 
-            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService);
+            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService,Jsondao);
 
             //Act 
             timer.Start();
