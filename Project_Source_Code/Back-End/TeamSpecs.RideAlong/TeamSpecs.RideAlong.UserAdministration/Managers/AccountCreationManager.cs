@@ -124,13 +124,13 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             response = new Response();
             response = _authService.GetUserModel(email);
             
-            if (response.HasError || response.ReturnValue.Count == 0)
+            if (response.HasError || (response.ReturnValue is not null && response.ReturnValue.Count == 0))
             {
                 response.HasError = true;
                 return response;
             }
             // Need authUser/ modelUser to call ClaimService & AuthService
-            if (response.ReturnValue.ToList()[0] is IAuthUserModel model)
+            if (response.ReturnValue is not null && response.ReturnValue.ToList()[0] is IAuthUserModel model)
             {
                 authUser.UID = model.UID;
                 authUser.userName = email;
@@ -148,13 +148,13 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             response = _authService.GetOtpHash(authUser);
             var otpHash = _hashService.hashUser(otp, BitConverter.ToInt32(authUser.salt));
             
-            if (response.HasError || response.ReturnValue.Count == 0)
+            if (response.HasError || (response.ReturnValue is not null && response.ReturnValue.Count == 0))
             {
                 response.HasError = true;
                 return response;
             }
             // Comprasion of both hashes
-            if (response.ReturnValue.ToList()[0] is string str)
+            if (response.ReturnValue is not null && response.ReturnValue.ToList()[0] is string str)
             {
                 otpMatch = (str == otpHash);
             }
@@ -195,7 +195,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
                 response = _accountCreationService.createUserProfile(email, profile);
 
-                if(response.HasError || response.ReturnValue.Count() == 0)
+                if(response.HasError || (response.ReturnValue is not null && response.ReturnValue.Count() == 0))
                 {
                     // If error occurs with userProfile, delete users existing claims
                     _claimService.DeleteAllUserClaims(modelUser);

@@ -1,0 +1,179 @@
+sequenceDiagram
+participant u as Browser
+participant scr as UpdatingAccountScript.js
+participant e as UserAdminstartionEntryPoint<br>(Entry Point)
+participant az as AuthN/AuthZ<br>(Manager Point)
+participant chrm as UserAdminstrationManager<br>(Manager Layer)
+participant chrs as AccountUpdatingService<br>(Services Layer)
+participant ll as LogService<br>(Services Layer)
+participant dg as SqlDbUserTarget<br>(Data Gateway)
+participant da as SqlServerDAO<br>(Data Access Object)
+participant ds as Data Store<br>(Sql Server)
+
+u ->>+ scr: User clicks on Update User button<br> on Navigation Bar
+    Note over u,scr: Assume user has properly logged in
+
+    scr->>scr: Event listener "UpdateUserView" <br>is invoked by clicking on Update User button
+    scr->>scr: function GetAccountDetails invoked by<br> event listener<br> creating AJAX call to entry point
+
+        scr->>+e: GetAccountDetails() : IActionResult
+            Note over scr,e: Invoked by function <br> GetAccountDetails creating<br>AJAX call to UA entry point
+
+            e->>+az: IsAuthorize( Dictionary <string, string>: requiredClaims): IResponse
+            Note over e,az: UpdateUserEntryPoint calls SecurityManager.isAuthorized to<br>verify user is able to access UA view<br> by passing claims requried to access
+            
+            az-->>-e: User is authorized to access the UA View 
+            Note over az,e: see Security LLD for successful user authorized case
+
+            e->>+az: GetPrincipalFromJwt() : IResponse
+            Note over e,az: Retrieves principal from tokens.<br>See Security success case.
+
+            az-->>-e:IResponse object returned
+            Note over az,e: IResponse.hasError = false
+
+            
+            e->>e: Extract user model from IResponse.ReturnValues
+                Note over e,e: userAccount = principal.UserModel
+
+                e->>+chrm: GetAccountUpdate( userAccount: IAccountUserModel): IResponse
+                    Note over e,chrm: UpdateUserEntryPoint calls upon<br>AccountUpdateManager.GetUpdateUserAccount
+
+                    chrm->>chrm: Validiate parameters 
+
+                    chrm->>chrm: Begin timer for Non Functional Requirement logging purposes
+
+                        chrm->>+chrs: GetUpdateUserAccountService( userAccount: IAccountUserModel): IResponse
+                            Note over chrm,chrs: AccountUpdateManager calls upon<br> GetAccountUpdateService.GetUpdateUserAccount
+
+                            chrs->>chrs: Validiate parameters
+
+                                chrs->>+dg: GetUpdatedUserSql( userAccount: IAccountUserModel): IResponse
+                                    Note over chrs,dg: GetAccountUpdateService calls upon<br> SqlDbUserTarget to retrieve Account details.
+
+                                    dg->>dg: Convert search parameters into SQL statement
+
+                                        dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+                                            Note over dg,da: SqlDbUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                                                da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                                                    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+
+                                                        ds->>ds: SELECT * FROM UserDetails WHERE UID = {userModel.UserId};
+
+                                                        ds->>ds: UserDetails is successfully retireved<br>from the Data Store
+
+                                                ds-->>-da: Database returns query results
+
+                                                da->>da: Check for thrown errors
+
+                                                da->>da: Create new IResponse object
+                                                    Note over da: HasError = false<br>ErrorMessage = null<br>ReturnValue = new list containing returned query results
+
+                                        da-->>-dg: IResponse object returned
+
+                                    dg->>dg: Check for errors in returned IResponse object
+
+                                dg-->>-chrs: IResponse object returned
+
+                            chrs->>chrs: Check for errors in IResponseObject
+
+                                # Log successful vehicle profile retrieval
+                                chrs-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                                    Note over chrs,ll: GetAccountUpdateService calls upon LogService to log<br>Successful retrieval of apdated account details<br>See logging success case                   
+
+                        chrs-->>-chrm: IResponse object returned
+                    
+                    chrm->>chrm: IResponse object returned
+
+                    chrm->>chrm: Check for errors in returned IResponse object
+
+                    chrm->>chrm: Check for any violations of business rules
+
+                chrm-->>-e: IResponse object returned
+
+            e ->> e : Turn the IResponse object into Json
+
+        e -->> scr: Return ok(Json) 
+
+    scr ->> scr: GetAcccount details uses the Json to fill in the view
+
+scr -->> u: User is is able to see the view and see Account Details
+
+u ->>u: User is able to plug in values for name,phone,address and switch account type drop down menu
+
+u ->> scr: User clicks save button
+
+    scr->>scr: Event listener "SaveUser" <br>is invoked by clicking on save button
+    scr->>scr: function PostAccountDetails invoked by<br> event listener<br> creating AJAX call to entry point
+    
+        scr->>+e: PostAccountDetails(string:address, string:name, string:phone, string: accountType) : IActionResult
+            Note over scr,e: Invoked by function <br> PostAccountDetails creating<br>AJAX call to UA entry point
+        
+            e->>e: Extract user model from IResponse.ReturnValues
+                Note over e,e: userAccount = principal.UserModel
+
+                e->>+chrm: PostAccountUpdate( userAccount: IAccountUserModel, string:address, string:name, string:phone, string: accountType): IResponse
+                    Note over e,chrm: UpdateUserEntryPoint calls upon<br>AccountUpdateManager.PostUpdateUserAccount
+
+                    chrm->>chrm: Validiate parameters 
+
+                    chrm->>chrm: Begin timer for Non Functional Requirement logging purposes
+
+                        chrm->>+chrs: PostUpdateUserAccountService( userAccount: IAccountUserModel, string:address, string:name, string:phone, string: accountType): IResponse
+                            Note over chrm,chrs: AccountUpdateManager calls upon<br> PostAccountUpdateService.PostUpdateUserAccount
+
+                            chrs->>chrs: Validiate parameters
+
+                                chrs->>+dg: PostUpdatedUserSql( userAccount: IAccountUserModel, string:address, string:name, string:phone, string: accountType): IResponse
+                                    Note over chrs,dg: PostAccountUpdateService calls upon<br> SqlDbUserTarget to update Account details.
+
+                                    dg->>dg: Convert search parameters into SQL statement
+
+                                        dg->>+da: ExecuteReadSql(sqlCommands: ICollection<KeyValuePair<sql: string, sqlParameters: HashSet<SqlParameter>>>) : IResponse
+                                            Note over dg,da: SqlDbUserTarget calls upon<br>SqlServerDAO to execute the sql
+
+                                                da->>+ds: SqlCommand.ExecuteReader() : SqlDataReader
+                                                    Note over da,ds: SqlServerDAO calls upon<br>`SqlCommand.ExecuteReader()`<br>to execute the sql command
+
+                                                        ds->>ds: UPDATE UserDetails FROM UserDetails SET Adress = @Adress, Name = @Name,  Phone = @Phone, AccountType = @AccountType,  WHERE UID = @UID ;
+
+                                                        ds->>ds: UserDetails is successfully retireved<br>from the Data Store
+                                                        ds-->>-da: Database returns query results
+
+                                                da->>da: Check for thrown errors
+
+                                                da->>da: Create new IResponse object
+                                                    Note over da: HasError = false<br>ErrorMessage = null<br>ReturnValue = new list containing returned query results
+
+                                        da-->>-dg: IResponse object returned
+
+                                    dg->>dg: Check for errors in returned IResponse object
+
+                                dg-->>-chrs: IResponse object returned
+
+                            chrs->>chrs: Check for errors in IResponseObject
+
+                                # Log successful vehicle profile retrieval
+                                chrs-->>ll: CreateLogAsync(logLevel: string, logCategory: string, logContext: string, userHash: string) : IResponse
+                                    Note over chrs,ll: PostAccountUpdateService calls upon LogService to log<br>Successful retrieval of apdated account details<br>See logging success case                   
+
+                        chrs-->>-chrm: IResponse object returned
+                    
+                    chrm->>chrm: IResponse object returned
+
+                    chrm->>chrm: Check for errors in returned IResponse object
+
+                    chrm->>chrm: Check for any violations of business rules
+
+                chrm-->>-e: IResponse object returned
+
+            e ->> e : Turn the IResponse object into Json
+
+        e -->> scr: Return ok(Json) 
+
+    scr ->> scr:  If succesful will cal the get service again to see updated account user
+
+scr -->> u: User is is able to see the view and the new updated Account Details
+         
+
+    

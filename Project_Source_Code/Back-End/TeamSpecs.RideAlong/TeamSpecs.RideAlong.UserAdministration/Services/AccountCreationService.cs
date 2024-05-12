@@ -167,7 +167,7 @@ public class AccountCreationService : IAccountCreationService
 
         response = _userTarget.CreateUserProfile(userName, profile);
 
-        if(response.HasError || response.ReturnValue.Count == 0)
+        if(response.HasError || (response.ReturnValue is not null && response.ReturnValue.Count == 0))
         {
             response.ErrorMessage = "Can't create create User Profile sql";
             return response;
