@@ -16,11 +16,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services
             _logService = logService;
         }
 
-        public IResponse createUserRecoveryEmail(string email)
+        public IResponse getUserRecoveryEmail(string email)
         {
             IResponse response = new Response();
 
-
+            response = _userTarget.retrieveAltEmail(email);
 
             return response;
         }
