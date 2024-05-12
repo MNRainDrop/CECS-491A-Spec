@@ -51,7 +51,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
         [HttpPost]
         [Route("PostCreateUser")]
-        public IActionResult PostAccountCreation(DateTime dateOfBirth, string altEmail, string email, string otp, string acccountType)
+        public IActionResult PostAccountCreation([FromBody]DateTime dateOfBirth, string altEmail, string email, string otp, string acccountType)
         {
             IResponse response = new Response();
             IProfileUserModel profile = new ProfileUserModel(dateOfBirth, altEmail);

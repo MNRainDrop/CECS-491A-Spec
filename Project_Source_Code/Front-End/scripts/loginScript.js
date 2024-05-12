@@ -48,7 +48,7 @@ function submitUsername() {
     var username = textInput.value.trim();
     // Check if username is not empty
     if (username) {
-        if (isValidEmailAddress(username)) {
+        if (isValidEmail(username)) {
             // Calls Web API controller
             fetch(webURL + "/Auth/startLogin", {
                 method: "POST",
@@ -95,7 +95,7 @@ function submitOTP() {
     var username = usernameParagraph.textContent.replace('Username: ', '').trim();
     // Check if OTP is not empty
     if (otp && username) {
-        if (isValidOTP(otp) && isValidEmailAddress(username)) {
+        if (isValidOTP(otp) && isValidEmail(username)) {
             var fetchResponse = false; // Assuming Fail response by default
             // Make fetch request to back - end
             fetch(webURL + "/Auth/tryAuthentication", {

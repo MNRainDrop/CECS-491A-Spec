@@ -1,4 +1,5 @@
 'use strict;'
+
 // Validators
 function isValidEmail(email) {
     // Minimum length check
@@ -23,35 +24,68 @@ var createAccountButton = document.getElementById("registration-button");
 createAccountButton.addEventListener("click", createAccount);
 
 function createAccount() {
-    // to signal we are in function
-    alert("create account");
+    // Generate view to prompt the user to enter their email
+    generateEmailInputView();
+}
 
-    // Retrieve the value of the email or username input field
-    var userInput = document.getElementById("text-input").value;
+function generateEmailInputView() {
+    // Get the dynamic content area
+    var dynamicContent = document.querySelector(".dynamic-content");
+    dynamicContent.innerHTML = "";
+    // Create a container for the email input form
+    var emailInputContainer = document.createElement("div");
+    emailInputContainer.classList.add("email-input-container");
 
-    // Validate the email or username input
-    if (isValidEmail(userInput)) {
-        var registrationData = {
-            email: userInput
-        };
-        
+    // Create and append a heading for the form
+    var heading = document.createElement("h2");
+    heading.textContent = "Enter your email";
+    emailInputContainer.appendChild(heading);
+
+    // Create the email input field
+    var emailInput = document.createElement("input");
+    emailInput.type = "email";
+    emailInput.placeholder = "Email";
+    emailInput.id = "email-input"; // Add an id for easier access
+    emailInput.classList.add("email-input");
+    emailInputContainer.appendChild(emailInput);
+
+    // Create a submit button
+    var submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.classList.add("email-input-submit");
+    submitButton.addEventListener("click", submitEmail);
+    emailInputContainer.appendChild(submitButton);
+
+    // Append the email input form to the dynamic content area
+    dynamicContent.appendChild(emailInputContainer);
+}
+
+function submitEmail() {
+    // Retrieve the value of the email input field
+    var email = document.getElementById("email-input").value;
+
+    // Validate the email input
+    if (isValidEmail(email)) {
+        // Proceed with the registration process
+
+
         // Send the registration request to the server
-        fetchWithTokens('http://localhost:8003/Registration/PostVerify', 'POST', registrationData)
+        fetchWithTokens('http://localhost:8003/Registration/PostVerify', 'POST', email)
         .then(response => {
             if (response.ok) {
                 // Registration successful
-                return response.json(); // Parse the response JSON
+                return response.text(); // Parse the response JSON
             } else {
                 // Registration failed, throw an error with the response message
-                return response.json().then(data => { throw new Error(data.message); });
+                return response.text().then(data => { throw new Error(data.message); });
             }
         })
         .then(data => {
             // Show success message from the server response
-            alert(data.message);
+            alert(data);
 
             // Call function to generate account information view
-            generateAccountInfoView();
+            generateAccountInfoView(email);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -59,16 +93,16 @@ function createAccount() {
             alert(error.message || 'Error occurred while creating account!');
         });
     } else {
-        // If the email or username input is invalid, show an error message
+        // If the email input is invalid, show an error message
         alert('Invalid email!');
     }
-
 }
 
-function generateAccountInfoView() {
+function generateAccountInfoView(email) {
     // Get the dynamic content area
     var dynamicContent = document.querySelector(".dynamic-content");
-
+    dynamicContent.innerHTML = "";
+    
     // Create a container for the account information form
     var accountInfoContainer = document.createElement("div");
     accountInfoContainer.classList.add("account-info-container");
@@ -77,6 +111,15 @@ function generateAccountInfoView() {
     var heading = document.createElement("h2");
     heading.textContent = "Account Information";
     accountInfoContainer.appendChild(heading);
+
+    // Create the non-editable email input field
+    var emailInput = document.createElement("input");
+    emailInput.type = "text";
+    emailInput.placeholder = "Email";
+    emailInput.classList.add("account-info-input");
+    emailInput.value = email;
+    emailInput.disabled = true; // Make it non-editable
+    accountInfoContainer.appendChild(emailInput);
 
     // Create the OTP input field
     var otpInput = document.createElement("input");
@@ -105,6 +148,7 @@ function generateAccountInfoView() {
     // Create the account type select field
     var accountTypeSelect = document.createElement("select");
     accountTypeSelect.classList.add("account-info-input");
+
     // Create options for account types
     var defaultOption = document.createElement("option");
     defaultOption.value = "Default User";
@@ -118,6 +162,7 @@ function generateAccountInfoView() {
     rentalFleetOption.value = "Rental Fleet";
     rentalFleetOption.textContent = "Rental Fleet";
     accountTypeSelect.appendChild(rentalFleetOption);
+
     // Set a default selected option
     defaultOption.selected = true;
     accountInfoContainer.appendChild(accountTypeSelect);
@@ -126,7 +171,9 @@ function generateAccountInfoView() {
     var submitButton = document.createElement("button");
     submitButton.textContent = "Submit";
     submitButton.classList.add("account-info-submit");
-    submitButton.addEventListener("click", submitAccountInfo);
+    submitButton.addEventListener("click", function() {
+        submitAccountInfo(email);
+    });
     accountInfoContainer.appendChild(submitButton);
 
     // Append the account information form to the dynamic content area
@@ -135,12 +182,17 @@ function generateAccountInfoView() {
 
 // Function to handle submission of account information
 function submitAccountInfo() {
-    // Here you can retrieve the values from the input fields and perform further processing
-    // For now, let's just show an alert with the values
-    var otp = document.querySelector(".account-info-container input[type='text']").value;
-    var dob = document.querySelector(".account-info-container input[type='date']").value;
-    var alternateEmail = document.querySelector(".account-info-container input[type='email']").value;
-    var accountType = document.querySelector(".account-info-container select").value;
+
+    var dynamicContent = document.querySelector(".dynamic-content");
+    // Find the account info container within dynamic content
+    var accountInfoContainer = dynamicContent.querySelector(".account-info-container");
+
+    // Retrieve the values from the input fields within account info container
+    var email = accountInfoContainer.querySelector("input[type='text']").value;
+    var otp = accountInfoContainer.querySelector("input[type='text'][placeholder='OTP sent to your email']").value;
+    var dob = accountInfoContainer.querySelector("input[type='date']").value;
+    var alternateEmail = accountInfoContainer.querySelector("input[type='email']").value;
+    var accountType = accountInfoContainer.querySelector("select").value;
     
 // Validate the OTP
 if (!isValidOTP(otp)) {
@@ -154,22 +206,22 @@ if (!isValidEmail(alternateEmail)) {
     return;
 }
 
-   // Construct the registration data object
-   var registrationData = {
+var accountData = {
+    email: email,
     otp: otp,
     dob: dob,
     alternateEmail: alternateEmail,
     accountType: accountType
-};
+}
 
 // Send the registration request to the server
-fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', registrationData)
+fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
         alert("Account created successfully! You can now log in.");
         // Redirect the user to the main page
-        window.location.href = "mainPage.html"; // Replace "mainPage.html" with the actual URL of your main page --> config file
+        location.reload();
     } else {
         // Registration failed, get the error message from the response
         return response.json().then(data => { throw new Error(data.message); });
