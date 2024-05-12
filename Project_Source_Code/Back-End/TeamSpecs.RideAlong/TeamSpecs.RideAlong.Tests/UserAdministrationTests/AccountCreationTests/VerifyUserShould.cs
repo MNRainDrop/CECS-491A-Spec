@@ -16,7 +16,7 @@ using System.Diagnostics;
 using TeamSpecs.RideAlong.Model;
 using Microsoft.Data.SqlClient;
 
-namespace TeamSpecs.RideAlong.TestingLibrary.AccountCreationTests
+namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests.AccountCreationTests
 {
     public class VerifyUserShould
     {
