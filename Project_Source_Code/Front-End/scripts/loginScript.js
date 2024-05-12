@@ -1,11 +1,20 @@
 'use strict;'
 // Validators
-var isValidEmailAddress = function (email) {
-    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-};
+function isValidEmail(email) {
+    // Minimum length check
+    if (email.length < 3)
+        return false;
+
+    // Regular expression pattern for email validation
+    var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]{1,}$/;
+
+    // Check if the email matches the pattern
+    return pattern.test(email);
+}
+
 var isValidOTP = function (OTP) {
-    var otpPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    // allows for OTP to be all numbers/letters
+    var otpPattern = /^[a-zA-Z0-9]{10}$/;
     return otpPattern.test(OTP);
 };
 // Event Listeners
