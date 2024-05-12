@@ -12,5 +12,5 @@ public interface ILogService
     /// <param name="logContext"></param>
     /// <param name="userHash"></param>
     /// <returns>Task with a bool indicating success or failure</returns>
-    Task<bool> CreateLogAsync(string logLevel, string category, string message, string? userHash, CancellationToken ctoken = default);
+    Task<IResponse> CreateLogAsync(string logLevel, string category, string message, string? userHash, CancellationToken ctoken = default);
 }
