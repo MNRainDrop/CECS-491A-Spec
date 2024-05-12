@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
     vehicleMarketPlaceNav.addEventListener("click", generateVehicleMarketplaceDefaultView);
 
+    var userAdmin = document.getElementById("userAdmin");
+    userAdmin.addEventListener("click", generateUserAdministration);
     var usageDashboardNav = document.getElementById('usage-dashboard-view');
     usageDashboardNav.addEventListener('click', generateUsageDashboardView);
 });
@@ -113,6 +115,12 @@ function generateVehicleMarketplaceDefaultView()
         permissionGranted = false;
         alert(error);
     })
+};
+
+function generateUserAdministration()
+{
+    var permissionGranted;
+    displayUserAdministration();
 };
 
 function logOut() {

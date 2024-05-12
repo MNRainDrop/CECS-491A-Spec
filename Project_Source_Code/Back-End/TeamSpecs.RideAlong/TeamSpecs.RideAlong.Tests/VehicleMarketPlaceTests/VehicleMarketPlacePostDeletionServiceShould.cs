@@ -21,7 +21,7 @@ public class VehicleMarketPlacePostDeletionServiceShould
         IResponse response;
 
         //Parameters 
-        string VIN = "1234567891012345";
+        string VIN = "VIN8";
 
 
         //Service 
