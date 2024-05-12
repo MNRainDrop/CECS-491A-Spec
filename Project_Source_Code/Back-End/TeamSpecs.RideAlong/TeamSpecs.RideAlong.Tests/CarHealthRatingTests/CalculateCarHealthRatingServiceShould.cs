@@ -596,6 +596,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Check results
+            if (response.ReturnValue is null)
+            {
+                Assert.Fail(nameof(response.ReturnValue) + "should not be null");
+            }
             foreach (var resultObject in response.ReturnValue)
             {
                 if (resultObject is IList list)

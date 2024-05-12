@@ -13,13 +13,11 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var flag = true;
             var timer = new Stopwatch();
-            IResponse response;
             var dao = new JsonFileDAO();
             uint result;
             var _pepperTarget = new FilePepperTarget(dao);
             IRandomService randomService = new RandomService();
             IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
-            string key = "Test Key2";
             //aray of 10 keys to be passed in for generate
             string[] test_key = {"RideAlongPepper", "Test Key2" , "Test Key3" , "Test Key4" , 
             "Test Key5" , "Test Key6" , "Test Key7" , "Test Key8" , "Test Key9" , "Test Key10" };
@@ -54,7 +52,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         {
             //Arrange 
             var timer = new Stopwatch();
-            IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
             IRandomService randomService = new RandomService();
@@ -81,13 +78,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             var flag = true;
             uint result;
             var timer = new Stopwatch();
-            IResponse response;
             var dao = new JsonFileDAO();
             var _pepperTarget = new FilePepperTarget(dao);
             IRandomService randomService = new RandomService();
             IPepperService PepperObject = new PepperService(_pepperTarget, randomService);
-            string key = "Test Key5";
-            uint value = 1161839200;
             //aray of 10 keys to be passed in for retrieving 
             string[] test_key = {"Test Key1", "Test Key2" , "Test Key3" , "Test Key4" ,
             "Test Key5" , "Test Key6" , "Test Key7" , "Test Key8" , "Test Key9" , "Test Key10" };

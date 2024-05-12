@@ -89,9 +89,10 @@ namespace TeamSpecs.RideAlong.ServiceLog
             var tableSql = "ServiceLog ";
             var rowsSql = "(";
             var valuesSql = "VALUES (";
-            string query = "" +
-                "UPDATE ServiceLog" +
-                "SET Thing = thing";
+            // commented out to not have warnings
+            //string query = "" +
+            //    "UPDATE ServiceLog" +
+            //    "SET Thing = thing";
 
             var response = new Response() { ReturnValue = new List<object>() };
             #endregion

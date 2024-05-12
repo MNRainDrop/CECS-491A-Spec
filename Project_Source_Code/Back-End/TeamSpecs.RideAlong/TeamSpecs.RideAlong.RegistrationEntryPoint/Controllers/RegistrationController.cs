@@ -34,7 +34,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
             response = _accountCreationManager.CallVerifyUser(email);
 
             // Database/ sql generation failed
-            if(response.HasError && response.ErrorMessage.Contains("Could not"))
+            if(response.HasError && response.ErrorMessage is not null && response.ErrorMessage.Contains("Could not"))
             {
                 return StatusCode(500);
             }
@@ -59,7 +59,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
             response = _accountCreationManager.RegisterUser(profile, email, otp, acccountType);
 
             // If DB or sql generation fails
-            if (response.HasError && response.ErrorMessage.Contains("Could not"))
+            if (response.HasError && response.ErrorMessage is not null && response.ErrorMessage.Contains("Could not"))
             {
                 return StatusCode(500);
             }

@@ -36,7 +36,7 @@ namespace TeamSpecs.RideAlong.SystemObservabilityEntryPoint.Controllers
                 _logger.CreateLogAsync(logInfo.level, logInfo.category, logInfo.message, null);
                 return NoContent();
             }
-            catch (Exception ex)
+            catch
             {
                 string remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress!.ToString();
                 _logger.CreateLogAsync("Warning", "", $"Unauthorized Logging attempt from IP: {remoteIpAddress}", null);

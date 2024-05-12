@@ -2,16 +2,14 @@
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using Org.BouncyCastle.Bcpg.Sig;
-using System;
 
 namespace TeamSpecs.RideAlong.SystemObservability;
 
 public class SqlDbSystemObservabilityTarget : ISystemObservabilityTarget
 {
-    private readonly IGenericDAO _dao;
+    private readonly ISqlServerDAO _dao;
 
-    public SqlDbSystemObservabilityTarget(IGenericDAO dao)
+    public SqlDbSystemObservabilityTarget(ISqlServerDAO dao)
     {
         _dao = dao;
     }
