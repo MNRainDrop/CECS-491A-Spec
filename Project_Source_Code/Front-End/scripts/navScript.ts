@@ -19,6 +19,15 @@ function fetchWithTokens(url: string, method: string, body: any) {
     });
 };
 
+// Logging Out Inactive User
+let inactiveUserTimeout: number
+document.addEventListener('click', () => {
+    clearTimeout(inactiveUserTimeout)
+    inactiveUserTimeout = setTimeout(() => {
+      logOut();
+    }, 1200000); // 20 minutes in milliseconds
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     //const rentalFleetNav = document.getElementById("rental-fleet-view");
     //const inventoryManagementNav = document.getElementById("inventory-management-view");
