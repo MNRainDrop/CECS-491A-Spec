@@ -2,7 +2,6 @@
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
-using TeamSpecs.RideAlong.UserAdministration.Targets;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Services
 {
@@ -15,6 +14,15 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services
         {
             _userTarget = userTarget;
             _logService = logService;
+        }
+
+        public IResponse createUserRecoveryEmail(string email)
+        {
+            IResponse response = new Response();
+
+
+
+            return response;
         }
 
         public IResponse RecoverUserAccount(string userName)

@@ -25,7 +25,18 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
     {
         #region Variables
         IResponse response = new Response();
-        var query = "";
+        // If user exists on either UserAccount or UserProfile, the table name will be listed and number 1 [UserAccount, 1]
+        string query = @"
+            SELECT 'UserAccount' AS Source, UserName AS UserName
+            FROM UserAccount
+            WHERE UserName = @UserName
+
+
+            UNION
+    
+            SELECT 'UserProfile' AS Source, AltUserName AS UserName
+            FROM UserProfile
+            WHERE AltUserName = @UserName;"; 
         SqlCommand cmd = new SqlCommand();
         #endregion
 
@@ -33,22 +44,8 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         try
         {
             #region Check if user is fully registered Sql Generation 
-
-            // If user exists on either UserAccount or UserProfile, the table name will be listed and number 1 [UserAccount, 1]
-
-            query = @"
-                SELECT 'UserAccount' AS Source, UserName AS UserName
-                FROM UserAccount
-                WHERE UserName = @UserName
-
-
-                UNION
-    
-                SELECT 'UserProfile' AS Source, AltUserName AS UserName
-                FROM UserProfile
-                WHERE AltUserName = @UserName;";
             cmd.CommandText = query;
-            cmd.Parameters.AddWithValue("@UserName", email); ;
+            cmd.Parameters.AddWithValue("@UserName", email);
             #endregion
         }
         catch
