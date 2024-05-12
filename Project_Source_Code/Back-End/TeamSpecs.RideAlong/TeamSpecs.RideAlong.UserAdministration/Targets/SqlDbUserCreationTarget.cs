@@ -73,7 +73,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         #endregion
 
         #region If user does not exist in DB
-        if (response.ReturnValue.Count == 0)
+        if (response.ReturnValue is not null && response.ReturnValue.Count == 0)
         {
             response.HasError = false;
             return response;
@@ -82,7 +82,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
 
 
         #region If user has same altUserName as email arguement
-        if (response.ReturnValue.ToList()[0] is object[] array)
+        if (response.ReturnValue is not null && response.ReturnValue.ToList()[0] is object[] array)
         {
             var check = array[0].ToString() == "UserProfile";
 

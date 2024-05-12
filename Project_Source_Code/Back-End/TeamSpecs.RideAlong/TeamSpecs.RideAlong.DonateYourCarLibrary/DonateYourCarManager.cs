@@ -25,6 +25,17 @@ namespace TeamSpecs.RideAlong.DonateYourCarLibrary
             response = _charityRetrievalService.RetrieveCharities(user);
             timer.Stop();
 
+
+            if (response.HasError == true) // Means that SQL generation/ DB  failed
+            {
+#pragma warning disable CS8604 // Possible null reference argument.
+                _logService.CreateLogAsync("Error", "Server", response.ErrorMessage, user.UserHash);
+#pragma warning restore CS8604 // Possible null reference argument.
+            }
+            else if (response.HasError == false)
+            {
+                _logService.CreateLogAsync("Info", "Business", "Successful retrieval of charities", user.UserHash);
+            }
             return response;
         }
 

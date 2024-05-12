@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {
@@ -34,7 +33,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
-            string text = "";
+            string text;
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();

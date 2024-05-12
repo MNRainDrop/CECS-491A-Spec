@@ -1,11 +1,11 @@
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
-using TeamSpecs.RideAlong.ConfigService;
 var builder = WebApplication.CreateBuilder(args);
 
 
