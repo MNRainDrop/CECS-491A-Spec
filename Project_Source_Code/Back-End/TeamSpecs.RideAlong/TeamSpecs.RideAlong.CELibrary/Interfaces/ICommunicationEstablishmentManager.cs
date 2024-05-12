@@ -6,6 +6,5 @@ namespace TeamSpecs.RideAlong.CELibrary.Interfaces
     {
         IResponse SendRequest(IAccountUserModel userAccount, bool pending_status, string vin);
 
-        IResponse
     }
 }
