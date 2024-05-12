@@ -75,3 +75,48 @@ function generateUserInfoRequestButton(content) {
     });
     content.appendChild(button);
 }
+
+function RequestingInfo(){
+    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetVehicleMarketplace', 'POST',currPage)
+    .then(function (response) {
+        if (response.status == 200) { 
+            response.json()
+            .then(function(data) {
+                // Check if data is an array or object
+                if (data.length == 0 && parseInt(document.getElementById('current-page').innerText) != 1)
+                    {
+                        decrementPages();
+                        displayMarketplace();
+                        return;
+                    }
+                else if (Array.isArray(data) && data.length > 0) {
+                    //alert("VP's retrieved");
+                    exrtactData(data);
+                    var vehicles = document.getElementsByClassName('vehicle-listings');
+                    for (let i = 0; i < vehicles.length; i++) {
+                        vehicles[i].addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            displayDetailMarketplace(vehicles[i].id);
+                        })
+                    }
+                } 
+            })
+            .catch(function (error) {
+                alert("Error parsing JSON: " + error);
+            });
+        } 
+        else {
+            // Handle response as string
+            response.text()
+            .then(function(text) {
+                alert(text); // Alert the string response
+                var dynamicContent = document.querySelector(".dynamic-content");
+                dynamicContent.innerHTML = text;
+            })
+            .catch(function (error) {
+                alert("Error reading response text: " + error);
+            });
+        }
+    }); 
+
+}
