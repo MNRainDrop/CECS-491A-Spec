@@ -36,21 +36,37 @@ function createAccount() {
         };
         
         // Send the registration request to the server
-        fetchWithTokens('/register', 'POST', registrationData)
-        .then(response => response.json())
+        fetchWithTokens('http://localhost:5107/Registration/PostVerify', 'POST', registrationData)
+        .then(response => {
+            if (response.ok) {
+                // Registration successful
+                return response.json(); // Parse the response JSON
+            } else {
+                // Registration failed, throw an error with the response message
+                return response.json().then(data => { throw new Error(data.message); });
+            }
+        })
         .then(data => {
-            // Handle response from the server
-            console.log(data);
-            // For demonstration, let's show an alert
-            alert('Account created successfully!');
+            // Show success message from the server response
+            alert(data.message);
+
+            // Call function to generate account information view
+            generateAccountInfoView();
         })
         .catch(error => {
             console.error('Error:', error);
             // Show an alert for any errors
-            alert('Error occurred while creating account!');
+            alert(error.message || 'Error occurred while creating account!');
         });
     } else {
         // If the email or username input is invalid, show an error message
-        alert('Invalid email or username!');
+        alert('Invalid email!');
     }
+
+}
+
+function generateAccountInfoView() {
+    // Here you can write code to dynamically generate the view for inputting account information
+    // For simplicity, let's just show an alert for now
+    alert("Generating account information view...");
 }
