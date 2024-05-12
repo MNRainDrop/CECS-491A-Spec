@@ -170,7 +170,7 @@ function showOTPView() {
 function showMainContent() {
     changeCSS();
     var dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Work in progresss: Security, Vehicle Profile, and Service Log</p>\n        </div>\n    ";
+    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Features include: Vehicle Profile, Service Log, VehicleMarketPlace, Car Health Rating and more!\n        </div>\n    ";
 };
 
 function unhideNavigation() {
