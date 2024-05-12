@@ -9,8 +9,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
     public interface IAccountRecoveryService
     {
-        IResponse EnableUserAccount(string userName);
-        IResponse DisableUserAccount(string userName);
         IResponse RecoverUserAccount(string userName);
     }
 }

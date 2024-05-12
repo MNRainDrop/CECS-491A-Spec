@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.UserAdministration.Targets;
 
-namespace TeamSpecs.RideAlong.UserAdministration.Targets
+namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
-    public class SqlDbUserRecoveryTarget
+    public class SqlDbUserRecoveryTarget : ISqlDbUserRecoveryTarget
     {
         private readonly ISqlServerDAO _dao;
 
@@ -20,7 +21,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
 
         public IResponse retrieveAltEmail(string email)
         {
+            IResponse response = new Response();
 
+
+
+            return response;
         }
 
 
