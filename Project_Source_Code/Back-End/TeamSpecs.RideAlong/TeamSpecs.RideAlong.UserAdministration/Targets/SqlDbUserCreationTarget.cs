@@ -25,7 +25,18 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
     {
         #region Variables
         IResponse response = new Response();
-        var query = "";
+        // If user exists on either UserAccount or UserProfile, the table name will be listed and number 1 [UserAccount, 1]
+        string query = @"
+            SELECT 'UserAccount' AS Source, UserName AS UserName
+            FROM UserAccount
+            WHERE UserName = @UserName
+
+
+            UNION
+    
+            SELECT 'UserProfile' AS Source, AltUserName AS UserName
+            FROM UserProfile
+            WHERE AltUserName = @UserName;"; 
         SqlCommand cmd = new SqlCommand();
         #endregion
 
@@ -33,22 +44,8 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         try
         {
             #region Check if user is fully registered Sql Generation 
-
-            // If user exists on either UserAccount or UserProfile, the table name will be listed and number 1 [UserAccount, 1]
-
-            query = @"
-                SELECT 'UserAccount' AS Source, UserName AS UserName
-                FROM UserAccount
-                WHERE UserName = @UserName
-
-
-                UNION
-    
-                SELECT 'UserProfile' AS Source, AltUserName AS UserName
-                FROM UserProfile
-                WHERE AltUserName = @UserName;";
             cmd.CommandText = query;
-            cmd.Parameters.AddWithValue("@UserName", email); ;
+            cmd.Parameters.AddWithValue("@UserName", email);
             #endregion
         }
         catch
@@ -359,27 +356,3 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
     }
 
 }
-
-// https://stackoverflow.com/questions/45027609/cant-insert-0-values-using-a-parameterized-query
-
-/*
- * -- Table: UserAccount
-CREATE TABLE UserAccount (
-    UID bigint  NOT NULL IDENTITY(0, 1),
-    UserName varchar(50)  NOT NULL,
-    Salt int  NOT NULL,
-    UserHash varchar(64)  NOT NULL,
-    CONSTRAINT UserHash UNIQUE (UserHash),
-    CONSTRAINT UserAccount_pk PRIMARY KEY  (UID)
-);
-
--- Table: OTP
-CREATE TABLE OTP (
-    UID bigint  NOT NULL,
-    PassHash varchar(64)  NOT NULL,
-    attempts int  NOT NULL,
-    firstFailedLogin datetime  NOT NULL,
-    CONSTRAINT OTP_pk PRIMARY KEY  (UID)
-);
- * 
- */

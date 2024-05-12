@@ -1,4 +1,4 @@
-@TeamSpecs.RideAlong.ServiceLogEntryPoint_HostAddress = http://localhost:5141
+@TeamSpecs.RideAlong.ServiceLogEntryPoint_HostAddress = http://localhost:5249
 
 GET {{TeamSpecs.RideAlong.ServiceLogEntryPoint_HostAddress}}/weatherforecast/
 Accept: application/json

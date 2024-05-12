@@ -135,6 +135,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemObservabilityEntryPoint", "SystemObservabilityEntryPoint\TeamSpecs.RideAlong.SystemObservabilityEntryPoint.csproj", "{22E49056-BD6E-4A8D-8734-82BA7693B394}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.RequestUserData", "TeamSpecs.RideAlong.RequestUserData\TeamSpecs.RideAlong.RequestUserData.csproj", "{9F3F3DE3-4CC3-4164-AEC9-C5489265305B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.ServiceLogEntryPoint", "TeamSpecs.RideAlong.ServiceLogEntryPoint\TeamSpecs.RideAlong.ServiceLogEntryPoint.csproj", "{4638F160-6B41-4D17-877C-A3855B08B1C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,6 +267,10 @@ Global
 		{9F3F3DE3-4CC3-4164-AEC9-C5489265305B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F3F3DE3-4CC3-4164-AEC9-C5489265305B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F3F3DE3-4CC3-4164-AEC9-C5489265305B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,6 +288,7 @@ Global
 		{F961192D-F036-4BF7-8C67-761E1FC7548C} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{22E49056-BD6E-4A8D-8734-82BA7693B394} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{9F3F3DE3-4CC3-4164-AEC9-C5489265305B} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{4638F160-6B41-4D17-877C-A3855B08B1C9} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}

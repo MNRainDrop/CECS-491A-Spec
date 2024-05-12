@@ -64,7 +64,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             catch
             {
                 response.HasError = true;
-                response.ErrorMessage = "could not execute setting VP uid to null Sql";
+                response.ErrorMessage = "Could not execute setting VP uid to null Sql";
                 return response;
             }
             #endregion
@@ -102,7 +102,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             catch
             {
                 response.HasError = true;
-                response.ErrorMessage = "could not generate deleting UID Sql";
+                response.ErrorMessage = "Could not generate deleting UID Sql";
                 return response;
             }
             #endregion
