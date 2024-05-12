@@ -57,6 +57,7 @@ function generateAccountDeletionButton(content) {
         alert("Account deletion button clicked");
         //add function here to make it do something 
         
+        
     });
     content.appendChild(button);
 }
@@ -70,36 +71,21 @@ function generateUserInfoRequestButton(content) {
         event.stopImmediatePropagation();
         const buttons = document.getElementById("vehicle-details-buttons");
         alert("Info request button clicked");
-        //add function here to make it do something 
+        //add function here to make it do something
+        RequestingInfo();
+         
         
     });
     content.appendChild(button);
 }
 
 function RequestingInfo(){
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetVehicleMarketplace', 'POST',currPage)
+    fetchWithTokens('http://localhost:8004/RequestUserData/UserDataRequest', 'POST',"")
     .then(function (response) {
         if (response.status == 200) { 
             response.json()
             .then(function(data) {
-                // Check if data is an array or object
-                if (data.length == 0 && parseInt(document.getElementById('current-page').innerText) != 1)
-                    {
-                        decrementPages();
-                        displayMarketplace();
-                        return;
-                    }
-                else if (Array.isArray(data) && data.length > 0) {
-                    //alert("VP's retrieved");
-                    exrtactData(data);
-                    var vehicles = document.getElementsByClassName('vehicle-listings');
-                    for (let i = 0; i < vehicles.length; i++) {
-                        vehicles[i].addEventListener('click', (event) => {
-                            event.stopPropagation();
-                            displayDetailMarketplace(vehicles[i].id);
-                        })
-                    }
-                } 
+                alert("Email sent");
             })
             .catch(function (error) {
                 alert("Error parsing JSON: " + error);

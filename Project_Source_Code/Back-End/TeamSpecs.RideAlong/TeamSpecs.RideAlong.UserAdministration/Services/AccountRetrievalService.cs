@@ -14,12 +14,12 @@ namespace TeamSpecs.RideAlong.UserAdministration
 {
     public class AccountRetrievalService : IAccountRetrievalService
     {
-        private SqlDbUserRetrievalTarget _target;
+        private ISqlDbUserRetrievalTarget _target;
         private readonly IMailKitService _mailKitService;
-        private JsonFileDAO _JsonFileDao;
+        private IJsonFileDAO _JsonFileDao;
 
 
-        public AccountRetrievalService(SqlDbUserRetrievalTarget target, IMailKitService mailKitService, JsonFileDAO JsonFileDao)
+        public AccountRetrievalService(ISqlDbUserRetrievalTarget target, IMailKitService mailKitService, IJsonFileDAO JsonFileDao)
         {
             _target = target;
             _mailKitService = mailKitService;
