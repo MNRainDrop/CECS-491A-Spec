@@ -9,7 +9,7 @@ using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class RegistrationController : ControllerBase
     {

@@ -142,5 +142,42 @@ function submitAccountInfo() {
     var alternateEmail = document.querySelector(".account-info-container input[type='email']").value;
     var accountType = document.querySelector(".account-info-container select").value;
     
-    alert("OTP: " + otp + "\nDate of Birth: " + dob + "\nAlternate Email: " + alternateEmail + "\nAccount Type: " + accountType);
+// Validate the OTP
+if (!isValidOTP(otp)) {
+    alert("Invalid OTP!");
+    return;
+}
+
+// Validate the alternate email
+if (!isValidEmail(alternateEmail)) {
+    alert("Invalid alternate email!");
+    return;
+}
+
+   // Construct the registration data object
+   var registrationData = {
+    otp: otp,
+    dob: dob,
+    alternateEmail: alternateEmail,
+    accountType: accountType
+};
+
+// Send the registration request to the server
+fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', registrationData)
+.then(response => {
+    if (response.ok) {
+        // Registration successful
+        alert("Account created successfully! You can now log in.");
+        // Redirect the user to the main page
+        window.location.href = "mainPage.html"; // Replace "mainPage.html" with the actual URL of your main page --> config file
+    } else {
+        // Registration failed, get the error message from the response
+        return response.json().then(data => { throw new Error(data.message); });
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    // Show an alert for any errors
+    alert(error.message || 'Error occurred while creating account!');
+});
 }
