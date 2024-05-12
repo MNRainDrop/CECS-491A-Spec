@@ -5,10 +5,13 @@ using System.Data;
 using System.Security.Claims;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Reflection;
+using System;
 
 namespace TeamSpecs.RideAlong.UserAdministration;
 
-public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
+public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
 {
     private readonly ISqlServerDAO _dao;
 
@@ -70,20 +73,30 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         #endregion
 
         #region If user does not exist in DB
-        if (response.ReturnValue.Count == 0) 
+        if (response.ReturnValue is not null && response.ReturnValue.Count == 0)
         {
             response.HasError = false;
             return response;
         }
         #endregion
 
-        // If user exists as AltUserName
-        if (response.ReturnValue.Any(r => ((DataRow)r)["Source"].ToString() == "UserProfile"))
+
+        #region If user has same altUserName as email arguement
+        if (response.ReturnValue is not null && response.ReturnValue.ToList()[0] is object[] array)
         {
-            response.HasError = true;
-            response.ErrorMessage = "Email exists as alt. UserName";
-            return response;
+            var check = array[0].ToString() == "UserProfile";
+
+            // If user exists as AltUserName
+            if (check)
+            {
+
+                response.HasError = true;
+                response.ErrorMessage = "Email exists as alt. UserName";
+                return response;
+            }
         }
+        #endregion
+
 
         query = "";
         cmd = new SqlCommand();
@@ -248,7 +261,7 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
                 new SqlParameter("@FirstFailedLogin", currentUtcTime)
             };
             sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(updateOtpSql, otpParams));
-        #endregion       
+            #endregion
         }
         catch
         {
@@ -286,26 +299,65 @@ public class SqlDbUserCreationTarget: ISqlDbUserCreationTarget
         return response;
     }
 
-    public IResponse CreateDefaultUser()
+    public IResponse CreateUserProfile(string email, IProfileUserModel profile)
     {
-        var response = new Response();
+        IResponse response = new Response();
+        ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands
+        = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
 
+        #region CreateUserProfile Sql generation 
+        try
+        {
+            string query = $@"
+                INSERT INTO UserProfile (UID, DateOfBirth, AltUserName, DateCreated)
+                VALUES ((SELECT UID FROM UserAccount Where UserName = @UserName), @DateOfBirth, @AlternateUserName, @DateCreated)
+            ";
+            var  profileParameters = new HashSet<SqlParameter>
+            {
+                new SqlParameter("@UserName", email),
+                new SqlParameter("@DateOfBirth", profile.DateOfBirth) ,
+                new SqlParameter("@AlternateUserName", profile.AlternateUserName),
+                new SqlParameter("@DateCreated", profile.DateCreated)
+            };
+            sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(query, profileParameters));
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not generate create userProfile tables.";
+            return response;
+        }
+        #endregion
+
+        #region CreateUserProfile Sql Exection
+
+        try
+        {
+            var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+            if (daoValue != 0)
+            {
+                response.ReturnValue = new List<object>();
+                response.ReturnValue.Add(daoValue);
+            }
+            else
+            {
+                throw new Exception("Rows not updated");
+            }
+        }
+        catch
+        {
+            response.HasError = true;
+            response.ErrorMessage = "Could not execute create userProfile tables.";
+            return response;
+
+        }
+
+        #endregion
+
+        response.HasError = false;
         return response;
     }
 
-    public IResponse CreateVendorUser()
-    {
-        var response = new Response();
-
-        return response;
-    }
-
-    public IResponse CreateFleetUser()
-    {
-        var response = new Response();
-
-        return response;
-    }
 }
 
 // https://stackoverflow.com/questions/45027609/cant-insert-0-values-using-a-parameterized-query

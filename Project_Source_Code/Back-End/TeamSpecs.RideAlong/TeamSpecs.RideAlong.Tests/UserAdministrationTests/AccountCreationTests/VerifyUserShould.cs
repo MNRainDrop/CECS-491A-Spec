@@ -22,7 +22,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests.AccountCrea
     {
         private static readonly IConfigServiceJson configService = new ConfigServiceJson();
         private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
-        private static readonly JsonFileDAO dao2 = new JsonFileDAO();
+        private static readonly IJsonFileDAO dao2 = new JsonFileDAO();
         private static readonly IHashService hashService = new HashService();
         private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
         private static readonly ILogService logService = new LogService(logTarget, hashService);
@@ -41,7 +41,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.UserAdministrationTests.AccountCrea
         {
             #region Arrange
             var timer = new Stopwatch();
-            var userName = "jmichael272@yahoo.com";
+            var userName = "jasonbarber3@aol.com";
             IResponse response;
             #endregion
 

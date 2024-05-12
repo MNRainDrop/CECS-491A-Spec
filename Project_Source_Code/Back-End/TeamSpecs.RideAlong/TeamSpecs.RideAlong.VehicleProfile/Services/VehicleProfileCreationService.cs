@@ -64,8 +64,8 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
 
-        var vehicle = new VehicleProfileModel(vin, userAccount.UserId, licensePlate, (!string.IsNullOrWhiteSpace(make)) ? make : "", (!string.IsNullOrWhiteSpace(model)) ? model : "", year);
-        var vehicleDetails = new VehicleDetailsModel(vin, (!string.IsNullOrWhiteSpace(color)) ? color : "", (!string.IsNullOrWhiteSpace(description)) ? description : "");
+        var vehicle = new VehicleProfileModel(vin.ToUpper(), userAccount.UserId, licensePlate.ToUpper(), (!string.IsNullOrWhiteSpace(make)) ? make.ToUpper() : "", (!string.IsNullOrWhiteSpace(model)) ? model.ToUpper() : "", year);
+        var vehicleDetails = new VehicleDetailsModel(vin.ToUpper(), (!string.IsNullOrWhiteSpace(color)) ? color : "", (!string.IsNullOrWhiteSpace(description)) ? description : "");
 
         return CreateVehicleProfile(vehicle, vehicleDetails, userAccount);
     }
@@ -99,10 +99,6 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
                 vehicleDetails.VIN = vehicle.VIN;
             }
         }
-        // Make can be null
-        // Model can be null
-        // Color can be null
-        // Description can be null
         if (userAccount is null)
         {
             throw new ArgumentNullException(nameof(userAccount));
@@ -121,6 +117,12 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         #endregion
 
         #region Write vehicle to database
+
+        vehicle.LicensePlate = vehicle.LicensePlate.ToUpper();
+        vehicle.VIN = vehicle.VIN.ToUpper();
+        vehicle.Make = vehicle.Make.ToUpper();
+        vehicle.Model = vehicle.Model.ToUpper();
+        vehicleDetails.VIN = vehicleDetails.VIN.ToUpper();
         // Check if vehicle is in database
         // if vehicle is in the database, change the owner to the new owner
         // if vehicle is not in the database, write a new entry for the vehicle

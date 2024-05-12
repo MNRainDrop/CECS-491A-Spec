@@ -405,3 +405,4 @@ RideAlong-config.*.xml
 Project_Source_Code/Back-End/TeamSpecs.RideAlong/RideAlongConfiguration.json
 *.bat
 *.config.json
+package*.json

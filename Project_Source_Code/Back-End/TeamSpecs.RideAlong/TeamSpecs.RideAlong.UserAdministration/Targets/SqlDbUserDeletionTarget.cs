@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
@@ -19,67 +21,112 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             _dao = dao;
         }
 
-        public IResponse DeleteUserAccountSql(string userName)
+        public IResponse DeleteVehicleProfiles(long uid)
         {
-            /*
-             * Revise SQL pullled from UserTarget --> needs to be reivsed
-             */
-
-
-            #region Validate arguments
-            if (string.IsNullOrEmpty(userName))
-            {
-                throw new ArgumentNullException(nameof(userName));
-            }
-            #endregion
-
-            #region Default sql setup
-            var commandSql = "DELETE FROM ";
-            var tableSql = "UserAccount ";
-            var whereSql = "WHERE UserName = @UserName";
-            #endregion
-
-
+            IResponse response = new Response();
             var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
-            var response = new Response();
+            string query = @"
+            UPDATE VehicleProfile
+            SET Owner_UID = NULL
+            WHERE Owner_UID = @UID;";
 
-            // 
+            #region Sql Generation 
             try
             {
-                // create new hash set of SqlParameters
-                var parameters = new HashSet<SqlParameter>()
-            {
-                new SqlParameter("@UserName", userName)
-            };
+                // Parameters for the query
+                var parameters = new HashSet<SqlParameter>
+                {
+                    new SqlParameter("@UID", uid)
+                };
 
-                var sqlString = commandSql + tableSql + whereSql;
-
-                sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
+                // Add query and parameters to the list
+                sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(query, parameters));
             }
             catch
             {
                 response.HasError = true;
-                response.ErrorMessage = "Could not generate sql to delete user";
+                response.ErrorMessage = "could not generate setting VP Uid to null Sql";
                 return response;
             }
+            #endregion
 
-            // DAO Executes the command
+            #region Execute Write 
             try
             {
                 var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
-                response.ReturnValue = new List<object>()
-            {
-                (object) daoValue
-            };
-                response.HasError = false;
+                if (daoValue == 0)
+                {
+                    response.HasError = true;
+                    response.ErrorMessage = "UID was not found";
+                    return response;
+                }
             }
             catch
             {
                 response.HasError = true;
-                response.ErrorMessage = "Account Deletion execution failed";
+                response.ErrorMessage = "could not execute setting VP uid to null Sql";
                 return response;
             }
+            #endregion
 
+            response.HasError = false;
+            return response;
+        }
+
+        public IResponse DeleteUserAccount(long uid)
+        {
+            IResponse response = new Response();
+            var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
+            string query = @"
+                DELETE FROM Listings WHERE ownerUID = @UID;
+                DELETE FROM Parts WHERE ownerUID = @UID;
+                DELETE FROM BuyRequest WHERE buyerUID = @UID;
+                DELETE FROM UserDetails WHERE UID = @UID;
+                DELETE FROM UserProfile WHERE UID = @UID;
+                DELETE FROM OTP WHERE UID = @UID;
+                DELETE FROM NotificationObject WHERE UID = @UID;
+                DELETE FROM NotificationCenter WHERE UID = @UID;
+                DELETE FROM UserAccount WHERE UID = @UID;
+            ";
+
+            #region Generate Deletion Sql
+            try
+            {
+                var parameters = new HashSet<SqlParameter>
+                {
+                    new SqlParameter("@UID", uid)
+                };
+
+                sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(query, parameters));
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "could not generate deleting UID Sql";
+                return response;
+            }
+            #endregion
+
+            #region Execute Write
+            try
+            {
+                var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
+                if (daoValue == 0)
+                {
+                    response.HasError = true;
+                    response.ErrorMessage = "UID was not found";
+                    return response;
+                }
+            }
+            catch
+            {
+                response.HasError = true;
+                response.ErrorMessage = "could not execute setting VP uid to null Sql";
+                return response;
+            }
+            #endregion
+
+            response.HasError = false;
             return response;
         }
     }

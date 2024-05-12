@@ -1,8 +1,8 @@
 ﻿namespace TeamSpecs.RideAlong.LoggingLibrary;
 
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
@@ -38,16 +38,40 @@ public class LogService : ILogService
         string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
         //changed to work with log object
-        ILog log = new Log(time , logLevel, logCategory, logContext, logHash, userHash);
+        ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
         return _logTarget.WriteLog(log);
     }
-
-    public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null)
+    /// <summary>
+    /// Writes async Log to DB. Valid Log Levels: (Info, Debug, Warning, Error). Valid Categories: (View, Business, Server, Data, DataStore)
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="logCategory"></param>
+    /// <param name="logContext"></param>
+    /// <param name="userHash"></param>
+    /// <returns>Task with a bool indicating success or failure</returns>
+    public async Task<IResponse> CreateLogAsync(string logLevel, string logCategory, string logContext, string? userHash = null, CancellationToken ctoken = default)
     {
+        // Set up log details
         DateTime time = DateTime.UtcNow;
         string logDetails = time.ToString() + logLevel + logCategory + logContext + userHash;
         string logHash = createLogHash(logDetails);
         ILog log = new Log(time, logLevel, logCategory, logContext, logHash, userHash);
-        return await Task.Run(() => _logTarget.WriteLog(log));
+
+        // Set up tcs
+        var tcs = new TaskCompletionSource<IResponse>();
+        try
+        {
+            ctoken.ThrowIfCancellationRequested();
+            tcs.SetResult(_logTarget.WriteLog(log));
+        }
+        catch (Exception ex)
+        {
+            IResponse failResponse = new Response();
+            failResponse.ErrorMessage = ex.Message;
+            tcs.SetResult(failResponse);
+        }
+
+        await tcs.Task;
+        return tcs.Task.Result;
     }
 }

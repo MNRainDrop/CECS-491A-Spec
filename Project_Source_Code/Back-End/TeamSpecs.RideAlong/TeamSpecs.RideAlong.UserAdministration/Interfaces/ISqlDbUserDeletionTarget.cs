@@ -4,6 +4,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
     public interface ISqlDbUserDeletionTarget
     {
-        IResponse DeleteUserAccountSql(string userName);
+        IResponse DeleteUserAccount(long uid);
+        IResponse DeleteVehicleProfiles(long uid);
     }
 }

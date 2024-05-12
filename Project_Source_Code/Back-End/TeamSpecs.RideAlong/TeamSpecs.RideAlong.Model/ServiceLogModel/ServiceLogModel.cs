@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TeamSpecs.RideAlong.Model.ServiceLogModel
+﻿namespace TeamSpecs.RideAlong.Model.ServiceLogModel
 {
     public class ServiceLogModel : IServiceLogModel
     {
@@ -14,7 +8,7 @@ namespace TeamSpecs.RideAlong.Model.ServiceLogModel
         public DateTime Date { get; set; }
         public string Description { get; set; }
         public int? Mileage { get; set; }
-        public string VIN { get; set; }
+        public string? VIN { get; set; }
 
         public ServiceLogModel(string category, string part, DateTime date, string description, int? mileage, string vin)
         {
@@ -47,6 +41,13 @@ namespace TeamSpecs.RideAlong.Model.ServiceLogModel
 
         public ServiceLogModel()
         {
+            ServiceLogID = null;
+            Category = string.Empty;
+            Part = string.Empty;
+            Date = DateTime.MinValue;
+            Description = string.Empty;
+            Mileage = 0;
+            VIN = null;
         }
     }
 }

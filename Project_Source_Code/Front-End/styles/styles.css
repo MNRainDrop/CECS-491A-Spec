@@ -189,9 +189,10 @@ nav:not(.hidden) {
 #pages > li:hover {
     cursor:pointer;
 }
-
+#pages > p {
+    font-weight: bold;
+}
 
 body {
     font-family: "Poppins", sans-serif;
 }
-

@@ -21,4 +21,6 @@ public sealed class RideAlongConfigModel
 
     [JsonPropertyName("VehicleMarketplaceManager")]
     public required VehicleMarketplaceManager VEHICLE_MARKETPLACE_MANAGER { get; set; }
+    [JsonPropertyName("SystemObservability")]
+    public required SystemObservability SYSTEM_OBSERVABILITY { get; set; }
 }

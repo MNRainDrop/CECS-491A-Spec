@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var userAdmin = document.getElementById("userAdmin");
     userAdmin.addEventListener("click", generateUserAdministration);
+    var usageDashboardNav = document.getElementById('usage-dashboard-view');
+    usageDashboardNav.addEventListener('click', generateUsageDashboardView);
 });
 
 function generateRentalDefaultView() {

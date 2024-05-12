@@ -1,7 +1,10 @@
 ﻿using TeamSpecs.RideAlong.Model;
-namespace TeamSpecs.RideAlong.UserAdministration;
 
-public interface IAccountDeletionService
+namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
-    IResponse DeleteUserAccount(IAccountUserModel userAccount);
+    public interface IAccountDeletionService
+    {
+        IResponse DeleteUser(IAccountUserModel model);
+        IResponse DeleteVehicles(IAccountUserModel model);
+    }
 }

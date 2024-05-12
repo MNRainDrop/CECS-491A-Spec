@@ -10,4 +10,6 @@ public interface IUserTarget
     IResponse EnableUserAccountSql(string userName);
     IResponse DisableUserAccountSql(string userName);
     IResponse RecoverUserAccountSql(string userName);
+    IResponse GetUpdatedUserSql(IAccountUserModel userModel);
+    IResponse PostUpdatedUserSql(IAccountUserModel userAccount, string address, string name, string phone, string accountType);
 }
