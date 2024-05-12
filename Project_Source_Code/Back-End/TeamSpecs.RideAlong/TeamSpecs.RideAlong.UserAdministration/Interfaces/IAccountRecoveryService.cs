@@ -9,6 +9,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
     public interface IAccountRecoveryService
     {
+        IResponse getUserRecoveryEmail(string email);
         IResponse RecoverUserAccount(string userName);
     }
 }

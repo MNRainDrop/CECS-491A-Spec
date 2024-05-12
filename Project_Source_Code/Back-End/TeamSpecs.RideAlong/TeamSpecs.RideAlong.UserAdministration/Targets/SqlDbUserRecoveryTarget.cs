@@ -26,7 +26,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             #region Varaibles 
             IResponse response = new Response();
             SqlCommand cmd = new SqlCommand();
-            string query = @"SELECT UP.altUserName
+            string query = @"SELECT UP.altUserName ,UA.Salt
                 FROM UserAccount UA
                 JOIN UserProfile UP ON UA.UID = UP.UID
                 WHERE UA.UserName = @UserName;";

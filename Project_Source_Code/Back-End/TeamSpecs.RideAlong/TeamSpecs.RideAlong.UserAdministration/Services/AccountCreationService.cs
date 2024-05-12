@@ -76,22 +76,22 @@ public class AccountCreationService : IAccountCreationService
 
         emailBody = $@"
 
-        Dear {email},
+            Dear {email},
 
-        Thank you for choosing to register with RideAlong!
+            Thank you for choosing to register with RideAlong!
 
-        To complete your registration and ensure the security of your account, we require you to verify your email address. Below is your One-Time Password (OTP):
+            To complete your registration and ensure the security of your account, we require you to verify your email address. Below is your One-Time Password (OTP):
 
-        OTP: {otp}
+            OTP: {otp}
 
-        Please enter this OTP on the registration page to confirm your email address and finalize your registration process. This OTP is valid for 2 hours, so please ensure you complete the verification process promptly.
+            Please enter this OTP on the registration page to confirm your email address and finalize your registration process. This OTP is valid for 2 hours, so please ensure you complete the verification process promptly.
 
-        If you didn't request this OTP or if you have any concerns about your account security, please contact our support team immediately!
+            If you didn't request this OTP or if you have any concerns about your account security, please contact our support team immediately!
 
-        Thank you for choosing RideAlong. We look forward to serving you!
+            Thank you for choosing RideAlong. We look forward to serving you!
         
-        Best regards,
-        RideAlong Team";
+            Best regards,
+            RideAlong Team";
 
         #region Attempt to send email 
         try
@@ -152,17 +152,18 @@ public class AccountCreationService : IAccountCreationService
     public IResponse createUserProfile(string userName, IProfileUserModel profile)
     {
 
-        #region Validate arguments
-        if (string.IsNullOrWhiteSpace(userName))
-        {
-            _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
-            throw new ArgumentException($"{nameof(userName)} must be valid");
-        }
-        #endregion
-
         IResponse response = new Response();
         var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
         var userHash = _hashService.hashUser(userName, (int)userPepper);
+
+        #region Validate arguments
+        if (string.IsNullOrWhiteSpace(userName))
+        {
+            response.HasError = true;
+            _logService.CreateLogAsync("Error", "Data", "Invalid Data Provided", null);
+            return response;
+        }
+        #endregion
 
         response = _userTarget.CreateUserProfile(userName, profile);
 

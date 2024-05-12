@@ -25,6 +25,15 @@ namespace TeamSpecs.RideAlong.UserAdministration.Services
             return response;
         }
 
+        public IResponse setRecoveryOtp()
+        {
+            IResponse response = new Response();
+
+
+
+            return response;
+        }
+
         public IResponse RecoverUserAccount(string userName)
         {
             IResponse response = new Response();
