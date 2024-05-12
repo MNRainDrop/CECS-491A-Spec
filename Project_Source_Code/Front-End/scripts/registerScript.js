@@ -228,8 +228,8 @@ fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', acc
     }
 })
 .catch(error => {
-    console.error('Error:', error);
+    console.error('Error:', response.text());
     // Show an alert for any errors
-    alert(error.message || 'Error occurred while creating account!');
+    alert(response.text()|| 'Error occurred while creating account!');
 });
 }

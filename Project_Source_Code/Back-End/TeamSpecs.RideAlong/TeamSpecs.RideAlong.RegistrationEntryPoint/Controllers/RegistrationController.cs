@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Formatters;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Model.AccountRequestModel;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
@@ -51,12 +52,12 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
 
         [HttpPost]
         [Route("PostCreateUser")]
-        public IActionResult PostAccountCreation([FromBody]DateTime dateOfBirth, string altEmail, string email, string otp, string acccountType)
+        public IActionResult PostAccountCreation(AccountCreationRequestModel model)
         {
             IResponse response = new Response();
-            IProfileUserModel profile = new ProfileUserModel(dateOfBirth, altEmail);
+            IProfileUserModel profile = new ProfileUserModel(model.DateOfBirth, model.AltEmail);
 
-            response = _accountCreationManager.RegisterUser(profile, email, otp, acccountType);
+            response = _accountCreationManager.RegisterUser(profile, model.Email, model.Otp, model.AccountType);
 
             // If DB or sql generation fails
             if (response.HasError && response.ErrorMessage is not null && response.ErrorMessage.Contains("Could not"))
