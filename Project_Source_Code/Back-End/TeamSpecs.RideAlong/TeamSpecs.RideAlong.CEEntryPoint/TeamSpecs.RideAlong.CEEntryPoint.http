@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.CEEntryPoint_HostAddress = http://localhost:5003
+
+GET {{TeamSpecs.RideAlong.CEEntryPoint_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
