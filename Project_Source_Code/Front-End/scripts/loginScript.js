@@ -22,8 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitUsernameButton = document.getElementById("login-button");
     submitUsernameButton.addEventListener("click", submitUsername);
 
-    var createAccountButton = document.getElementById("registration-button");
-    createAccountButton.addEventListener("click", createAccount);
 });
 
 
@@ -180,7 +178,3 @@ function unhideNavigation() {
     var navigation = document.getElementById("navigation");
     navigation.classList.remove("hidden");
 };
-
-function createAccount() {
-    alert("create account");
-}
