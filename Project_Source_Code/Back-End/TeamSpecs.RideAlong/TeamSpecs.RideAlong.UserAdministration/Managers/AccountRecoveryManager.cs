@@ -136,7 +136,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             #endregion
 
             #region Upload new OTP 
-
+            //response = _accountRecoveryService.setOTP();
             #endregion
 
             response.HasError = false;
