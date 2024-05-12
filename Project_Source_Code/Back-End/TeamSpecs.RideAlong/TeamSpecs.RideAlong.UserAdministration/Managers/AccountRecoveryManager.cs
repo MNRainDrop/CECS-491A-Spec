@@ -151,7 +151,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 return false;
 
             // Regular expression pattern for email validation
-            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]{1,}$";
 
             // Check if the email matches the pattern
             return Regex.IsMatch(email, pattern);
