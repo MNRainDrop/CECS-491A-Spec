@@ -66,6 +66,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
             throw new ArgumentNullException(nameof(userAccount.UserHash));
         }
         #endregion
+        _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {userAccount.UserName} attempted to retrieve {vehicleProfile.VIN} details.", userAccount.UserHash);
 
         #region Call Services
         IResponse response;
@@ -90,13 +91,13 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not retrieve vehicle profile details." + response.ErrorMessage;
+            response.ErrorMessage = $"VehicleProfile: {userAccount.UserName} Could not retrieve vehicle profile details." + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful retrieval of vehicle profile details.";
+            response.ErrorMessage = $"VehicleProfile: {userAccount.UserName} Successful retrieval of vehicle profile details.";
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, userAccount.UserHash);
         #endregion
         return response;
     }
@@ -115,6 +116,7 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
             throw new ArgumentNullException(nameof(userAccount.UserHash));
         }
         #endregion
+        _logService.CreateLogAsync("Info", "Business", $"VehicleProfile: {userAccount.UserName} attempted to view vehicle profile view.", userAccount.UserHash);
 
         #region Call services
         var timer = new Stopwatch();
@@ -136,13 +138,13 @@ public class VehicleProfileRetrievalManager : IVehicleProfileRetrievalManager
         #region Log the action to the database
         if (response.HasError)
         {
-            response.ErrorMessage = "Could not retrieve vehicle profile details." + response.ErrorMessage;
+            response.ErrorMessage = $"VehicleProfile: {userAccount.UserName} Could not retrieve vehicle profile details." + response.ErrorMessage;
         }
         else
         {
-            response.ErrorMessage = "Successful retrieval of vehicle profile details.";
+            response.ErrorMessage = $"VehicleProfile: {userAccount.UserName} Successful retrieval of vehicle profile details.";
         }
-        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Server", response.ErrorMessage, userAccount.UserHash);
+        _logService.CreateLogAsync(response.HasError ? "Error" : "Info", "Business", response.ErrorMessage, userAccount.UserHash);
         #endregion
 
         return response;

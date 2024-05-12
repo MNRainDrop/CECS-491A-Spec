@@ -447,6 +447,7 @@
     
     async function generateModifyView() {
         generateVehicleForm();
+        document.getElementById('vin').readOnly = true;
         const vin = document.getElementsByClassName('vin')[0].innerText;
         var formData = await postGetVehicleDetailsFromAPI(vin);
         if (formData) {

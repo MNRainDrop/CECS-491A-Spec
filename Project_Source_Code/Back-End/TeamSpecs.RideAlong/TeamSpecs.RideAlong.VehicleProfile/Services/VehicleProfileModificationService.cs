@@ -58,6 +58,12 @@ public class VehicleProfileModificationService : IVehicleProfileModificationServ
         }
         #endregion
 
+        vehicle.LicensePlate = vehicle.LicensePlate.ToUpper();
+        vehicle.VIN = vehicle.VIN.ToUpper();
+        vehicle.Make = vehicle.Make.ToUpper();
+        vehicle.Model = vehicle.Model.ToUpper();
+        vehicleDetails.VIN = vehicleDetails.VIN.ToUpper();
+
         var response = _modifyVehicleTarget.ModifyVehicleProfileSql(vehicle, vehicleDetails);
 
         #region Log to database
