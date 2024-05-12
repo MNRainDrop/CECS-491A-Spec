@@ -225,7 +225,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 return false;
 
             // Regular expression pattern for email validation
-            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            string pattern = @"^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]{1,}$";
 
             // Check if the email matches the pattern
             return Regex.IsMatch(email, pattern);
@@ -343,18 +343,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             // ^^^ above needs to be edited to correlate to actual permissions
 
             return claims;
-        }
-
-        private int getIntFromBitArray(BitArray bitArray)
-        {
-
-            if (bitArray.Length > 32)
-                throw new ArgumentException("Argument length shall be at most 32 bits.");
-
-            int[] array = new int[1];
-            bitArray.CopyTo(array, 0);
-            return array[0];
-
         }
     }
 }

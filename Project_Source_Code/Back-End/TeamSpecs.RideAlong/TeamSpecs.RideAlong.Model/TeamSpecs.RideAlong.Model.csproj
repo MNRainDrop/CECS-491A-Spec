@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AccountRequestModel\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>
