@@ -61,7 +61,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
 
             //Service 
-            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService,Jsondao);
+            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService);
 
             //Act 
             timer.Start();

@@ -6,5 +6,7 @@ namespace TeamSpecs.RideAlong.UserAdministration
     {
         IResponse RetrieveAccount(long uid);
 
+        IResponse RetrieveAllAccount();
+
     }
 }

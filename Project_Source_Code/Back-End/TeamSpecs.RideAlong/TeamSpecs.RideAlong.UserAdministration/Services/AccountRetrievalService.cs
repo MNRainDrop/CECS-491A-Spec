@@ -16,14 +16,12 @@ namespace TeamSpecs.RideAlong.UserAdministration
     {
         private ISqlDbUserRetrievalTarget _target;
         private readonly IMailKitService _mailKitService;
-        private IJsonFileDAO _JsonFileDao;
 
 
-        public AccountRetrievalService(ISqlDbUserRetrievalTarget target, IMailKitService mailKitService, IJsonFileDAO JsonFileDao)
+        public AccountRetrievalService(ISqlDbUserRetrievalTarget target, IMailKitService mailKitService)
         {
             _target = target;
             _mailKitService = mailKitService;
-            _JsonFileDao = JsonFileDao;
         }
 
         public IResponse RetrieveAccount(long uid)
@@ -73,25 +71,16 @@ namespace TeamSpecs.RideAlong.UserAdministration
 
             }
 
-
-
-
-
-
-
-
-            //Poppulate message to pass to target 
-            
-
-            //sending email
-            //var email = temp2;
-          
-
-
             return response;
-
-
         }
+
+        public IResponse RetrieveAllAccount()
+        {
+            IResponse response;
+            response = _target.RetrieveAllAccountInformation();
+            return response;
+        }
+
 
     }
 }

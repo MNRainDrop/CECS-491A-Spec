@@ -57,5 +57,38 @@ namespace TeamSpecs.RideAlong.AccountDeletionEntryPoint.Controllers
 
         }
 
+
+        [HttpPost]
+        [Route("RetrieveAllAccount")]
+        public IActionResult RetrieveAllAccount()
+        {
+
+            IResponse response;
+            try
+            {
+                response = _manager.RetrieveAllAccount();
+                if (response is not null)
+                {
+                    if (response.HasError)
+                    {
+                        return BadRequest(response.ErrorMessage);
+                    }
+                    else
+                    {
+                        return Ok(response.ReturnValue);
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
     }
 }

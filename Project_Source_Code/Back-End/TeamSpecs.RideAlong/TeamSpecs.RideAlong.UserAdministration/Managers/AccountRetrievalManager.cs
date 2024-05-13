@@ -18,5 +18,12 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             return response;
         
         }
+
+        public IResponse RetrieveAllAccount()
+        {
+            IResponse response;
+            response = _accountRetrievalService.RetrieveAllAccount();
+            return response;
+        }
     }
 }
