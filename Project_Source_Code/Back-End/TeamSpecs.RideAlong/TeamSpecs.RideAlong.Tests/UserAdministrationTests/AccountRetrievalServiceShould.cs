@@ -65,7 +65,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
             //Act 
             timer.Start();
-            response = View.RetrieveAccount(uid);
+            response = View.RetrieveAllAccount();
             timer.Stop();
 
 

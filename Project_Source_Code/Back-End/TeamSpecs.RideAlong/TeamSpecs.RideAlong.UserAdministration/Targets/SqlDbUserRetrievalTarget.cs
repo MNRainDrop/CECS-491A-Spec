@@ -81,7 +81,6 @@ public class SqlDbUserRetrievalTarget : ISqlDbUserRetrievalTarget
         var fromSql = "FROM UserAccount ua ";
         var joinSql = "Inner Join UserProfile ON ua.UID = UserProfile.uid ";
         var joinSql2 = "Inner Join UserDetails ON ua.UID = UserDetails.uid ";
-        var joinSql3 = "Inner Join UserClaim ON ua.UID = UserClaim.uid ";
         #endregion
 
         // Convert parameters into sql
@@ -94,7 +93,7 @@ public class SqlDbUserRetrievalTarget : ISqlDbUserRetrievalTarget
         try
         {
             // create new hash set of SqlParameters
-            var sqlString = commandSql + fromSql + joinSql + joinSql2 + joinSql3;
+            var sqlString = commandSql + fromSql + joinSql + joinSql2;
             sqlCommands.Add(KeyValuePair.Create<string, HashSet<SqlParameter>?>(sqlString, parameters));
         }
         catch
