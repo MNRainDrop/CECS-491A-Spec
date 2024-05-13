@@ -207,7 +207,7 @@ function submitAccountInfo() {
     // Retrieve the values from the input fields within account info container
     var email = accountInfoContainer.querySelector("input[type='text']").value;
     var otp = accountInfoContainer.querySelector("input[type='text'][placeholder='OTP sent to your email']").value;
-    var dob = accountInfoContainer.querySelector("input[type='date']").value;
+    var dob = new Date(accountInfoContainer.querySelector("input[type='date']").value).toISOString();
     var alternateEmail = accountInfoContainer.querySelector("input[type='email']").value;
     var accountType = accountInfoContainer.querySelector("select").value;
     
