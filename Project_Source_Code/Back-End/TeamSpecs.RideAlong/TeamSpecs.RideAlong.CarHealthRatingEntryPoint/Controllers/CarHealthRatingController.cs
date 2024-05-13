@@ -57,22 +57,24 @@ namespace TeamSpecs.RideAlong.CarHealthRatingEntryPoint.Controllers
         public IActionResult GetVehicleProfiles()
         {
             IResponse response;
+            IAccountUserModel user = new AccountUserModel("temp");
             IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
-            IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
-            user.UserId = principal.userIdentity.UID;
-            user.UserHash = principal.userIdentity.userHash;
+            if (principal is not null && principal.userIdentity.userName is not null)
+            {
+                user.UserName = principal.userIdentity.userName;
+                user.UserId = principal.userIdentity.UID;
+                user.UserHash = principal.userIdentity.userHash;
+            }
 
 
             response = _manager.RetrieveValidVehicleProfiles(user);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             if (response.HasError == true)
             {
                 return BadRequest(response.ErrorMessage);
             }
-            else if (response.HasError == false && response.ReturnValue.Count >= 1)
+            else if (response.HasError == false && response.ReturnValue is not null && response.ReturnValue.Count >= 1)
             {
                 var jsonVehicles = JsonSerializer.Serialize(response.ReturnValue);
 
@@ -82,7 +84,6 @@ namespace TeamSpecs.RideAlong.CarHealthRatingEntryPoint.Controllers
             {
                 return Ok("No Vehicle Profiles found.");
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         }
 
@@ -91,12 +92,15 @@ namespace TeamSpecs.RideAlong.CarHealthRatingEntryPoint.Controllers
         public IActionResult GetCalculateCarHealthRating([FromBody] string vin) 
         { 
             IResponse response;
+
             IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
-            IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
-            user.UserId = principal.userIdentity.UID;
-            user.UserHash = principal.userIdentity.userHash;
+            IAccountUserModel user = new AccountUserModel("temp");
+            if (principal is not null && principal.userIdentity.userName is not null)
+            {
+                user.UserName = principal.userIdentity.userName;
+                user.UserId = principal.userIdentity.UID;
+                user.UserHash = principal.userIdentity.userHash;
+            }
 
             response = _manager.CallCalculateCarHealthRating(user, vin);
 
