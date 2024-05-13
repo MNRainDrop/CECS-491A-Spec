@@ -18,3 +18,38 @@
     display: block; /* Make sure the image is displayed as a block element */
     margin: auto; /* Center the image horizontally */
   }
+
+  #detail {
+    display: none;
+    position: fixed;
+    inset: 0px;
+    max-width: 800px;
+    height: fit-content;
+    margin: auto;
+    border-style: solid;
+    border-color: #686A6C;
+    border-width: 1px;
+    background-color: white;
+}
+#detail > h1, h2, p {
+    padding: 10px;
+}
+#detail > ul {
+    list-style-type: none;
+    padding: 10px;
+}
+
+form {
+    margin: 10px;
+    display: justify;
+    justify-content: center;
+}
+
+form > input {
+    display: block;
+    max-width: 800px;
+    min-width: 200px;
+    padding: 2px;
+    margin: 5px;
+    box-sizing: content-box;
+}

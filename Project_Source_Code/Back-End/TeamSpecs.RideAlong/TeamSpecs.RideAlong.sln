@@ -29,6 +29,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleMarketplace", "TeamSpecs.RideAlong.VehicleMarketplace\TeamSpecs.RideAlong.VehicleMarketplace.csproj", "{1FD52138-F096-4F7C-BC20-6C932D387341}"
+	ProjectSection(ProjectDependencies) = postProject
+		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityEndPoint", "SecurityEndPoint\TeamSpecs.RideAlong.SecurityEndPoint.csproj", "{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -82,6 +85,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Vehicle
 		{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0} = {20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}
 		{266F16FE-A585-451E-8F7B-82A8D8B7E7CA} = {266F16FE-A585-451E-8F7B-82A8D8B7E7CA}
 		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB} = {8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}
+		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHealthRatingLibrary", "TeamSpecs.RideAlong.CarHealthRatingLibrary\TeamSpecs.RideAlong.CarHealthRatingLibrary.csproj", "{C4BA1AEE-38F3-4B0D-A983-2F32C0CBA28D}"

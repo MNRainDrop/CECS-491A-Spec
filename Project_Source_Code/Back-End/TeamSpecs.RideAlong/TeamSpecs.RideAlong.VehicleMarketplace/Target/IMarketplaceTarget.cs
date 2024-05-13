@@ -4,14 +4,16 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace;
 
 public interface IMarketplaceTarget
 {
-    public IResponse UploadVehicleToMarketplace(string VIN, int view, string Description, int Status);
+    IResponse UploadVehicleToMarketplace(string VIN, int view, string Description, int Status);
 
-    public IResponse DeleteVehicleFromMarketplace(string VIN);
+    IResponse DeleteVehicleFromMarketplace(string VIN);
 
-    public IResponse ReadAllPublicVehicleProfileSql();
+    IResponse ReadAllPublicVehicleProfileSql(int numOfResults, int page);
 
-    public IResponse SearchMarketplaceVehicleProfile(ICollection<object> searchParameters);
+    IResponse RetrieveDetailVehicleProfileSql(string VIN);
 
-    public IResponse VehicleMarketplaceSendRequestService(INotification buyRequest);
+    IResponse SearchMarketplaceVehicleProfile(ICollection<object> searchParameters);
+
+    IResponse VehicleMarketplaceSendRequestService(string VIN);
 
 }
