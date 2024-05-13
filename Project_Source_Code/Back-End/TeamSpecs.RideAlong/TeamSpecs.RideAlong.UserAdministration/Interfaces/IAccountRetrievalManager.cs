@@ -1,8 +1,8 @@
 ﻿using TeamSpecs.RideAlong.Model;
 
-namespace TeamSpecs.RideAlong.UserAdministration
+namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
-    public interface IAccountRetrievalService
+    public interface IAccountRetrievalManager
     {
         IResponse RetrieveAccount(long uid);
 

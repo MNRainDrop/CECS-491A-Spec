@@ -1,4 +1,4 @@
-namespace RideAlong.DonateYourCarEntryPoint
+namespace TeamSpecs.RideAlong.RequestUserData
 {
     public class WeatherForecast
     {

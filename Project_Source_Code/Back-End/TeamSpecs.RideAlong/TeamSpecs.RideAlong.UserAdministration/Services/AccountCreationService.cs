@@ -37,6 +37,8 @@ public class AccountCreationService : IAccountCreationService
         var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
         var userHash = _hashService.hashUser(email, (int)userPepper);
 
+        _logService.CreateLogAsync("Info", "Business", email + " attempted to create a account confirmation", userHash);
+
         response = _userTarget.CheckDbForEmail(email);
 
         if (response.HasError && response.ErrorMessage == "User exists in the Database")
@@ -144,6 +146,8 @@ public class AccountCreationService : IAccountCreationService
             return response;
         }
 
+        _logService.CreateLogAsync("Info", "Business", email + " has created a account confirmation.", userHash);
+
         return response;
     }
 
@@ -172,6 +176,8 @@ public class AccountCreationService : IAccountCreationService
         }
         #endregion
 
+        _logService.CreateLogAsync("Info", "Business", userName + " attempted to confirm their account", userHash);
+
         response = _userTarget.CreateUserProfile(userName, profile);
 
         if(response.HasError || (response.ReturnValue is not null && response.ReturnValue.Count == 0))
@@ -180,7 +186,7 @@ public class AccountCreationService : IAccountCreationService
             return response;
         }
 
-
+        _logService.CreateLogAsync("Info", "Business", userHash + " has successfully created a account", userHash);
         response.HasError = false;
         return response;
     }

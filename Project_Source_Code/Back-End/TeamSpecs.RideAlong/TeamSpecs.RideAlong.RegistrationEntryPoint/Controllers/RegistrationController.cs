@@ -37,7 +37,7 @@ namespace TeamSpecs.RideAlong.RegistrationEntryPoint.Controllers
             // Database/ sql generation failed
             if(response.HasError && response.ErrorMessage is not null && response.ErrorMessage.Contains("Could not"))
             {
-                return StatusCode(503);
+                return StatusCode(500);
             }
 
             // If returns bad --> user exists OR other issue

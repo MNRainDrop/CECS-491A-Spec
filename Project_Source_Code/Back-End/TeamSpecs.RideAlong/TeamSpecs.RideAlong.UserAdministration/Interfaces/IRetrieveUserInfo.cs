@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
 {
-    public interface ISqlDbUserRetrievalTarget
+    internal interface IRetrieveUserInfo
     {
-        IResponse RetrieveAllUserInformation(long UID);
-
-        IResponse RetrieveAllAccountInformation();
-
     }
 }
