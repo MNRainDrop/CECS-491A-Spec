@@ -45,23 +45,6 @@ function generateModifyButton(content) {
     content.appendChild(button);
 }
 
-
-function generateAccountDeletionButton(content) {
-    var button = document.createElement('input');
-    button.type = 'button';
-    button.value = 'Account Deletion';
-
-    button.addEventListener('click', (event) => {
-        event.stopImmediatePropagation();
-        const buttons = document.getElementById("vehicle-details-buttons");
-        alert("Account deletion button clicked");
-        //add function here to make it do something 
-        
-        
-    });
-    content.appendChild(button);
-}
-
 function generateUserInfoRequestButton(content) {
     var button = document.createElement('input');
     button.type = 'button';
