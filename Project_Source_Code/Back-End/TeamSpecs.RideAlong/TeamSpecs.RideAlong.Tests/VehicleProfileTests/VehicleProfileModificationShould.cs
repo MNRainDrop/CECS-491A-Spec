@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -10,7 +11,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileModificationShould
 {
-    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
     private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();

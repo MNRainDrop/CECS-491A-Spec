@@ -29,6 +29,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleProfile", "TeamSpecs.RideAlong.VehicleProfile\TeamSpecs.RideAlong.VehicleProfile.csproj", "{20C84C49-760E-45B8-8600-61F1F4790856}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.VehicleMarketplace", "TeamSpecs.RideAlong.VehicleMarketplace\TeamSpecs.RideAlong.VehicleMarketplace.csproj", "{1FD52138-F096-4F7C-BC20-6C932D387341}"
+	ProjectSection(ProjectDependencies) = postProject
+		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SecurityEndPoint", "SecurityEndPoint\TeamSpecs.RideAlong.SecurityEndPoint.csproj", "{3E7E4D09-4C81-4DA2-9F99-EBF89A37631F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -63,7 +66,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5BC5D755-BED8-4932-8B85-256320D97C0E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		RideAlongConfiguration.json = RideAlongConfiguration.json
+		RideAlong.config.json = RideAlong.config.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.InventoryManagement", "InventoryManagement\TeamSpecs.RideAlong.InventoryManagement.csproj", "{CFEF364E-E28F-4638-B7B8-0860FFE193F5}"
@@ -82,6 +85,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.Vehicle
 		{20497FB3-CA26-4B5E-9AEB-2951A6BA61C0} = {20497FB3-CA26-4B5E-9AEB-2951A6BA61C0}
 		{266F16FE-A585-451E-8F7B-82A8D8B7E7CA} = {266F16FE-A585-451E-8F7B-82A8D8B7E7CA}
 		{8A3A49EF-AB9F-4C35-A823-01B536DEBCAB} = {8A3A49EF-AB9F-4C35-A823-01B536DEBCAB}
+		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHealthRatingLibrary", "TeamSpecs.RideAlong.CarHealthRatingLibrary\TeamSpecs.RideAlong.CarHealthRatingLibrary.csproj", "{C4BA1AEE-38F3-4B0D-A983-2F32C0CBA28D}"
@@ -107,9 +111,30 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CarHeal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarLibrary", "TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj", "{1227EA0F-F6D9-4812-9050-BF6DC563188C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.DonateYourCarEntryPoint", "RideAlong.DonateYourCarEntryPoint\TeamSpecs.RideAlong.DonateYourCarEntryPoint.csproj", "{8C150363-9864-4010-BC51-0645AA00047D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntryPoints", "EntryPoints", "{7A22D9A7-165F-4580-808F-3F1536D90851}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConfigService", "ConfigService\TeamSpecs.RideAlong.ConfigService.csproj", "{94C5A058-723E-412F-9C38-5299E181A4FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{A810CAD1-59D9-476B-84DB-75DBED542972}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RegistrationEntryPoint", "TeamSpecs.RideAlong.RegistrationEntryPoint\TeamSpecs.RideAlong.RegistrationEntryPoint.csproj", "{FF5B731A-CB8A-4739-8B81-A0C3C468C938}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.AccountDeletionEntryPoint", "TeamSpecs.RideAlong.AccountDeletionEntryPoint\TeamSpecs.RideAlong.AccountDeletionEntryPoint.csproj", "{82DE18F2-CC4E-41E4-B019-63703DD54F9B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.AccountRecoveryEntryPoint", "TeamSpecs.RideAlong.AccountRecoveryEntryPoint\TeamSpecs.RideAlong.AccountRecoveryEntryPoint.csproj", "{F961192D-F036-4BF7-8C67-761E1FC7548C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemObservability", "SystemObservability\TeamSpecs.RideAlong.SystemObservability.csproj", "{55B9C0B1-DC82-49C9-BC07-84BA0708B090}"
+	ProjectSection(ProjectDependencies) = postProject
+		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
+		{4AB88406-3491-4915-AB0F-0952F69C07A1} = {4AB88406-3491-4915-AB0F-0952F69C07A1}
+		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemObservabilityEntryPoint", "SystemObservabilityEntryPoint\TeamSpecs.RideAlong.SystemObservabilityEntryPoint.csproj", "{22E49056-BD6E-4A8D-8734-82BA7693B394}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.ServiceLogEntryPoint", "TeamSpecs.RideAlong.ServiceLogEntryPoint\TeamSpecs.RideAlong.ServiceLogEntryPoint.csproj", "{4638F160-6B41-4D17-877C-A3855B08B1C9}"
 EndProject
 <<<<<<< Updated upstream
 =======
@@ -235,8 +260,6 @@ Global
 		{8C150363-9864-4010-BC51-0645AA00047D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C150363-9864-4010-BC51-0645AA00047D}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< Updated upstream
-=======
 		{94C5A058-723E-412F-9C38-5299E181A4FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94C5A058-723E-412F-9C38-5299E181A4FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94C5A058-723E-412F-9C38-5299E181A4FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -265,15 +288,10 @@ Global
 		{22E49056-BD6E-4A8D-8734-82BA7693B394}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22E49056-BD6E-4A8D-8734-82BA7693B394}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22E49056-BD6E-4A8D-8734-82BA7693B394}.Release|Any CPU.Build.0 = Release|Any CPU
-		{627F8A6A-19C3-43A1-9709-AE47E62AC891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{627F8A6A-19C3-43A1-9709-AE47E62AC891}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{627F8A6A-19C3-43A1-9709-AE47E62AC891}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{627F8A6A-19C3-43A1-9709-AE47E62AC891}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> Stashed changes
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4638F160-6B41-4D17-877C-A3855B08B1C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -286,14 +304,6 @@ Global
 		{34B65107-F7A7-4BB4-9C51-9A035C9BF0D5} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{8C150363-9864-4010-BC51-0645AA00047D} = {7A22D9A7-165F-4580-808F-3F1536D90851}
-<<<<<<< Updated upstream
-=======
-		{FF5B731A-CB8A-4739-8B81-A0C3C468C938} = {7A22D9A7-165F-4580-808F-3F1536D90851}
-		{82DE18F2-CC4E-41E4-B019-63703DD54F9B} = {7A22D9A7-165F-4580-808F-3F1536D90851}
-		{F961192D-F036-4BF7-8C67-761E1FC7548C} = {7A22D9A7-165F-4580-808F-3F1536D90851}
-		{22E49056-BD6E-4A8D-8734-82BA7693B394} = {7A22D9A7-165F-4580-808F-3F1536D90851}
-		{627F8A6A-19C3-43A1-9709-AE47E62AC891} = {7A22D9A7-165F-4580-808F-3F1536D90851}
->>>>>>> Stashed changes
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}

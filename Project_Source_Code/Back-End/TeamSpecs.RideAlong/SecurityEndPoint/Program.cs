@@ -1,13 +1,11 @@
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
+using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Middleware;
 using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Targets;
-using Microsoft.Extensions.DependencyInjection;
-using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -20,7 +18,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IGenericDAO, SqlServerDAO> ();
+builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
+builder.Services.AddScoped<ISqlServerDAO, SqlServerDAO> ();
 builder.Services.AddScoped<IHashService, HashService>();
 builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();

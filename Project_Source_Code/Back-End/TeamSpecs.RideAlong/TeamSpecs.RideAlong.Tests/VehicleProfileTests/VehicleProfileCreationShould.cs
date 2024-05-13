@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Text.Json;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -11,7 +12,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileCreationShould
 {
-    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
+    private static readonly IClaimTarget claimTarget = new ClaimTarget(dao);
+    private static readonly IClaimService claimService = new ClaimService(claimTarget);
     private static readonly ICRUDVehicleTarget createVehicleTarget = new SqlDbVehicleTarget(dao);
     private static readonly IRetrieveVehiclesTarget retrieveVehicleTarget = new SqlDbVehicleTarget(dao);
     private static readonly IRetrieveVehicleDetailsTarget retrieveDetailsTarget = new SqlDbVehicleTarget(dao);
@@ -20,7 +24,7 @@ public class VehicleProfileCreationShould
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
     private static readonly ILogService logService = new LogService(logTarget, hashService);
 
-    private static readonly IVehicleProfileCreationService creationService = new VehicleProfileCreationService(logService, createVehicleTarget);
+    private static readonly IVehicleProfileCreationService creationService = new VehicleProfileCreationService(logService, createVehicleTarget, claimService, configService);
 
     [Fact]
     public void VehicleProfileCreation_CreateVehicleProfileInDatabase_ValidParametersPassedIn_OneVehicleProfileAndVehicleDetailsWritten_Pass()

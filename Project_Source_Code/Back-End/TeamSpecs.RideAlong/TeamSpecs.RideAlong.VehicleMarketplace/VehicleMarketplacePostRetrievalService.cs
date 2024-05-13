@@ -12,10 +12,10 @@ namespace TeamSpecs.RideAlong.VehicleMarketplace
             _target = target;
         }
 
-        public IResponse RetrieveAllPublicPost()
+        public IResponse RetrieveAllPublicPost(int numOfResults, int page)
         {
             IResponse response;
-            response = _target.ReadAllPublicVehicleProfileSql();
+            response = _target.ReadAllPublicVehicleProfileSql(numOfResults,page);
 
             return response;
 

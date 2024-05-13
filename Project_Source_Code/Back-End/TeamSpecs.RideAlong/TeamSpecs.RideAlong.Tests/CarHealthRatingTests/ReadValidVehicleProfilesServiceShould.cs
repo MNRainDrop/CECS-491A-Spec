@@ -11,6 +11,7 @@ using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.CarHealthRatingLibrary;
 using TeamSpecs.RideAlong.VehicleProfile;
+using TeamSpecs.RideAlong.ConfigService;
 
 namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 {
@@ -24,7 +25,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
 
             var hashService = new HashService();
@@ -110,7 +112,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
 
             var hashService = new HashService();
@@ -209,7 +212,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 
             IResponse response;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
 
             var hashService = new HashService();

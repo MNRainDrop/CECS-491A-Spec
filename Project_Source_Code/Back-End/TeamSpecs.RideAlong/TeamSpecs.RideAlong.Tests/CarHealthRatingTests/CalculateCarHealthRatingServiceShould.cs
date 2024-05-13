@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TeamSpecs.RideAlong.CarHealthRatingLibrary;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -26,8 +27,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             IResponse response;
 
             long realUID;
-
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
             var hashService = new HashService();
             var logTarget = new SqlDbLogTarget(dao);
@@ -136,7 +137,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
 
             long realUID;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
             var hashService = new HashService();
             var logTarget = new SqlDbLogTarget(dao);
@@ -280,7 +282,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             var pointsCheck = 0;
             var categoryCheck = 0;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
             var hashService = new HashService();
             var logTarget = new SqlDbLogTarget(dao);
@@ -462,7 +465,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             var pointsCheck = 0;
             var categoryCheck = 0;
 
-            var dao = new SqlServerDAO();
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
             var chrTarget = new SqlDBCarHealthRatingTarget(dao);
             var hashService = new HashService();
             var logTarget = new SqlDbLogTarget(dao);
@@ -592,7 +596,10 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
             #endregion
 
             #region Check results
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            if (response.ReturnValue is null)
+            {
+                Assert.Fail(nameof(response.ReturnValue) + "should not be null");
+            }
             foreach (var resultObject in response.ReturnValue)
             {
                 if (resultObject is IList list)
@@ -614,7 +621,6 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CarHealthRatingTests
                     pointsCheck++;
                 }
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             #endregion
 
             #endregion

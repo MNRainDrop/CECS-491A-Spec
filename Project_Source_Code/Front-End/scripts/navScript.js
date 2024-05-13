@@ -29,6 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var vehicleMarketPlaceNav = document.getElementById("vehicle-marketplace-view");
     vehicleMarketPlaceNav.addEventListener("click", generateVehicleMarketplaceDefaultView);
+
+    var userAdmin = document.getElementById("userAdmin");
+    userAdmin.addEventListener("click", generateUserAdministration);
+    var usageDashboardNav = document.getElementById('usage-dashboard-view');
+    usageDashboardNav.addEventListener('click', generateUsageDashboardView);
 });
 
 function generateRentalDefaultView() {
@@ -112,6 +117,12 @@ function generateVehicleMarketplaceDefaultView()
     })
 };
 
+function generateUserAdministration()
+{
+    var permissionGranted;
+    displayUserAdministration();
+};
+
 function logOut() {
     // Remove the tokens from storage
     sessionStorage.removeItem('IDToken');
@@ -137,7 +148,6 @@ function refreshUserTokens() {
         try {
             sessionStorage.setItem('IDToken', data.idToken);
             sessionStorage.setItem('AccessToken', data.accessToken);
-            alert("Your session has been refreshed!!!!");
         }
         catch (_a) { }
         ;

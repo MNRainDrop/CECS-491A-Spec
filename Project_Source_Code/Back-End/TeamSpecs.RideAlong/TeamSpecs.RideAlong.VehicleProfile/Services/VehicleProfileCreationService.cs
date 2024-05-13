@@ -1,18 +1,28 @@
 ﻿namespace TeamSpecs.RideAlong.VehicleProfile;
 
-using System.Linq;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.Services;
+using TeamSpecs.RideAlong.ConfigService;
 
 public class VehicleProfileCreationService : IVehicleProfileCreationService
 {
     private readonly ICRUDVehicleTarget _crudVehiclesTarget;
     private readonly ILogService _logService;
+    private readonly IClaimService _claimService;
+    private readonly IConfigServiceJson _config;
 
-    public VehicleProfileCreationService(ILogService logService, ICRUDVehicleTarget crudVehiclesTarget)
+    public VehicleProfileCreationService(
+        ILogService logService,
+        ICRUDVehicleTarget crudVehiclesTarget,
+        IClaimService claimService,
+        IConfigServiceJson configService
+    )
     {
         _logService = logService;
         _crudVehiclesTarget = crudVehiclesTarget;
+        _claimService = claimService;
+        _config = configService;
     }
     public IResponse CreateVehicleProfile(string vin, string licensePlate, string? make, string? model, int year, string? color, string? description, IAccountUserModel userAccount)
     {
@@ -54,8 +64,8 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
 
-        var vehicle = new VehicleProfileModel(vin, userAccount.UserId, licensePlate, (!string.IsNullOrWhiteSpace(make)) ? make : "", (!string.IsNullOrWhiteSpace(model)) ? model : "", year);
-        var vehicleDetails = new VehicleDetailsModel(vin, (!string.IsNullOrWhiteSpace(color)) ? color : "", (!string.IsNullOrWhiteSpace(description)) ? description : "");
+        var vehicle = new VehicleProfileModel(vin.ToUpper(), userAccount.UserId, licensePlate.ToUpper(), (!string.IsNullOrWhiteSpace(make)) ? make.ToUpper() : "", (!string.IsNullOrWhiteSpace(model)) ? model.ToUpper() : "", year);
+        var vehicleDetails = new VehicleDetailsModel(vin.ToUpper(), (!string.IsNullOrWhiteSpace(color)) ? color : "", (!string.IsNullOrWhiteSpace(description)) ? description : "");
 
         return CreateVehicleProfile(vehicle, vehicleDetails, userAccount);
     }
@@ -89,10 +99,6 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
                 vehicleDetails.VIN = vehicle.VIN;
             }
         }
-        // Make can be null
-        // Model can be null
-        // Color can be null
-        // Description can be null
         if (userAccount is null)
         {
             throw new ArgumentNullException(nameof(userAccount));
@@ -111,6 +117,12 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         #endregion
 
         #region Write vehicle to database
+
+        vehicle.LicensePlate = vehicle.LicensePlate.ToUpper();
+        vehicle.VIN = vehicle.VIN.ToUpper();
+        vehicle.Make = vehicle.Make.ToUpper();
+        vehicle.Model = vehicle.Model.ToUpper();
+        vehicleDetails.VIN = vehicleDetails.VIN.ToUpper();
         // Check if vehicle is in database
         // if vehicle is in the database, change the owner to the new owner
         // if vehicle is not in the database, write a new entry for the vehicle
@@ -151,25 +163,28 @@ public class VehicleProfileCreationService : IVehicleProfileCreationService
         }
         #endregion
 
-        #region Error Check
+        #region Error Check and Update Claims
         if (response.HasError)
         {
             response.ErrorMessage = "Could not create vehicle. " + response.ErrorMessage;
         }
         else
         {
-            // Update Claims
-
-            // Add claims here once user administration claim modification is complete
+            // Add claims
             var claims = new List<KeyValuePair<string, string>>()
             {
                 new KeyValuePair<string, string>("canViewVehicle", vehicle.VIN),
                 new KeyValuePair<string, string>("canModifyVehicle", vehicle.VIN),
                 new KeyValuePair<string, string>("canDeleteVehicle", vehicle.VIN),
-                new KeyValuePair<string, string>("ownsVehicle", "true")
             };
 
-            // add claims
+            _claimService.CreateUserClaim(userAccount, claims);
+
+            // Update owning vehicle claim
+            var oldClaim = new KeyValuePair<string, string>("ownsVehicle", "false");
+            var newClaim = new KeyValuePair<string, string>("ownsVehicle", "true");
+            
+            _claimService.ModifyUserClaim(userAccount, oldClaim, newClaim);
 
             response.ErrorMessage = "Successful retrieval of vehicle profile.";
         }

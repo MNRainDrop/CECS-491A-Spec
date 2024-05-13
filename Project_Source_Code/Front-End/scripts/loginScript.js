@@ -1,10 +1,20 @@
+'use strict;'
 // Validators
-var isValidEmailAddress = function (email) {
-    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-};
+function isValidEmail(email) {
+    // Minimum length check
+    if (email.length < 3)
+        return false;
+
+    // Regular expression pattern for email validation
+    var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]{1,}$/;
+
+    // Check if the email matches the pattern
+    return pattern.test(email);
+}
+
 var isValidOTP = function (OTP) {
-    var otpPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    // allows for OTP to be all numbers/letters
+    var otpPattern = /^[a-zA-Z0-9]{10}$/;
     return otpPattern.test(OTP);
 };
 // Event Listeners
@@ -12,18 +22,35 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitUsernameButton = document.getElementById("login-button");
     submitUsernameButton.addEventListener("click", submitUsername);
 
-    var createAccountButton = document.getElementById("registration-button");
-    createAccountButton.addEventListener("click", createAccount);
 });
+
+
+(async function() {
+    //#region Initial Setup
+    var webURL = "";
+    var CONFIG = (await fetchConfig('./configs/RideAlong.config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw "Could not read config file";
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error(error);
+        }));
+    webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["security"]
+    window.webURL = webURL;
+}) (window);
+
 // Implementation
 function submitUsername() {
     var textInput = document.getElementById("text-input");
     var username = textInput.value.trim();
     // Check if username is not empty
     if (username) {
-        if (isValidEmailAddress(username)) {
+        if (isValidEmail(username)) {
             // Calls Web API controller
-            fetch("http://localhost:8080/Auth/startLogin", {
+            fetch(webURL + "/Auth/startLogin", {
                 method: "POST",
                 body: JSON.stringify(username),
                 headers: {
@@ -68,10 +95,10 @@ function submitOTP() {
     var username = usernameParagraph.textContent.replace('Username: ', '').trim();
     // Check if OTP is not empty
     if (otp && username) {
-        if (isValidOTP(otp) && isValidEmailAddress(username)) {
+        if (isValidOTP(otp) && isValidEmail(username)) {
             var fetchResponse = false; // Assuming Fail response by default
             // Make fetch request to back - end
-            fetch("http://localhost:8080/Auth/tryAuthentication", {
+            fetch(webURL + "/Auth/tryAuthentication", {
                 method: "POST",
                 body: JSON.stringify({ username: username, otp: otp }),
                 headers: {
@@ -127,7 +154,7 @@ function showOTPView() {
 
     // Create a paragraph element to tell user what to do next
     var message = document.createElement('h2');
-    message.textContent = `An OTP has been sent to your email address. Please enter the OTP`
+    message.innerHTML = `An OTP has been sent to your email address.<br>Please enter the OTP`
     document.querySelector(".messages").appendChild(message);
 
     // Change contents of input text field
@@ -143,7 +170,7 @@ function showOTPView() {
 function showMainContent() {
     changeCSS();
     var dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Work in progresss: Security, Vehicle Profile, and Service Log</p>\n        </div>\n    ";
+    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Features include: Vehicle Profile, Service Log, VehicleMarketPlace, Car Health Rating and more!\n        </div>\n    ";
 };
 
 function unhideNavigation() {
@@ -151,7 +178,3 @@ function unhideNavigation() {
     var navigation = document.getElementById("navigation");
     navigation.classList.remove("hidden");
 };
-
-function createAccount() {
-    alert("create account");
-}

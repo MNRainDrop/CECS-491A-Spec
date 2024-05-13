@@ -4,7 +4,7 @@
     border-color: #686A6C;
     border-width: 1px;
     padding: 5px;
-    margin: 0px 0px 10px 10px; 
+    margin: 0px 10px 10px 10px; 
     background-color: #FEFEFE;
 }
 
@@ -54,7 +54,7 @@ form > input {
 }
 
 #create-vehicle-button {
-    margin: 0px 0px 10px 10px; /* top, right, bottom, left */
+    margin: 10px 0px 10px 10px; /* top, right, bottom, left */
     font-size: 15px;
 }
 

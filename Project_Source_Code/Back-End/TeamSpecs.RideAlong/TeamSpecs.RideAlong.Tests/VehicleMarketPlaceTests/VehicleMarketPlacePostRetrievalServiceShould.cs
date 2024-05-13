@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Azure;
+using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
@@ -14,8 +16,9 @@ namespace TeamSpecs.RideAlong.TestingLibrary
         {
             //Arrange 
             var timer = new Stopwatch();
-            var _dao = new SqlServerDAO();
-            var _target = new SqlDbMarketplaceTarget(_dao);
+            ConfigServiceJson configService = new ConfigServiceJson();
+            var dao = new SqlServerDAO(configService);
+            var _target = new SqlDbMarketplaceTarget(dao);
 
             IResponse response;
 
@@ -25,12 +28,16 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             string description = "This is test case 1";
             int status = 1;*/
 
+            var _numresult = 0;
+            var _page = 1;
+            
+
             //Service 
             VehicleMarketplacePostRetrievalService View = new VehicleMarketplacePostRetrievalService(_target);
 
             //Act 
             timer.Start();
-            response = View.RetrieveAllPublicPost();
+            response = View.RetrieveAllPublicPost(_numresult, _page);
             timer.Stop();
 
 

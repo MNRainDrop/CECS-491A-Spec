@@ -1,16 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
-using TeamSpecs.RideAlong.Model;
+﻿using TeamSpecs.RideAlong.Model;
 
 namespace TeamSpecs.RideAlong.DataAccess
 {
-    public class JsonFileDAO : IGenericDAO
+    public class JsonFileDAO : IJsonFileDAO
     {
-
-#pragma warning disable IDE0052 // Remove unread private members
         private readonly string _currentFile;
-        private string _relativePath;
+        private readonly string _relativePath;
         private readonly string _newfile;
-#pragma warning restore IDE0052 // Remove unread private members
         public JsonFileDAO()
         {
             //Default get relative path to PepperService folder
@@ -37,7 +33,7 @@ namespace TeamSpecs.RideAlong.DataAccess
         public IResponse ExecuteReadOnly()
         {
             var response = new Response();
-            string text = "";
+            string text;
 
             string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();
@@ -67,20 +63,5 @@ namespace TeamSpecs.RideAlong.DataAccess
             return response;
         }
 
-        public int ExecuteWriteOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
-        {
-            throw new NotImplementedException();
-
-        }
-
-        public List<object[]> ExecuteReadOnly(ICollection<KeyValuePair<string, HashSet<SqlParameter>?>> sqlCommands)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IResponse ExecuteReadOnly(SqlCommand sqlCommand)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

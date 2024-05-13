@@ -3,5 +3,9 @@ namespace TeamSpecs.RideAlong.UserAdministration;
 
 public interface IAccountCreationService
 {
-    IResponse CreateValidUserAccount(string userName);
+    IResponse verifyUser(string email);
+
+    IResponse verifyAltUser(string email);
+
+    IResponse createUserProfile(string userName, IProfileUserModel profile);
 }

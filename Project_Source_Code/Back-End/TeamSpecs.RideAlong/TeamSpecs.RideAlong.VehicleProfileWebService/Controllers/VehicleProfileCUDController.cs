@@ -178,13 +178,13 @@ public class VehicleProfileCUDController : Controller
 
     [HttpPost]
     [Route("DeleteVehicleProfile")]
-    public IActionResult PostDeleteVehicleProfile([FromBody] RequestData requestData)
+    public IActionResult PostDeleteVehicleProfile([FromBody] JavaScriptVehicle requestData)
     {
         #region Check for valid claims
         Dictionary<string, string> requiredClaims = new Dictionary<string, string>
         {
             { "canView", "vehicleProfile" },
-            { "canDeleteVehicle", requestData.vehicleProfile.VIN.ToString() }
+            { "canDeleteVehicle", requestData.VIN.ToString() }
         };
         bool hasPermission;
         try
@@ -227,8 +227,13 @@ public class VehicleProfileCUDController : Controller
         }
         #endregion
 
-        var vehicle = new VehicleProfileModel(requestData.vehicleProfile.VIN, user.UserId, requestData.vehicleProfile.LicensePlate, requestData.vehicleProfile.Make, requestData.vehicleProfile.Model, requestData.vehicleProfile.Year);
-        var details = new VehicleDetailsModel(requestData.vehicleDetails.VIN, requestData.vehicleDetails.Color, requestData.vehicleDetails.Description);
+        var vehicle = new VehicleProfileModel(
+            requestData.VIN,
+            user.UserId,
+            requestData.LicensePlate,
+            requestData.Make,
+            requestData.Model,
+            requestData.Year);
 
         try
         {

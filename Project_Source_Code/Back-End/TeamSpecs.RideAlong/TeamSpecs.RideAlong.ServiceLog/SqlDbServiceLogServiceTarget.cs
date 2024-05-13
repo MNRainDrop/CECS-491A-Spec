@@ -18,9 +18,9 @@ namespace TeamSpecs.RideAlong.ServiceLog
     public class SqlDbServiceLogServiceTarget : ISqlDbServiceLogTarget
     {
 
-        private readonly IGenericDAO _dao;
+        private readonly ISqlServerDAO _dao;
 
-        public SqlDbServiceLogServiceTarget(IGenericDAO dao)
+        public SqlDbServiceLogServiceTarget(ISqlServerDAO dao)
         {
             _dao = dao;
         }
@@ -89,9 +89,10 @@ namespace TeamSpecs.RideAlong.ServiceLog
             var tableSql = "ServiceLog ";
             var rowsSql = "(";
             var valuesSql = "VALUES (";
-            string query = "" +
-                "UPDATE ServiceLog" +
-                "SET Thing = thing";
+            // commented out to not have warnings
+            //string query = "" +
+            //    "UPDATE ServiceLog" +
+            //    "SET Thing = thing";
 
             var response = new Response() { ReturnValue = new List<object>() };
             #endregion

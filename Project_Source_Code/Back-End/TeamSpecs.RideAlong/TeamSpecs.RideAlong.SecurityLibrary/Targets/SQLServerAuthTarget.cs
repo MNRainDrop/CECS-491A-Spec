@@ -12,9 +12,9 @@ namespace TeamSpecs.RideAlong.SecurityLibrary.Targets
 
     public class SQLServerAuthTarget : IAuthTarget
     {
-        IGenericDAO _dao;
+        ISqlServerDAO _dao;
         ILogService _logger;
-        public SQLServerAuthTarget(IGenericDAO dao, ILogService logger)
+        public SQLServerAuthTarget(ISqlServerDAO dao, ILogService logger)
         {
             _dao = dao;
             _logger = logger;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -10,14 +11,17 @@ namespace TeamSpecs.RideAlong.TestingLibrary.VehicleProfileTests;
 
 public class VehicleProfileDeletionShould
 {
-    private static readonly IGenericDAO dao = new SqlServerDAO();
+    private static readonly IConfigServiceJson configService = new ConfigServiceJson();
+    private static readonly ISqlServerDAO dao = new SqlServerDAO(configService);
     private static readonly ICRUDVehicleTarget vehicleTarget = new SqlDbVehicleTarget(dao);
 
     private static readonly IHashService hashService = new HashService();
     private static readonly ILogTarget logTarget = new SqlDbLogTarget(dao);
     private static readonly ILogService logService = new LogService(logTarget, hashService);
 
-    private static readonly IVehicleProfileDeletionService deletionService = new VehicleProfileDeletionService(vehicleTarget, logService);
+    private static readonly IClaimTarget claimTarget = new ClaimTarget(dao);
+    private static readonly IClaimService claimService = new ClaimService(claimTarget);
+    private static readonly IVehicleProfileDeletionService deletionService = new VehicleProfileDeletionService(vehicleTarget, logService, claimService);
 
     [Fact]
     public void VehicleProfileDeletion_DeleteVehicleProfileInDatabase_ValidParametersPassedIn_OneVehicleProfileAndOneVehicleDetailsDeleted_Pass()

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
@@ -13,13 +14,14 @@ public class VehicleMarketPlacePostDeletionServiceShould
     {
         //Arrange 
         var timer = new Stopwatch();
-        var _dao = new SqlServerDAO();
-        var _target = new SqlDbMarketplaceTarget(_dao);
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
+        var _target = new SqlDbMarketplaceTarget(dao);
 
         IResponse response;
 
         //Parameters 
-        string VIN = "1234567891012345";
+        string VIN = "VIN8";
 
 
         //Service 

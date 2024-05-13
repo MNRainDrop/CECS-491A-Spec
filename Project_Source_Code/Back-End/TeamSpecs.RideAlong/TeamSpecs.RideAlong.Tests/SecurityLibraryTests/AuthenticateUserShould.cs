@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
@@ -34,7 +35,8 @@ public class AuthenticateUserShould
     public void Authenticate_A_Username_pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -58,7 +60,8 @@ public class AuthenticateUserShould
     public void GetUserModel_FromDatabase_Pass()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -93,7 +96,8 @@ public class AuthenticateUserShould
     public void Not_GetUserPrincpal_if_No_Such_User_Exists_Fail()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -128,7 +132,8 @@ public class AuthenticateUserShould
     public void getUserPrincipal()
     {
         //Arrange
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var logTarget = new SqlDbLogTarget(dao);
         var hashService = new HashService();
         var logger = new LogService(logTarget, hashService);
@@ -174,7 +179,8 @@ public class AuthenticateUserShould
         string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         string _rideAlongIssuer = "Ride Along by Team Specs";
 
-        var dao = new SqlServerDAO();
+        ConfigServiceJson configService = new ConfigServiceJson();
+        var dao = new SqlServerDAO(configService);
         var hasher = new HashService();
         var logTarget = new SqlDbLogTarget(dao);
         var logger = new LogService(logTarget, hasher);

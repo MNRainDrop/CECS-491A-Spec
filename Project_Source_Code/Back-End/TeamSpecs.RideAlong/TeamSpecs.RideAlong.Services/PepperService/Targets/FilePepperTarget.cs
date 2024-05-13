@@ -14,9 +14,9 @@ namespace TeamSpecs.RideAlong.Services
 {
     public class FilePepperTarget : IPepperTarget
     {
-        private readonly IGenericDAO _fileDao;
+        private readonly IJsonFileDAO _fileDao;
 
-        public FilePepperTarget(IGenericDAO Target)
+        public FilePepperTarget(IJsonFileDAO Target)
         {
             _fileDao = Target;
         }
