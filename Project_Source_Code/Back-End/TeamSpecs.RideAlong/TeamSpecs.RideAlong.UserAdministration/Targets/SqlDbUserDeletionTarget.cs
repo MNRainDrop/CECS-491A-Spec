@@ -54,12 +54,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             try
             {
                 var daoValue = _dao.ExecuteWriteOnly(sqlCommands);
-                if (daoValue == 0)
-                {
-                    response.HasError = true;
-                    response.ErrorMessage = "UID was not found";
-                    return response;
-                }
+
             }
             catch
             {

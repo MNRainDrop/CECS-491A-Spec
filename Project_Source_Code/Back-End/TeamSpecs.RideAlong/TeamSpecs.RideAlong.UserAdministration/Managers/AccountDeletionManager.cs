@@ -134,6 +134,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
+            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has succesfully deleted their account", model.UserHash);
+
             timer.Restart();
 
             timer.Start();
@@ -176,7 +178,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
-            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has succesfully deleted their account", model.UserHash);
             response.HasError = false;
             return response;
         }

@@ -19,18 +19,9 @@ var isValidOTP = function (OTP) {
     return otpPattern.test(OTP);
 };
 
-
-var createAccountButton = document.getElementById("registration-button");
-createAccountButton.addEventListener("click", createAccount);
-
-function createAccount() {
-    // Generate view to prompt the user to enter their email
-    generateEmailInputView();
-}
-
 (async function() {
     //#region Initial Setup
-    var webURL = "";
+    var registrationURL = "";
     var CONFIG = (await fetchConfig('./configs/RideAlong.config.json')
         .then(response => {
             if (!response.ok) {
@@ -41,9 +32,16 @@ function createAccount() {
         .catch((error) => {
             console.error(error);
         }));
-    webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["registration"]
-    window.webURL = webURL;
-}) (window);
+        registrationURL = CONFIG["ip"] + ':' + CONFIG["ports"]["registration"]
+
+
+var createAccountButton = document.getElementById("registration-button");
+createAccountButton.addEventListener("click", createAccount);
+
+function createAccount() {
+    // Generate view to prompt the user to enter their email
+    generateEmailInputView();
+}
 
 function generateEmailInputView() {
     // Get the dynamic content area
@@ -87,7 +85,7 @@ function submitEmail() {
 
 
         // Send the registration request to the server
-        fetchWithTokens(webURL + '/Registration/PostVerify', 'POST', email)
+        fetchWithTokens(registrationURL +'/Registration/PostVerify', 'POST', email)
         .then(response => {
             if (response.ok) {
                 // Registration successful
@@ -178,7 +176,7 @@ function generateAccountInfoView(email) {
     vendorOption.textContent = "Vendor";
     accountTypeSelect.appendChild(vendorOption);
     var rentalFleetOption = document.createElement("option");
-    rentalFleetOption.value = "Rental";
+    rentalFleetOption.value = "Rental Fleet";
     rentalFleetOption.textContent = "Rental Fleet";
     accountTypeSelect.appendChild(rentalFleetOption);
 
@@ -234,7 +232,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens( webURL + '/Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens(registrationURL +'/Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
@@ -243,12 +241,14 @@ fetchWithTokens( webURL + '/Registration/PostCreateUser', 'POST', accountData)
         location.reload();
     } else {
         // Registration failed, get the error message from the response
-        alert(response.text());
+        return response.json().then(data => { throw new Error(data.message); });
     }
 })
-.catch((error) => {
-    console.error('Error:', error.message);
+.catch(error => {
+    console.error('Error:', response.text());
     // Show an alert for any errors
-    alert("Something went wrong! Try again later");
+    alert(response.text());
 });
 }
+
+})(window);
