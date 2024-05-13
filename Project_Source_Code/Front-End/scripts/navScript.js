@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     viewAccounts.addEventListener('click', generateUA4);
 
     var usageDashboardNav = document.getElementById('usage-dashboard-view');
-    usageDashboardNav.addEventListener('click', generateUsageDashboardView);
+    usageDashboardNav.addEventListener('click', generateSystemObservabilityView);
 
   
 });
@@ -128,6 +128,10 @@ function generateUserAdministration()
     var permissionGranted;
     displayUserAdministration();
 };
+
+function generateSystemObservabilityView() {
+    generateUsageDashboardView();
+}
 
 function generateUA4()
 {
