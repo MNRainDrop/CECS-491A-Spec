@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
@@ -17,7 +18,27 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         [Route("startLogin")]
         public IActionResult StartLogin([FromBody] string username)
         {
-            var startLoginResponse = _securityManager.StartLogin(username);
+            IResponse startLoginResponse;
+            using var source = new CancellationTokenSource();
+
+            // Run asynchronous task for login
+            Task<IResponse> startLoginTask = Task.Run(() => _securityManager.StartLogin(username), source.Token);
+
+            // Stop the task if it takes to long
+            source.CancelAfter(5000);
+            try
+            {
+                // Successful Execution Stored into response
+                startLoginTask.Wait();
+                startLoginResponse = startLoginTask.Result;
+            }
+            catch
+            {
+                // Handles failure if it takes too long
+                return StatusCode(500, "Start Login took Longer than 5 Seconds");
+            }
+
+            // Validate Response
             if (startLoginResponse.HasError)
             {
                 return BadRequest(startLoginResponse.ErrorMessage);
@@ -32,7 +53,23 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         [Route("tryAuthentication")]
         public IActionResult tryAuthentication([FromBody] AuthNRequest loginRequest)
         {
-            var tryAuthentication = _securityManager.TryAuthenticating(loginRequest);
+            IResponse tryAuthentication;
+
+            #region Creates cancellable async task for `TryAuthenticating`
+            using var source = new CancellationTokenSource();
+            Task<IResponse> tryAuthTask = Task.Run(() => _securityManager.TryAuthenticating(loginRequest), source.Token);
+            source.CancelAfter(5000);
+            try
+            {
+                tryAuthTask.Wait();
+                tryAuthentication = tryAuthTask.Result;
+            }
+            catch
+            {
+                return StatusCode(500, "Start Login took Longer than 5 Seconds");
+            }
+            #endregion
+
             if (tryAuthentication.HasError)
             {
                 return BadRequest(tryAuthentication.ErrorMessage);
@@ -51,7 +88,23 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         [Route("refreshTokens")]
         public IActionResult PostRefreshTokens()
         {
-            IResponse tokenRefreshResponse = _securityManager.RefreshTokens();
+            IResponse tokenRefreshResponse;
+
+            #region Creates cancellable async task for `RefreshTokens()`
+            using var source = new CancellationTokenSource();
+            Task<IResponse> refreshTokensTask = Task.Run(() => _securityManager.RefreshTokens(), source.Token);
+            source.CancelAfter(5000);
+            try
+            {
+                refreshTokensTask.Wait();
+                tokenRefreshResponse = refreshTokensTask.Result;
+            }
+            catch
+            {
+                return StatusCode(500, "Start Login took Longer than 5 Seconds");
+            }
+            #endregion
+
             if (tokenRefreshResponse.HasError)
             {
                 return BadRequest("Error creating tokens: " + tokenRefreshResponse.ErrorMessage);

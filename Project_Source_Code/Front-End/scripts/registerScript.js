@@ -74,24 +74,26 @@ function submitEmail() {
         .then(response => {
             if (response.ok) {
                 // Registration successful
-                return response.text(); // Parse the response JSON
+                return response.text(); // Parse the response text
             } else {
-                // Registration failed, throw an error with the response message
-                return response.text().then(data => { throw new Error(data.message); });
+                // Registration failed, extract error message from response body
+                return response.text().then(errorMessage => {
+                    throw new Error(errorMessage);
+                });
             }
         })
         .then(data => {
             // Show success message from the server response
             alert(data);
-
+    
             // Call function to generate account information view
             generateAccountInfoView(email);
         })
         .catch(error => {
-            console.error('Error:', error);
-            // Show an alert for any errors
-            alert(error.message || 'Error occurred while creating account!');
+            // Show the error message in an alert
+            alert(error.message || "An error occurred. Please try again later.");
         });
+    
     } else {
         // If the email input is invalid, show an error message
         alert('Invalid email!');
@@ -207,10 +209,10 @@ if (!isValidEmail(alternateEmail)) {
 }
 
 var accountData = {
+    dateOfBirth: dob,
+    altEmail: alternateEmail,
     email: email,
     otp: otp,
-    dob: dob,
-    alternateEmail: alternateEmail,
     accountType: accountType
 }
 
@@ -230,6 +232,6 @@ fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', acc
 .catch(error => {
     console.error('Error:', response.text());
     // Show an alert for any errors
-    alert(response.text()|| 'Error occurred while creating account!');
+    alert(response.text());
 });
 }

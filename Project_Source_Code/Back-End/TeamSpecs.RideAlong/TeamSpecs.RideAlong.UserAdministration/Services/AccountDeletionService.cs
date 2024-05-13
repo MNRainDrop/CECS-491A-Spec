@@ -35,7 +35,7 @@ public class AccountDeletionService : IAccountDeletionService
     {
         IResponse response = new Response();
 
-        _sqlDbUserDeletion.DeleteUserAccount(model.UserId);
+        response = _sqlDbUserDeletion.DeleteUserAccount(model.UserId);
 
         return response;
     }

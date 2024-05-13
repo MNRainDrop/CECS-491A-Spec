@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
-using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
@@ -139,6 +133,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
+            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has succesfully deleted their account", model.UserHash);
             response.HasError = false;
             return response;
         }

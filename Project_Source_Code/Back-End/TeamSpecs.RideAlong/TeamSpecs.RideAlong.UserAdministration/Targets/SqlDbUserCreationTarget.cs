@@ -83,8 +83,13 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         {
             var check = array[0].ToString() == "UserProfile";
 
+            if (response.ReturnValue.Count() == 2)
+            {
+                check = true;
+            }
+
             // If user exists as AltUserName
-            if (check)
+            if (check )
             {
 
                 response.HasError = true;
@@ -133,7 +138,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
         #endregion
 
         #region If user has not confirmed account 
-        if (response.ReturnValue == null)
+        if (response.ReturnValue is not null && response.ReturnValue.Count() == 0 )
         {
             // user has not gotten confirmation
             response.HasError = false;
@@ -243,7 +248,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
             var userAccountParams = new HashSet<SqlParameter>()
             {
                 new SqlParameter("@UserName", userAccount.UserName),
-                new SqlParameter("@Salt", userAccount.Salt),
+                new SqlParameter("@Salt", (int)userAccount.Salt),
                 new SqlParameter("@UserHash", userAccount.UserHash),
             };
             sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(updateUserAccountSql, userAccountParams));
@@ -254,7 +259,7 @@ public class SqlDbUserCreationTarget : ISqlDbUserCreationTarget
             {
                 new SqlParameter("@UserName", userAccount.UserName),
                 new SqlParameter("@PassHash", otp),
-                new SqlParameter("@Attempts", 0),
+                new SqlParameter("@Attempts", (object)0),
                 new SqlParameter("@FirstFailedLogin", currentUtcTime)
             };
             sqlCommands.Add(new KeyValuePair<string, HashSet<SqlParameter>?>(updateOtpSql, otpParams));
