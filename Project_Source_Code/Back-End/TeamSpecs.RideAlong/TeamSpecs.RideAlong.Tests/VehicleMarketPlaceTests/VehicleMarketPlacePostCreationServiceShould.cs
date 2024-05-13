@@ -4,6 +4,7 @@ using TeamSpecs.RideAlong.DataAccess;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
 using TeamSpecs.RideAlong.VehicleMarketplace;
+using TeamSpecs.RideAlong.VehicleMarketplace.Managers;
 
 namespace TeamSpecs.RideAlong.TestingLibrary
 {
@@ -22,13 +23,14 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             IResponse response;
 
             //Parameters 
-            string VIN = "VINTEST";
+            string VIN = "testVin2";
             int view = 1;
             string description = "This is test case 1";
             int status = 1;
 
             //Service 
             VehiceMarketplacePostCreationService Create = new VehiceMarketplacePostCreationService(_target);
+            
 
             //Act 
             timer.Start();

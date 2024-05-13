@@ -1,11 +1,20 @@
 'use strict;'
 // Validators
-var isValidEmailAddress = function (email) {
-    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailPattern.test(email);
-};
+function isValidEmail(email) {
+    // Minimum length check
+    if (email.length < 3)
+        return false;
+
+    // Regular expression pattern for email validation
+    var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9.-]{1,}$/;
+
+    // Check if the email matches the pattern
+    return pattern.test(email);
+}
+
 var isValidOTP = function (OTP) {
-    var otpPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    // allows for OTP to be all numbers/letters
+    var otpPattern = /^[a-zA-Z0-9]{10}$/;
     return otpPattern.test(OTP);
 };
 // Event Listeners
@@ -13,8 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitUsernameButton = document.getElementById("login-button");
     submitUsernameButton.addEventListener("click", submitUsername);
 
-    var createAccountButton = document.getElementById("registration-button");
-    createAccountButton.addEventListener("click", createAccount);
 });
 
 
@@ -41,7 +48,7 @@ function submitUsername() {
     var username = textInput.value.trim();
     // Check if username is not empty
     if (username) {
-        if (isValidEmailAddress(username)) {
+        if (isValidEmail(username)) {
             // Calls Web API controller
             fetch(webURL + "/Auth/startLogin", {
                 method: "POST",
@@ -88,7 +95,7 @@ function submitOTP() {
     var username = usernameParagraph.textContent.replace('Username: ', '').trim();
     // Check if OTP is not empty
     if (otp && username) {
-        if (isValidOTP(otp) && isValidEmailAddress(username)) {
+        if (isValidOTP(otp) && isValidEmail(username)) {
             var fetchResponse = false; // Assuming Fail response by default
             // Make fetch request to back - end
             fetch(webURL + "/Auth/tryAuthentication", {
@@ -163,7 +170,7 @@ function showOTPView() {
 function showMainContent() {
     changeCSS();
     var dynamicContent = document.querySelector(".dynamic-content");
-    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Work in progresss: Security, Vehicle Profile, and Service Log</p>\n        </div>\n    ";
+    dynamicContent.innerHTML = "\n        <div id=\"main-content\">\n            <p>Welcome, user! You are now logged in.</p>\n            <p>Welcome to the <b>Ride-Along</b> Application!<br>We are currently working on this page to make it better suited for you!</p>\n            <p>Features include: Vehicle Profile, Service Log, VehicleMarketPlace, Car Health Rating and more!\n        </div>\n    ";
 };
 
 function unhideNavigation() {
@@ -171,7 +178,3 @@ function unhideNavigation() {
     var navigation = document.getElementById("navigation");
     navigation.classList.remove("hidden");
 };
-
-function createAccount() {
-    alert("create account");
-}

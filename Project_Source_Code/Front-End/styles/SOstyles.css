@@ -1,0 +1,49 @@
+.dynamic-content {
+    padding: 10px 10px 10px 10px;
+    display: block;
+}
+
+p {
+    font-size: 1rem;
+}
+
+#kpi {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+.kpi {
+    width: calc(50% - 10px);
+    min-width: 450px;
+    padding: 10px 0px;
+}
+
+ul {
+    overflow: scroll;
+    width: 100%;
+    min-width: 400px;
+    height: 200px;
+    line-height: 2rem;
+    padding: 0;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+}
+ul li {
+    list-style: none;
+    background-size: cover;
+    width: fit-content;
+    min-width: 100%;
+    flex-grow: 1;
+    max-height: 2rem;
+    white-space: pre;
+}
+
+ul li:nth-child(odd) {
+    background-color: #dfe6e9;
+}
+
+#logs {
+    display: block;
+}

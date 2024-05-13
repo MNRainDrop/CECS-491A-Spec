@@ -49,6 +49,7 @@ public class VehicleProfileDeletionService : IVehicleProfileDeletionService
         }
         #endregion
 
+        vehicle.VIN = vehicle.VIN.ToUpper();
         var response = _deleteVehicleTarget.DeleteVehicleProfileSql(vehicle, userAccount);
 
         #region Error Check and Update Claims
