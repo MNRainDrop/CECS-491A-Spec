@@ -8,9 +8,10 @@ namespace TeamSpecs.RideAlong.Model.AccountRequestModel
 {
     public class AccountCreationRequestModel : IAccountCreationRequestModel
     {
-        public AccountCreationRequestModel(DateTime dateOfbirth, string altEmail, string email, string otp, string accountType)
+        public AccountCreationRequestModel(string dateOfbirth, string altEmail, string email, string otp, string accountType)
         {
-            this.DateOfBirth = dateOfbirth;
+            DateOfBirthString = dateOfbirth;
+            DateOfBirth = DateTime.Parse(DateOfBirthString);
             this.AltEmail = altEmail;
             this.Email = email;
             this.Otp = otp;
@@ -20,6 +21,7 @@ namespace TeamSpecs.RideAlong.Model.AccountRequestModel
         public AccountCreationRequestModel() 
         {
             DateOfBirth = DateTime.MinValue;
+            DateOfBirthString = string.Empty;
             AltEmail = string.Empty;
             Email = string.Empty;
             Otp = string.Empty;
@@ -27,6 +29,7 @@ namespace TeamSpecs.RideAlong.Model.AccountRequestModel
         }
 
         public DateTime DateOfBirth { get; set; }
+        public string DateOfBirthString { get; set; }
         public string AltEmail { get; set; }
         public string Email { get; set; }
         public string Otp { get; set; }
