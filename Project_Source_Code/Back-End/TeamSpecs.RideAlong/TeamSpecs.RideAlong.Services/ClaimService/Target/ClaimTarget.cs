@@ -56,10 +56,10 @@ public class ClaimTarget : IClaimTarget
                 daoValue
             };
         }
-        catch
+        catch (Exception ex)
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not write user claim to database. ";
+            response.ErrorMessage = "Could not write user claim to database. " + ex;
             return response;
         }
 
@@ -110,10 +110,10 @@ public class ClaimTarget : IClaimTarget
                 daoValue
             };
         }
-        catch
+        catch (Exception ex)
         {
             response.HasError = true;
-            response.ErrorMessage = "Could not write user claim to database. ";
+            response.ErrorMessage = "Could not write user claim to database. " + ex;
             return response;
         }
 

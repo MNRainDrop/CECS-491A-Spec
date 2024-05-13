@@ -188,7 +188,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
                 if(response.HasError)
                 {
-                    response.ErrorMessage = "Claim generation failed.";
+                    response.ErrorMessage = "Claim generation failed. " + response.ErrorMessage;
                     // log claim
                     return response;
                 }
