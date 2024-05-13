@@ -77,10 +77,11 @@
     
     function handleCharityClick(link, make, model, year) {
         // Generate the dynamic link with the extracted values
+        if (link == "https://www.kars4kids.org/"){
         var dynamicLink = link + "?make=" + encodeURIComponent(make) +
         "&model=" + encodeURIComponent(model) +
         "&year=" + encodeURIComponent(year);
-        
+    }   
         // Open the dynamic link in a new tab
         window.open(dynamicLink, '_blank');
     }

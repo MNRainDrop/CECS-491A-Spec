@@ -61,9 +61,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
             IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
 
@@ -93,9 +91,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
             IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
             try
@@ -131,9 +127,9 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
+
             IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
             try
@@ -170,9 +166,9 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
+
             IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
             try
@@ -209,9 +205,9 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
-#pragma warning disable CS8604 // Possible null reference argument.
+
             IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
-#pragma warning restore CS8604 // Possible null reference argument.
+
             user.UserId = principal.userIdentity.UID;
             user.UserHash = principal.userIdentity.userHash;*/
             try

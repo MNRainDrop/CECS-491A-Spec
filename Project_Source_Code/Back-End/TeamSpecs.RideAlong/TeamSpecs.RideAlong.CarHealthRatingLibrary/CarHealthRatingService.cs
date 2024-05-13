@@ -115,8 +115,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             }
 
             // Check for 10 objects 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            if (response.ReturnValue.Count == 0)
+            if (response.ReturnValue is not null && response.ReturnValue.Count == 0 )
             {
                 _logService.CreateLogAsync("Info", "Server", "Successful retrieval of no Service Logs", userAccount.UserHash);
                 response.HasError = true;
@@ -124,7 +123,7 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
                 response.ReturnValue = null;
                 return response;
             }
-            else if (response.ReturnValue.Count < 10)
+            else if (response.ReturnValue is not null && response.ReturnValue.Count < 10)
             {
                 _logService.CreateLogAsync("Info", "Server", "Successful retrieval of Service Logs", userAccount.UserHash);
                 response.HasError = true;
@@ -134,159 +133,179 @@ namespace TeamSpecs.RideAlong.CarHealthRatingLibrary
             }
             else
             {
-                // Iterate over each Service Log in the collection
-                foreach (var serviceLogObject in response.ReturnValue)
+                var currentPart = "part";
+                var currentMileage = 0;
+                var currentDate = DateTime.Now;
+                if (response.ReturnValue is not null)
                 {
-
-                    if (serviceLogObject is object[] array)
+                    // Iterate over each Service Log in the collection
+                    foreach (var serviceLogObject in response.ReturnValue)
                     {
-                        var currentPart = array[0].ToString();
-#pragma warning disable CS8604 // Possible null reference argument.
-                        var currentDate = DateTime.Parse(array[1].ToString());
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
-                        var currentMileage = Int32.Parse(array[2].ToString());
-#pragma warning restore CS8604 // Possible null reference argument.
 
-#pragma warning disable CS8604 // Possible null reference argument.
-                        IServiceLogModel currentServiceLog = new ServiceLogModel(currentPart, currentDate, currentMileage, vin);
-#pragma warning restore CS8604 // Possible null reference argument.
-
-                        // For edge case, if List/Category only has one item
-                        if (iterator == 0)
+                        if (serviceLogObject is object[] array)
                         {
-                            tempServiceLogModel = currentServiceLog;
+                            currentPart = array[0]?.ToString() ?? "part";
+
+                            if (array.Length > 1 && array[1] is DateTime && array[2] != null)
+                            {
+                                if (DateTime.TryParse(array[1].ToString(), out DateTime parsedDate))
+                                {
+                                    currentDate = parsedDate;
+
+                                    if (Int32.TryParse(array[2].ToString(), out int mileage))
+                                    {
+                                        currentMileage = mileage;
+                                    }
+                                }
+                            }
+
+
+
+                            IServiceLogModel currentServiceLog = new ServiceLogModel(currentPart, currentDate, currentMileage, vin);
+
+
+                            // For edge case, if List/Category only has one item
+                            if (iterator == 0)
+                            {
+                                tempServiceLogModel = currentServiceLog;
+                            }
+
+                            // Check if the Part property of the service log matches the desired value for each category
+                            if (fluidMaintenanceParts.Contains(currentServiceLog.Part))
+                            {
+                                fluidServiceLogs.Add(currentServiceLog);
+                            }
+                            else if (mechanicallyWearingParts.Contains(currentServiceLog.Part))
+                            {
+                                mechanicallyWearingServiceLogs.Add(currentServiceLog);
+                            }
+                            else if (nonMechanicalMaintenanceParts.Contains(currentServiceLog.Part))
+                            {
+                                nonMechanicalServiceLogs.Add(currentServiceLog);
+                            }
+
+                            iterator++;
+                        }
+                    }
+
+                    // Add most recent Service Log to give score based on their most recent mileage
+                    #region Checking for Lists with 1 Service Log
+                    if (fluidServiceLogs.Count == 1)
+                    {
+                        fluidServiceLogs.Add(tempServiceLogModel);
+                    }
+                    else if (mechanicallyWearingServiceLogs.Count == 1)
+                    {
+                        mechanicallyWearingServiceLogs.Add(tempServiceLogModel);
+                    }
+                    else if (nonMechanicalServiceLogs.Count == 1)
+                    {
+                        nonMechanicalServiceLogs.Add(tempServiceLogModel);
+                    }
+                    #endregion
+
+                    #region Calculating CHR Rank
+                    for (int i = 0; i < fluidServiceLogs.Count - 1; i++)
+                    {
+                        var totalMileage = fluidServiceLogs[i].Mileage - fluidServiceLogs[i + 1].Mileage;
+
+                        totalPoints += 6;
+
+                        category.Add("Fluid");
+
+                        if (totalMileage < (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
+                        {
+                            // assign max points
+                            pointsEarned.Add(6);
+                        }
+                        else if (totalMileage >= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10))
+                            && totalMileage <= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
+                        {
+                            // assign 5 points
+                            pointsEarned.Add(5);
+                        }
+                        else if (totalMileage > (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .50)))
+                        {
+                            pointsEarned.Add(1);
+                        }
+                        else
+                        {
+                            pointsEarned.Add(3);
                         }
 
-                        // Check if the Part property of the service log matches the desired value for each category
-                        if (fluidMaintenanceParts.Contains(currentServiceLog.Part))
+                    }
+
+                    for (int i = 0; i < mechanicallyWearingServiceLogs.Count - 1; i++)
+                    {
+                        var totalMileage = mechanicallyWearingServiceLogs[i].Mileage - mechanicallyWearingServiceLogs[i + 1].Mileage;
+
+                        totalPoints += 12;
+
+                        category.Add("Mechanically Wearing Parts");
+
+                        if (totalMileage < (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
                         {
-                            fluidServiceLogs.Add(currentServiceLog);
+                            pointsEarned.Add(12);
                         }
-                        else if (mechanicallyWearingParts.Contains(currentServiceLog.Part))
+                        else if (totalMileage >= (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)) &&
+                                 totalMileage <= (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
                         {
-                            mechanicallyWearingServiceLogs.Add(currentServiceLog);
+                            pointsEarned.Add(10);
                         }
-                        else if (nonMechanicalMaintenanceParts.Contains(currentServiceLog.Part))
+                        else if (totalMileage > (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .50)))
                         {
-                            nonMechanicalServiceLogs.Add(currentServiceLog);
+                            pointsEarned.Add(2);
                         }
-
-                        iterator++;
+                        else
+                        {
+                            pointsEarned.Add(6);
+                        }
                     }
-                }
 
-                // Add most recent Service Log to give score based on their most recent mileage
-                #region Checking for Lists with 1 Service Log
-                if (fluidServiceLogs.Count == 1 )
+                    for (int i = 0; i < nonMechanicalServiceLogs.Count - 1; i++)
+                    {
+                        var totalMileage = nonMechanicalServiceLogs[i].Mileage - nonMechanicalServiceLogs[i + 1].Mileage;
+
+                        totalPoints += 6;
+
+                        category.Add("Non-Mechanical Maintenance");
+
+                        if (totalMileage < (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
+                        {
+                            pointsEarned.Add(6);
+                        }
+                        else if (totalMileage >= (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)) &&
+                                 totalMileage <= (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
+                        {
+                            pointsEarned.Add(5);
+                        }
+                        else if (totalMileage > (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .50)))
+                        {
+                            pointsEarned.Add(1);
+                        }
+                        else
+                        {
+                            pointsEarned.Add(3);
+                        }
+                    }
+                    #endregion
+
+                    #region Returns
+                    response.ReturnValue = new List<object>();
+                    response.ReturnValue.Add(pointsEarned);
+                    response.ReturnValue.Add(category);
+                    response.ReturnValue.Add(totalPoints);
+                    return response;
+                    #endregion
+                }
+                else
                 {
-                    fluidServiceLogs.Add(tempServiceLogModel);
+                    response.HasError  = true;
+                    response.ErrorMessage = "something went wrong";
+                    return response;
                 }
-                else if(mechanicallyWearingServiceLogs.Count == 1)
-                {
-                    mechanicallyWearingServiceLogs.Add(tempServiceLogModel);
-                }
-                else if(nonMechanicalServiceLogs.Count == 1)
-                {
-                    nonMechanicalServiceLogs.Add(tempServiceLogModel);
-                }
-                #endregion
-
-                #region Calculating CHR Rank
-                for (int i = 0; i < fluidServiceLogs.Count - 1; i++) 
-                {
-                    var totalMileage = fluidServiceLogs[i].Mileage - fluidServiceLogs[i + 1].Mileage;
-
-                    totalPoints += 6;
-
-                    category.Add("Fluid");
-                    
-                    if( totalMileage < (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
-                    {
-                        // assign max points
-                        pointsEarned.Add(6);
-                    }
-                    else if(totalMileage >= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE - (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)) 
-                        && totalMileage <= (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .10)))
-                    {
-                        // assign 5 points
-                        pointsEarned.Add(5);
-                    }
-                    else if(totalMileage > (Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE + (int)(Globals.FLUID_MANTAINENCE_AVERAGE_MILEAGE * .50)))
-                    {
-                        pointsEarned.Add(1);
-                    }
-                    else
-                    {
-                        pointsEarned.Add(3);
-                    }
-
-                }
-
-                for (int i = 0; i < mechanicallyWearingServiceLogs.Count - 1; i++)
-                {
-                    var totalMileage = mechanicallyWearingServiceLogs[i].Mileage - mechanicallyWearingServiceLogs[i + 1].Mileage;
-
-                    totalPoints += 12;
-
-                    category.Add("Mechanically Wearing Parts");
-
-                    if (totalMileage < (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
-                    {
-                        pointsEarned.Add(12);
-                    }
-                    else if (totalMileage >= (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)) &&
-                             totalMileage <= (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
-                    {
-                        pointsEarned.Add(10);
-                    }
-                    else if (totalMileage > (Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.MECHINALLY_WEARING_PARTS_AVERAGE_MILEAGE * .50)))
-                    {
-                        pointsEarned.Add(2);
-                    }
-                    else
-                    {
-                        pointsEarned.Add(6);
-                    }
-                }
-
-                for (int i = 0; i < nonMechanicalServiceLogs.Count - 1; i++)
-                {
-                    var totalMileage = nonMechanicalServiceLogs[i].Mileage - nonMechanicalServiceLogs[i + 1].Mileage;
-
-                    totalPoints += 6;
-
-                    category.Add("Non-Mechanical Maintenance");
-
-                    if (totalMileage < (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
-                    {
-                        pointsEarned.Add(6);
-                    }
-                    else if (totalMileage >= (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE - (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)) &&
-                             totalMileage <= (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .10)))
-                    {
-                        pointsEarned.Add(5);
-                    }
-                    else if (totalMileage > (Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE + (int)(Globals.NON_MECHANICAL_WEARING_PARTS_AVERAGE_MILEAGE * .50)))
-                    {
-                        pointsEarned.Add(1);
-                    }
-                    else
-                    {
-                        pointsEarned.Add(3);
-                    }
-                }
-                #endregion
-
-                #region Returns
-                response.ReturnValue = new List<object>();
-                response.ReturnValue.Add(pointsEarned);
-                response.ReturnValue.Add(category);
-                response.ReturnValue.Add(totalPoints);
-                return response;
-                #endregion
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
         }
 
        
