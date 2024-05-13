@@ -24,6 +24,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IConfigServiceJson, ConfigServiceJson>();
 builder.Services.AddScoped<ISqlServerDAO, SqlServerDAO>();
+builder.Services.AddScoped<IJsonFileDAO,JsonFileDAO>();
 
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
 
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IRandomService, RandomService>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMailKitService, MailKitService>();
 
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 
@@ -41,6 +43,11 @@ builder.Services.AddScoped<IClaimTarget, ClaimTarget>();
 builder.Services.AddScoped<IAccountDeletionManager, AccountDeletionManager>();
 builder.Services.AddScoped<IAccountDeletionService, AccountDeletionService>();
 builder.Services.AddScoped<ISqlDbUserDeletionTarget, SqlDbUserDeletionTarget>();
+builder.Services.AddScoped<IAccountRetrievalManager, AccountRetrievalManager>();
+builder.Services.AddScoped<IAccountRetrievalService, AccountRetrievalService>();
+builder.Services.AddScoped<ISqlDbUserRetrievalTarget, SqlDbUserRetrievalTarget>();
+
+
 
 
 
