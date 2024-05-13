@@ -37,10 +37,12 @@ namespace TeamSpecs.RideAlong.CELibrary.Target
             {
 
                 var daoValue = _dao.ExecuteReadOnly(sqlCommand);
-                response.ReturnValue = new List<object>()
-            {
-                daoValue
-            };
+                response.ReturnValue = new List<object>();
+
+                foreach (var item in daoValue)
+                {
+                    response.ReturnValue.Add(new EmailModel((string)item[0]));
+                };
             }
             catch
             {
