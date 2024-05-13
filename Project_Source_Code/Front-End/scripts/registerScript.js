@@ -42,7 +42,7 @@ function createAccount() {
             console.error(error);
         }));
     webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["registration"]
-    window.webURL = webURL;
+    window.registerURL = webURL;
 }) (window);
 
 function generateEmailInputView() {
@@ -87,7 +87,7 @@ function submitEmail() {
 
 
         // Send the registration request to the server
-        fetchWithTokens(webURL + '/Registration/PostVerify', 'POST', email)
+        fetchWithTokens(registerURL + '/Registration/PostVerify', 'POST', email)
         .then(response => {
             if (response.ok) {
                 // Registration successful
@@ -234,7 +234,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens( webURL + 'Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens( registerURL + 'Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
