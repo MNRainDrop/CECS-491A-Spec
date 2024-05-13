@@ -32,7 +32,7 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
                 startLoginTask.Wait();
                 startLoginResponse = startLoginTask.Result;
             }
-            catch (Exception ex)
+            catch
             {
                 // Handles failure if it takes too long
                 return StatusCode(500, "Start Login took Longer than 5 Seconds");
@@ -64,7 +64,7 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
                 tryAuthTask.Wait();
                 tryAuthentication = tryAuthTask.Result;
             }
-            catch (Exception ex)
+            catch
             {
                 return StatusCode(500, "Start Login took Longer than 5 Seconds");
             }
@@ -99,7 +99,7 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
                 refreshTokensTask.Wait();
                 tokenRefreshResponse = refreshTokensTask.Result;
             }
-            catch (Exception ex)
+            catch
             {
                 return StatusCode(500, "Start Login took Longer than 5 Seconds");
             }
