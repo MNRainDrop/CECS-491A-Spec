@@ -4,6 +4,7 @@ using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.UserAdministration.Managers;
 using TeamSpecs.RideAlong.Model;
 using System.Collections;
+using TeamSpecs.RideAlong.UserAdministration.Interfaces;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,19 +15,19 @@ namespace TeamSpecs.RideAlong.AccountDeletionEntryPoint.Controllers
     public class DeletionController : ControllerBase
     {
         private readonly ILogService _logService;
-        private readonly AccountDeletionManager _accountDeletionManager;
+        private readonly IAccountDeletionManager _accountDeletionManager;
         private readonly ISecurityManager _securityManager;
 
-        public DeletionController(ILogService logService, AccountDeletionManager accountDeletionManager, ISecurityManager securityManager)
+        public DeletionController(ILogService logService, IAccountDeletionManager accountDeletionManager, ISecurityManager securityManager)
         {
             _logService = logService;
             _accountDeletionManager = accountDeletionManager;
             _securityManager = securityManager;
         }
 
-        [HttpDelete]
+        [HttpPost]
         [Route("DeleteMyAccount")]
-        public IActionResult DeleteUsersAccount([FromBody] string testUser) // change so user is not needed
+        public IActionResult DeleteUsersAccount() // change so user is not needed
         {
             IResponse response = new Response();
             IAccountUserModel user = new AccountUserModel("temp");
@@ -34,7 +35,7 @@ namespace TeamSpecs.RideAlong.AccountDeletionEntryPoint.Controllers
 
             if (principal.userIdentity.userName is not null)
             {
-                user = new AccountUserModel(principal.userIdentity.userName);
+                user.UserName = principal.userIdentity.userName;
                 user.UserId = principal.userIdentity.UID;
                 user.Salt = BitConverter.ToUInt32(principal.userIdentity.salt); 
                 user.UserHash = principal.userIdentity.userHash;

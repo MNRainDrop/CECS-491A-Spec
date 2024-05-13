@@ -78,14 +78,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             IResponse response = new Response();
             var sqlCommands = new List<KeyValuePair<string, HashSet<SqlParameter>?>>();
             string query = @"
-                DELETE FROM Listings WHERE ownerUID = @UID;
-                DELETE FROM Parts WHERE ownerUID = @UID;
-                DELETE FROM BuyRequest WHERE buyerUID = @UID;
-                DELETE FROM UserDetails WHERE UID = @UID;
-                DELETE FROM UserProfile WHERE UID = @UID;
-                DELETE FROM OTP WHERE UID = @UID;
-                DELETE FROM NotificationObject WHERE UID = @UID;
-                DELETE FROM NotificationCenter WHERE UID = @UID;
                 DELETE FROM UserAccount WHERE UID = @UID;
             ";
 
@@ -129,5 +121,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Targets
             response.HasError = false;
             return response;
         }
+
+        //public IResponse Create
     }
 }
