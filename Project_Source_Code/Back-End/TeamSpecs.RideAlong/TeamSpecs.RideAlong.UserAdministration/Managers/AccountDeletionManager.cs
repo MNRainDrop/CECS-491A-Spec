@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Org.BouncyCastle.Asn1.Tsp;
+using System.Diagnostics;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
@@ -118,6 +119,48 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             #endregion
 
             #region Checking if Deletion service failed
+            if (response.ErrorMessage is not null)
+            {
+                if (response.HasError && response.ErrorMessage.Contains("Could not"))
+                {
+                    _logService.CreateLogAsync("Info", "Business", "AccountDeletionFailure: " + response.ErrorMessage, model.UserHash);
+                    return response;
+                }
+                else if (response.HasError)
+                {
+                    _logService.CreateLogAsync("Info", "Business", "AccountDeletionFailure: " + response.ErrorMessage, model.UserHash);
+                    return response;
+                }
+            }
+            #endregion
+
+            timer.Restart();
+
+            timer.Start();
+            if (model.UserHash is not null)
+            {
+                response = _accountDeletionService.CreateAccountDeletionRequestTable(model.UserHash);
+            }
+            else
+            {
+                response.HasError = true;
+                response.ErrorMessage = "userHash null";
+                return response;
+            }
+            timer.Stop();
+
+            #region Checking timer
+            if (timer.ElapsedMilliseconds > 3000)
+            {
+                _logService.CreateLogAsync("Warning", "Business", "Claims Service took longer than 3 seconds", model.UserHash);
+            }
+            else if (timer.ElapsedMilliseconds > 10000)
+            {
+                _logService.CreateLogAsync("Error", "Business", "AccountDeletionFailure: Claims Service took longer than 10 seconds", model.UserHash);
+            }
+            #endregion
+
+            #region Checking if create deletion request table service failed
             if (response.ErrorMessage is not null)
             {
                 if (response.HasError && response.ErrorMessage.Contains("Could not"))
