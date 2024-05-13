@@ -232,7 +232,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens(registrationURL +'/Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens(registrationURL +'/Registration/PostCreateUser', 'POST', JSON.parse(accountData))
 .then(response => {
     if (response.ok) {
         // Registration successful
