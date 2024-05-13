@@ -86,7 +86,7 @@ function generateCarHealthRatingDefaultView()
 
 function generateVehicleProfileView()
 {
-    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleProfile"] + '/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             // replace the parameter inside changeCSS() to the path of the css file you need
@@ -145,7 +145,7 @@ function logOut() {
 }
 
 function refreshUserTokens() {
-    fetchWithTokens('http://localhost:8080/Auth/refreshTokens', 'POST', '')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["security"] + '/Auth/refreshTokens', 'POST', '')
         .then(function (response) {
         if (response.ok) {
             return response.json();
