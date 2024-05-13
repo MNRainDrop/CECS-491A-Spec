@@ -34,7 +34,7 @@ public class AccountCreationService : IAccountCreationService
     public IResponse verifyUser(string email)
     {
         IResponse response = new Response();
-        var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
+        var userPepper = _pepperService.RetrievePepper("Test Key1");
         var userHash = _hashService.hashUser(email, (int)userPepper);
 
         _logService.CreateLogAsync("Info", "Business", email + " attempted to create a account confirmation", userHash);

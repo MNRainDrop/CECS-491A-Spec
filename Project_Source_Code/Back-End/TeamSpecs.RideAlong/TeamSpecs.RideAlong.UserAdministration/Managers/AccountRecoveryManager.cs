@@ -45,7 +45,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         {
             #region Varaibles 
             IResponse response = new Response();
-            var userPepper = _pepperService.RetrievePepper("RideAlongPepper");
+            var userPepper = _pepperService.RetrievePepper("Test Key1");
             var userHash = _hashService.hashUser(email, (int)userPepper);
             string altEmail;
             string otp;

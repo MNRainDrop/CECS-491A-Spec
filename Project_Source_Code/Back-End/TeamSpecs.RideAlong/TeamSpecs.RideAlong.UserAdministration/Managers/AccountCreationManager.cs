@@ -264,7 +264,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
 
         private bool IsValidAccountType(string accountType)
         {
-            return accountType == "Vendor" || accountType == "Renter" || accountType == "Default User" || accountType == "Admin";
+            return accountType == "Vendor" || accountType == "Rental" || accountType == "Default User" || accountType == "Admin";
         }
 
         private bool IsValidOneTimePassword(string otp)

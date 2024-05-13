@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Org.BouncyCastle.Asn1.Tsp;
+using System.Diagnostics;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.Services;
@@ -23,6 +24,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
         {
             IResponse response = new Response();
             var timer = new Stopwatch();
+
+            //_logService.CreateLogAsync("Info", "Business", model.UserName + " is attempting to delete account ", model.UserHash);
 
             // Disoassociate VP's from UID -- Set FleetManagement, MarketpalceStatus, & VendingStatus to default values
             timer.Start();
@@ -133,7 +136,50 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
-            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has succesfully deleted their account", model.UserHash);
+            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has deleted account", model.UserHash);
+            
+            timer.Restart();
+
+            timer.Start();
+            if (model.UserHash is not null)
+            {
+                response = _accountDeletionService.CreateAccountDeletionRequestTable(model.UserHash);
+            }
+            else
+            {
+                response.HasError = true;
+                response.ErrorMessage = "userHash null";
+                return response;
+            }
+            timer.Stop();
+
+            #region Checking timer
+            if (timer.ElapsedMilliseconds > 3000)
+            {
+                _logService.CreateLogAsync("Warning", "Business", "Claims Service took longer than 3 seconds", model.UserHash);
+            }
+            else if (timer.ElapsedMilliseconds > 10000)
+            {
+                _logService.CreateLogAsync("Error", "Business", "AccountDeletionFailure: Claims Service took longer than 10 seconds", model.UserHash);
+            }
+            #endregion
+
+            #region Checking if create deletion request table service failed
+            if (response.ErrorMessage is not null)
+            {
+                if (response.HasError && response.ErrorMessage.Contains("Could not"))
+                {
+                    _logService.CreateLogAsync("Info", "Business", "AccountDeletionFailure: " + response.ErrorMessage, model.UserHash);
+                    return response;
+                }
+                else if (response.HasError)
+                {
+                    _logService.CreateLogAsync("Info", "Business", "AccountDeletionFailure: " + response.ErrorMessage, model.UserHash);
+                    return response;
+                }
+            }
+            #endregion
+
             response.HasError = false;
             return response;
         }
