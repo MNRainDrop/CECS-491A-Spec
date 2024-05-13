@@ -4,7 +4,6 @@
     function extractData(jsonData,make, model, year) {
         //var data = JSON.parse(jsonData);
         var dynamicContent = document.querySelector(".dynamic-content");
-        //var temp = "http://localhost:3000/";
         var html = "<div class=DYCcontainer>";
         jsonData.forEach(function(data) {
             // Access values from each object

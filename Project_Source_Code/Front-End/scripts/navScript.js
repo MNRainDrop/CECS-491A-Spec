@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function generateRentalDefaultView() {
     var permissionGranted;
-    fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["rentalFleet"] + '/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("permission granted!!!");
@@ -65,7 +65,7 @@ function generateRentalDefaultView() {
 function generateCarHealthRatingDefaultView()
 {
     var permissionGranted;
-    fetchWithTokens('http://localhost:8082/CarHealthRating/GetAuthStatus', 'POST', '')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["carhealth"] + '/CarHealthRating/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("Permission Granted!");
@@ -105,7 +105,7 @@ function generateVehicleProfileView()
 function generateVehicleMarketplaceDefaultView()
 {
     var permissionGranted;
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"] + '/VehicleMarketplace/GetAuthStatus', 'POST','')
         .then(function (response) {
         if (response.status == 204) {
             var dynamicContent = document.querySelector(".dynamic-content");
