@@ -3,7 +3,6 @@ using MailKit.Net.Smtp;
 using TeamSpecs.RideAlong.Model;
 using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.ConfigService.ConfigModels;
-using MimeKit;
 
 namespace TeamSpecs.RideAlong.Services
 {

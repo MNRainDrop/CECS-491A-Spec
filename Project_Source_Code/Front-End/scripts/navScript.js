@@ -131,6 +131,7 @@ function generateUserAdministration()
 
 function generateUA4()
 {
+    changeCSS("styles/VPMstyles.css");
     DisplayAllAccounts();
 };
 
