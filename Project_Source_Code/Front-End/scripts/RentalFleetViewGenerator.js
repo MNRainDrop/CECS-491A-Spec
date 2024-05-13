@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const fetchFleetButton = document.getElementById('fetchFleetButton');
     fetchFleetButton.addEventListener('click', function() {
         // Send POST request to fetch fleet data
-        fetch('http://localhost:8081/Rentals/GetFleet', {
+        fetch(CONFIG["ip"] + ':' + CONFIG["ports"]["rentalFleet"]+'/Rentals/GetFleet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

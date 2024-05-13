@@ -63,7 +63,7 @@ function generateUserInfoRequestButton(content) {
 }
 
 function RequestingInfo(){
-    fetchWithTokens('http://localhost:8004/RequestUserData/UserDataRequest', 'POST',"")
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["accountDeletion"]+'/RequestUserData/UserDataRequest', 'POST',"")
     .then(function (response) {
         if (response.status == 200) { 
             response.json()
@@ -125,7 +125,7 @@ function exrtactData(jsonData) {
 
 function DisplayAllAccounts()
 {
-    fetchWithTokens('http://localhost:8004/RequestUserData/RetrieveAllAccount', 'POST','')
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["accountDeletion"]+'/RequestUserData/RetrieveAllAccount', 'POST','')
     .then(function (response) {
         if (response.status == 200) { 
             response.json()

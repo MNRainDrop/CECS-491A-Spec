@@ -1,7 +1,7 @@
 'use strict';
 (async function() {
     function generateUsageDashboardView(){
-        fetchWithTokens('http://localhost:8728/SystemObservability/PostAuthStatus', 'POST', '')
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["systemObservability"]+'/SystemObservability/PostAuthStatus', 'POST', '')
             .then(function (response) {
             if (response.status == 204) {
                 // replace the parameter inside changeCSS() to the path of the css file you need
@@ -118,7 +118,7 @@
     function populateAllKPIs(months) {
         var dropDown = document.getElementById('time-frame');
         var months = dropDown.options[dropDown.selectedIndex].id
-        fetchWithTokens('http://localhost:8728/SystemObservability/PostGetKPIs', 'POST', months)
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["systemObservability"]+'/SystemObservability/PostGetKPIs', 'POST', months)
             .then(response => {
                 if (!response.ok) {
                     throw "Could not process request";
@@ -138,7 +138,7 @@
             .catch(error => {
                 alert(error)
             });
-        fetchWithTokens('http://localhost:8728/SystemObservability/PostGetLogs', 'POST', months)
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["systemObservability"]+'/PostGetLogs', 'POST', months)
             .then(response => {
                 if (!response.ok) {
                     throw "Could not process request";
