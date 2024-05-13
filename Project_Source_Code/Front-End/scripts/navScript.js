@@ -32,8 +32,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var userAdmin = document.getElementById("userAdmin");
     userAdmin.addEventListener("click", generateUserAdministration);
+
+    var viewAccounts = document.getElementById('view-all-accounts');
+    viewAccounts.addEventListener('click', generateUA4);
+
     var usageDashboardNav = document.getElementById('usage-dashboard-view');
     usageDashboardNav.addEventListener('click', generateUsageDashboardView);
+
+  
 });
 
 function generateRentalDefaultView() {
@@ -121,6 +127,11 @@ function generateUserAdministration()
 {
     var permissionGranted;
     displayUserAdministration();
+};
+
+function generateUA4()
+{
+    DisplayAllAccounts();
 };
 
 function logOut() {

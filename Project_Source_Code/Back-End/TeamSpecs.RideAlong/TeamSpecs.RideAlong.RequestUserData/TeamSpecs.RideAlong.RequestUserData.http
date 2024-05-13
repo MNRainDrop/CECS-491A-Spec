@@ -1,0 +1,6 @@
+@TeamSpecs.RideAlong.RequestUserData_HostAddress = http://localhost:5032
+
+GET {{TeamSpecs.RideAlong.RequestUserData_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

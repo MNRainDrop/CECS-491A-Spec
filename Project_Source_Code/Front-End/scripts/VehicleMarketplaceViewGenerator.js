@@ -29,7 +29,7 @@ function exrtactData(jsonData) {
         `;
     });   
     html += "</div>"; 
-    html += "<div id=detail></div>";
+    //html += "<div id=detail></div>";
     dynamicContent.innerHTML = html;
 
    
