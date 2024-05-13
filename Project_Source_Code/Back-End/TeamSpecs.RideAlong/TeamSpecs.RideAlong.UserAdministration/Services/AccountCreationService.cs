@@ -42,12 +42,19 @@ public class AccountCreationService : IAccountCreationService
         if (response.HasError && response.ErrorMessage == "User exists in the Database")
         {
             _logService.CreateLogAsync("Info", "Business", "AccountCreationFailure: " + response.ErrorMessage, userHash);
+            response.ErrorMessage = "User already exists";
+            return response;
+        }
+        else if(response.HasError && response.ErrorMessage == "Email exists as alt. UserName")
+        {
+            _logService.CreateLogAsync("Info", "Data Store","AccountCreationFailure: " + response.ErrorMessage, userHash);
+            response.ErrorMessage = "User already exists";
             return response;
         }
         else if(response.HasError)
         {
-            _logService.CreateLogAsync("Info", "Data Store","AccountCreationFailure: " + response.ErrorMessage, userHash);
-            response.ErrorMessage += " : CheckDbForExisitngEmail target Failed.";
+            response.ErrorMessage += " CheckDbForExisitngEmail target Failed. :";
+            _logService.CreateLogAsync("Info", "Data Store", "AccountCreationFailure: " + response.ErrorMessage, userHash);
             return response;
         }
 
