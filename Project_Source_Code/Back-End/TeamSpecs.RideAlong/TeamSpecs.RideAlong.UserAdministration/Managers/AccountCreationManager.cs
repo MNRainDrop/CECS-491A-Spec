@@ -284,7 +284,7 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             var list = new List<Tuple<string, string>>
             {
                 new Tuple<string, string>("canLogin", "true"),
-                new Tuple<string, string>("canRequestCarHealthRating", "true"),
+                new Tuple<string, string>("canRequestCarHealthRanking", "true"),
                 new Tuple<string, string>("canCreateVehicle", "true"),
                 new Tuple<string, string>("canView", "default"),
                 new Tuple<string, string>("canView", "vehicleProfile"),
