@@ -56,8 +56,7 @@ namespace TeamSpecs.RideAlong.Services
                 var temp2 = x as KeyValuePair<string, uint>?;
                 if (temp2.Value.Key == PepperObject.Key)
                 {
-                    //throw new Exception("Key already exist in Pepper !!");
-                    return response;
+                    throw new Exception("Key already exist in Pepper !!");
                 }
             }
 

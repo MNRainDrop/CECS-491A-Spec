@@ -61,11 +61,11 @@ namespace TeamSpecs.RideAlong.TestingLibrary
 
 
             //Service 
-            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService);
+            AccountRetrievalService View = new AccountRetrievalService(_target,_mailKitService,Jsondao);
 
             //Act 
             timer.Start();
-            response = View.RetrieveAllAccount();
+            response = View.RetrieveAccount(uid);
             timer.Stop();
 
 

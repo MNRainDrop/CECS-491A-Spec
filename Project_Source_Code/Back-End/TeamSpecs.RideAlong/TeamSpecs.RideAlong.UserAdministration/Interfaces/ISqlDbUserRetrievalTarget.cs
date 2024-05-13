@@ -11,7 +11,5 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
     {
         IResponse RetrieveAllUserInformation(long UID);
 
-        IResponse RetrieveAllAccountInformation();
-
     }
 }
