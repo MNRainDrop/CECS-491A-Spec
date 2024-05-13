@@ -12,6 +12,7 @@ public class Log : ILog
         this.LogHash = logHash;
     }
 
+
     private int? LogID { get; set; }
     public DateTimeOffset LogTime { get; set; }
     public string LogLevel { get; set; }

@@ -105,31 +105,5 @@ namespace TeamSpecs.RideAlong.Services.FormatCompressorService
                 #endregion
             }
         }
-        public IResponse CreateFile<T>(byte[] zipFileBytes, string filepath, string filename)
-        {
-            IResponse response = new Response();
-            try
-            {
-                #region Create Directory Path
-                string newFile = Path.Combine(filepath, filename);
-                #endregion
-
-                #region Write the zip file bytes to the given filepath
-                File.WriteAllBytes(newFile, zipFileBytes);
-                #endregion
-
-                #region Return Success Outcome
-                response.HasError = false;
-                return response;
-                #endregion
-            }
-            catch (Exception ex)
-            {
-                #region Catch Errors
-                response.ErrorMessage = ex.Message;
-                return response;
-                #endregion
-            }
-        }
     }
 }

@@ -21,15 +21,5 @@ namespace TeamSpecs.RideAlong.Services.FormatCompressorService
         /// <param name="zipFileBytes"></param>
         /// <returns>IResponse Containing list of "T" objects</returns>
         IResponse Extract<T>(byte[] zipFileBytes);
-        /// <summary>
-        /// Creates a file from the zipFileBytes passed in<br>
-        /// Places it in given filepath, names it the filename
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="zipFileBytes"></param>
-        /// <param name="filepath"></param>
-        /// <param name="filename"></param>
-        /// <returns>IResponse based on outcome</returns>
-        IResponse CreateFile<T>(byte[] zipFileBytes, string filepath, string filename);
     }
 }

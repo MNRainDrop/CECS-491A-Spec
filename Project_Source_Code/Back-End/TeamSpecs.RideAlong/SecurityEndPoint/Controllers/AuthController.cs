@@ -17,7 +17,27 @@ namespace TeamSpecs.RideAlong.SecurityEndPoint.Controllers
         [Route("startLogin")]
         public IActionResult StartLogin([FromBody] string username)
         {
-            var startLoginResponse = _securityManager.StartLogin(username);
+            IResponse startLoginResponse;
+            using var source = new CancellationTokenSource();
+
+            // Run asynchronous task for login
+            Task<IResponse> startLoginTask = Task.Run(() => _securityManager.StartLogin(username), source.Token);
+
+            // Stop the task if it takes to long
+            source.CancelAfter(5000);
+            try
+            {
+                // Successful Execution Stored into response
+                startLoginTask.Wait();
+                startLoginResponse = startLoginTask.Result;
+            }
+            catch (Exception ex)
+            {
+                // Handles failure if it takes too long
+                return StatusCode(500, "Start Login took Longer than 5 Seconds");
+            }
+
+            // Validate Response
             if (startLoginResponse.HasError)
             {
                 return BadRequest(startLoginResponse.ErrorMessage);

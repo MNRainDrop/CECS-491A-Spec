@@ -17,7 +17,7 @@ namespace TeamSpecs.RideAlong.Archiving
         {
             List<ILog> newLogs = new List<ILog>();
             #region Extract New Logs
-            IResponse compressorResponse = _compressor.Extract<List<ILog>>(zipFileBytes);
+            IResponse compressorResponse = _compressor.Extract<ILog>(zipFileBytes);
             if (compressorResponse.HasError)
             {
                 return compressorResponse;
@@ -35,35 +35,8 @@ namespace TeamSpecs.RideAlong.Archiving
             }
             #endregion
 
-            List<ILog> existingLogs = new List<ILog>();
-            #region Get Existing Logs
-            IResponse targetResponse = _aTarget.GetLogs(DateTime.Now, null);
-            if (targetResponse.HasError)
-            {
-                return targetResponse;
-            }
-            else if (targetResponse.ReturnValue is null || targetResponse.ReturnValue.First() is null)
-            {
-                IResponse noLogsReturnedResponse = new Response();
-                noLogsReturnedResponse.HasError = true;
-                noLogsReturnedResponse.ErrorMessage = "No Logs Returned";
-                return noLogsReturnedResponse;
-            }
-            foreach (var log in targetResponse.ReturnValue)
-            {
-                existingLogs.Add((ILog)log);
-            }
-            #endregion
-
-            #region Concatenate new to existing
-            foreach (var log in newLogs)
-            {
-                existingLogs.Add(log);
-            }
-            #endregion
-
             #region Set All Logs
-            IResponse setLogsResponse = _aTarget.SetLogs(existingLogs);
+            IResponse setLogsResponse = _aTarget.SetLogs(newLogs);
             if (setLogsResponse.HasError)
                 return setLogsResponse;
             #endregion
