@@ -136,32 +136,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLogEntryPoint", "TeamSpecs.RideAlong.ServiceLogEntryPoint\TeamSpecs.RideAlong.ServiceLogEntryPoint.csproj", "{4638F160-6B41-4D17-877C-A3855B08B1C9}"
 EndProject
-<<<<<<< Updated upstream
-=======
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ConfigService", "ConfigService\TeamSpecs.RideAlong.ConfigService.csproj", "{94C5A058-723E-412F-9C38-5299E181A4FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CEEntryPoint", "TeamSpecs.RideAlong.CEEntryPoint\TeamSpecs.RideAlong.CEEntryPoint.csproj", "{627F8A6A-19C3-43A1-9709-AE47E62AC891}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.ServiceLog", "TeamSpecs.RideAlong.ServiceLog\TeamSpecs.RideAlong.ServiceLog.csproj", "{A810CAD1-59D9-476B-84DB-75DBED542972}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.CELibrary", "TeamSpecs.RideAlong.CELibrary\TeamSpecs.RideAlong.CELibrary.csproj", "{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.RegistrationEntryPoint", "TeamSpecs.RideAlong.RegistrationEntryPoint\TeamSpecs.RideAlong.RegistrationEntryPoint.csproj", "{FF5B731A-CB8A-4739-8B81-A0C3C468C938}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.AccountDeletionEntryPoint", "TeamSpecs.RideAlong.AccountDeletionEntryPoint\TeamSpecs.RideAlong.AccountDeletionEntryPoint.csproj", "{82DE18F2-CC4E-41E4-B019-63703DD54F9B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.AccountRecoveryEntryPoint", "TeamSpecs.RideAlong.AccountRecoveryEntryPoint\TeamSpecs.RideAlong.AccountRecoveryEntryPoint.csproj", "{F961192D-F036-4BF7-8C67-761E1FC7548C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemObservability", "SystemObservability\TeamSpecs.RideAlong.SystemObservability.csproj", "{55B9C0B1-DC82-49C9-BC07-84BA0708B090}"
-	ProjectSection(ProjectDependencies) = postProject
-		{191F40A7-33DC-4A46-8B15-C7D28601E733} = {191F40A7-33DC-4A46-8B15-C7D28601E733}
-		{4AB88406-3491-4915-AB0F-0952F69C07A1} = {4AB88406-3491-4915-AB0F-0952F69C07A1}
-		{94C5A058-723E-412F-9C38-5299E181A4FB} = {94C5A058-723E-412F-9C38-5299E181A4FB}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamSpecs.RideAlong.SystemObservabilityEntryPoint", "SystemObservabilityEntryPoint\TeamSpecs.RideAlong.SystemObservabilityEntryPoint.csproj", "{22E49056-BD6E-4A8D-8734-82BA7693B394}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.CEEntryPoint", "TeamSpecs.RideAlong.CEEntryPoint\TeamSpecs.RideAlong.CEEntryPoint.csproj", "{627F8A6A-19C3-43A1-9709-AE47E62AC891}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamSpecs.RideAlong.CELibrary", "TeamSpecs.RideAlong.CELibrary\TeamSpecs.RideAlong.CELibrary.csproj", "{0A774F28-E3AD-4BA8-AF5E-0AE5B7DFBE6C}"
-EndProject
->>>>>>> Stashed changes
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -312,6 +290,12 @@ Global
 		{34B65107-F7A7-4BB4-9C51-9A035C9BF0D5} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{7E26749D-09C6-4109-AD64-56129D7A4CD0} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 		{8C150363-9864-4010-BC51-0645AA00047D} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{FF5B731A-CB8A-4739-8B81-A0C3C468C938} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{82DE18F2-CC4E-41E4-B019-63703DD54F9B} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{F961192D-F036-4BF7-8C67-761E1FC7548C} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{22E49056-BD6E-4A8D-8734-82BA7693B394} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{4638F160-6B41-4D17-877C-A3855B08B1C9} = {7A22D9A7-165F-4580-808F-3F1536D90851}
+		{627F8A6A-19C3-43A1-9709-AE47E62AC891} = {7A22D9A7-165F-4580-808F-3F1536D90851}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6251906-A373-4F38-84F0-2AF81BDE4135}

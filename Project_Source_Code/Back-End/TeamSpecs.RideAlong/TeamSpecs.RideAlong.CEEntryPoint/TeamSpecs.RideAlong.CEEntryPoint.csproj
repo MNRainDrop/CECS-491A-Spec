@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.CELibrary\TeamSpecs.RideAlong.CELibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.DataAccess\TeamSpecs.RideAlong.DataAccess.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.DonateYourCarLibrary\TeamSpecs.RideAlong.DonateYourCarLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.LoggingLibrary\TeamSpecs.RideAlong.LoggingLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Services\TeamSpecs.RideAlong.Services.csproj" />
