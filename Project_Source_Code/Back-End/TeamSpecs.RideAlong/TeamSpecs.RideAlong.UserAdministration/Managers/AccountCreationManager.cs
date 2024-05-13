@@ -290,59 +290,70 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 new Tuple<string, string>("canView", "vehicleProfile"),
                 new Tuple<string, string>("canView", "marketplace"),
                 new Tuple<string, string>("canView", "serviceLog"),
-                new Tuple<string, string>("ownsVehicle", "true"),
+                new Tuple<string, string>("canView", "charity"),
+                new Tuple<string, string>("canView", "scrapYourCars"),
+                new Tuple<string, string>("canView", "userDirections"),
+                new Tuple<string, string>("canView", "carNewsCenter"),
+                new Tuple<string, string>("canView", "email"),
                 new Tuple<string, string>("CanModifyServiceLog", "true"),
                 new Tuple<string, string>("CanDeleteServiceLog", "true"),
-                new Tuple<string, string>("CanCreateServiceLog", "true"),
-                new Tuple<string, string>("canDeleteAccount", "true")
+                new Tuple<string, string>("CanCreateServiceLog", "true")
             };
             // ^^^ above needs to be edited to correlate to actual permissions
 
             return list;
         }
 
-        private IDictionary<string, string> GenerateVendorClaims()
+        private IList<Tuple<string, string>> GenerateVendorClaims()
         {
-            IDictionary<string, string> claims = new Dictionary<string, string>()
-        {
-            { "0", "True" },
-            { "1", "True" },
-            { "2", "True" },
-            { "3", "True" },
-            { "4", "True" },
-            { "5", "True" },
-            { "6", "True" },
-            { "7", "True" },
-            { "8", "True" },
-            { "9", "True" },
-            { "10", "True" }
-        };
-
+            var list = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("canLogin", "true"),
+                new Tuple<string, string>("canRequestCarHealthRating", "true"),
+                new Tuple<string, string>("canCreateVehicle", "true"),
+                new Tuple<string, string>("canView", "default"),
+                new Tuple<string, string>("canView", "inventory"),
+                new Tuple<string, string>("canView", "vehicleProfile"),
+                new Tuple<string, string>("canView", "marketplace"),
+                new Tuple<string, string>("canView", "serviceLog"),
+                new Tuple<string, string>("canView", "charity"),
+                new Tuple<string, string>("canView", "scrapYourCars"),
+                new Tuple<string, string>("canView", "userDirections"),
+                new Tuple<string, string>("canView", "carNewsCenter"),
+                new Tuple<string, string>("canView", "email"),
+                new Tuple<string, string>("CanModifyServiceLog", "true"),
+                new Tuple<string, string>("CanDeleteServiceLog", "true"),
+                new Tuple<string, string>("CanCreateServiceLog", "true")
+            };
             // ^^^ above needs to be edited to correlate to actual permissions
 
-            return claims;
+            return list;
         }
 
-        private IDictionary<string, string> GenerateRentalClaims()
+        private IList<Tuple<string, string>> GenerateRentalClaims()
         {
-            IDictionary<string, string> claims = new Dictionary<string, string>()
-        {
-            { "0", "True" },
-            { "1", "True" },
-            { "2", "True" },
-            { "3", "True" },
-            { "4", "True" },
-            { "5", "True" },
-            { "6", "True" },
-            { "7", "True" },
-            { "8", "True" },
-            { "9", "True" },
-            { "10", "True" }
-        };
-
+            var list = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>("canLogin", "true"),
+                new Tuple<string, string>("canRequestCarHealthRating", "true"),
+                new Tuple<string, string>("canCreateVehicle", "true"),
+                new Tuple<string, string>("canView", "default"),
+                new Tuple<string, string>("canView", "rental"),
+                new Tuple<string, string>("canView", "vehicleProfile"),
+                new Tuple<string, string>("canView", "marketplace"),
+                new Tuple<string, string>("canView", "serviceLog"),
+                new Tuple<string, string>("canView", "charity"),
+                new Tuple<string, string>("canView", "scrapYourCars"),
+                new Tuple<string, string>("canView", "userDirections"),
+                new Tuple<string, string>("canView", "carNewsCenter"),
+                new Tuple<string, string>("canView", "email"),
+                new Tuple<string, string>("CanModifyServiceLog", "true"),
+                new Tuple<string, string>("CanDeleteServiceLog", "true"),
+                new Tuple<string, string>("CanCreateServiceLog", "true")
+            };
             // ^^^ above needs to be edited to correlate to actual permissions
 
-            return claims;
+            return list;
         }
     }
 }

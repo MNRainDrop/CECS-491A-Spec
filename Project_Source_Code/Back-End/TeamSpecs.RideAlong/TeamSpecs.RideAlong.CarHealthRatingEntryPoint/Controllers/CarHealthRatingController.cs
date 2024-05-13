@@ -29,7 +29,6 @@ namespace TeamSpecs.RideAlong.CarHealthRatingEntryPoint.Controllers
         public IActionResult GetAuthStatus()
         {
             Dictionary<string, string> requiredClaims = new Dictionary<string, string>();
-            requiredClaims.Add("ownsVehicle", "true");
             requiredClaims.Add("canRequestCarHealthRanking", "true");
 
             bool hasPermission;

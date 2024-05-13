@@ -28,6 +28,23 @@ function createAccount() {
     generateEmailInputView();
 }
 
+(async function() {
+    //#region Initial Setup
+    var webURL = "";
+    var CONFIG = (await fetchConfig('./configs/RideAlong.config.json')
+        .then(response => {
+            if (!response.ok) {
+                throw "Could not read config file";
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error(error);
+        }));
+    webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["registration"]
+    window.webURL = webURL;
+}) (window);
+
 function generateEmailInputView() {
     // Get the dynamic content area
     var dynamicContent = document.querySelector(".dynamic-content");
@@ -70,7 +87,7 @@ function submitEmail() {
 
 
         // Send the registration request to the server
-        fetchWithTokens('http://localhost:8003/Registration/PostVerify', 'POST', email)
+        fetchWithTokens(webURL + '/Registration/PostVerify', 'POST', email)
         .then(response => {
             if (response.ok) {
                 // Registration successful
@@ -217,7 +234,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens( webURL + 'Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
