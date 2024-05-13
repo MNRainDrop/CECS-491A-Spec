@@ -29,14 +29,14 @@
     
     function createDonateYourCarView(make, model, year){
         var permissionGranted;
-        fetchWithTokens('http://localhost:5212/DonateYourCar/GetAuthStatus', 'POST','')
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["charity"]+'/DonateYourCar/GetAuthStatus', 'POST','')
             .then(function (response) {
             if (response.status == 204) {
                 var dynamicContent = document.querySelector(".dynamic-content");
                 dynamicContent.innerHTML = "";
                 // replace the parameter inside changeCSS() to the path of the css file you need
                 changeCSS("styles/DYCstyles.css");
-                fetchWithTokens('http://localhost:5212/DonateYourCar/RetrieveCharities', 'GET','')
+                fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["charity"]+'/DonateYourCar/RetrieveCharities', 'GET','')
                 .then(function (response) {
                     if (response.status == 200) { 
                         response.json()

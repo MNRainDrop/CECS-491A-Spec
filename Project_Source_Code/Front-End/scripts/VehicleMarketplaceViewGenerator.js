@@ -161,7 +161,7 @@ function displayMarketplace() {
     pages(displayMarketplace);
     document.getElementById('current-page').innerText = currPage;
         
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetVehicleMarketplace', 'POST',currPage)
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"] + '/VehicleMarketplace/GetVehicleMarketplace', 'POST',currPage)
     .then(function (response) {
         if (response.status == 200) { 
             response.json()
@@ -208,7 +208,7 @@ function displayDetailMarketplace(vin){
     var response;
     var content;
     try {
-        fetchWithTokens('http://localhost:5104/VehicleMarketplace/VehicleMarketplacePostDetailRetrieval', 'POST',vin)
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"]+'/VehicleMarketplace/VehicleMarketplacePostDetailRetrieval', 'POST',vin)
         .then(function (response) {
         if (response.status == 200) { 
             response.json()
@@ -313,7 +313,7 @@ function uploadToMarketplace(VIN,description){
 }
 
 function postUploadToMarketplace(vehicle) {
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/VehicleMarketplacePostCreation', 'POST',vehicle)
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"]+'/VehicleMarketplace/VehicleMarketplacePostCreation', 'POST',vehicle)
         .then(response => {
             if (response.status == 403) {   
                 throw "You are unauthorized";
@@ -394,7 +394,7 @@ function deleteFromMarketplace(VIN,description){
 }
 
 function postDeleteFromMarketplace(vehicle) {
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/VehicleMarketplacePostDeletion', 'POST',vehicle)
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehiclemarketplace"]+'/VehicleMarketplace/VehicleMarketplacePostDeletion', 'POST',vehicle)
         .then(response => {
             if (response.status == 403) {   
                 throw "You are unauthorized";
@@ -508,7 +508,7 @@ function generateBuyRequestWindow(){
 }
 
 function sendBuyRequest(vehicle) {
-    fetchWithTokens('http://localhost:5104/VehicleMarketplace/SendBuyRequest', 'POST',vehicle)
+    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"]+'/VehicleMarketplace/SendBuyRequest', 'POST',vehicle)
         .then(response => {
             if (response.status == 403) {   
                 throw "You are unauthorized";
