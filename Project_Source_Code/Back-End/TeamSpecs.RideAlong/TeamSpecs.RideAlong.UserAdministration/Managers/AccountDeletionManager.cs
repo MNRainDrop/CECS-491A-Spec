@@ -25,6 +25,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             IResponse response = new Response();
             var timer = new Stopwatch();
 
+            //_logService.CreateLogAsync("Info", "Business", model.UserName + " is attempting to delete account ", model.UserHash);
+
             // Disoassociate VP's from UID -- Set FleetManagement, MarketpalceStatus, & VendingStatus to default values
             timer.Start();
             response = _accountDeletionService.DeleteVehicles(model);
@@ -134,8 +136,8 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
             }
             #endregion
 
-            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has succesfully deleted their account", model.UserHash);
-
+            _logService.CreateLogAsync("Info", "Business", model.UserHash + " has deleted account", model.UserHash);
+            
             timer.Restart();
 
             timer.Start();
