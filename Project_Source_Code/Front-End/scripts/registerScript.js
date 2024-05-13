@@ -178,7 +178,7 @@ function generateAccountInfoView(email) {
     vendorOption.textContent = "Vendor";
     accountTypeSelect.appendChild(vendorOption);
     var rentalFleetOption = document.createElement("option");
-    rentalFleetOption.value = "Rental Fleet";
+    rentalFleetOption.value = "Rental";
     rentalFleetOption.textContent = "Rental Fleet";
     accountTypeSelect.appendChild(rentalFleetOption);
 
@@ -234,7 +234,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens( webURL + 'Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens( webURL + '/Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
@@ -243,12 +243,12 @@ fetchWithTokens( webURL + 'Registration/PostCreateUser', 'POST', accountData)
         location.reload();
     } else {
         // Registration failed, get the error message from the response
-        return response.json().then(data => { throw new Error(data.message); });
+        alert(response.text());
     }
 })
-.catch(error => {
-    console.error('Error:', response.text());
+.catch((error) => {
+    console.error('Error:', error.message);
     // Show an alert for any errors
-    alert(response.text());
+    alert("Something went wrong! Try again later");
 });
 }
