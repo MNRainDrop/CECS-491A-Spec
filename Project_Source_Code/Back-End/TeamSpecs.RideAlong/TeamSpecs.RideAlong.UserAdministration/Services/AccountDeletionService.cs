@@ -39,4 +39,13 @@ public class AccountDeletionService : IAccountDeletionService
 
         return response;
     }
+
+    public IResponse CreateAccountDeletionRequestTable(string userHash)
+    {
+        IResponse response = new Response();
+
+        response = _sqlDbUserDeletion.CreateAccountDeletionRequest(userHash);
+
+        return response;
+    }
 }

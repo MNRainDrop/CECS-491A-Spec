@@ -4,7 +4,6 @@
     function extractData(jsonData,make, model, year) {
         //var data = JSON.parse(jsonData);
         var dynamicContent = document.querySelector(".dynamic-content");
-        //var temp = "http://localhost:3000/";
         var html = "<div class=DYCcontainer>";
         jsonData.forEach(function(data) {
             // Access values from each object
@@ -29,14 +28,14 @@
     
     function createDonateYourCarView(make, model, year){
         var permissionGranted;
-        fetchWithTokens('http://localhost:5212/DonateYourCar/GetAuthStatus', 'POST','')
+        fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["charity"]+'/DonateYourCar/GetAuthStatus', 'POST','')
             .then(function (response) {
             if (response.status == 204) {
                 var dynamicContent = document.querySelector(".dynamic-content");
                 dynamicContent.innerHTML = "";
                 // replace the parameter inside changeCSS() to the path of the css file you need
                 changeCSS("styles/DYCstyles.css");
-                fetchWithTokens('http://localhost:5212/DonateYourCar/RetrieveCharities', 'GET','')
+                fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["charity"]+'/DonateYourCar/RetrieveCharities', 'GET','')
                 .then(function (response) {
                     if (response.status == 200) { 
                         response.json()
@@ -77,10 +76,11 @@
     
     function handleCharityClick(link, make, model, year) {
         // Generate the dynamic link with the extracted values
+        if (link == "https://www.kars4kids.org/"){
         var dynamicLink = link + "?make=" + encodeURIComponent(make) +
         "&model=" + encodeURIComponent(model) +
         "&year=" + encodeURIComponent(year);
-        
+    }   
         // Open the dynamic link in a new tab
         window.open(dynamicLink, '_blank');
     }

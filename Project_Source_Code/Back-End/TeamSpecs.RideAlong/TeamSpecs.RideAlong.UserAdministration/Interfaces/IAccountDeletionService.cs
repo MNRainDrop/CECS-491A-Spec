@@ -6,5 +6,6 @@ namespace TeamSpecs.RideAlong.UserAdministration.Interfaces
     {
         IResponse DeleteUser(IAccountUserModel model);
         IResponse DeleteVehicles(IAccountUserModel model);
+        IResponse CreateAccountDeletionRequestTable(string userHash);
     }
 }
