@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ConfigService\TeamSpecs.RideAlong.ConfigService.csproj" />
     <ProjectReference Include="..\Middlleware\TeamSpecs.RideAlong.Middleware.csproj" />
+    <ProjectReference Include="..\TeamSpecs.RideAlong.CommEstablishmentLibrary\TeamSpecs.RideAlong.CoEsLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.Model\TeamSpecs.RideAlong.Model.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.SecurityLibrary\TeamSpecs.RideAlong.SecurityLibrary.csproj" />
     <ProjectReference Include="..\TeamSpecs.RideAlong.VehicleMarketplace\TeamSpecs.RideAlong.VehicleMarketplace.csproj" />

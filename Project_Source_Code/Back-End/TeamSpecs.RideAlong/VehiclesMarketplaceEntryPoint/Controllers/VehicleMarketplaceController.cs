@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamSpecs.RideAlong.VehicleMarketplace;
+using TeamSpecs.RideAlong.CoEsLibrary.Interfaces;
 using TeamSpecs.RideAlong.LoggingLibrary;
-using TeamSpecs.RideAlong.SecurityLibrary;
 using TeamSpecs.RideAlong.Model;
-using System.Text.Json;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
+using TeamSpecs.RideAlong.VehicleMarketplace;
 
 namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
 {
@@ -15,13 +14,15 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         private readonly ILogService _logService;
         private readonly IVehicleMarketplaceManager _manager;
         private readonly ISecurityManager _securityManager;
+        private readonly ICommEstaManager _commEstaManager;
 
 
-        public VehicleMarketplaceController(ILogService logService, IVehicleMarketplaceManager marketplaceManager, ISecurityManager securityManager)
+        public VehicleMarketplaceController(ILogService logService, IVehicleMarketplaceManager marketplaceManager, ISecurityManager securityManager, ICommEstaManager commEstaManager)
         {
             _logService = logService;
             _manager = marketplaceManager;
             _securityManager = securityManager;
+            _commEstaManager = commEstaManager;
         }
 
         [HttpPost]
@@ -52,12 +53,12 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
 
         }
 
-        
+
 
 
         [HttpPost]
         [Route("GetVehicleMarketplace")]
-        public IActionResult GetAllVehiclesFromMarketplace([FromBody]int page)
+        public IActionResult GetAllVehiclesFromMarketplace([FromBody] int page)
         {
             IResponse response;
             /*IAppPrincipal principal = _securityManager.JwtToPrincipal();
@@ -138,7 +139,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
             user.UserHash = principal.userIdentity.userHash;*/
             try
             {
-                response = _manager.SendBuyRequest(request1.UID,request1.VIN,request1.price);
+                response = _manager.SendBuyRequest(request1.UID, request1.VIN, request1.price);
                 if (response is not null)
                 {
                     if (response.HasError)
@@ -240,9 +241,45 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
 
         }
 
+        [HttpPost]
+        [Route("CommunicationEstablishment")]
+        public IActionResult GetSeller(string vin)
+        {
+            IResponse response;
+            IAppPrincipal principal = _securityManager.JwtToPrincipal();
+#pragma warning disable CS8604 // Possible null reference argument.
+            IAccountUserModel user = new AccountUserModel(principal.userIdentity.userName);
+#pragma warning restore CS8604 // Possible null reference argument.
+            user.UserId = principal.userIdentity.UID;
+            user.UserHash = principal.userIdentity.userHash;
+            try
+            {
+                response = _commEstaManager.GetSeller(user, vin);
+                if (response is not null)
+                {
+                    if (response.HasError)
+                    {
+                        return BadRequest(response.ErrorMessage);
+                    }
+                    else
+                    {
+                        return Ok(response.ReturnValue);
+                    }
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
 
         public class BuyRequest
-        { 
+        {
             public required long UID { get; set; }
 
             public required string VIN { get; set; }
@@ -270,13 +307,13 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         }
 
         public class JavaScriptMarketplaceStatus
-        { 
+        {
             public required int View { get; set; }
 
-            public required int MarketplaceStatus {  get; set; }
+            public required int MarketplaceStatus { get; set; }
 
-            public required string Description {  get; set; }
-        
+            public required string Description { get; set; }
+
         }
         public class JavaScriptDetails
         {
