@@ -187,8 +187,7 @@ public class AuthenticateUserShould
         var authTarget = new SQLServerAuthTarget(dao, logger);
         var authService = new AuthService(authTarget, logger);
         var httpContext = new HttpContextAccessor();
-        var mailkit = new MailKitService(configService);
-        var sm = new SecurityManager(authService, logger, httpContext, mailkit);
+        var sm = new SecurityManager(authService, logger, httpContext);
         var name = "sample_user@gmail.com";
 
         var modelResponse = authService.GetUserModel(name);
