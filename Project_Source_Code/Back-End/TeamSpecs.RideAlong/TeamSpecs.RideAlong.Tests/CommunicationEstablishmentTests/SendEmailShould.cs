@@ -53,7 +53,7 @@ namespace TeamSpecs.RideAlong.TestingLibrary.CommunicationEstablishmentTests
             var vehicleproParameters = new HashSet<SqlParameter>
             {
                 new SqlParameter("@VIN", vin),
-                new SqlParameter("@Owner_UID", 10041),
+                new SqlParameter("@Owner_UID", 0),
                 new SqlParameter("@LicensePlate", "ABC123"),
                 new SqlParameter("@Make", "HOnda"),
                 new SqlParameter("@Model", "CRV"),
