@@ -23,27 +23,16 @@ namespace TeamSpecs.RideAlong.CoEsLibrary.Services
         {
             IResponse response = new Response();
             response = _dbCETarget.GetSellerSql(vin);
+            var username = "";
 
-            var collection = response.ReturnValue;
 
-            // Assuming the collection contains only one element
-            if (collection.Count == 1)
+            if (response.ReturnValue is not null)
             {
-                var list = (List<object>)collection.First();
-
-                // Check if the list has elements
-                if (list.Count > 0)
+                if (response.ReturnValue.ToList()[0] is object[] array)
                 {
-                    var username = (string)list[0];
-                    // Now you can work with the first element as needed
+                    username = array[0].ToString();
 
-
-
-
-                    if (response.ReturnValue != null && response.ReturnValue.Count > 0)
-                    {
-
-                        string emailBody = $@"
+                    string emailBody = $@"
 
                         Dear {username},
 
@@ -56,34 +45,37 @@ namespace TeamSpecs.RideAlong.CoEsLibrary.Services
                         Best regards,
                         RideAlong Team";
 
-                        try
-                        {
+                    try
+                    {
 #pragma warning disable CS8604
-                            _mailKitService.SendEmail(username, "RideAlong Communication Confirmation", emailBody);
+                        _mailKitService.SendEmail(username, "RideAlong Communication Confirmation", emailBody);
 #pragma warning restore CS8604
-                        }
-
-                        catch
-                        {
-                            response.HasError = true;
-                            response.ErrorMessage = " Emailing service failed";
-                            _logService.CreateLogAsync("Info", "Business", "Communinication Establishment feature: " + response.ErrorMessage, accountUser.UserHash);
-                        }
                     }
+
+                    catch
+                    {
+                        response.HasError = true;
+                        response.ErrorMessage = " Emailing service failed";
+                        _logService.CreateLogAsync("Info", "Business", "Communinication Establishment feature: " + response.ErrorMessage, accountUser.UserHash);
+                    }
+                    return response;
                 }
 
-
-                else
-                {
-                    // Handle the case where ReturnValue is null or empty
-                    response.ErrorMessage = "email is null" + response.ErrorMessage;
-                }
-
-
-
-
+            }
+            else
+            {
+                response.HasError = true;
+                response.ErrorMessage = " Emailing service is null";
+                _logService.CreateLogAsync("Info", "Business", "Communinication Establishment feature: " + response.ErrorMessage, accountUser.UserHash);
             }
             return response;
         }
     }
 }
+
+
+
+
+
+
+

@@ -19,7 +19,7 @@ namespace TeamSpecs.RideAlong.CELibrary.Target
         {
 
             var sqlCommandString = "";
-            var response = new Response();
+            IResponse response = new Response();
             sqlCommandString = @"
             SELECT UA.UserName 
             From VendingStatus VS 
@@ -36,13 +36,9 @@ namespace TeamSpecs.RideAlong.CELibrary.Target
             try
             {
 
-                var daoValue = _dao.ExecuteReadOnly(sqlCommand);
-                response.ReturnValue = new List<object>();
+                response = _dao.ExecuteReadOnly(sqlCommand);
 
-                foreach (var item in daoValue)
-                {
-                    response.ReturnValue.Add(new EmailModel((string)item[0]));
-                };
+
             }
             catch
             {
