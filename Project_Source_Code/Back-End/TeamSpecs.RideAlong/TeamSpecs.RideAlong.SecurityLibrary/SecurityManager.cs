@@ -20,17 +20,19 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
 
         private ILogService _logger;
         private IHttpContextAccessor _httpContextAccessor;
+        private IMailKitService _mailkitService;
         private string _rideAlongSecretKey = "This is Ridealong's super secret key for testing security";
         private string _rideAlongIssuer = "Ride Along by Team Specs";
         private string _accessTokenHeader = "X-Access-Token";
         private string _refreshTokenHeader = "X-Refresh-Token";
         private int __otpLength = 10;
 
-        public SecurityManager(IAuthService authService, ILogService logger, IHttpContextAccessor httpContextAccessor)
+        public SecurityManager(IAuthService authService, ILogService logger, IHttpContextAccessor httpContextAccessor, IMailKitService mailKit)
         {
             _authService = authService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _mailkitService = mailKit;
         }
 
         /// <summary>
@@ -386,13 +388,20 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 return LogInAttempt;
             }
 
-            // For A Development Environment Only
-            LogInAttempt.ReturnValue = new List<object>();
-            LogInAttempt.ReturnValue.Add(otp);
-            // End
+            // write email service
+            _mailkitService.SendEmail(username, "RideAlong One Time-Password Request",
+                $"Dear {username},\nTo complete your login and ensure the security of your account, we require you to log in with a One-Time Password (OTP):\n{otp}\n\n"
+                + "Please enter this OTP on the login page to access RideAlong. This OTP is only valid for 2 hours, so please ensure you complete the authentication process promptly.\n"
+                + "If you did not request this OTP or if you ahve any concerns about your account security, please contact our suppor team immediately!\n"
+                + "Thank you for choosing RideAlong. We look forward to serving you!"
+                + "\n\nBest regards,\nRideAlong Team");
 
             // If we got here, then all was completed successfully. Set error to false, return response
             LogInAttempt.HasError = false;
+            LogInAttempt.ReturnValue = new List<object>()
+            {
+                "OTP Sent to email"
+            };
             return LogInAttempt;
         }
 
