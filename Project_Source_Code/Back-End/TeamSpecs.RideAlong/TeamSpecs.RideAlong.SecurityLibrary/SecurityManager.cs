@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using TeamSpecs.RideAlong.LoggingLibrary;
 using TeamSpecs.RideAlong.Model;
+using TeamSpecs.RideAlong.ConfigService;
 using TeamSpecs.RideAlong.SecurityLibrary.Interfaces;
 using TeamSpecs.RideAlong.SecurityLibrary.Model;
 using TeamSpecs.RideAlong.Services;
@@ -27,12 +28,12 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
         private string _refreshTokenHeader = "X-Refresh-Token";
         private int __otpLength = 10;
 
-        public SecurityManager(IAuthService authService, ILogService logger, IHttpContextAccessor httpContextAccessor, IMailKitService mailKit)
+        public SecurityManager(IAuthService authService, ILogService logger, IHttpContextAccessor httpContextAccessor)
         {
             _authService = authService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
-            _mailkitService = mailKit;
+            _mailkitService = new MailKitService(new ConfigServiceJson());
         }
 
         /// <summary>
