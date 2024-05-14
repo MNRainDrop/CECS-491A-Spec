@@ -24,6 +24,7 @@ builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
+builder.Services.AddScoped<IMailKitService, MailKitService>();
 
 builder.Services.AddScoped<ISystemObservabilityTarget, SqlDbSystemObservabilityTarget>();
 builder.Services.AddScoped<ISystemObservabilityService, SystemObservabilityService>();
