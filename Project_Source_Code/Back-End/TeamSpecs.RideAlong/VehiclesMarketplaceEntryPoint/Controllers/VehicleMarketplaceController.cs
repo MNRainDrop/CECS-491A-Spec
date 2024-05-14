@@ -31,6 +31,7 @@ namespace TeamSpecs.RideAlong.VehiclesMarketplaceEntryPoint.Controllers
         {
             Dictionary<string, string> requiredClaims = new Dictionary<string, string>();
             requiredClaims.Add("canView", "marketplace");
+            requiredClaims.Add("canView", "email");
 
             bool hasPermission;
 
