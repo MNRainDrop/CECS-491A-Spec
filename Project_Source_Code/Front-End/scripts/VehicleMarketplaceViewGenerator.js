@@ -29,7 +29,7 @@ function exrtactData(jsonData) {
         `;
     });   
     html += "</div>"; 
-    //html += "<div id=detail></div>";
+    html += "<div id=detail></div>";
     dynamicContent.innerHTML = html;
 
    
@@ -47,7 +47,7 @@ function exrtactDataDetail(jsonData) {
     var model; 
     var description; 
     var date;
-
+    var year;
     jsonData.forEach(function(data) {
         // Access values from each object
         VIN = data.vin;
@@ -59,19 +59,21 @@ function exrtactDataDetail(jsonData) {
         var status = data.marketplaceStatus; 
         var id = data.owner_UID; 
         var view = data.viewStatus;
-        var year = data.year;   
+        year = data.year;   
     });
     content.innerHTML= `
     <div id=test class=vehicle-listings>
     <img src="VPM-resource/car.png">
             <ul id="detail-description">
-                <li class="vin">${VIN}</li>
-                <li>${make}</li>
-                <li>${model}</li>
-                <li>${description}</li>
+                <li class="vin">VIN: ${VIN}</li>
+                <li>Make: ${make}</li>
+                <li>Model: ${model}</li>
+                <li>Year: ${year}</li>
+                <li>Description: ${description}</li>
                 <li>Date posted: ${date}</li>
             </ul>
-        </div>
+            <div id=marketValue></div>
+    </div>
     `;
     //});   
     //html += "</div>"; 
@@ -127,8 +129,16 @@ async function fetchAPIMarktValue(vin){
         }
     };
     try {
+        var content = document.getElementById('marketValue');
         const response = await fetch(url, options);
         const result = await response.text();
+        //Extract Value
+        var jsonObj = JSON.parse(result);
+        var avg = jsonObj.prices.average;
+        var mil = jsonObj.mileage;
+        //Injecting 
+        var htmlContent = "<p>Average price for this vehicle is $" + avg + " for an avaerage mileage of " + mil + " miles</p>";
+        content.innerHTML = htmlContent;    
         console.log(result);
     } catch (error) {
         console.error(error);
@@ -350,7 +360,7 @@ function deleteFromMarketplace(VIN,description){
 
     // Create paragraph element. Displays the instructions use the VIN retrieval
     var message = document.createElement('p');
-    message.textContent = "Please input iyour description of the vehicle";
+    message.textContent = "Please input your description of the vehicle";
     content.appendChild(message);
 
     // Generate a form that lets the user input vin, licenseplate, make, model, year, color, and description
@@ -382,10 +392,7 @@ function deleteFromMarketplace(VIN,description){
             vehicleDetails: details, 
             status: marketplaceStatus
         };
-        /*console.log("Submit button clicked");
-        console.log("vehicle ", vehicle); 
-        console.log("details: ", details);
-        console.log("status: ", marketplaceStatus)*/
+        
         postDeleteFromMarketplace(data);
 
         event.stopImmediatePropagation();
