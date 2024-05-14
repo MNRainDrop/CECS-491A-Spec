@@ -25,6 +25,7 @@ builder.Services.AddScoped<IAuthTarget, SQLServerAuthTarget>();
 builder.Services.AddScoped<ILogTarget, SqlDbLogTarget>();
 builder.Services.AddScoped<ILogService, LogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMailKitService, MailKitService>();
 builder.Services.AddScoped<ISecurityManager, SecurityManager>();
 
 
