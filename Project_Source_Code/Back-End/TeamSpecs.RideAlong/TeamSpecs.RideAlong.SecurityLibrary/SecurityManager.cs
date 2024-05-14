@@ -339,8 +339,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 {
                     LogInAttempt.ErrorMessage += $": {tryGetUserModel.ErrorMessage}";
                 }
-                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                _logger.CreateLogAsync("Info", "Business", $"User at {ipAddress} failed Authentication for {username}", null);
                 return LogInAttempt;
             }
 
@@ -367,8 +365,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             if (!_authService.Authorize(userPrincipal, loginClaim))
             {
                 LogInAttempt.ErrorMessage = "Login Not Permitted";
-                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                _logger.CreateLogAsync("Info", "Business", $"User at {ipAddress} failed Authentication for {username}", null);
                 return LogInAttempt;
             }
 
@@ -413,13 +409,10 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             else
             {
                 LogInAttempt.ErrorMessage = "The user could not be retreived";
-
                 if (tryGetUserModel.ErrorMessage.IsNullOrEmpty())
                 {
                     LogInAttempt.ErrorMessage += $": {tryGetUserModel.ErrorMessage}";
                 }
-                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                _logger.CreateLogAsync("Info", "Business", $"User at {ipAddress} failed Authentication for {username}", null);
                 return LogInAttempt;
             }
             // Check amount of login attempts
@@ -469,10 +462,7 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
             // If 3 or more, then early exit
             else if (attempts >= 3)
             {
-
                 LogInAttempt.ErrorMessage = "Too Many Tries, Please perform account recovery or contact an admin";
-                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                _logger.CreateLogAsync("Info", "Business", $"User at {ipAddress} too many Authentication attempts for {username}", null);
                 return LogInAttempt;
             }
             #endregion
@@ -514,8 +504,6 @@ namespace TeamSpecs.RideAlong.SecurityLibrary
                 }
                 // Exit
                 LogInAttempt.ErrorMessage = "Incorrect login or password, please try again";
-                string ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-                _logger.CreateLogAsync("Info", "Business", $"User at {ipAddress} failed Authentication for {username}", null);
                 return LogInAttempt;
             }
 

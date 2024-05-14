@@ -37,14 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
     viewAccounts.addEventListener('click', generateUA4);
 
     var usageDashboardNav = document.getElementById('usage-dashboard-view');
-    usageDashboardNav.addEventListener('click', generateSystemObservabilityView);
+    usageDashboardNav.addEventListener('click', generateUsageDashboardView);
 
   
 });
 
 function generateRentalDefaultView() {
     var permissionGranted;
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["rentalFleet"] + '/Rentals/GetAuthStatus', 'POST', '')
+    fetchWithTokens('http://localhost:8081/Rentals/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("permission granted!!!");
@@ -65,7 +65,7 @@ function generateRentalDefaultView() {
 function generateCarHealthRatingDefaultView()
 {
     var permissionGranted;
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["carhealth"] + '/CarHealthRating/GetAuthStatus', 'POST', '')
+    fetchWithTokens('http://localhost:8082/CarHealthRating/GetAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             alert("Permission Granted!");
@@ -86,7 +86,7 @@ function generateCarHealthRatingDefaultView()
 
 function generateVehicleProfileView()
 {
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleProfile"] + '/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
+    fetchWithTokens('http://localhost:8727/VehicleProfileRetrieve/PostAuthStatus', 'POST', '')
         .then(function (response) {
         if (response.status == 204) {
             // replace the parameter inside changeCSS() to the path of the css file you need
@@ -105,7 +105,7 @@ function generateVehicleProfileView()
 function generateVehicleMarketplaceDefaultView()
 {
     var permissionGranted;
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["vehicleMarketplace"] + '/VehicleMarketplace/GetAuthStatus', 'POST','')
+    fetchWithTokens('http://localhost:5104/VehicleMarketplace/GetAuthStatus', 'POST','')
         .then(function (response) {
         if (response.status == 204) {
             var dynamicContent = document.querySelector(".dynamic-content");
@@ -129,10 +129,6 @@ function generateUserAdministration()
     displayUserAdministration();
 };
 
-function generateSystemObservabilityView() {
-    generateUsageDashboardView();
-}
-
 function generateUA4()
 {
     changeCSS("styles/VPMstyles.css");
@@ -150,7 +146,7 @@ function logOut() {
 }
 
 function refreshUserTokens() {
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["security"] + '/Auth/refreshTokens', 'POST', '')
+    fetchWithTokens('http://localhost:8080/Auth/refreshTokens', 'POST', '')
         .then(function (response) {
         if (response.ok) {
             return response.json();

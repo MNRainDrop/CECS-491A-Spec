@@ -45,6 +45,23 @@ function generateModifyButton(content) {
     content.appendChild(button);
 }
 
+
+function generateAccountDeletionButton(content) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Account Deletion';
+
+    button.addEventListener('click', (event) => {
+        event.stopImmediatePropagation();
+        const buttons = document.getElementById("vehicle-details-buttons");
+        alert("Account deletion button clicked");
+        //add function here to make it do something 
+        
+        
+    });
+    content.appendChild(button);
+}
+
 function generateUserInfoRequestButton(content) {
     var button = document.createElement('input');
     button.type = 'button';
@@ -63,7 +80,7 @@ function generateUserInfoRequestButton(content) {
 }
 
 function RequestingInfo(){
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["accountDeletion"]+'/RequestUserData/UserDataRequest', 'POST',"")
+    fetchWithTokens('http://localhost:8004/RequestUserData/UserDataRequest', 'POST',"")
     .then(function (response) {
         if (response.status == 200) { 
             response.json()
@@ -350,7 +367,7 @@ window.generateUploadForm = generateUploadForm;
 
 function DisplayAllAccounts()
 {
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["accountDeletion"]+'/RequestUserData/RetrieveAllAccount', 'POST','')
+    fetchWithTokens('http://localhost:8004/RequestUserData/RetrieveAllAccount', 'POST','')
     .then(function (response) {
         if (response.status == 200) { 
             response.json()

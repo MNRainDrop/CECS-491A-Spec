@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }));
     webURL = CONFIG["ip"] + ':' + CONFIG["ports"]["security"]
     window.webURL = webURL;
-    window.CONFIG = CONFIG;
 }) (window);
 
 // Implementation

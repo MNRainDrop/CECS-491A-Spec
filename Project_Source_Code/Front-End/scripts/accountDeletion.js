@@ -27,7 +27,7 @@ function generateAccountDeletionButton(content) {
 
 function deleteUsersAccount() {
     // Make a request to delete the user's account
-    fetchWithTokens(CONFIG["ip"] + ':' + CONFIG["ports"]["deletion"]+'/Deletion/DeleteMyAccount', 'POST', "")
+    fetchWithTokens('http://localhost:8004/Deletion/DeleteMyAccount', 'POST', "")
         .then(response => {
             if (response.ok) {
                 // Account deletion successful

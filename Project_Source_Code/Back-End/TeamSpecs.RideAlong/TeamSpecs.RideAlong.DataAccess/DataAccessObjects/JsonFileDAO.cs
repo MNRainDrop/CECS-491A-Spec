@@ -10,7 +10,7 @@ namespace TeamSpecs.RideAlong.DataAccess
             var response = new Response();
             var currentDir = AppDomain.CurrentDomain.BaseDirectory;
 
-            string filePath = Path.Combine(currentDir, @"../../../../PepperOutput.json");
+            string filePath = Path.Combine(currentDir, @"..\..\..\..\PepperOutput.json");
             using (StreamWriter outputFile = new StreamWriter(filePath, false))
             {
                 outputFile.WriteLine(Writevalue);
@@ -35,7 +35,7 @@ namespace TeamSpecs.RideAlong.DataAccess
             string text;
 
             var currentDir = AppDomain.CurrentDomain.BaseDirectory;
-            string filePath = Path.Combine(currentDir, @"../../../../PepperOutput.json");
+            string filePath = Path.Combine(currentDir, @"..\..\..\..\PepperOutput.json");
 
             //string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             response.ReturnValue = new List<object>();

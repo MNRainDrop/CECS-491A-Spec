@@ -172,10 +172,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 _logService.CreateLogAsync("Error", "Server", "Server Timeout on Getting Account Update Service. " + response.ErrorMessage, userAccount.UserHash);
             }
 
-            if (response.HasError == true && response.ErrorMessage is not null) // Means that SQL generation/ DB  failed
+            if (response.HasError == true) // Means that SQL generation/ DB  failed
             {
+#pragma warning disable CS8604 // Possible null reference argument.
                 _logService.CreateLogAsync("Error", "Server", response.ErrorMessage, userAccount.UserHash);
-
+#pragma warning restore CS8604 // Possible null reference argument.
             }
             else if (response.HasError == false)
             {

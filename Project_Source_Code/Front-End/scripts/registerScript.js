@@ -19,21 +19,6 @@ var isValidOTP = function (OTP) {
     return otpPattern.test(OTP);
 };
 
-(async function() {
-    //#region Initial Setup
-    var registrationURL = "";
-    var CONFIG = (await fetchConfig('./configs/RideAlong.config.json')
-        .then(response => {
-            if (!response.ok) {
-                throw "Could not read config file";
-            }
-            return response.json();
-        })
-        .catch((error) => {
-            console.error(error);
-        }));
-        registrationURL = CONFIG["ip"] + ':' + CONFIG["ports"]["registration"]
-
 
 var createAccountButton = document.getElementById("registration-button");
 createAccountButton.addEventListener("click", createAccount);
@@ -85,7 +70,7 @@ function submitEmail() {
 
 
         // Send the registration request to the server
-        fetchWithTokens(registrationURL +'/Registration/PostVerify', 'POST', email)
+        fetchWithTokens('http://localhost:8003/Registration/PostVerify', 'POST', email)
         .then(response => {
             if (response.ok) {
                 // Registration successful
@@ -207,7 +192,7 @@ function submitAccountInfo() {
     // Retrieve the values from the input fields within account info container
     var email = accountInfoContainer.querySelector("input[type='text']").value;
     var otp = accountInfoContainer.querySelector("input[type='text'][placeholder='OTP sent to your email']").value;
-    var dob = new Date(accountInfoContainer.querySelector("input[type='date']").value).toISOString();
+    var dob = accountInfoContainer.querySelector("input[type='date']").value;
     var alternateEmail = accountInfoContainer.querySelector("input[type='email']").value;
     var accountType = accountInfoContainer.querySelector("select").value;
     
@@ -232,7 +217,7 @@ var accountData = {
 }
 
 // Send the registration request to the server
-fetchWithTokens(registrationURL +'/Registration/PostCreateUser', 'POST', accountData)
+fetchWithTokens('http://localhost:8003/Registration/PostCreateUser', 'POST', accountData)
 .then(response => {
     if (response.ok) {
         // Registration successful
@@ -250,5 +235,3 @@ fetchWithTokens(registrationURL +'/Registration/PostCreateUser', 'POST', account
     alert(response.text());
 });
 }
-
-})(window);
