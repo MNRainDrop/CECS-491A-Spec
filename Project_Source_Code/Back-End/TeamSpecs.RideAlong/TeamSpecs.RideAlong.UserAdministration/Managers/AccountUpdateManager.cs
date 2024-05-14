@@ -26,11 +26,11 @@ namespace TeamSpecs.RideAlong.UserAdministration.Managers
                 throw new ArgumentException(nameof(address));
             }
 
-            if (!IsValidUsername(name))
+            /*if (!IsValidUsername(name))
             {
 
                 throw new ArgumentException(nameof(name));
-            }
+            }*/
 
             if (!IsValidPhone(phone))
             {

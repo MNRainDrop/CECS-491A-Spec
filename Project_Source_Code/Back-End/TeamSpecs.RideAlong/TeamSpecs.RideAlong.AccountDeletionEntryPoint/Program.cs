@@ -47,6 +47,20 @@ builder.Services.AddScoped<IAccountRetrievalManager, AccountRetrievalManager>();
 builder.Services.AddScoped<IAccountRetrievalService, AccountRetrievalService>();
 builder.Services.AddScoped<ISqlDbUserRetrievalTarget, SqlDbUserRetrievalTarget>();
 
+builder.Services.AddScoped<IClaimTarget, ClaimTarget>();
+builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IUserTarget, SqlDbUserTarget>();
+builder.Services.AddScoped<IPostAccountUpdateService, PostAccountUpdateService>();
+builder.Services.AddScoped<IGetAccountUpdateService, GetAccountUpdateService>();
+builder.Services.AddScoped<IAccountUpdateManager, AccountUpdateManager>();
+builder.Services.AddScoped<IAccountClaimManager, AccountClaimManager>();
+
+
+
+
+
+
+
 
 
 

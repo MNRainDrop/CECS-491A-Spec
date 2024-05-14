@@ -407,3 +407,4 @@ Project_Source_Code/Back-End/TeamSpecs.RideAlong/RideAlongConfiguration.json
 *.config.json
 package*.json
 Project_Source_Code/Back-End/TeamSpecs.RideAlong/Report.txt
+Project_Source_Code/Back-End/TeamSpecs.RideAlong/PepperOutput.json

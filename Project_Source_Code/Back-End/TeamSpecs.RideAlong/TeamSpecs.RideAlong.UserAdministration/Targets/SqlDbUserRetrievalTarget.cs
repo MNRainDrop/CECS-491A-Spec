@@ -108,11 +108,12 @@ public class SqlDbUserRetrievalTarget : ISqlDbUserRetrievalTarget
         {
             var daoValue = _dao.ExecuteReadOnly(sqlCommands);
             response.ReturnValue = new List<object>();
+            
 
             foreach (var item in daoValue)
             {
-                //response.ReturnValue.Add(new UserDataRequestModel((string)item[0], (long)item[1], (string)item[2], (string)item[3], (string)item[4], (int)item[5], (DateTime)item[6], (int)item[8], (string)item[9], (int)item[10]));
-                response.ReturnValue.Add(new UserDataRequestModel((string)item[1]) { UserHash = (string)item[3], DoB = (DateTime)item[5], AltUserName = (string)item[6], CreationDate = (DateTimeOffset)item[7], Address = (string)item[9], Name = (string)item[10], PhoneNumber = (string)item[11] });
+               
+                response.ReturnValue.Add(new UserDataRequestModel((string)item[1]) { UserId = (long)item[0], UserHash = (string)item[3], DoB = (DateTime)item[5], AltUserName = (string)item[6], CreationDate = (DateTimeOffset)item[7], Address = (string)item[9], Name = (string)item[10], PhoneNumber = (string)item[11] });
 
             }
             response.HasError = false;

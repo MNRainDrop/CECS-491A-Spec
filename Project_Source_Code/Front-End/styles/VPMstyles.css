@@ -19,7 +19,7 @@
     margin: auto; /* Center the image horizontally */
   }
 
-  #detail {
+#detail {
     display: none;
     position: fixed;
     inset: 0px;
@@ -53,3 +53,18 @@ form > input {
     margin: 5px;
     box-sizing: content-box;
 }
+.corner-button {
+    top: 10px;
+    right: 10px;
+  }
+
+.disable-button {
+top: 10px;
+right: 60px;
+}
+
+.enable-button {
+    top: 10px;
+    right: 300;
+}
+
