@@ -428,6 +428,8 @@ function postDeleteFromMarketplace(vehicle) {
 
 //#region buy request button 
 function generateBuyRequestButton(content,VIN) {
+    var buttonContainer = document.createElement('div'); // Create a container for the buttons
+
     var button = document.createElement('input');
     button.type = 'button';
     button.value = 'Request Buy';
@@ -488,6 +490,23 @@ function generateBuyRequestButton(content,VIN) {
         event.stopImmediatePropagation();
         
     });
+
+    // Create the "Send Email" button
+    var emailButton = document.createElement('input');
+    emailButton.type = 'button';
+    emailButton.value = 'Send Email';
+
+    emailButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the event from propagating to parent elements
+
+        // Call the SendEmail function with the VIN
+        SendEmail(VIN);
+    });
+
+    // Add both buttons to the container
+    buttonContainer.appendChild(buyButton);
+    buttonContainer.appendChild(emailButton);
+
     content.appendChild(button);
 }
 
@@ -512,6 +531,38 @@ function generateBuyRequestWindow(){
         console.log("Before stopImmediatePropagation");
         event.stopImmediatePropagation();
     });
+}
+
+function generateSendEmailButton(content, VIN) {
+    var button = document.createElement('input');
+    button.type = 'button';
+    button.value = 'Send Email';
+
+    button.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent the event from propagating to parent elements
+
+        // Call the SendEmail function with the VIN
+        SendEmail(VIN);
+    });
+
+    content.appendChild(button);
+}
+
+// Function to send an email with the VIN
+function SendEmail(VIN) {
+    // Make a fetch request to the backend endpoint to send the email
+    fetchWithTokens('https://localhost:5104/VehicleMarketplace/SendEmail', 'POST', VIN)
+        .then(response => {
+            if (response.ok) {
+                alert('Email sent successfully');
+            } else {
+                throw new Error('Failed to send email');
+            }
+        })
+        .catch(error => {
+            console.error('Error sending email:', error);
+            alert('Failed to send email');
+        });
 }
 
 function sendBuyRequest(vehicle) {
