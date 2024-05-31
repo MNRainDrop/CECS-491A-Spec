@@ -57,7 +57,8 @@ namespace TeamSpecs.RideAlong.TestingLibrary
             string description = "This is test case 1";
             int status = 1;*/
 
-            var uid = 0;
+            // The following line is commented out because of warning
+            //var uid = 0;
 
 
             //Service 
